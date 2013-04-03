@@ -1272,13 +1272,14 @@ inschar(c)
 char	c;
 {
     xyupdate();
-    if (IM != NULL)
-	tputs(IM, (int) LI, foutch);
-    if (IC != NULL)
+    if (IC != NULL) {
 	tputs(IC, (int) LI, foutch);
-    outchar(c);
-    if (EI != NULL)
+	outchar(c);
+    } else if (IM != NULL) {
+	tputs(IM, (int) LI, foutch);
+	outchar(c);
 	tputs(EI, (int) LI, foutch);
+    }
 }
 
 /*
