@@ -35,9 +35,6 @@ Cmd	*cmd;
 	break;
 
     case CTRL('R'):
-	redraw_window(curwin, TRUE);
-	break;
-
     case CTRL('L'):
 	redraw_all(curwin, TRUE);
 	break;
