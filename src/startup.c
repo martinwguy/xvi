@@ -265,6 +265,8 @@ char	*envp;				/* init string from the environment */
 	    nc = argv[count][1];
 	    if (nc == '/') {
 		pat = &(argv[count][2]);
+	    } else if (nc == '$') {
+		line = 0; /* sends us to last line of file */
 	    } else if (is_digit(nc)) {
 		line = atol(&(argv[count][1]));
 	    } else if (nc == '\0') {
