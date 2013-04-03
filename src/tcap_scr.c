@@ -1146,11 +1146,7 @@ int	start_row, end_row, nlines;
      * or by the appropriate number of line insertions.
      */
     if (SF != NULL && (nlines > 1 || sf == NULL)) {
-	static Flexbuf	SFbuf;
-
-	flexclear(&SFbuf);
-	(void) lformat(&SFbuf, SF, nlines);
-	(void) tputs(flexgetstr(&SFbuf), end_row - start_row, foutch);
+	tputs(tgoto(SF, nlines, nlines), end_row - start_row, foutch);
     } else if (sf != NULL) {
 	int	i;
 
@@ -1233,11 +1229,7 @@ int	start_row, end_row, nlines;
      * or by the appropriate number of line insertions.
      */
     if (SR != NULL && (nlines > 1 || sr == NULL)) {
-	static Flexbuf	SRbuf;
-
-	flexclear(&SRbuf);
-	(void) lformat(&SRbuf, SR, nlines);
-	(void) tputs(flexgetstr(&SRbuf), end_row - start_row, foutch);
+	tputs(tgoto(SR, nlines, nlines), end_row - start_row, foutch);
     } else if (sr != NULL) {
 	int	i;
 
