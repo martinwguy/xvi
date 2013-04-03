@@ -1,0 +1,2 @@
+?package(xvi):needs="text" section="Apps/Editors"\
+  title="xvi" command="/usr/bin/xvi"

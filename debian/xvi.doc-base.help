@@ -1,0 +1,8 @@
+Document: xvi-help
+Title: xvi help file
+Author: Chris and John Downey
+Abstract: Quick reference guide to xvi commands
+Section: Apps/Editors
+
+Format: text
+Files: /usr/share/xvi/xvi.help

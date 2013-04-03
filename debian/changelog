@@ -1,0 +1,7 @@
+xvi (2.47-1) unstable; urgency=low
+
+  * Initial release
+  * Wrote top level Makefile to implement Debian conventions
+
+ -- Martin Guy <martinwguy@yahoo.it>  Sat,  8 Apr 2006 11:08:58 +0100
+
