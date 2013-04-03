@@ -1,0 +1,17 @@
+ C:\TC\LIB\c0l + 
+ defmain + defscr + 
+ alloc + altstack + ascii + buffers + cmdline + 
+ cmdmode + cursor + dispmode + edit + 
+ ex_cmds1 + ex_cmds2 + events + fileio + 
+ find + flexbuf + map + mark + misccmds + mouse + 
+ movement + normal + param + pipe + preserve + 
+ ptrfunc + regexp + screen + search + startup + 
+ status + tags + undo + update + 
+ version + virtscr + 
+ windows + yankput + 
+ targets + vi_cmds + vi_ops + cmdtab + 
+ msdos_c + msdos_a + ibmpc_a + ibmpc_c + 
+ C:\TC\LIB\wildargs 
+ xvi.exe  
+ nul.map 
+ C:\TC\LIB\cl.lib C:\TC\LIB\emu.lib  C:\TC\LIB\mathl.lib  ; 

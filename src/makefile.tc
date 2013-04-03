@@ -1,0 +1,114 @@
+# Copyright (c) 1990,1991,1992,1993 Chris and John Downey
+#***
+#
+# @(#)makefile.tc	1.6 (Chris & John Downey) 3/1/94
+#
+# program name:
+#	xvi
+# function:
+#	Portable version of UNIX "vi" editor, with extensions.
+# module name:
+#	makefile.tc
+# module function:
+#	Makefile for Turbo C/C++ and TASM, for MSDOS.
+# history:
+#	STEVIE - ST Editor for VI Enthusiasts, Version 3.10
+#	Originally by Tim Thompson (twitch!tjt)
+#	Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
+#	Heavily modified by Chris & John Downey
+#***
+
+#
+# Name of this file.
+#
+THISFILE=	makefile.tc
+
+MEMMODEL=	l
+CC=		tcc
+#
+# Flags:	ANSI, large model
+#		Note that we do NOT (currently) use the -A switch (broken?)
+#
+# Turbo C has some very fussy warnings, which we don't want to see.
+#
+WARNFLAGS=	-w-ccc -w-par -w-rch -w-stu
+OPTFLAGS=	-O -G-
+DEFS=		-D__STDC__=1 -DMSDOS
+CFLAGS=		-m$(MEMMODEL) -f- $(WARNFLAGS) $(OPTFLAGS) $(DEFS)
+# AS=		e:\bin\msdos\masm.exe
+ASFLAGS=	-Ml -DMEMMODEL=$(MEMMODEL)
+LD=		tlink
+LDFLAGS=	
+LIBS=		$(LIB)\c$(MEMMODEL).lib $(LIB)\emu.lib \
+			$(LIB)\math$(MEMMODEL).lib 
+
+MACHSRC=	defmain.c defscr.c \
+		msdos_c.c ibmpc_c.c msdos_a.asm ibmpc_a.asm
+MACHOBJ=	defmain.obj defscr.obj \
+		msdos_c.obj ibmpc_c.obj msdos_a.obj ibmpc_a.obj
+MACHINC=	msdos.h ibmpc.h 8086mm.inc
+
+GENINC=		ascii.h change.h param.h ptrfunc.h regexp.h regmagic.h xvi.h \
+		virtscr.h
+
+GENSRC=		alloc.c altstack.c ascii.c buffers.c \
+		cmdline.c cmdmode.c cmdtab.c cursor.c dispmode.c \
+		edit.c ex_cmds1.c ex_cmds2.c events.c \
+		fileio.c find.c flexbuf.c \
+		map.c mark.c misccmds.c mouse.c movement.c \
+		normal.c param.c pipe.c preserve.c ptrfunc.c \
+		regexp.c screen.c search.c startup.c status.c \
+		tags.c targets.c undo.c update.c \
+		version.c vi_cmds.c vi_ops.c virtscr.c \
+		windows.c yankput.c
+
+GENOBJ=		alloc.obj altstack.obj ascii.obj buffers.obj \
+		cmdline.obj cmdmode.obj cmdtab.obj cursor.obj dispmode.obj \
+		edit.obj ex_cmds1.obj ex_cmds2.obj events.obj \
+		fileio.obj find.obj flexbuf.obj \
+		map.obj mark.obj misccmds.obj mouse.obj movement.obj \
+		normal.obj param.obj pipe.obj preserve.obj ptrfunc.obj \
+		regexp.obj screen.obj search.obj startup.obj status.obj \
+		tags.obj targets.obj undo.obj update.obj \
+		version.obj vi_cmds.obj vi_ops.obj virtscr.obj \
+		windows.obj yankput.obj
+
+LINKFILE=	xvi.lnk
+
+all:		xvi.exe
+
+xvi.exe:	$(GENOBJ) $(MACHOBJ) $(LINKFILE)
+		$(LD) @$(LINKFILE)
+
+$(LINKFILE):	$(THISFILE)
+		+echo $(LIB)\c0$(MEMMODEL) + > $@
+		+echo defmain + defscr + >> $@
+		+echo alloc + altstack + ascii + buffers + cmdline + >> $@
+		+echo cmdmode + cursor + dispmode + edit + >> $@
+		+echo ex_cmds1 + ex_cmds2 + events + fileio + >> $@
+		+echo find + flexbuf + map + mark + misccmds + mouse + >> $@
+		+echo movement + normal + param + pipe + preserve + >> $@
+		+echo ptrfunc + regexp + screen + search + startup + >> $@
+		+echo status + tags + undo + update + >> $@
+		+echo version + virtscr + >> $@
+		+echo windows + yankput + >> $@
+		+echo targets + vi_cmds + vi_ops + cmdtab + >> $@
+		+echo msdos_c + msdos_a + ibmpc_a + ibmpc_c + >> $@
+		+echo $(LIB)\wildargs >> $@
+		+echo xvi.exe $(LDFLAGS) >> $@
+		+echo nul.map >> $@
+		+echo $(LIBS) ; >> $@
+
+.c.obj:
+		$(CC) $(CFLAGS) -c $<
+
+.asm.obj:
+		$(AS) $(ASFLAGS) $< ;
+
+tags:		$(SRC)
+		ctags -t $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
+
+clean:
+		del *.obj
+		del $(LINKFILE)
+		del *.map

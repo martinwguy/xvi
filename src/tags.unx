@@ -1,0 +1,14 @@
+beep	screen.c	/^beep(window)$/
+do_sline	screen.c	/^do_sline(win)$/
+file_to_new	screen.c	/^file_to_new(win)$/
+gotocmd	screen.c	/^gotocmd(win, clr)$/
+line_to_new	screen.c	/^line_to_new(win, lp, start_row, line)$/
+redraw_all	screen.c	/^redraw_all(win, clrflag)$/
+redraw_window	screen.c	/^redraw_window(window, flag)$/
+s_del	screen.c	/^s_del(win, row, nlines)$/
+s_ins	screen.c	/^s_ins(win, row, nlines)$/
+s_inschar	screen.c	/^s_inschar(window, newchar)$/
+update_cline	screen.c	/^update_cline(win)$/
+update_sline	screen.c	/^update_sline(win)$/
+updateline	screen.c	/^updateline(window)$/
+wind_goto	screen.c	/^wind_goto(win)$/

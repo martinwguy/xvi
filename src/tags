@@ -1,0 +1,518 @@
+CTRL	ascii.h	/^#define CTRL(x) 	((x) & 0x1f)$/
+Cmd_State	xvi.h	351
+DPRINT	alloc.c	/^#define DPRINT(args)	$/
+EnterTag	tags.c	/^EnterTag(name)$/
+FAIL	regexp.c	/^#define FAIL(m) 	{ regerror(m); return(NULL); }$/
+FD_SET	unix.c	/^#	define	FD_SET(f,p)	(*(p) |= (1 << (f)))$/
+FD_ZERO	unix.c	/^#	define	FD_ZERO(p)	(*(p) = 0)$/
+Flexbuf	xvi.h	478
+HandleCommand	normal.c	/^HandleCommand(cmd)$/
+HandleOperator	normal.c	/^HandleOperator(cmd)$/
+IDCHAR	tags.c	/^#define IDCHAR(c)	(is_alnum(c) || (c) == '_')$/
+IDEF1	xvi.h	/^#define	IDEF1(val)	((val) == 0 ? \\$/
+ISMULT	regexp.c	/^#define ISMULT(c)	((c) == '*' || (c) == '+' || (c)/
+K_FUNC	ascii.h	/^#define K_FUNC(n)	(0xa0 + (n))$/
+LDEF1	xvi.h	/^#define	LDEF1(val)	(((val) == 0 ? 1L : (val)))$/
+LONG2INT	xvi.h	/^#define	LONG2INT(n)	(sizeof(int) == sizeof(long) ?/
+MC_ROUNDUP	alloc.c	/^#define MC_ROUNDUP(n)	(((n) + MEMCHUNK - 1) & MC_M/
+Mtcapmain	tcapmain.c	/^main(argc, argv)$/
+NEXT	regexp.c	/^#define NEXT(p) 	(((*((p)+1)&0377)<<8) + (*((p)+2)/
+OP	regexp.c	/^#define OP(p)		(*(p))$/
+OPERAND	regexp.c	/^#define OPERAND(p)	((p) + 3)$/
+P	xvi.h	/^#   define  P(args)		args$/
+PFUNCADDR	param.h	/^#   define	PFUNCADDR(f)	((bool_t (*)(Xviwin *, Par/
+P_ischanged	param.h	/^#define P_ischanged(n)	(params[n].p_flags & P_CHAN/
+P_setchanged	param.h	/^#define P_setchanged(n)	(params[n].p_flags |= P_CH/
+Paramval	param.h	36
+Pb	param.h	/^#define	Pb(n)		(params[n].p_bool)$/
+Pen	param.h	/^#define	Pen(n)		(params[n].p_value)$/
+Pes	param.h	/^#define	Pes(n)		(params[n].p_elist[params[n].p_eva/
+Pl	param.h	/^#define	Pl(n)		(params[n].p_list)$/
+Pn	param.h	/^#define	Pn(n)		(params[n].p_num)$/
+Ps	param.h	/^#define	Ps(n)		(params[n].p_str)$/
+RECYCLE	alloc.c	/^#define RECYCLE(p)	(((Reusable *) (p))->ru_next = /
+Rnode	search.c	210
+Termstate	unix.c	63
+UCHARAT	regexp.c	/^#define UCHARAT(p)	((int)*(unsigned char *)(p))$/
+VA_START	xvi.h	/^#   define  VA_START(a, b)	va_start(a, b)$/
+VSadvise	virtscr.h	/^#define	VSadvise(vs, r, c, i, str)	((*(vs->v_advis/
+VSbeep	virtscr.h	/^#define	VSbeep(vs)			((*(vs->v_beep))(vs))$/
+VScan_scroll	virtscr.h	/^#define	VScan_scroll(vs, start, end, n)	(\\$/
+VSclear_all	virtscr.h	/^#define	VSclear_all(vs)			((*(vs->v_clear_all))(vs/
+VSclear_line	virtscr.h	/^#define	VSclear_line(vs, row, col)	((*(vs->v_clear/
+VSclear_rows	virtscr.h	/^#define	VSclear_rows(vs, start, end)	((*(vs->v_cle/
+VSclose	virtscr.h	/^#define	VSclose(vs)			((*(vs->v_close))(vs))$/
+VScolour_cost	virtscr.h	/^#define	VScolour_cost(vs)		((*(vs->v_colour_cost))/
+VScols	virtscr.h	/^#define	VScols(vs)			(vs->pv_cols)$/
+VSdecode_colour	virtscr.h	/^#define	VSdecode_colour(vs, ind, str)	((*(vs->v_de/
+VSflush	virtscr.h	/^#define	VSflush(vs)			((*(vs->v_flush))(vs))$/
+VSgoto	virtscr.h	/^#define	VSgoto(vs, row, col)		((*(vs->v_goto))(vs,/
+VSinsert	virtscr.h	/^#define	VSinsert(vs, row, col, str)	((*(vs->v_inse/
+VSopen	virtscr.h	/^#define	VSopen(vs, win)			((*(vs->v_open))(vs, win/
+VSputc	virtscr.h	/^#define	VSputc(vs, row, col, c)		((*(vs->v_putc))(/
+VSresize	virtscr.h	/^#define	VSresize(vs, top, bot, l, r)	((*(vs->v_res/
+VSrows	virtscr.h	/^#define	VSrows(vs)			(vs->pv_rows)$/
+VSscroll	virtscr.h	/^#define	VSscroll(vs, start, end, n)	((*(vs->v_scro/
+VSset_colour	virtscr.h	/^#define	VSset_colour(vs, colind)	((*((vs)->v_set_c/
+VSwrite	virtscr.h	/^#define	VSwrite(vs, row, col, str)	((*(vs->v_write/
+Wait200ms	unix.c	/^Wait200ms()$/
+Wait_t	unix.c	36
+WarnUnSaved	ex_cmds2.c	/^WarnUnSaved(window)$/
+Xviwin	xvi.h	595
+_do_set	param.c	/^_do_set(window, mip, inter)$/
+_replchars	undo.c	/^_replchars(window, line, start, nchars, newstring)/
+_repllines	undo.c	/^_repllines(window, line, nolines, newlines)$/
+add_char_to_rhs	search.c	/^add_char_to_rhs(dest, c, ulmode)$/
+add_window	windows.c	/^add_window(last, next)$/
+alloc	alloc.c	/^alloc(size)$/
+alloc_window	windows.c	/^alloc_window(win)$/
+alt_file_name	altstack.c	/^alt_file_name()$/
+appendit	fileio.c	/^appendit(window, fname, start, end, force)$/
+ascii_map	ascii.h	/^#   define ascii_map(n)	((n) == '\\n' ? 012 : (n))$/
+autodetect	fileio.c	/^autodetect(fp)$/
+badcmd	cmdline.c	/^badcmd(interactive, str)$/
+bck_word	find.c	/^bck_word(p, type, skip_white)$/
+bcksearch	search.c	/^bcksearch(window, startline, startindex, wrapscan)/
+beep	screen.c	/^beep(window)$/
+begin_line	movement.c	/^begin_line(window, flag)$/
+bool_t	xvi.h	188
+buf1line	alloc.c	/^buf1line(b)$/
+bufempty	alloc.c	/^bufempty(b)$/
+bufno	yankput.c	/^#define	bufno(c)	((c) - LOWEST_NAME)$/
+c_proc	events.c	/^c_proc(c)$/
+calc_position_in_line	cursor.c	/^calc_position_in_line(win)$/
+calc_same	map.c	/^calc_same(mptr)$/
+call_shell	unix.c	/^call_shell(sh)$/
+call_system	unix.c	/^call_system(command)$/
+can_scroll	tcap_scr.c	/^can_scroll(scr, start_row, end_row, nlines)$/
+can_write	unix.h	/^#define can_write(f)	(access((f),F_OK) != 0 || acc/
+catch_signals	signal.c	/^catch_signals()$/
+cclass	find.c	237
+challoc	alloc.c	/^challoc()$/
+chfree	alloc.c	/^chfree(ch)$/
+clear_all	tcap_scr.c	/^clear_all(scr)$/
+clear_buffer	buffers.c	/^clear_buffer(buffer)$/
+clear_line	tcap_scr.c	/^clear_line(scr, row, col)$/
+clear_rows	tcap_scr.c	/^clear_rows(scr, start, end)$/
+closescr	tcap_scr.c	/^closescr(scr)$/
+clrmark	mark.c	/^clrmark(line, buffer)$/
+cls	find.c	/^cls(c)$/
+cmd_init	cmdmode.c	/^cmd_init(win, firstch)$/
+cmd_input	cmdmode.c	/^cmd_input(win, ch)$/
+cntllines	misccmds.c	/^cntllines(pbegin, pend)$/
+cntplines	misccmds.c	/^cntplines(win, pbegin, pend)$/
+colour_cost	tcap_scr.c	/^colour_cost(scr)$/
+common_prefix	cmdmode.c	/^common_prefix(s)$/
+compile	search.c	/^compile(pat, delimiter, delim_only)$/
+copy_lines	yankput.c	/^copy_lines(from, to)$/
+crepsearch	find.c	/^crepsearch(buffer, flag, num)$/
+cstrchr	regexp.c	/^cstrchr(s, c)$/
+cstrncmp	regexp.c	/^cstrncmp(s1, s2, n)$/
+cur_prog	search.c	/^#define	cur_prog()	(lastprogp->rn_ptr)$/
+cursupdate	cursor.c	/^cursupdate(win)$/
+d_proc	events.c	/^d_proc(c)$/
+dealloc_window	windows.c	/^dealloc_window(win)$/
+dec	ptrfunc.c	/^dec(lp)$/
+decode_command	cmdline.c	/^decode_command(str, forcep, cmdp)$/
+delete_line	tcap_scr.c	/^delete_line()$/
+delete_map	map.c	/^delete_map(maplist, lhs)$/
+delete_window	windows.c	/^delete_window(window)$/
+disp_init	dispmode.c	/^disp_init(win, func, colwidth, listmode)$/
+disp_screen	dispmode.c	/^disp_screen(win, ch)$/
+do_HLM	targets.c	/^do_HLM(cmd)$/
+do_badcmd	normal.c	/^do_badcmd(cmd)$/
+do_cmd	vi_cmds.c	/^do_cmd(cmd)$/
+do_csearch	targets.c	/^do_csearch(cmd)$/
+do_ins	vi_cmds.c	/^do_ins(cmd)$/
+do_left_right	targets.c	/^do_left_right(cmd)$/
+do_operator	normal.c	/^do_operator(cmd)$/
+do_page	vi_cmds.c	/^do_page(cmd)$/
+do_pipe	pipe.c	/^do_pipe(window, command)$/
+do_put	yankput.c	/^do_put(win, location, direction, name)$/
+do_quote	normal.c	/^do_quote(cmd)$/
+do_rchar	vi_cmds.c	/^do_rchar(cmd)$/
+do_scroll	vi_cmds.c	/^do_scroll(cmd)$/
+do_sline	screen.c	/^do_sline(win)$/
+do_target	targets.c	/^do_target(cmd)$/
+do_word	targets.c	/^do_word(cmd)$/
+do_x	vi_cmds.c	/^do_x(cmd)$/
+do_yank	yankput.c	/^do_yank(buffer, from, to, charbased, name)$/
+do_z	vi_cmds.c	/^do_z(cmd)$/
+dup2c	unix.c	/^dup2c(oldfd, newfd)$/
+earlier	xvi.h	/^#define	earlier(l1, l2)	((l1)->l_number < (l2)->l_/
+end_command	undo.c	/^end_command(window)$/
+end_replace	edit.c	/^end_replace(c)$/
+end_word	find.c	/^end_word(p, type, skip_white)$/
+endofline	alloc.c	/^endofline(p)$/
+enum_usage	param.c	/^enum_usage(w, pp)$/
+eq	ptrfunc.c	/^eq(a, b)$/
+erase_display	tcap_scr.c	/^erase_display()$/
+erase_line	tcap_scr.c	/^erase_line()$/
+exAmpersand	search.c	/^exAmpersand(window, lp, up, flags)$/
+exAppendToFile	ex_cmds1.c	/^exAppendToFile(window, filename, l1, l2, force)$/
+exArgs	ex_cmds1.c	/^exArgs(window)$/
+exChangeDirectory	ex_cmds2.c	/^exChangeDirectory(dir)$/
+exCloseWindow	ex_cmds1.c	/^exCloseWindow(win, force)$/
+exCommand	cmdline.c	/^exCommand(cmdline, interactive)$/
+exCompareWindows	ex_cmds1.c	/^exCompareWindows()$/
+exEditAlternateFile	ex_cmds1.c	/^exEditAlternateFile(window)$/
+exEditFile	ex_cmds1.c	/^exEditFile(window, force, arg)$/
+exEquals	ex_cmds2.c	/^exEquals(window, line)$/
+exGlobal	search.c	/^exGlobal(window, lp, up, cmd, matchtype)$/
+exHelp	ex_cmds2.c	/^exHelp(window)$/
+exInteractiveShell	ex_cmds2.c	/^exInteractiveShell(window)$/
+exJoin	ex_cmds2.c	/^exJoin(window, l1, l2, exclam)$/
+exLineOperation	ex_cmds2.c	/^exLineOperation(type, l1, l2, destline)$/
+exNewBuffer	ex_cmds1.c	/^exNewBuffer(window, filename, sizehint)$/
+exNext	ex_cmds1.c	/^exNext(window, argc, argv, force)$/
+exPreserveAllBuffers	preserve.c	/^exPreserveAllBuffers()$/
+exQuit	ex_cmds1.c	/^exQuit(window, force)$/
+exReadFile	ex_cmds1.c	/^exReadFile(window, filename, atline)$/
+exRewind	ex_cmds1.c	/^exRewind(window, force)$/
+exSet	param.c	/^exSet(window, argc, argv, inter)$/
+exShellCommand	ex_cmds2.c	/^exShellCommand(window, command)$/
+exShowFileStatus	ex_cmds1.c	/^exShowFileStatus(window, newfile)$/
+exSource	ex_cmds2.c	/^exSource(interactive, file)$/
+exSplitWindow	ex_cmds1.c	/^exSplitWindow(window)$/
+exSubstitute	search.c	/^exSubstitute(window, lp, up, command)$/
+exSuspend	ex_cmds2.c	/^exSuspend(window)$/
+exTag	tags.c	/^exTag(window, tag, force, interactive, split)$/
+exTilde	search.c	/^exTilde(window, lp, up, flags)$/
+exWQ	ex_cmds1.c	/^exWQ(window, filename, force)$/
+exWriteToFile	ex_cmds1.c	/^exWriteToFile(window, filename, l1, l2, force)$/
+exXit	ex_cmds1.c	/^exXit(window)$/
+exists	unix.h	/^#define exists(f)	(access((f),F_OK) == 0)$/
+expand_percents	cmdline.c	/^expand_percents(str)$/
+fail	tcap_scr.c	/^fail(str)$/
+fd_set_type	unix.c	118
+fexpand	unix.c	/^fexpand(name, do_completion)$/
+file_to_new	screen.c	/^file_to_new(win)$/
+find_tag	tags.c	/^find_tag(tag, file, fnamep, pattern)$/
+findline	mouse.c	/^findline(wp, row, pstartrow)$/
+findparam	param.c	/^findparam(win, arg)$/
+findwin	mouse.c	/^findwin(row)$/
+flexaddch	flexbuf.c	/^flexaddch(f, ch)$/
+flexdelete	flexbuf.c	/^flexdelete(f)$/
+flexdetach	flexbuf.c	/^flexdetach(f)$/
+flexgetstr	flexbuf.c	/^flexgetstr(f)$/
+flexpopch	flexbuf.c	/^flexpopch(f)$/
+flushout	tcap_scr.c	/^flushout(scr)$/
+fopenab	unix.h	/^#define fopenab(f)	fopen((f),"a")$/
+fopenrb	unix.h	/^#define fopenrb(f)	fopen((f),"r")$/
+fopenwb	unix.h	/^#define fopenwb(f)	fopen((f),"w")$/
+format_redo	vi_ops.c	/^format_redo(opchar, cmd)$/
+foutch	unix.c	/^foutch(c)$/
+free_buffer	buffers.c	/^free_buffer(buffer)$/
+free_changes	undo.c	/^free_changes(chp)$/
+free_undo	undo.c	/^free_undo(buffer)$/
+fwd_word	find.c	/^fwd_word(p, type, skip_white)$/
+fwdsearch	search.c	/^fwdsearch(window, startline, startindex, wrapscan)/
+gchar	ptrfunc.h	/^#define	gchar(lp)	((lp)->p_line->l_text[(lp)->p_in/
+getScreenSize	unix.c	/^getScreenSize(rp, cp)$/
+get_cmd	cmdmode.c	/^get_cmd(win)$/
+get_file	fileio.c	/^get_file(window, filename, headp, tailp, extra_str/
+get_indent	misccmds.c	/^get_indent(lp)$/
+get_line	cmdline.c	/^get_line(cpp, startline, lpp)$/
+get_range	cmdline.c	/^get_range(cpp)$/
+getcwd	unix.h	/^#   define getcwd(p,s)	getwd(p)$/
+getmark	mark.c	/^getmark(c, buffer)$/
+getstate	unix.c	/^#	define getstate(p)	((void) tcgetattr(0, (p)))$/
+gotocmd	screen.c	/^gotocmd(win, clr)$/
+gotoline	misccmds.c	/^gotoline(b, n)$/
+grep_line	search.c	/^grep_line()$/
+grow_line	alloc.c	/^grow_line(lp, n)$/
+guess_format	fileio.c	/^guess_format(fp, guessp)$/
+hex_to_bin	ascii.h	/^#define hex_to_bin(h)	(is_digit(h) ? (h) & 017 : (/
+hup_handler	signal.c	/^hup_handler(sig)$/
+i_proc	edit.c	/^i_proc(c)$/
+ignore_signals	signal.c	/^ignore_signals()$/
+inc	ptrfunc.c	/^inc(lp)$/
+inccount	search.c	/^inccount()$/
+inch	unix.c	/^inch(timeout)$/
+info_update	status.c	/^info_update(win)$/
+init_change_data	undo.c	/^init_change_data(window)$/
+init_marks	mark.c	/^init_marks(buffer)$/
+init_params	param.c	/^init_params()$/
+init_sline	status.c	/^init_sline(win)$/
+init_undo	undo.c	/^init_undo(buffer)$/
+init_yankput	yankput.c	/^init_yankput()$/
+initline	fileio.c	/^initline()$/
+input_timeout	unix.c	/^input_timeout(msec)$/
+ins_str	tcap_scr.c	/^ins_str(scr, row, col, str)$/
+inschar	tcap_scr.c	/^inschar(c)$/
+insert_map	map.c	/^insert_map(maplist, lhs, rhs)$/
+int_handler	signal.c	/^int_handler(sig)$/
+invis_cursor	termcap.h	/^#define invis_cursor()		\/* invisible cursor (very /
+inword	regexp.c	/^#define inword(c)	(is_alnum(c) || (c) == '_')$/
+is_alnum	ascii.h	/^#define is_alnum(c)	(isascii(c) && isalnum(c))$/
+is_alpha	ascii.h	/^#define is_alpha(c)	(isascii(c) && isalpha(c))$/
+is_cntrl	ascii.h	/^#define is_cntrl(c)	(isascii(c) && iscntrl(c))$/
+is_digit	ascii.h	/^#define is_digit(c)	(isascii(c) && isdigit(c))$/
+is_graph	ascii.h	/^#define is_graph(c)	(isascii(c) && isgraph(c))$/
+is_lastline	xvi.h	/^#define	is_lastline(lp)	((lp)->l_number == MAX_LIN/
+is_line0	xvi.h	/^#define	is_line0(lp)	((lp)->l_number == 0)$/
+is_lower	ascii.h	/^#define is_lower(c)	(isascii(c) && islower(c))$/
+is_modified	xvi.h	/^#define	is_modified(b)	((b)->b_flags & FL_MODIFIED/
+is_octdigit	ascii.h	/^#define is_octdigit(c)	((c) >= '0' && (c) <= '7')$/
+is_print	ascii.h	/^#define is_print(c)	(isascii(c) && isprint(c))$/
+is_punct	ascii.h	/^#define is_punct(c)	(isascii(c) && ispunct(c))$/
+is_readonly	xvi.h	/^#define	is_readonly(b)	(Pb(P_readonly) || ((b)->b_/
+is_space	ascii.h	/^#define is_space(c)	((c) == ' ' || (c) == '\\t')$/
+is_text	find.c	/^#define is_text(c)	(is_alnum(c) || ((c) == '_'))$/
+is_upper	ascii.h	/^#define is_upper(c)	(isascii(c) && isupper(c))$/
+is_white	find.c	/^#define is_white(c)	(((c) == ' ') || ((c) == '\\t')/
+is_xdigit	ascii.h	/^#define is_xdigit(c)	(isascii(c) && isxdigit(c))$/
+jump	movement.c	/^jump(win, currline, halfwinsize)$/
+kbgetc	unix.c	/^kbgetc()$/
+later	xvi.h	/^#define	later(l1, l2)	((l1)->l_number > (l2)->l_nu/
+line_to_new	screen.c	/^line_to_new(win, lp, start_row, line)$/
+lineno	xvi.h	/^#define	lineno(b, l)	((l)->l_number)$/
+linesearch	search.c	/^linesearch(window, startline, dir, strp)$/
+lnresize	alloc.c	/^lnresize(lp, newsize)$/
+lt	ptrfunc.c	/^lt(a, b)$/
+makeargv	misccmds.c	/^makeargv(str, argcp, argvp, whites)$/
+map_char	map.c	/^map_char(c)$/
+map_failed	map.c	/^map_failed(pos)$/
+map_getc	map.c	/^map_getc()$/
+map_timeout	map.c	/^map_timeout()$/
+map_waiting	map.c	/^map_waiting()$/
+mapescape	map.c	/^mapescape(lhsp, rhsp)$/
+mapstring	search.c	/^mapstring(sp, delim)$/
+mapthrough	map.c	/^mapthrough(mp, map)$/
+match	search.c	/^match(line, ind)$/
+match_t	param.c	100
+matchinfo_t	param.c	91
+matchname	param.c	/^matchname(name, argp, delim)$/
+memcpy	unix.h	/^#   define  memcpy(to, from, n)	bcopy((from), (to)/
+min	windows.c	/^#define	min(a, b)	(((a) < (b)) ? (a) : (b))$/
+mkstr	edit.c	/^mkstr(c)$/
+mkup	regexp.c	/^#define mkup(c)		((Pb(P_ignorecase) && is_lower(c)/
+more_files	ex_cmds1.c	/^more_files()$/
+mouseclick	mouse.c	/^mouseclick(row, col)$/
+mousedrag	mouse.c	/^mousedrag(row1, row2, col1, col2)$/
+mousemove	mouse.c	/^mousemove(ypos)$/
+moutch	unix.h	/^#define moutch(c)	putchar(c)$/
+move_cursor	movement.c	/^move_cursor(win, lp, index)$/
+move_cursor_to_window	movement.c	/^move_cursor_to_window(win)$/
+move_window_to_cursor	movement.c	/^move_window_to_cursor(win)$/
+n_proc	events.c	/^n_proc(c)$/
+new_buffer	buffers.c	/^new_buffer()$/
+newline	alloc.c	/^newline(nchars)$/
+newscr	tcap_scr.c	/^newscr(scr, win)$/
+normal	normal.c	/^normal(c)$/
+not_editable	xvi.h	/^#define	not_editable(b)	((b)->b_flags & FL_NOEDIT)/
+not_imp	param.c	/^not_imp(window, new_value, interactive)$/
+nothing	unix.c	/^	static int  nothing() { return(0); }$/
+numformat	flexbuf.c	/^numformat(f, n, uflag)$/
+oflush	unix.h	/^#define oflush()	(void) fflush(stdout)$/
+one_left	movement.c	/^one_left(window, unused)$/
+one_right	movement.c	/^one_right(window, move_past_end)$/
+openbwd	misccmds.c	/^openbwd()$/
+openfwd	misccmds.c	/^openfwd(window, oldposn, split_line)$/
+outchar	tcap_scr.c	/^outchar(c)$/
+outstr	tcap_scr.c	/^outstr(s)$/
+p_read	pipe.c	/^p_read(fp)$/
+p_write	pipe.c	/^p_write(fp)$/
+par_show	param.c	/^par_show()$/
+parmstring	param.c	/^parmstring(pp, leading)$/
+pbeep	tcap_scr.c	/^pbeep(scr)$/
+plines	misccmds.c	/^plines(win, lp)$/
+pop_alternate	altstack.c	/^pop_alternate(linep)$/
+pop_change_list	undo.c	/^pop_change_list(csp, chpp)$/
+preservebuf	preserve.c	/^preservebuf(window)$/
+process_map	map.c	/^process_map(c, pos)$/
+prompt	dispmode.c	/^prompt(message)$/
+pset_colour	tcap_scr.c	/^pset_colour(scr, colour)$/
+psvfile	preserve.c	/^psvfile(window)$/
+pswap	ptrfunc.c	/^pswap(a, b)$/
+push_alternate	altstack.c	/^push_alternate(altfile, altline)$/
+push_change	undo.c	/^push_change(csp, change)$/
+push_change_list	undo.c	/^push_change_list(csp)$/
+put	yankput.c	/^put(str, vi_mode, newline)$/
+put_char	tcap_scr.c	/^put_char(scr, row, col, c)$/
+put_file	fileio.c	/^put_file(window, f, start, end, ncp, nlp)$/
+put_str	tcap_scr.c	/^put_str(scr, row, col, str)$/
+putbuf	preserve.c	/^putbuf(wp, fp)$/
+r_proc	edit.c	/^r_proc(c)$/
+ralloc	alloc.c	/^ralloc()$/
+redraw_all	screen.c	/^redraw_all(win, clrflag)$/
+redraw_window	screen.c	/^redraw_window(window, flag)$/
+reg	regexp.c	/^reg(paren, flagp)$/
+regatom	regexp.c	/^regatom(flagp)$/
+regbranch	regexp.c	/^regbranch(flagp)$/
+regc	regexp.c	/^regc(b)$/
+regcomp	regexp.c	/^regcomp(exp)$/
+regdefault	regexp.c	/^regdefault(flagp)$/
+regdump	regexp.c	/^regdump(r)$/
+regerror	search.c	/^regerror(s)$/
+regexec	regexp.c	/^regexec(prog, string, at_bol)$/
+reginsert	regexp.c	/^reginsert(op, opnd)$/
+regmatch	regexp.c	/^regmatch(prog)$/
+regnext	regexp.c	/^regnext(p)$/
+regnode	regexp.c	/^regnode(op)$/
+regoptail	regexp.c	/^regoptail(p, val)$/
+regpiece	regexp.c	/^regpiece(flagp)$/
+regprop	regexp.c	/^regprop(op)$/
+regrepeat	regexp.c	/^regrepeat(p)$/
+regsubst	search.c	/^regsubst(prog, src, dest, lnum)$/
+regtail	regexp.c	/^regtail(p, val)$/
+regtry	regexp.c	/^regtry(prog, string)$/
+remove	unix.h	/^#   define remove(f)	unlink(f)$/
+replbuffer	undo.c	/^replbuffer(window, newlines)$/
+replchars	undo.c	/^replchars(window, line, start, nchars, newstring)$/
+repllines	undo.c	/^repllines(window, line, nolines, newlines)$/
+report	undo.c	/^report(window)$/
+rmatch	search.c	/^rmatch(line, ind, maxindex)$/
+rn_delete	search.c	/^rn_delete(rp)$/
+rn_duplicate	search.c	/^#define rn_duplicate(s)	((s) ? ((s)->rn_count++, (/
+rn_new	search.c	/^rn_new(str)$/
+runvp	unix.c	/^runvp(args)$/
+s_del	screen.c	/^s_del(win, row, nlines)$/
+s_ins	screen.c	/^s_ins(win, row, nlines)$/
+s_inschar	screen.c	/^s_inschar(window, newchar)$/
+save_position	undo.c	/^save_position(window)$/
+scroll	tcap_scr.c	/^scroll(scr, start_row, end_row, nlines)$/
+scroll_down	tcap_scr.c	/^scroll_down(start_row, end_row, nlines)$/
+scroll_up	tcap_scr.c	/^scroll_up(start_row, end_row, nlines)$/
+scrolldown	movement.c	/^scrolldown(win, nlines)$/
+scrollup	movement.c	/^scrollup(win, nlines)$/
+search	search.c	/^search(window, startline, startindex, dir, strp)$/
+searchc	find.c	/^searchc(ch, dir, type, num)$/
+set_edit	undo.c	/^set_edit(window, new_value, interactive)$/
+set_format	fileio.c	/^set_format(window, new_value, interactive)$/
+set_indent	misccmds.c	/^set_indent(lp, indent)$/
+set_param	param.c	/^    set_param(int n, ...)$/
+set_scroll_region	tcap_scr.c	/^set_scroll_region(top, bottom)$/
+set_undolevels	undo.c	/^set_undolevels(window, new_value, interactive)$/
+setcursor	mouse.c	/^setcursor(wp, row, col)$/
+setmark	mark.c	/^setmark(c, buffer, pos)$/
+setpcmark	mark.c	/^setpcmark(window)$/
+setsigcatcher	signal.c	/^setsigcatcher(sig, handler)$/
+setstate	unix.c	/^#	define setstate(p)	((void) tcsetattr(0, TCSANOW,/
+setup_buffer	buffers.c	/^setup_buffer(b)$/
+shiftdown	movement.c	/^shiftdown(win, nlines)$/
+shiftup	movement.c	/^shiftup(win, nlines)$/
+show_arg	ex_cmds1.c	/^show_arg()$/
+show_file_info	status.c	/^show_file_info(window, show_numbers)$/
+show_line	cmdline.c	/^show_line()$/
+show_map	map.c	/^show_map()$/
+showmatch	find.c	/^showmatch()$/
+skipblanks	cmdline.c	/^#define skipblanks(p)	{ while (*(p) != '\\0' && is_/
+specify_pipe_range	pipe.c	/^specify_pipe_range(window, l1, l2)$/
+stack_empty	altstack.c	/^#define	stack_empty()	(n_elements == 0)$/
+stack_full	altstack.c	/^#define	stack_full()	FALSE$/
+start_command	undo.c	/^start_command(window)$/
+startinsert	edit.c	/^startinsert(startln, repeat)$/
+startreplace	edit.c	/^startreplace(c, repeat)$/
+startup_error	tcapmain.c	/^startup_error(str)$/
+state_t	xvi.h	339
+strcspn	regexp.c	/^strcspn(s1, s2)$/
+strerror	unix.c	/^strerror(err)$/
+strformat	flexbuf.c	/^strformat(f, p)$/
+strsave	alloc.c	/^strsave(string)$/
+substitute	search.c	/^substitute(window, lp, up, sub, flags)$/
+sys_endv	unix.c	/^sys_endv()$/
+sys_exit	unix.c	/^sys_exit(code)$/
+sys_init	unix.c	/^sys_init()$/
+sys_pipe	unix.c	/^sys_pipe(cmd, writefunc, readfunc)$/
+sys_startv	unix.c	/^sys_startv()$/
+tabinout	misccmds.c	/^tabinout(inout, start, finish)$/
+tagLookup	tags.c	/^tagLookup(name, lenptr)$/
+tagReadTagFile	tags.c	/^tagReadTagFile(filename)$/
+tagword	tags.c	/^tagword()$/
+tcap_scr_main	tcap_scr.c	/^tcap_scr_main(argc, argv)$/
+tcscroll	tcap_scr.c	/^tcscroll(scr, start_row, end_row, nlines, doit)$/
+tempfname	unix.c	/^tempfname(srcname)$/
+term_handler	signal.c	/^term_handler(sig)$/
+throw	alloc.c	/^throw(lineptr)$/
+to_lower	ascii.h	/^#define to_lower(c)	((c) | 040)$/
+to_upper	ascii.h	/^#define to_upper(c)	((c) & 0137)$/
+tstp_handler	signal.c	/^tstp_handler(sig)$/
+tty_close	termcap.h	/^#define tty_close()$/
+tty_endv	tcap_scr.c	/^tty_endv()$/
+tty_goto	tcap_scr.c	/^tty_goto(row, col)$/
+tty_open	tcap_scr.c	/^tty_open(prows, pcolumns)$/
+tty_startv	tcap_scr.c	/^tty_startv()$/
+txtformset	fileio.c	/^txtformset(tfindex)$/
+undo	undo.c	/^undo(window, specific, direction)$/
+unpreserve	preserve.c	/^unpreserve(buffer)$/
+update_cline	screen.c	/^update_cline(win)$/
+update_sline	screen.c	/^update_sline(win)$/
+updateline	screen.c	/^updateline(window)$/
+usage	startup.c	/^usage()$/
+usemem	alloc.c	/^usemem(p, nbytes)$/
+validname	yankput.c	/^#define	validname(c)	((c) >= LOWEST_NAME && (c) < /
+vfork	unix.c	/^#   define	vfork() fork()$/
+vis_cursor	termcap.h	/^#define vis_cursor()		\/* visible cursor (very opti/
+vischar	ascii.c	/^vischar(c, pp, tabcol)$/
+vs_free	virtscr.c	/^vs_free(vs)$/
+vs_init	virtscr.c	/^vs_init(vs)$/
+vs_resize	virtscr.c	/^vs_resize(vs, rows, columns)$/
+w_setstate	unix.c	/^#	define w_setstate(p)	((void) tcsetattr(0, TCSADR/
+win_sig_handler	tcap_scr.c	/^win_sig_handler(sig)$/
+wind_goto	screen.c	/^wind_goto(win)$/
+writeit	fileio.c	/^writeit(window, fname, start, end, force)$/
+xvAdjustWindows	windows.c	/^xvAdjustWindows(vs, do_clear)$/
+xvCanSplit	windows.c	/^xvCanSplit(window)$/
+xvChangesNotSaved	misccmds.c	/^xvChangesNotSaved(window)$/
+xvClear	update.c	/^xvClear(vs)$/
+xvClearLine	update.c	/^xvClearLine(vs, line)$/
+xvCloseWindow	windows.c	/^xvCloseWindow(win)$/
+xvConvertWhiteSpace	misccmds.c	/^xvConvertWhiteSpace(str)$/
+xvDoSearch	find.c	/^xvDoSearch(window, str, cmd_char)$/
+xvEqualiseWindows	windows.c	/^xvEqualiseWindows(wincount)$/
+xvFindPattern	search.c	/^xvFindPattern(window, startpos, str, dir, match_cu/
+xvFindWindowByName	windows.c	/^xvFindWindowByName(window, filename)$/
+xvInitWindow	windows.c	/^xvInitWindow(vs)$/
+xvInitialiseCmd	normal.c	/^xvInitialiseCmd(cmd)$/
+xvJoinLine	misccmds.c	/^xvJoinLine(window, line, no_space)$/
+xvLocateTextObject	find.c	/^xvLocateTextObject(win, startpos, opchar1, opchar2/
+xvMapWindowOntoBuffer	windows.c	/^xvMapWindowOntoBuffer(w, b)$/
+xvMarkDirty	update.c	/^xvMarkDirty(vs, row)$/
+xvMoveDown	movement.c	/^xvMoveDown(pp, nlines)$/
+xvMoveLeft	movement.c	/^xvMoveLeft(posn, unused)$/
+xvMoveRight	movement.c	/^xvMoveRight(posn, move_past_end)$/
+xvMoveStatusLine	windows.c	/^xvMoveStatusLine(wp, nlines)$/
+xvMoveToColumn	movement.c	/^xvMoveToColumn(posn, col)$/
+xvMoveToLineNumber	movement.c	/^xvMoveToLineNumber(line)$/
+xvMoveToNextNonWhite	find.c	/^xvMoveToNextNonWhite(pos)$/
+xvMoveUp	movement.c	/^xvMoveUp(pp, nlines)$/
+xvNextDisplayedWindow	windows.c	/^xvNextDisplayedWindow(window)$/
+xvNextWindow	windows.c	/^xvNextWindow(window)$/
+xvOpChange	vi_ops.c	/^xvOpChange(cmd)$/
+xvOpDelete	vi_ops.c	/^xvOpDelete(cmd)$/
+xvOpShift	vi_ops.c	/^xvOpShift(cmd)$/
+xvOpYank	vi_ops.c	/^xvOpYank(cmd)$/
+xvOpenWindow	windows.c	/^xvOpenWindow(oldwin, sizehint)$/
+xvProcessSearch	normal.c	/^xvProcessSearch(type, pattern)$/
+xvReadFromCommand	pipe.c	/^xvReadFromCommand(window, command, atline)$/
+xvResizeWindow	windows.c	/^xvResizeWindow(window, nlines)$/
+xvSetPosnToStartOfLine	movement.c	/^xvSetPosnToStartOfLine(pos, flag)$/
+xvUnMapWindow	windows.c	/^xvUnMapWindow(w)$/
+xvUpdateAllBufferWindows	windows.c	/^xvUpdateAllBufferWindows(buffer)$/
+xvUpdateLine	update.c	/^xvUpdateLine(win, vs, row)$/
+xvUpdateScr	update.c	/^xvUpdateScr(win, vs, start_row, nlines)$/
+xvUseWindow	windows.c	/^xvUseWindow(win)$/
+xvWriteMultiString	update.c	/^xvWriteMultiString(vs, str, length, colours, row, /
+xvWriteToCommand	pipe.c	/^xvWriteToCommand(window, command, l1, l2)$/
+xv_decode_colour	virtscr.c	/^xv_decode_colour(vs, which, colstr)$/
+xv_strtoi	param.c	/^xv_strtoi(sp)$/
+xvi_handle_event	events.c	/^xvi_handle_event(ev)$/
+xvi_keymap	map.c	/^xvi_keymap(left, right)$/
+xvi_map	map.c	/^xvi_map(arg, exclam, inter)$/
+xvi_startup	startup.c	/^xvi_startup(vs, argc, argv, envp)$/
+xvi_unmap	map.c	/^xvi_unmap(argc, argv, exclam, inter)$/
+xvpSetColour	param.c	/^xvpSetColour(w, new_value, interactive)$/
+xvpSetMagic	param.c	/^xvpSetMagic(window, new_value, interactive)$/
+xvpSetRT	param.c	/^xvpSetRT(window, new_value, interactive)$/
+xvpSetTS	param.c	/^xvpSetTS(window, new_value, interactive)$/
+xvpSetVBell	param.c	/^xvpSetVBell(w, new_value, interactive)$/
+xyadvise	tcap_scr.c	/^xyadvise(scr, row, col, index, str)$/
+xygoto	tcap_scr.c	/^xygoto(scr, row, col)$/
+xyupdate	tcap_scr.c	/^xyupdate()$/
+yank_str	yankput.c	/^yank_str(name, str, line_based)$/
+yanktext	yankput.c	/^yanktext(from, to)$/
+yp_free	yankput.c	/^yp_free(yp)$/
+yp_get_buffer	yankput.c	/^yp_get_buffer(name)$/
+yp_push_deleted	yankput.c	/^yp_push_deleted()$/
+yp_stuff_input	yankput.c	/^yp_stuff_input(win, name, vi_mode)$/

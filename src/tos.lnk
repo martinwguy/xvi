@@ -1,0 +1,10 @@
+from c:\lib\c.o
+alloc.o ascii.o buffers.o cmdline.o defscr.o
+edit.o ex_cmds1.o ex_cmds2.o events.o
+fileio.o find.o flexbuf.o
+input.o startup.o mark.o misccmds.o movement.o normal.o param.o
+preserve.o ptrfunc.o regexp.o screen.o search.o signal.o
+status.o tos.o undo.o windows.o
+yankput.o
+lib c:\lib\lc.lib c:\lib\lcm.lib
+to xvi.ttp

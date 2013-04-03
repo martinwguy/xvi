@@ -1,0 +1,76 @@
+# Copyright (c) 1990,1991,1992,1993 Chris and John Downey
+#***
+#
+# @(#)makefile.sol	1.1 (Chris & John Downey) 7/14/94
+#
+# program name:
+#	xvi
+# function:
+#	Portable version of UNIX "vi" editor, with extensions.
+# module name:
+#	makefile.usg
+# module function:
+#	Makefile for Solaris 2. Basically as per SysV, but with POSIX defined.
+# history:
+#	STEVIE - ST Editor for VI Enthusiasts, Version 3.10
+#	Originally by Tim Thompson (twitch!tjt)
+#	Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
+#	Heavily modified by Chris & John Downey
+#***
+
+SYSDEFS=	-DUNIX -DTERMIOS -DPOSIX
+INCDIRS=
+
+LIBS=		-ltermcap
+LDFLAGS=
+
+CFLAGS=		$(SYSDEFS) $(INCDIRS) -g
+LINTFLAGS=	$(SYSDEFS) $(INCDIRS) -ah
+
+MACHSRC=	unix.c tcapmain.c tcap_scr.c
+MACHOBJ=	unix.o tcapmain.o tcap_scr.o
+MACHINC=	unix.h termcap.h
+
+GENINC=		ascii.h change.h param.h ptrfunc.h regexp.h regmagic.h xvi.h \
+		virtscr.h
+
+GENSRC=		alloc.c altstack.c ascii.c buffers.c \
+		cmdline.c cmdmode.c cmdtab.c cursor.c dispmode.c \
+		edit.c ex_cmds1.c ex_cmds2.c events.c \
+		fileio.c find.c flexbuf.c \
+		map.c mark.c misccmds.c mouse.c movement.c normal.c \
+		param.c pipe.c preserve.c ptrfunc.c regexp.c \
+		screen.c search.c signal.c startup.c status.c \
+		tags.c targets.c undo.c update.c \
+		version.c vi_cmds.c vi_ops.c virtscr.c \
+		windows.c yankput.c
+
+GENOBJ=		alloc.o altstack.o ascii.o buffers.o \
+		cmdline.o cmdmode.o cmdtab.o cursor.o dispmode.o \
+		edit.o ex_cmds1.o ex_cmds2.o events.o \
+		fileio.o find.o flexbuf.o \
+		map.o mark.o misccmds.o mouse.o movement.o normal.o \
+		param.o pipe.o preserve.o ptrfunc.o regexp.o \
+		screen.o search.o signal.o startup.o status.o \
+		tags.o targets.o undo.o update.o \
+		version.o vi_cmds.o vi_ops.o virtscr.o \
+		windows.o yankput.o
+
+all:		xvi
+
+xvi:		$(GENOBJ) $(MACHOBJ)
+		$(CC) $(CFLAGS) -o xvi $(GENOBJ) $(MACHOBJ) $(LIBS)
+
+.c.o:		$< $(GENINC) $(MACHINC) param.c
+		$(CC) $(CFLAGS) -c -o $@ $<
+
+lint:
+		lint $(LINTFLAGS) $(GENSRC) $(MACHSRC)
+
+tags:		$(GENSRC) $(MACHSRC)
+		ctags -t $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
+
+clean:
+		rm $(GENOBJ) $(MACHOBJ) xvi
+
+$(GENOBJ):	$(GENINC) $(MACHINC)
