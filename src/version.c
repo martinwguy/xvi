@@ -26,7 +26,7 @@ static char *copyright = "@(#)Copyright (c) 1992 Chris & John Downey";
 #endif
 
 #ifdef __DATE__
-    char	Version[] = "Xvi 2.47 " __DATE__;
+    char	Version[] = "Xvi 2.48 " __DATE__;
 #else
-    char	Version[] = "Xvi 2.47 10th November 1994";
+    char	Version[] = "Xvi 2.48 13th October 2013";
 #endif
