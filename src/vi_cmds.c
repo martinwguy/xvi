@@ -1,5 +1,4 @@
-/* Copyright (c) 1990,1991,1992,1993,1994 Chris and John Downey */
-#ifndef lint
+/* Copyright (c) 1990,1991,1992,1993,1994 Chris and John Downey */ #ifndef lint
 static char *sccsid = "@(#)targets.c	2.43 (Chris & John Downey) 8/12/94";
 #endif
 
@@ -121,12 +120,13 @@ Cmd	*cmd;
 	    break;
 	}
 
-	for (count = IDEF1(cmd->cmd_prenum); count > 0; --count) {
+	count = IDEF1(cmd->cmd_prenum) - 1; /* 4J does 3 Joins to join 4 lines */
+	do {				    /* but 0J and 1J do one, like 2J */
 	    if (!xvJoinLine(curwin, curwin->w_cursor->p_line, FALSE)) {
 		beep(curwin);
 		break;
 	    }
-	}
+	} while (--count > 0);
 	xvUpdateAllBufferWindows(curbuf);
 
 	end_command(curwin);
