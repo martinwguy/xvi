@@ -557,9 +557,9 @@ register char	*str;
 /*
  * Join the specified line to the next line in the buffer.
  * Returns TRUE if successful. If no_space is FALSE, and
- * if no space already exists at the join boundary, and if
- * the line being appended does not start with a ')', then
- * a space character will be inserted to separate the lines.
+ * if the lst char of the first line is not space, and if
+ * the first non-space char of the line being appended is not ')',
+ * then a space character is inserted to separate the lines.
  *
  * The screen is not updated; that is left to the caller.
  */
@@ -599,11 +599,12 @@ bool_t	no_space;
     repllines(window, line->l_next, (long) 1, (Line *) NULL);
 
     /*
-     * If there is no whitespace on this line,
+     * If the last char of the first line is not space and
+     * the first of the second was not a closing brace
      * insert a single space.
      */
     if (
-	!is_space(line->l_text[size1])
+	!is_space(line->l_text[size1-1])
 	&&
 	line->l_text[size1] != ')'
 	&&
