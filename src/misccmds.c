@@ -556,7 +556,7 @@ register char	*str;
 
 /*
  * Join the specified line to the next line in the buffer.
- * Returns TRUE if successful. If no_space is FALSE, and
+ * Returns TRUE if successful. If exclam is FALSE, and
  * if the lst char of the first line is not space, and if
  * the first non-space char of the line being appended is not ')',
  * then a space character is inserted to separate the lines.
@@ -564,10 +564,10 @@ register char	*str;
  * The screen is not updated; that is left to the caller.
  */
 bool_t
-xvJoinLine(window, line, no_space)
+xvJoinLine(window, line, exclam)
 Xviwin	*window;
 Line	*line;
-bool_t	no_space;
+bool_t	exclam;
 {
     char		*nextline;	/* text of subsequent line */
     int			size1;		/* size of the first line */
@@ -591,7 +591,7 @@ bool_t	no_space;
      * Then delete the following line.
      */
     nextline = line->l_next->l_text;
-    while (is_space(*nextline)) {
+    if (!exclam) while (is_space(*nextline)) {
 	nextline++;
     }
 
@@ -608,7 +608,7 @@ bool_t	no_space;
 	&&
 	line->l_text[size1] != ')'
 	&&
-	!no_space
+	!exclam
     ) {
 	replchars(window, line, size1, 0, " ");
     }
