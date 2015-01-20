@@ -403,6 +403,10 @@ bool_t	exclam;
 	    beep(window);
 	    break;
 	}
+	/* Leave the cursor at the start of the joined line.
+	 * Original "vi" either does this or leaves it where it was,
+	 * apparently at random. */
+        move_cursor(window, l1, 0);
     }
 
     xvUpdateAllBufferWindows(window->w_buffer);

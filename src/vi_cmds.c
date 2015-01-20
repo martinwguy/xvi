@@ -114,19 +114,30 @@ Cmd	*cmd;
     case 'J':
     {
 	int	count;
+	int	size1;		/* chars in the first line */
+	Line *	line = curwin->w_cursor->p_line;
 
 	if (!start_command(curwin)) {
 	    beep(curwin);
 	    break;
 	}
 
+	size1 = strlen(line->l_text);
 	count = IDEF1(cmd->cmd_prenum) - 1; /* 4J does 3 Joins to join 4 lines */
 	do {				    /* but 0J and 1J do one, like 2J */
-	    if (!xvJoinLine(curwin, curwin->w_cursor->p_line, FALSE)) {
+	    if (!xvJoinLine(curwin, line, FALSE)) {
 		beep(curwin);
 		break;
 	    }
 	} while (--count > 0);
+
+	/* Leave the cursor on the first char after the first of
+	 * the joined lines, which is usually the inserted space,
+	 * with a special case for when we join a line to nothing.
+	 */
+	if (line->l_text[size1] == '\0') size1--;
+	move_cursor(curwin, line, size1);
+
 	xvUpdateAllBufferWindows(curbuf);
 
 	end_command(curwin);
