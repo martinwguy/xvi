@@ -23,6 +23,8 @@ static char *sccsid = "@(#)unix.c	2.24 (Chris & John Downey) 7/14/94";
 
 ***/
 
+#include	"xvi.h"
+
 /***********************************************************************
  *                    Environmental setup section                      *
  ***********************************************************************/
@@ -133,8 +135,6 @@ static char *sccsid = "@(#)unix.c	2.24 (Chris & John Downey) 7/14/94";
 /***********************************************************************
  *                END of environmental setup section                   *
  ***********************************************************************/
-
-#include	"xvi.h"
 
 static	Termstate	cooked_state, raw_state;
 
