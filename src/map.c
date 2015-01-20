@@ -149,7 +149,9 @@ map_getc()
 	if (!flexempty(npos.mp_src)) {
 	    mapthrough(&npos,
 			(State == NORMAL) ? cmd_map :
-			(State == INSERT || State == REPLACE) ? ins_map :
+			(State == INSERT ||
+			 State == REPLACE ||
+			 State == CMDLINE) ? ins_map :
 			NULL);
 	} else if (!flexempty(kpos.mp_src)) {
 	    mapthrough(&kpos, key_map);
