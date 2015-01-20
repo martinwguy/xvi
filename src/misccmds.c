@@ -600,15 +600,17 @@ bool_t	exclam;
 
     /*
      * If the last char of the first line is not space and
-     * the first of the second was not a closing brace
-     * insert a single space.
+     * the first of the second was not a closing brace and
+     * the second line wasn't empty, insert a single space.
      */
     if (
+	!exclam
+	&&
 	!is_space(line->l_text[size1-1])
 	&&
 	line->l_text[size1] != ')'
 	&&
-	!exclam
+	line->l_text[size1] != '\0'
     ) {
 	replchars(window, line, size1, 0, " ");
     }
