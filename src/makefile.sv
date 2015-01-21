@@ -85,7 +85,7 @@ tags:		$(SRC)
 		ctags -t $(SRC) $(GENINC) $(MACHINC)
 
 clean:
-		csh -c 'rm -f *.{o,obj} &'
+		rm -f *.o *.obj xvi
 
 install:
 		mv $(ALL) $(HOME)/bin/`arch`

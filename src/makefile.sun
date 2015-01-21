@@ -81,7 +81,7 @@ tags:		$(GENSRC) $(MACHSRC)
 		ctags -t $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
 
 clean:
-		csh -c 'rm -f *.{o,obj} xvi &'
+		rm -f *.o *.obj xvi
 
 $(GENOBJ): 	$(GENINC) $(MACHINC)
 
