@@ -1,4 +1,3 @@
-/* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
 #ifndef lint
 static char *sccsid = "@(#)unix.c	2.24 (Chris & John Downey) 7/14/94";
 #endif
@@ -76,6 +75,9 @@ static char *sccsid = "@(#)unix.c	2.24 (Chris & John Downey) 7/14/94";
      * Table of line speeds ... exactly 16 long, and the CBAUD mask
      * is 017 (i.e. 15) so we will never access outside the array.
      */
+#ifndef CBAUD
+#	define CBAUD 017
+#endif
     short	speeds[] = {
 	/* B0 */	0,
 	/* B50 */	50,
