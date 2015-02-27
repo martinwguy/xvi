@@ -75,11 +75,13 @@ tagInit()
 	}
 
 	while (TRUE) {
+	    register int n;
 	    /*
 	     * Read the whole line into inbuf.
 	     */
-	    cp = inbuf;
-	    while ((c = getc(fp)) != EOF && c != '\n') {
+	    cp = inbuf; n = 0;
+	    while ((c = getc(fp)) != EOF && c != '\n'
+		   && ++n < sizeof(inbuf)) {
 		*cp++ = c;
 	    }
 	    if (c == EOF) {
