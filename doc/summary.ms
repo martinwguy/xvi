@@ -92,7 +92,7 @@ may be added as colon commands at some time in the future:
 .DS
 .B
 .c3 abbreviate recover write>>
-.c3 unabbreviate join
+.c3 unabbreviate
 .R
 .DE
 .KE
