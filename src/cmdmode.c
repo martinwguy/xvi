@@ -148,10 +148,6 @@ int	ch;
 		    inbuf[inpos] = '\0';
 		}
 	    }
-	    len = colposn[inpos - 1] + 1;
-	    while (flexlen(&win->w_statusline) > len)
-		(void) flexrmchar(&win->w_statusline);
-	    update_cline(win);
 	    if (inpos == 0) {
 		/*
 		 * Deleted past first char;
@@ -160,6 +156,10 @@ int	ch;
 		State = NORMAL;
 		return(cmd_CANCEL);
 	    }
+	    len = colposn[inpos - 1] + 1;
+	    while (flexlen(&win->w_statusline) > len)
+		(void) flexrmchar(&win->w_statusline);
+	    update_cline(win);
 	    return(cmd_INCOMPLETE);
 
 	case ESC:
