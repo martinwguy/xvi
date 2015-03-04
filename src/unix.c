@@ -24,6 +24,11 @@ static char *sccsid = "@(#)unix.c	2.24 (Chris & John Downey) 7/14/94";
 
 #include	"xvi.h"
 
+/* Without this we get compiler warning about conversion from int to
+ * pointer, which could be damaging on a 64-bit system with 32-bit ints.
+ * No idea why this is needed as stdio.h *is* included from xvi.h -martin */
+FILE *fdopen(int fd, const char *mode);
+
 /***********************************************************************
  *                    Environmental setup section                      *
  ***********************************************************************/
@@ -922,7 +927,7 @@ long	(*readfunc) P((FILE *));
 	(void) dup2c(pd1[0], 0);
 	(void) dup2c(pd2[1], 1);
 	(void) close(2);
-	(void) dup(1);			/* dup2(1, 2) */
+	pid2 = dup(1);			/* dup2(1, 2) */
 
 	/*
 	 * Exec the command.
@@ -1090,7 +1095,7 @@ bool_t			do_completion;
 	    (void) signal(SIGQUIT, SIG_DFL);
 	    dup2c(pd[1], 1);
 	    (void) close(2);		/* redirect both stdout & stderr */
-	    (void) dup(1);
+	    save0= dup(1);
 	    (void) close(0);
 	    (void) execvp(args[0], args);
 	    _exit(0);
