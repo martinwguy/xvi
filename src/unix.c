@@ -72,6 +72,9 @@ FILE *fdopen(int fd, const char *mode);
 #ifdef	TERMIO
 #   ifdef	TERMIOS
 #	include <termios.h>
+#	ifndef TIOCGWINSZ
+#	 include <sys/ioctl.h>  /* BSD and GNU/Linux need this for TIOCGWINSZ */
+#	endif
    typedef struct termios	Termstate;
 #	define getstate(p)	((void) tcgetattr(0, (p)))
 #	define setstate(p)	((void) tcsetattr(0, TCSANOW, (p)))
