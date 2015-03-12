@@ -731,13 +731,15 @@ char	*srcname;
     unsigned	headlen;
     unsigned	rootlen;
     unsigned	indexnum = 0;
+    /* Where to put the preserve file if the source dir is unwritable */
+    static char	*dir_prefix = NULL;	/* or "/tmp/" */
 
     if ((srctail = strrchr(srcname, '/')) == NULL) {
 	srctail = srcname;
     } else {
 	srctail++;
     }
-    headlen = srctail - srcname;
+    headlen = dir_prefix ? strlen(dir_prefix) : (srctail - srcname);
 
     /*
      * Make copy of filename's tail & change it from "wombat" to
@@ -769,7 +771,7 @@ char	*srcname;
      * (or ".xxx") suffix ...
      */
     if (headlen > 0) {
-	(void) memcpy(retp, srcname, (int) headlen);
+	(void) memcpy(retp, dir_prefix ? dir_prefix : srcname, (int) headlen);
     }
     (void) memcpy(&retp[headlen], tailname, (int) rootlen);
 
@@ -788,6 +790,21 @@ char	*srcname;
 	(void) lformat(&suffix, "%03u", ++indexnum);
 	(void) strncpy(endp, flexgetstr(&suffix), 3);
 	flexdelete(&suffix);
+    }
+
+    /* Make sure we can create the file. */
+    {
+	FILE *fp = fopenwb(retp);
+	if ((fp ) != NULL) {
+	    /* Yes. Delete it. */
+	    fclose(fp);
+	    remove(retp);
+	} else {
+	    /* Put it in /tmp instead of the same dir as the source */
+	    dir_prefix = "/tmp/";
+	    retp = tempfname(srcname);
+	    dir_prefix = NULL;
+	}
     }
     return retp;
 }
