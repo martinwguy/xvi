@@ -256,7 +256,10 @@ static void
 win_sig_handler(sig)
 int	sig;
 {
+#ifndef _POSIX_SOURCE
+    /* Not necessary when using sigaction() instead of signal() */
     (void) signal(SIGWINCH, win_sig_handler);
+#endif
     win_size_changed = TRUE;
 }
 
@@ -301,7 +304,18 @@ char	*argv[];
 	(void) sigvec(SIGWINCH, &vec, (struct sigvec *) NULL);
     }
 #else
+/* Prefer sigaction() to signal() is available, as it works better */
+# ifdef _POSIX_SOURCE
+    {
+	struct sigaction act;
+	act.sa_handler = win_sig_handler;
+	act.sa_mask = 0;
+	act.sa_flags = 0;
+	sigaction(SIGWINCH, &act, NULL);
+    }
+# else
     (void) signal(SIGWINCH, win_sig_handler);
+# endif
 #endif
 
     event.ev_vs = vs;
