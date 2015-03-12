@@ -1,4 +1,5 @@
-/* Copyright (c) 1990,1991,1992,1993,1994 Chris and John Downey */ #ifndef lint
+/* Copyright (c) 1990,1991,1992,1993,1994 Chris and John Downey */
+#ifndef lint
 static char *sccsid = "@(#)targets.c	2.43 (Chris & John Downey) 8/12/94";
 #endif
 
