@@ -55,9 +55,22 @@
 
 ***/
 
+
+
 #include "xvi.h"
+/*
+ * CTRL is defined by term.h (or by a file it includes)
+ * so we undefine it here to avoid conflicts with the
+ * version defined in "xvi.h".
+ */
+#undef	CTRL
 
 #include <term.h>
+
+/* and make sure it it exists, just in case */
+#ifndef CTRL
+#define CTRL(x) ((x) & 0x1f)
+#endif
 
 static	VirtScr		*newscr P((VirtScr *, genptr *));
 static	void		closescr P((VirtScr *));
@@ -196,24 +209,24 @@ static struct {
     char	*key_tcname;
     char	*key_rhs;
 } keys[] = {
-    "ku",	(char *) arrow_keys + 0,	/* up */
-    "kd",	(char *) arrow_keys + 2,	/* down */
-    "kr",	(char *) arrow_keys + 4,	/* right */
-    "kl",	(char *) arrow_keys + 6,	/* left */
-    "kP",	(char *) arrow_keys + 8,	/* page up */
-    "kN",	(char *) arrow_keys + 10,	/* page down */
-    "kh",	"H",				/* home */
-    "k0",	"#0",				/* function key 0 */
-    "k1",	(char *) arrow_keys + 12,	/* help */
-    "k2",	"#2",				/* function key 2 */
-    "k3",	"#3",				/* function key 3 */
-    "k4",	"#4",				/* function key 4 */
-    "k5",	"#5",				/* function key 5 */
-    "k6",	"#6",				/* function key 6 */
-    "k7",	"#7",				/* function key 7 */
-    "k8",	"#8",				/* function key 8 */
-    "k9",	"#9",				/* function key 9 */
-    NULL
+  { "ku",	(char *) arrow_keys + 0		}, /* up */
+  { "kd",	(char *) arrow_keys + 2		}, /* down */
+  { "kr",	(char *) arrow_keys + 4		}, /* right */
+  { "kl",	(char *) arrow_keys + 6		}, /* left */
+  { "kP",	(char *) arrow_keys + 8		}, /* page up */
+  { "kN",	(char *) arrow_keys + 10	}, /* page down */
+  { "kh",	"H"				}, /* home */
+  { "k0",	"#0"				}, /* function key 0 */
+  { "k1",	(char *) arrow_keys + 12	}, /* help */
+  { "k2",	"#2"				}, /* function key 2 */
+  { "k3",	"#3"				}, /* function key 3 */
+  { "k4",	"#4"				}, /* function key 4 */
+  { "k5",	"#5"				}, /* function key 5 */
+  { "k6",	"#6"				}, /* function key 6 */
+  { "k7",	"#7"				}, /* function key 7 */
+  { "k8",	"#8"				}, /* function key 8 */
+  { "k9",	"#9"				}, /* function key 9 */
+  { NULL,	NULL				}
 };
 
 /*

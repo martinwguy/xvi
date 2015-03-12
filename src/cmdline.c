@@ -166,105 +166,105 @@ static	struct	ecmd	{
     /*
      * The zero-length string is used for the :linenumber command.
      */
-    "",		    EX_NOCMD,	    1,	EC_RANGE0,		ec_none,
-    "!",	    EX_SHCMD,	    0,	EC_INTEXP,		ec_rest,
+  { "",		    EX_NOCMD,	    1,	EC_RANGE0,		ec_none },
+  { "!",	    EX_SHCMD,	    0,	EC_INTEXP,		ec_rest },
 
-    "#",	    EX_NUMBER,	    0,	0,			ec_none,
-    "&",	    EX_AMPERSAND,   0,	0,			ec_rest,
-    "*",	    EX_EXBUFFER,    0,	0,			ec_rest,
-    "<",	    EX_LSHIFT,	    0,	0,			ec_none,
-    "=",	    EX_EQUALS,	    0,	0,			ec_none,
-    ">",	    EX_RSHIFT,	    0,	0,			ec_none,
-    "@",	    EX_EXBUFFER,    0,	0,			ec_rest,
-    "\"",	    EX_COMMENT,	    0,	0,			ec_rest,
+  { "#",	    EX_NUMBER,	    0,	0,			ec_none },
+  { "&",	    EX_AMPERSAND,   0,	0,			ec_rest },
+  { "*",	    EX_EXBUFFER,    0,	0,			ec_rest },
+  { "<",	    EX_LSHIFT,	    0,	0,			ec_none },
+  { "=",	    EX_EQUALS,	    0,	0,			ec_none },
+  { ">",	    EX_RSHIFT,	    0,	0,			ec_none },
+  { "@",	    EX_EXBUFFER,    0,	0,			ec_rest },
+  { "\"",	    EX_COMMENT,	    0,	0,			ec_rest },
 
-    "abbreviate",   EX_ABBREVIATE,  0,	0,			ec_strings,
-    "append",	    EX_APPEND,	    1,	0,			ec_none,
-    "args",	    EX_ARGS,	    0,	0,			ec_none,
+  { "abbreviate",   EX_ABBREVIATE,  0,	0,			ec_strings },
+  { "append",	    EX_APPEND,	    1,	0,			ec_none },
+  { "args",	    EX_ARGS,	    0,	0,			ec_none },
 
-    "buffer",	    EX_BUFFER,	    0,	EC_EXPALL,		ec_1string,
+  { "buffer",	    EX_BUFFER,	    0,	EC_EXPALL,		ec_1string },
 
-    "cd",	    EX_CHDIR,	    1,	EC_EXPALL,		ec_1string,
-    "change",	    EX_CHANGE,	    2,	0,			ec_none,
-    "chdir",	    EX_CHDIR,	    1,	EC_EXPALL,		ec_1string,
-    "close",	    EX_CLOSE,	    1,	EC_EXCLAM,		ec_none,
-    "compare",	    EX_COMPARE,	    0,	0,			ec_none,
-    "copy",	    EX_COPY,	    1,	0,			ec_line,
+  { "cd",	    EX_CHDIR,	    1,	EC_EXPALL,		ec_1string },
+  { "change",	    EX_CHANGE,	    2,	0,			ec_none },
+  { "chdir",	    EX_CHDIR,	    1,	EC_EXPALL,		ec_1string },
+  { "close",	    EX_CLOSE,	    1,	EC_EXCLAM,		ec_none },
+  { "compare",	    EX_COMPARE,	    0,	0,			ec_none },
+  { "copy",	    EX_COPY,	    1,	0,			ec_line },
 
-    "delete",	    EX_DELETE,	    0,	0,			ec_none,
+  { "delete",	    EX_DELETE,	    0,	0,			ec_none },
 
-    "echo",	    EX_ECHO,	    0,	EC_INTEXP,		ec_strings,
-    "edit",	    EX_EDIT,	    1,	EC_EXCLAM|EC_EXPALL,	ec_1string,
-    "equalise",	    EX_EQUALISE,    0,	0,			ec_none,
-    "ex",	    EX_EX,	    0,	EC_EXPALL,		ec_1string,
+  { "echo",	    EX_ECHO,	    0,	EC_INTEXP,		ec_strings },
+  { "edit",	    EX_EDIT,	    1,	EC_EXCLAM|EC_EXPALL,	ec_1string },
+  { "equalise",	    EX_EQUALISE,    0,	0,			ec_none },
+  { "ex",	    EX_EX,	    0,	EC_EXPALL,		ec_1string },
 
-    "file",	    EX_FILE,	    0,	EC_EXPALL,		ec_1string,
+  { "file",	    EX_FILE,	    0,	EC_EXPALL,		ec_1string },
 
-    "global",	    EX_GLOBAL,	    0,	EC_EXCLAM,		ec_nonalnum,
+  { "global",	    EX_GLOBAL,	    0,	EC_EXCLAM,		ec_nonalnum },
 
-    "help",	    EX_HELP,	    0,	0,			ec_none,
+  { "help",	    EX_HELP,	    0,	0,			ec_none },
 
-    "insert",	    EX_INSERT,	    0,	0,			ec_none,
+  { "insert",	    EX_INSERT,	    0,	0,			ec_none },
 
-    "join",	    EX_JOIN,	    0,	EC_EXCLAM,		ec_none,
+  { "join",	    EX_JOIN,	    0,	EC_EXCLAM,		ec_none },
 
-    "k",	    EX_K,	    0,	0,			ec_1lower,
+  { "k",	    EX_K,	    0,	0,			ec_1lower },
 
-    "list",	    EX_LIST,	    0,	0,			ec_none,
+  { "list",	    EX_LIST,	    0,	0,			ec_none },
 
-    "map",	    EX_MAP,	    0,	EC_EXCLAM,		ec_nonalnum,
-    "mark",	    EX_MARK,	    0,	0,			ec_1lower,
-    "move",	    EX_MOVE,	    1,	0,			ec_line,
+  { "map",	    EX_MAP,	    0,	EC_EXCLAM,		ec_nonalnum },
+  { "mark",	    EX_MARK,	    0,	0,			ec_1lower },
+  { "move",	    EX_MOVE,	    1,	0,			ec_line },
 
-    "next",	    EX_NEXT,	    1,	EC_EXCLAM|EC_EXPALL,	ec_strings,
-    "number",	    EX_NUMBER,	    0,	0,			ec_none,
+  { "next",	    EX_NEXT,	    1,	EC_EXCLAM|EC_EXPALL,	ec_strings },
+  { "number",	    EX_NUMBER,	    0,	0,			ec_none },
 
-    "open",	    EX_OPEN,	    0,	0,			ec_none,
+  { "open",	    EX_OPEN,	    0,	0,			ec_none },
 
-    "preserve",	    EX_PRESERVE,    0,	0,			ec_none,
-    "print",	    EX_PRINT,	    1,	0,			ec_none,
-    "put",	    EX_PUT,	    0,	EC_RANGE0,		ec_none,
+  { "preserve",	    EX_PRESERVE,    0,	0,			ec_none },
+  { "print",	    EX_PRINT,	    1,	0,			ec_none },
+  { "put",	    EX_PUT,	    0,	EC_RANGE0,		ec_none },
 
-    "quit",	    EX_QUIT,	    0,	EC_EXCLAM,		ec_none,
+  { "quit",	    EX_QUIT,	    0,	EC_EXCLAM,		ec_none },
 
-    "read",	    EX_READ,	    1,	EC_EXPALL|EC_RANGE0,	ec_filecmd,
-    "recover",	    EX_RECOVER,	    0,	0,			ec_none,
-    "redo",	    EX_REDO,	    0,	0,			ec_none,
-    "rewind",	    EX_REWIND,	    0,	EC_EXCLAM,		ec_none,
+  { "read",	    EX_READ,	    1,	EC_EXPALL|EC_RANGE0,	ec_filecmd },
+  { "recover",	    EX_RECOVER,	    0,	0,			ec_none },
+  { "redo",	    EX_REDO,	    0,	0,			ec_none },
+  { "rewind",	    EX_REWIND,	    0,	EC_EXCLAM,		ec_none },
 
-    "set",	    EX_SET,	    0,	0,			ec_strings,
-    "shell",	    EX_SHELL,	    0,	0,			ec_none,
-    "source",	    EX_SOURCE,	    0,	EC_EXPALL,		ec_1string,
-    "split",	    EX_SPLIT,	    0,	0,			ec_none,
-    "stop",	    EX_SUSPEND,	    0,	0,			ec_none,
-    "substitute",   EX_SUBSTITUTE,  1,	0,			ec_nonalnum,
-    "suspend",	    EX_SUSPEND,	    0,	0,			ec_none,
+  { "set",	    EX_SET,	    0,	0,			ec_strings },
+  { "shell",	    EX_SHELL,	    0,	0,			ec_none },
+  { "source",	    EX_SOURCE,	    0,	EC_EXPALL,		ec_1string },
+  { "split",	    EX_SPLIT,	    0,	0,			ec_none },
+  { "stop",	    EX_SUSPEND,	    0,	0,			ec_none },
+  { "substitute",   EX_SUBSTITUTE,  1,	0,			ec_nonalnum },
+  { "suspend",	    EX_SUSPEND,	    0,	0,			ec_none },
 
-    "t",	    EX_COPY,	    1,	0,			ec_line,
-    "tag",	    EX_TAG,	    0,	EC_EXCLAM,		ec_1string,
+  { "t",	    EX_COPY,	    1,	0,			ec_line },
+  { "tag",	    EX_TAG,	    0,	EC_EXCLAM,		ec_1string },
 
-    "unabbreviate", EX_UNABBREV,    0,	0,			ec_strings,
-    "undo",	    EX_UNDO,	    0,	0,			ec_none,
-    "unmap",	    EX_UNMAP,	    0,	EC_EXCLAM,		ec_strings,
+  { "unabbreviate", EX_UNABBREV,    0,	0,			ec_strings },
+  { "undo",	    EX_UNDO,	    0,	0,			ec_none },
+  { "unmap",	    EX_UNMAP,	    0,	EC_EXCLAM,		ec_strings },
 
-    "v",	    EX_V,	    1,	0,			ec_nonalnum,
-    "version",	    EX_VERSION,	    0,	0,			ec_none,
-    "visual",	    EX_VISUAL,	    0,	EC_EXCLAM|EC_EXPALL,	ec_1string,
+  { "v",	    EX_V,	    1,	0,			ec_nonalnum },
+  { "version",	    EX_VERSION,	    0,	0,			ec_none },
+  { "visual",	    EX_VISUAL,	    0,	EC_EXCLAM|EC_EXPALL,	ec_1string },
 
-    "wn",	    EX_WN,	    0,	EC_EXCLAM,		ec_none,
-    "wq",	    EX_WQ,	    0,	EC_EXCLAM|EC_EXPALL,	ec_filecmd,
-    "write",	    EX_WRITE,	    1,	EC_EXCLAM|EC_EXPALL,	ec_filecmd,
+  { "wn",	    EX_WN,	    0,	EC_EXCLAM,		ec_none },
+  { "wq",	    EX_WQ,	    0,	EC_EXCLAM|EC_EXPALL,	ec_filecmd },
+  { "write",	    EX_WRITE,	    1,	EC_EXCLAM|EC_EXPALL,	ec_filecmd },
 
-    "xit",	    EX_XIT,	    0,	0,			ec_none,
+  { "xit",	    EX_XIT,	    0,	0,			ec_none },
 
-    "yank",	    EX_YANK,	    0,	0,			ec_none,
+  { "yank",	    EX_YANK,	    0,	0,			ec_none },
 
-    "z",	    EX_Z,	    0,	0,			ec_none,
+  { "z",	    EX_Z,	    0,	0,			ec_none },
 
-    "|",	    EX_GOTO,	    0,	0,			ec_none,
-    "~",	    EX_TILDE,	    0,	0,			ec_rest,
+  { "|",	    EX_GOTO,	    0,	0,			ec_none },
+  { "~",	    EX_TILDE,	    0,	0,			ec_rest },
 
-    NULL,	    0,		    0,	0,			ec_none,
+  { NULL,	    0,		    0,	0,			ec_none },
 };
 
 /*

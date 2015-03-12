@@ -23,6 +23,13 @@
 
 #include	"xvi.h"
 
+/*
+ * CTRL is defined by sgtty.h (or by a file it includes)
+ * so we undefine it here to avoid conflicts with the
+ * version defined in "xvi.h".
+ */
+#undef	CTRL
+
 /* Without this we get compiler warning about conversion from int to
  * pointer, which could be damaging on a 64-bit system with 32-bit ints.
  * No idea why this is needed as stdio.h *is* included from xvi.h -martin */
@@ -145,8 +152,6 @@ FILE *fdopen(int fd, const char *mode);
  ***********************************************************************/
 
 static	Termstate	cooked_state, raw_state;
-
-#undef	CTRL
 
 #ifdef	SETVBUF_AVAIL
     /*
