@@ -310,7 +310,7 @@ bool_t	doit;
 
 		for (line = 0; line < nlines; line++) {
 		    tty_goto(start_row, 0);
-		    insert_line();
+		    insert_a_line();
 		}
 	    }
 	} else {
@@ -331,7 +331,7 @@ bool_t	doit;
 
 		    for (line = 0; line < nlines; line++) {
 			tty_goto(start_row, 0);
-			delete_line();
+			delete_a_line();
 		    }
 		}
 	    } else {

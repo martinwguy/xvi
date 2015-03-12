@@ -46,6 +46,8 @@ FILE *fdopen(int fd, const char *mode);
 
 #ifdef	POSIX
 #	include <unistd.h>
+#	include <sys/types.h>
+#	include <sys/wait.h>
 #endif
 
 #if defined(sun) && !defined(POSIX)
@@ -699,11 +701,11 @@ int	code;
  * This is a routine that can be passed to tputs() (in the termcap
  * library): it does the same thing as putchar().
  */
-void
+int
 foutch(c)
 int	c;
 {
-    putchar(c);
+    return(putchar(c));
 }
 
 /*
@@ -994,8 +996,8 @@ cleanup:
 	dup2c(save2, 2);
     }
 
-#ifdef	WIFEXITED
-#   define	FAILED(s)	(!WIFEXITED(s) || (s).w_retcode != 0)
+#if defined(WIFEXITED) && defined(WEXITSTATUS)
+#   define	FAILED(s)	(!WIFEXITED(s) || WEXITSTATUS(s) != 0)
 #else
 #   define	FAILED(s)	((s) != 0)
 #endif
@@ -1101,7 +1103,6 @@ bool_t			do_completion;
 
 	default:			/* parent */
 	{
-	    Wait_t		status;
 	    FILE		*pfp;
 	    static Flexbuf	newname;
 	    register int	c;

@@ -468,7 +468,7 @@ erase_line()
  * Insert one line.
  */
 void
-insert_line()
+insert_a_line()
 {
     xyupdate();
     fputs("\033[L", stdout);
@@ -478,7 +478,7 @@ insert_line()
  * Delete one line.
  */
 void
-delete_line()
+delete_a_line()
 {
     xyupdate();
     fputs("\033[M", stdout);

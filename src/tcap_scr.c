@@ -57,6 +57,8 @@
 
 #include "xvi.h"
 
+#include <term.h>
+
 static	VirtScr		*newscr P((VirtScr *, genptr *));
 static	void		closescr P((VirtScr *));
 static	void		clear_all P((VirtScr *));
@@ -625,7 +627,7 @@ bool_t	doit;
 		if (doit) {
 		    for (line = 0; line < nlines; line++) {
 			tty_goto(start_row, 0);
-			delete_line();
+			delete_a_line();
 		    }
 		}
 	    } else {
@@ -1035,7 +1037,7 @@ erase_line()
  * Delete one line.
  */
 void
-delete_line()
+delete_a_line()
 {
     xyupdate();
     if (DL != NULL)

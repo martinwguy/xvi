@@ -51,8 +51,8 @@ extern	int		Columns;
  * Terminal driving functions.
  */
 #define	erase_line()	outstr("\033K")	/* erase to end of line */
-#define	insert_line()	outstr("\033L")	/* insert one line */
-#define	delete_line()	outstr("\033M")	/* delete one line */
+#define	insert_a_line()	outstr("\033L")	/* insert one line */
+#define	delete_a_line()	outstr("\033M")	/* delete one line */
 #define	erase_display()	outstr("\033E")	/* erase display */
 #define	invis_cursor()	outstr("\033f")	/* invisible cursor */
 #define	vis_cursor()	outstr("\033e")	/* visible cursor */

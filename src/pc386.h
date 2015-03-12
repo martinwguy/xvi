@@ -46,13 +46,13 @@ extern unsigned	Rows,
 #define can_scroll_area		TRUE
 #define can_inschar		FALSE
 #define cost_goto		0	/* cost of tty_goto() */
-#define delete_line()
+#define delete_a_line()
 #define erase_display()		(disp_move(0,0),disp_eeop())
 #define erase_line()		disp_eeol()
 #define flush_output()		disp_flush()
 #define hidemouse()		msm_hidecursor()
 #define inschar(c)
-#define insert_line()
+#define insert_a_line()
 #define invis_cursor()
 #define mousestatus(x,y)	msm_getstatus(x,y)
 #define outchar(c)		disp_putc(c)

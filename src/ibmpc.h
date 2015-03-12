@@ -36,8 +36,8 @@
 #define tty_close()
 #define vis_cursor()
 #define invis_cursor()
-#define insert_line()
-#define delete_line()
+#define insert_a_line()
+#define delete_a_line()
 
 /*
  * Colour handling: default screen colours for PC's.

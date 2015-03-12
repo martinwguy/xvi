@@ -87,8 +87,8 @@ extern unsigned char	curcell[2];
 /*
  * Terminal driving functions - just use macros here.
  */
-#define insert_line()		/* insert one line */
-#define delete_line()		/* delete one line */
+#define insert_a_line()		/* insert one line */
+#define delete_a_line()		/* delete one line */
 #define save_cursor()		/* save cursor position */
 #define restore_cursor()	/* restore cursor position */
 #define invis_cursor()		/* invisible cursor */

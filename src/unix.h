@@ -167,12 +167,13 @@ extern	int		rename P((const char *, const char *));
  * Declarations for system interface routines in unix.c.
  */
 extern	char		*fexpand P((char *, bool_t));
-extern	void		foutch P((int));
+extern	int		foutch P((int));
 extern	void		Wait200ms P((void));
 extern	void		sys_init P((void));
 extern	void		sys_startv P((void));
 extern	void		sys_endv P((void));
 extern	void		sys_exit P((int));
+extern	int		inch P((long));
 extern	int		call_shell P((char *));
 extern	int		call_system P((char *));
 extern	bool_t		sys_pipe P((char *, int (*)(FILE *), long (*)(FILE *)));
