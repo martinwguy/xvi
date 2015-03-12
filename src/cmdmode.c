@@ -63,7 +63,7 @@ int	firstch;
  * Return the number of names in the string; the common prefix is
  * marked simply by setting the character following it to '\0'.
  */
-static
+static int
 common_prefix(s)
     char * s;
 {
@@ -79,7 +79,7 @@ common_prefix(s)
 	{
 	    register char * p0;
 	    register char * p1;
-	    register c;
+	    register int c;
 
 	    p0 = s;
 	    p1 = argv[i];

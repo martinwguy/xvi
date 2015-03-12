@@ -468,8 +468,8 @@ matchname(name, argp, delim)
     int		delim;
 {
     register char *arg;
-    register nc;
-    register ac;
+    register int nc;
+    register int ac;
 
     arg = *argp;
     while ((nc = *name++) == (ac = *arg++) && nc != '\0') {

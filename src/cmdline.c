@@ -398,6 +398,8 @@ bool_t	interactive;			/* true if reading from tty */
 		     */
 		    arg = NULL;
 		}
+	    default:
+		break;
 	    }
 
 	    if (arg != NULL) {
@@ -431,6 +433,8 @@ bool_t	interactive;			/* true if reading from tty */
 			command = EX_EBADARGS;
 		    }
 		    arg = argv[0];	/* unnecessary but correct */
+		default:
+		    break;
 		}
 	    }
 	}

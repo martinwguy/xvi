@@ -164,6 +164,9 @@ xvEvent	*ev;
 	case REPLACE:
 	    func = r_proc;
 	    break;
+
+	default: /* EXITING */
+	    break;
 	}
 	if ((*func)(c)) {
 	    do_update = TRUE;

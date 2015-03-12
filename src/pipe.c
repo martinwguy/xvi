@@ -193,10 +193,8 @@ FILE	*fp;
 	}
 
 	switch (state) {
-#if 0
 	case at_eof:
 	    break;
-#endif
 
 	case at_soln:
 	case in_line:

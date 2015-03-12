@@ -571,6 +571,9 @@ int		nlines;
 	for (count = row; count < row + nlines; count++) {
 	    xvClearLine(vs, (unsigned) count);
 	}
+
+    case cant_do_it:
+	break;
     }
 }
 
@@ -679,6 +682,9 @@ int			nlines;
 	for (count = bottomline - nlines; count < bottomline; count++) {
 	    xvClearLine(vs, (unsigned) count);
 	}
+
+    case cant_do_it:
+	break;
     }
 }
 

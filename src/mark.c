@@ -113,11 +113,9 @@ Buffer	*buffer;
     /*
      * Previous context mark.
      */
-    if (c == '\'' || c == '`' && buffer->b_pcvalid) {
-	retpos = buffer->b_pcmark.m_pos;
-    }
-
-    for (mlist = buffer->b_mlist, i = 0; i < NMARKS; i++) {
+    if (c == '\'' || c == '`') {
+	if (buffer->b_pcvalid) retpos = buffer->b_pcmark.m_pos;
+    } else for (mlist = buffer->b_mlist, i = 0; i < NMARKS; i++) {
 	if (mlist[i].m_name == (unsigned char) c) {
 	    retpos = mlist[i].m_pos;
 	    break;

@@ -399,6 +399,8 @@ char		*no_file_str;
 		    (void) ungetc(c, fp);
 		    c = eolnchars[0];
 		}
+	    default:
+		break;
 	    }
 	}
 
