@@ -1,7 +1,4 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)map.c	2.9 (Chris & John Downey) 7/26/93";
-#endif
 
 /***
 
@@ -23,12 +20,12 @@ static char *sccsid = "@(#)map.c	2.9 (Chris & John Downey) 7/26/93";
     into a canonical form. The second mapping stage is used for user-set maps.
     Note, however, that the actual mapping process is exactly the same for
     both stages; it is only the data that are different.
-
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

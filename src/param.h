@@ -1,7 +1,6 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-/***
 
-* @(#)param.h	2.11 (Chris & John Downey) 8/12/94
+/***
 
 * program name:
     xvi
@@ -11,13 +10,12 @@
     param.h
 * module function:
     Definitions for parameter access.
-
-    This is all going to change when we have local parameters.
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

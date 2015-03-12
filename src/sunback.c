@@ -1,6 +1,4 @@
-#ifndef lint
-static char *sccsid = "@(#)sunback.c	2.4 (Chris & John Downey) 4/27/93";
-#endif
+/* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
 
 /***
 
@@ -18,6 +16,8 @@ static char *sccsid = "@(#)sunback.c	2.4 (Chris & John Downey) 4/27/93";
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
+
 ***/
 
 #include "xvi.h"

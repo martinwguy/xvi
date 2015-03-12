@@ -1,7 +1,4 @@
 /* Copyright (c) 1992,1993,1994 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)version.c	2.30 (Chris & John Downey) 8/12/94";
-#endif
 
 /***
 
@@ -18,6 +15,7 @@ static char *sccsid = "@(#)version.c	2.30 (Chris & John Downey) 8/12/94";
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 
@@ -26,7 +24,7 @@ static char *copyright = "@(#)Copyright (c) 1992 Chris & John Downey";
 #endif
 
 #ifdef __DATE__
-    char	Version[] = "Xvi 2.48 " __DATE__;
+    char	Version[] = "Xvi 2.49 " __DATE__;
 #else
-    char	Version[] = "Xvi 2.48 13th October 2013";
+    char	Version[] = "Xvi 2.49 4th March 2015";
 #endif

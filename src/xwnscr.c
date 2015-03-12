@@ -1,9 +1,5 @@
 /* Copyright (c) 1992 Mark Russell, University of Kent */
 /* Modifications Copyright (c) 1993 Chris and John Downey */
-#ifndef lint
-char xvi_xwnscr_sccsid[] = "@(#)xwnscr.c	1.5 5/11/92 (UKC)";
-static char *sccsid = "%W% (Chris & John Downey) %G%";
-#endif
 
 /***
 
@@ -20,6 +16,7 @@ static char *sccsid = "%W% (Chris & John Downey) %G%";
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

@@ -1,6 +1,6 @@
-/***
+/* Copyright (c) 1986 by University of Toronto */
 
-* @(#)regexp.h	2.3 4/27/93
+/***
 
 * program name:
     xvi
@@ -10,15 +10,33 @@
     regexp.h
 * module function:
     Definitions for regular expression routines.
-
 * history:
     Regular expression routines by Henry Spencer.
     Modfied for use with STEVIE (ST Editor for VI Enthusiasts,
      Version 3.10) by Tony Andrews.
     Adapted for use with Xvi by Chris & John Downey.
-    Original copyright notice is in regexp.c.
-    Please note that this is a modified version.
+    Last modified by Martin Guy
+
 ***/
+
+/*
+ *	Copyright (c) 1986 by University of Toronto.
+ *	Written by Henry Spencer.  Not derived from licensed software.
+ *
+ *	Permission is granted to anyone to use this software for any
+ *	purpose on any computer system, and to redistribute it freely,
+ *	subject to the following restrictions:
+ *
+ *	1. The author is not responsible for the consequences of use of
+ *		this software, no matter how awful, even if they arise
+ *		from defects in it.
+ *
+ *	2. The origin of this software must not be misrepresented, either
+ *		by explicit claim or by omission.
+ *
+ *	3. Altered versions must be plainly marked as such, and must not
+ *		be misrepresented as being the original software.
+ */
 
 /*
  * Caveat:  this is V8 regexp(3) [actually, a reimplementation thereof],

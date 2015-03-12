@@ -1,7 +1,4 @@
-#ifndef lint
-static char *sccsid = "@(#)regexp.c	2.4 3/17/94";
-static char *copyright = "Copyright (c) 1986 by University of Toronto.";
-#endif
+/* Copyright (c) 1986 by University of Toronto */
 
 /***
 
@@ -18,13 +15,11 @@ static char *copyright = "Copyright (c) 1986 by University of Toronto.";
     Modfied for use with STEVIE (ST Editor for VI Enthusiasts,
      Version 3.10) by Tony Andrews.
     Adapted for use with Xvi by Chris & John Downey.
-    Original copyright notice appears below.
-    Please note that this is a modified version.
+    Last modified by Martin Guy
+
 ***/
 
 /*
- * regcomp and regexec -- regsub and regerror are elsewhere
- *
  *	Copyright (c) 1986 by University of Toronto.
  *	Written by Henry Spencer.  Not derived from licensed software.
  *
@@ -41,27 +36,6 @@ static char *copyright = "Copyright (c) 1986 by University of Toronto.";
  *
  *	3. Altered versions must be plainly marked as such, and must not
  *		be misrepresented as being the original software.
- *
- * Beware that some of this code is subtly aware of the way operator
- * precedence is structured in regular expressions.  Serious changes in
- * regular-expression syntax might require a total rethink.
- *
- * $Log:	regexp.c,v $
- * Revision 1.2	 88/04/28  08:09:45  tony
- * First modification of the regexp library. Added an external variable
- * 'reg_ic' which can be set to indicate that case should be ignored.
- * Added a new parameter to regexec() to indicate that the given string
- * comes from the beginning of a line and is thus eligible to match
- * 'beginning-of-line'.
- *
- * xvi, version 1.7:
- *
- * Pb(P_ignorecase) replaces reg_ic.
- *
- * BWORD (beginning of word) & EWORD (end of word) implemented.
- *
- * Some strings passed to regerror() are altered slightly, for
- * consistency with other error messages in xvi.
  */
 
 #include "xvi.h"

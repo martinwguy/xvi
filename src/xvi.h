@@ -1,7 +1,6 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-/***
 
-* %W% (Chris & John Downey) %G%
+/***
 
 * program name:
     xvi
@@ -14,12 +13,12 @@
 
     This file should really be split up into several files
     rather than being concentrated into one huge monolith.
-
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

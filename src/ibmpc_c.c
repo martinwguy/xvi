@@ -1,7 +1,4 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)ibmpc_c.c	2.7 (Chris & John Downey) 6/15/93";
-#endif
 
 /***
 
@@ -14,12 +11,12 @@ static char *sccsid = "@(#)ibmpc_c.c	2.7 (Chris & John Downey) 6/15/93";
 * module function:
     C part of terminal interface module for IBM PC compatibles
     running MS-DOS.
-
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

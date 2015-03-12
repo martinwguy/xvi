@@ -1,7 +1,4 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)tcap_scr.c	1.6 (Chris & John Downey) 3/17/94";
-#endif
 
 /***
 
@@ -54,6 +51,7 @@ static char *sccsid = "@(#)tcap_scr.c	1.6 (Chris & John Downey) 3/17/94";
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

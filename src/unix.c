@@ -1,6 +1,4 @@
-#ifndef lint
-static char *sccsid = "@(#)unix.c	2.24 (Chris & John Downey) 7/14/94";
-#endif
+/* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
 
 /***
 
@@ -19,6 +17,7 @@ static char *sccsid = "@(#)unix.c	2.24 (Chris & John Downey) 7/14/94";
     Heavily modified by Chris & John Downey
     Patched by P.T Breuer (ptb@eng.cam.ac.uk) to accept the HPUX
     flag for twiddles under HP-UX with gcc.
+    Last modified by Martin Guy
 
 ***/
 

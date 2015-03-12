@@ -1,7 +1,6 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-/***
 
-* @(#)ascii.h	2.5 (Chris & John Downey) 4/27/93
+/***
 
 * program name:
     xvi
@@ -25,6 +24,7 @@
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

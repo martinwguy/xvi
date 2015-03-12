@@ -1,7 +1,6 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-/***
 
-* @(#)qnx.h	2.11 (Chris & John Downey) 6/21/93
+/***
 
 * program name:
     xvi
@@ -16,6 +15,7 @@
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

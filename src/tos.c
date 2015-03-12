@@ -1,7 +1,4 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)tos.c	2.4 (Chris & John Downey) 6/16/93";
-#endif
 
 /***
 
@@ -18,8 +15,8 @@ static char *sccsid = "@(#)tos.c	2.4 (Chris & John Downey) 6/16/93";
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
-
     Atari port modified by Steve Found for LATTICE C V5.0
+    Last modified by Martin Guy
 
 ***/
 

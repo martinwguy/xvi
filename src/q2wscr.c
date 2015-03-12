@@ -1,7 +1,4 @@
 /* Copyright (c) 1990,1991,1992 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)q2wscr.c	1.15 (Chris & John Downey) 3/15/94";
-#endif
 
 /***
 
@@ -17,12 +14,12 @@ static char *sccsid = "@(#)q2wscr.c	1.15 (Chris & John Downey) 3/15/94";
     Note that this module assumes the C86 compiler,
     which is an ANSI compiler, rather than the standard
     QNX compiler, which is not.
-
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

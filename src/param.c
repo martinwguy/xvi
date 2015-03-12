@@ -1,7 +1,4 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)param.c	2.24 (Chris & John Downey) 8/12/94";
-#endif
 
 /***
 
@@ -38,12 +35,12 @@ static char *sccsid = "@(#)param.c	2.24 (Chris & John Downey) 8/12/94";
     this obviously places some restrictions on the sort of things they
     may be used for, and it may be necessary at some point to change
     this type to something like "unsigned long".
-
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 

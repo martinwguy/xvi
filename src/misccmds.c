@@ -1,7 +1,4 @@
 /* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
-#ifndef lint
-static char *sccsid = "@(#)misccmds.c	2.16 (Chris & John Downey) 3/17/94";
-#endif
 
 /***
 
@@ -13,14 +10,12 @@ static char *sccsid = "@(#)misccmds.c	2.16 (Chris & John Downey) 3/17/94";
     misccmds.c
 * module function:
     Miscellaneous functions.
-
-    This module will probably get hacked later and split
-    up more sensibly.
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
+    Last modified by Martin Guy
 
 ***/
 
