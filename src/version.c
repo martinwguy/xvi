@@ -19,12 +19,8 @@
 
 ***/
 
-#ifndef lint
-static char *copyright = "@(#)Copyright (c) 1992 Chris & John Downey";
-#endif
-
 #ifdef __DATE__
-    char	Version[] = "Xvi 2.49 " __DATE__;
+    char	Version[] = "Xvi 2.49-rc1 " __DATE__;
 #else
-    char	Version[] = "Xvi 2.49 4th March 2015";
+    char	Version[] = "Xvi 2.49-rc1 12th March 2015";
 #endif
