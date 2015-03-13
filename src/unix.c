@@ -799,7 +799,7 @@ char	*srcname;
 	    /* Yes. Delete it. */
 	    fclose(fp);
 	    remove(retp);
-	} else {
+	} else if (dir_prefix == NULL) {
 	    /* Put it in /tmp instead of the same dir as the source */
 	    dir_prefix = "/tmp/";
 	    retp = tempfname(srcname);
