@@ -401,7 +401,8 @@ char	*envp;				/* init string from the environment */
 static void
 usage()
 {
-    startup_error("Usage: xvi { options } [ file ... ]\n");
+    startup_error(Version);
+    startup_error("\n\nUsage: xvi { options } [ file ... ]\n");
     startup_error("       xvi { options } -t tag\n");
     startup_error("       xvi { options } +[num] file\n");
     startup_error("       xvi { options } +/pat  file\n");
