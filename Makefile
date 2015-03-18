@@ -13,19 +13,20 @@ DOCDIR=$(DESTDIR)$(INSTALLROOT)/share/doc/xvi
 all:
 	@# makefile.lnx sets CFLAGS itself; we apply the DEB_BUILD_OPTIONS by
 	@# overriding its OPTFLAG variable. Subvert it to set HELPFILE too.
-	make -C src -f makefile.lnx \
+	$(MAKE) -C src -f makefile.lnx \
 		OPTFLAG="$(OPTFLAG) -DHELPFILE=\\\"$(HELPDIR)/xvi.help\\\"" \
 		xvi
 
 install: all
-	install -d $(BINDIR) $(HELPDIR) $(MANDIR) $(DOCDIR)
-	install -m 755 -s src/xvi $(BINDIR)
-	install -m 644 src/xvi.help $(HELPDIR)
-	install -m 644 doc/xvi.1 $(MANDIR)
+	$(INSTALL) -d $(BINDIR) $(HELPDIR) $(MANDIR) $(DOCDIR)
+	$(INSTALL) -m 755 -s src/xvi $(BINDIR)
+	$(INSTALL) -m 644 src/xvi.help $(HELPDIR)
+	$(INSTALL) -m 644 doc/xvi.1 $(MANDIR)
 	# Need to remove backspacing from nroff output
 	nroff -ms < doc/summary.ms | col -b > $(DOCDIR)/summary.txt
 	chmod 644 $(DOCDIR)/summary.txt
 
 clean:
-	make -C src -f makefile.lnx clean
-	rm -rf debian/xvi
+	$(MAKE) -C src -f makefile.lnx clean
+	$(MAKE) -C doc clean
+	rm -f configure-stamp build-stamp -r debian/xvi

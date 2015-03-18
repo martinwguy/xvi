@@ -87,6 +87,10 @@ FILE *fdopen(int fd, const char *mode);
 #	define w_setstate(p)	((void) ioctl(0,TCSETAW,(char *)(p)))
 #   endif	/* no TERMIOS */
 
+#ifdef __hpux
+#undef setstate
+#endif
+
     /*
      * Table of line speeds ... exactly 16 long, and the CBAUD mask
      * is 017 (i.e. 15) so we will never access outside the array.
@@ -1021,7 +1025,7 @@ cleanup:
 	dup2c(save2, 2);
     }
 
-#if defined(WIFEXITED) && defined(WEXITSTATUS)
+#if defined(WIFEXITED) && defined(WEXITSTATUS) && !defined(__hpux)
 #   define	FAILED(s)	(!WIFEXITED(s) || WEXITSTATUS(s) != 0)
 #else
 #   define	FAILED(s)	((s) != 0)

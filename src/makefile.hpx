@@ -1,9 +1,6 @@
 # Copyright (c) 1990,1991,1992,1993 Chris and John Downey
 #***
 #
-# @(#)makefile.hpx      P.T. Breuer 20/3/93
-# @(#)makefile.hpx	1.1 (Chris & John Downey) 7/28/93
-#
 # program name:
 #       xvi
 # function:
@@ -11,7 +8,7 @@
 # module name:
 #       makefile.hpx
 # module function:
-#       Makefile for HP UNIX with Gnu cc.
+#       Makefile for HP UNIX with HP's ANSI C.
 # history:
 #       STEVIE - ST Editor for VI Enthusiasts, Version 3.10
 #       Originally by Tim Thompson (twitch!tjt)
@@ -20,6 +17,9 @@
 #       This makefile adapted from 
 #       makefile.bsd    2.3 (Chris & John Downey) 9/3/92
 #       by P.T. Breuer (ptb@eng.cam.ac.uk) 20/3/93 for HP-UX 6.0 and gcc.
+#	by Richard Lloyd <richard.lloyd@connectinternetsolutions.com>
+#		for HP-UX 11.31 with HP's ANSI C.
+#	If you wish to use gcc, say "make CC=gcc".
 #***
 
 SYSDEFS=	-DUNIX -DHPUX -DTERMIOS -DPOSIX
@@ -28,7 +28,6 @@ INCDIRS=
 LIBS=		-ltermcap
 LDFLAGS=
 
-CC=		gcc
 CFLAGS=		$(SYSDEFS) $(INCDIRS) -O
 LINTFLAGS=	$(SYSDEFS) $(INCDIRS) -ah
 
@@ -83,6 +82,6 @@ tags:		$(GENSRC) $(MACHSRC)
 		ctags -t $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
 
 clean:
-		rm $(GENOBJ) $(MACHOBJ) xvi
+		rm -f $(GENOBJ) $(MACHOBJ) xvi tags
 
 $(GENOBJ):	$(GENINC) $(MACHINC)
