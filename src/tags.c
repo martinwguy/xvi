@@ -302,6 +302,19 @@ char	*line;
     }
 
     /*
+     * Exuberant ctags creates tags with extra stuff on the end after ;" like
+ANY	regexp.c	95;"	d	file:
+Ev_resize	virtscr.h	/^	Ev_resize,$/;"	e	enum:xvevent::__anon25
+     * One way would be to implement ;-separated multiple commands and " comments
+     * A simpler one is to strip this here.
+     */
+    { /* Match ;"\t and delete it if found */
+	char *p,*q;
+        if ((p = strrchr(line, ';')) != NULL && (q = strrchr(line, '"')) != NULL
+	    && q == p+1 && q[1] == '\t') *p = '\0';
+    }
+
+    /*
      * Allocate space for the structure immediately followed by
      * the text. Then copy the string into the allocated space
      * and set up the pointers within the structure.
