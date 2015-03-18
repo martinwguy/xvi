@@ -2,7 +2,7 @@ Source: xvi
 Section: editors
 Priority: optional
 Maintainer: Martin Guy <martinwguy@yahoo.it>
-Build-Depends: debhelper (>= 4.0.0), libncurses5-dev
+Build-Depends: debhelper (>= 4.0.0), libncurses5-dev, groff
 Standards-Version: 3.6.2
 
 Package: xvi

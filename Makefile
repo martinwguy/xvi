@@ -19,11 +19,11 @@ all:
 
 install: all
 	install -d $(BINDIR) $(HELPDIR) $(MANDIR) $(DOCDIR)
-	install -m 755 src/xvi $(BINDIR)
+	install -m 755 -s src/xvi $(BINDIR)
 	install -m 644 src/xvi.help $(HELPDIR)
 	install -m 644 doc/xvi.1 $(MANDIR)
 	# Need to remove backspacing from nroff output
-	col -b < doc/summary.lst > $(DOCDIR)/summary.txt
+	nroff -ms < doc/summary.ms | col -b > $(DOCDIR)/summary.txt
 	chmod 644 $(DOCDIR)/summary.txt
 
 clean:
