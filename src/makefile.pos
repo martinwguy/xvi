@@ -25,11 +25,11 @@ SYSDEFS=	-DUNIX -DTERMIOS -DPOSIX
 INCDIRS=
 
 LIBS=		-ltermcap
-LDFLAGS=	-ansi
+LDFLAGS=
 
 DEBUGFLAG=	-g
 OPTFLAG=	-O
-CFLAGS= 	$(SYSDEFS) $(INCDIRS) $(OPTFLAG) -ansi
+CFLAGS= 	$(SYSDEFS) $(INCDIRS) $(OPTFLAG)
 
 LINTFLAGS=	$(SYSDEFS) $(INCDIRS) -ah
 
@@ -77,10 +77,10 @@ lint:
 		lint $(LINTFLAGS) $(GENSRC) $(MACHSRC)
 
 tags:		$(GENSRC) $(MACHSRC)
-		ctags -t $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
+		ctags $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
 
 clean:
-		rm -f *.o *.obj xvi
+		rm -f *.o *.obj xvi tags
 
 install:
 		mv xvi $(HOME)/bin/`arch`/xvi

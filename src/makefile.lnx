@@ -11,7 +11,7 @@
 #	makefile.pos
 # module function:
 #	Makefile for Linux
-#	Same as makefile.pos but with -DPOSIX and -ansi removed!
+#	Same as makefile.pos
 # history:
 #	STEVIE - ST Editor for VI Enthusiasts, Version 3.10
 #	Originally by Tim Thompson (twitch!tjt)
