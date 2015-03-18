@@ -1,0 +1,72 @@
+To build xvi on Linux systems:
+
+Linux
+-----
+	cd src
+	make -f makefile.lnx
+	install -s xvi /usr/local/bin/
+	install ../doc/help /usr/local/lib/xvi.help
+	install ../doc/xvi.1 /usr/local/share/man/man1/
+
+To make the Debian/Ubuntu package, say
+	apt-get install debhelper build-essential libncurses-dev
+	dpkg-buildpackage -rfakeroot
+which will create you ../xvi*.deb that you can install with
+	dpkg -i ../*.deb
+
+Other versions of Unix
+----------------------
+makefile.aix
+	AIX (IBM's SysV-compatible UNIX)
+makefile.bsd
+	Berkeley UNIX including FreeBSD, NetBSD, OpenBSD
+makefile.hpx
+	HP UNIX (HP-UX) with GNU cc
+makefile.pos
+	POSIX systems, tested on BSDI
+makefile.q2t
+	QNX 2 in terminal mode, using the CII C86 ANSI Compiler
+makefile.q2w
+	QNX 2 with Windows, using the CII C86 ANSI Compiler
+makefile.q4t
+	QNX V4.1 (POSIX-conformant) in terminal mode, using Watcom C Compiler
+makefile.sol
+	Solaris 2
+makefile.sun
+	SunOS
+makefile.sv
+	SunView
+makefile.usg
+	System V UNIX
+makefile.xen
+	Xenix on a 386
+makefile.xwn
+	Xwn/termcap combined version under X11
+
+MS-DOS
+------
+makefile.386
+	386 protected mode version using Zortech C 3.00 & PharLap DOS extender
+makefile.bcc
+	Borland C/C++
+makefile.msc
+	Microsoft C with Microsoft Macro Assembler (or compatible assembler)
+	and a public-domain version of "make" (not Microsoft's Make, which is brain-dead)
+makefile.qc
+	Microsoft Quick C (standalone version) & Microsoft's make utility
+makefile.tc
+	Turbo C/C++ and TASM
+makefile.zc2
+	Zortech C 2.18
+makefile.zc3
+	Zortech C 3.00
+
+MS-DOS clones
+---------------
+makefile.tos
+	Atari ST with Megamax or Lattice 5.0 C compiler
+
+OS/2
+----
+makefile.os2
+	OS/2 with Microsoft's make, which is the stupidest make ever.
