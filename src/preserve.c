@@ -15,7 +15,7 @@
     modified buffers in temporary files. It can be invoked with the
     :preserve command or it may be called by one of the system
     interface modules when at least PSVKEYS keystrokes have been
-    read, & at least Pn(P_preservetime) seconds have elsapsed
+    read, & at least Pn(P_preservetime) seconds have elapsed
     since the last keystroke. (PSVKEYS is defined in xvi.h.) The
     preservebuf() routine can be used to preserve a single buffer.
 * history:
