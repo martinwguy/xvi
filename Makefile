@@ -27,4 +27,5 @@ install: all
 	chmod 644 $(DOCDIR)/summary.txt
 
 clean:
-	rm -f src/*.o src/xvi
+	make -C src -f makefile.lnx clean
+	rm -rf debian/xvi

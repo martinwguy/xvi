@@ -78,7 +78,7 @@ tags:		$(GENSRC) $(MACHSRC)
 		ctags $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
 
 clean:
-		rm -f *.o *.obj xvi
+		rm -f *.o *.obj xvi tags
 
 install:
 		mv xvi $(HOME)/bin/`arch`/xvi
