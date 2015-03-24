@@ -1,5 +1,9 @@
 # Top-level makefile for Debian package
 #
+# If you want a different kind od build, use:
+#	cd src; make -f makefile.lnx
+# or whatever
+#
 #	Martin Guy, 8 April 2006
 
 INSTALLROOT=/usr
@@ -8,6 +12,14 @@ BINDIR=$(DESTDIR)$(INSTALLROOT)/bin
 HELPDIR=$(DESTDIR)$(INSTALLROOT)/share/xvi
 MANDIR=$(DESTDIR)$(INSTALLROOT)/share/man/man1
 DOCDIR=$(DESTDIR)$(INSTALLROOT)/share/doc/xvi
+
+INSTALL?=install
+MAKE?=make
+
+OPTFLAG = -O2
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	OPTFLAG = -O0
+endif
 
 # Default target for "make"
 all:
@@ -29,4 +41,4 @@ install: all
 clean:
 	$(MAKE) -C src -f makefile.lnx clean
 	$(MAKE) -C doc clean
-	rm -f configure-stamp build-stamp -r debian/xvi
+	dh_clean

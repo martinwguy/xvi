@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+if [ "$1" != "upgrade" ]
+then
+  update-alternatives --remove editor /usr/bin/xvi
+  update-alternatives --remove vi /usr/bin/xvi
+fi
+
+#DEBHELPER#
+
+exit 0
