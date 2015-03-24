@@ -1,5 +1,9 @@
 # Top-level makefile for Debian package
 #
+# If you want a different kind of build, use:
+#	cd src; make -f makefile.hpx
+# or whatever.
+#
 #	Martin Guy, 8 April 2006
 
 INSTALLROOT=/usr
@@ -9,11 +13,19 @@ HELPDIR=$(DESTDIR)$(INSTALLROOT)/share/xvi
 MANDIR=$(DESTDIR)$(INSTALLROOT)/share/man/man1
 DOCDIR=$(DESTDIR)$(INSTALLROOT)/share/doc/xvi
 
+INSTALL?=install
+MAKE?=make
+
+OPTFLAG = -O2
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	OPTFLAG = -O0
+endif
+
 # Default target for "make"
 all:
-	@# makefile.lnx sets CFLAGS itself; we apply the DEB_BUILD_OPTIONS by
+	@# makefile.pos sets CFLAGS itself; we apply the DEB_BUILD_OPTIONS by
 	@# overriding its OPTFLAG variable. Subvert it to set HELPFILE too.
-	$(MAKE) -C src -f makefile.lnx \
+	$(MAKE) -C src -f makefile.pos \
 		OPTFLAG="$(OPTFLAG) -DHELPFILE=\\\"$(HELPDIR)/xvi.help\\\"" \
 		xvi
 
@@ -27,6 +39,6 @@ install: all
 	chmod 644 $(DOCDIR)/summary.txt
 
 clean:
-	$(MAKE) -C src -f makefile.lnx clean
+	$(MAKE) -C src -f makefile.pos clean
 	$(MAKE) -C doc clean
-	rm -f configure-stamp build-stamp -r debian/xvi
+	dh_clean

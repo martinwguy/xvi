@@ -1,0 +1,11 @@
+#! /bin/sh
+set -e
+
+update-alternatives --install /usr/bin/vi vi /usr/bin/xvi 20 \
+  --slave /usr/share/man/man1/vi.1.gz vi.1.gz /usr/share/man/man1/xvi.1.gz
+update-alternatives --install /usr/bin/editor editor /usr/bin/xvi 19 \
+  --slave /usr/share/man/man1/editor.1.gz editor.1.gz /usr/share/man/man1/xvi.1.gz
+
+#DEBHELPER#
+
+exit 0
