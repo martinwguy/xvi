@@ -1,5 +1,4 @@
 # Copyright (c) 1990,1991,1992,1993 Chris and John Downey
-#***
 #
 # program name:
 #       xvi
@@ -20,7 +19,7 @@
 #	by Richard Lloyd <richard.lloyd@connectinternetsolutions.com>
 #		for HP-UX 11.31 with HP's ANSI C.
 #	If you wish to use gcc, say "make CC=gcc".
-#***
+#	Modified by Martin Guy <martinwguy@gmail.com>
 
 SYSDEFS=	-DUNIX -DHPUX -DTERMIOS -DPOSIX
 INCDIRS=

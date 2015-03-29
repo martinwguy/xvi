@@ -1,8 +1,4 @@
 ; Copyright (c) 1990,1991,1992,1993 Chris and John Downey
-_TEXT	segment word public 'CODE'
-	db	"@(#)msdos_a.asm	2.6 (Chris & John Downey) 6/28/93"
-	db	0
-_TEXT	ends
 
 ;***
 ;
@@ -42,7 +38,7 @@ _TEXT	ends
 ;	Originally by Tim Thompson (twitch!tjt)
 ;	Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
 ;	Heavily modified by Chris & John Downey
-;***
+;	Modified by Martin Guy <martinwguy@gmail.com>
 
 include 8086mm.inc
 

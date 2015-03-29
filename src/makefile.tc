@@ -1,7 +1,4 @@
 # Copyright (c) 1990,1991,1992,1993 Chris and John Downey
-#***
-#
-# @(#)makefile.tc	1.6 (Chris & John Downey) 3/1/94
 #
 # program name:
 #	xvi
@@ -16,7 +13,7 @@
 #	Originally by Tim Thompson (twitch!tjt)
 #	Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
 #	Heavily modified by Chris & John Downey
-#***
+#	Modified by Martin Guy <martinwguy@gmail.com>
 
 #
 # Name of this file.
