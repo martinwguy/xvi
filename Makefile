@@ -1,4 +1,4 @@
-# Top-level makefile for Debian package
+# Top-level Makefile for Debian package
 #
 # If you want a different kind of build, use:
 #	cd src; make -f makefile.hpx
