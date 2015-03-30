@@ -1,0 +1,703 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html><head>
+  <title> Summary of Differences between Vi and Xvi </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ </head>
+ <body>
+
+<h1 align="CENTER">
+Summary of Differences between Vi and Xvi
+</h1>
+
+<p align="CENTER"><i>
+Chris Downey<br>
+John Downey</i>
+</p>
+
+<blockquote>
+<b>Xvi</b> (pronounced <i>ecks-vee-eye</i>)
+is a free, portable, multi-window implementation of the popular
+<small>UNIX</small>
+editor <b>vi</b>.
+<p>
+This document summarises the differences between the “real” <b>vi</b>
+and <b>xvi</b>.
+These differences are divided into three groups:
+<i>unimplemented features</i>,
+<i>differences</i>
+and <i>enhancements</i>,
+and each of these is described in the following sections.
+</p></blockquote>
+
+<h2>1.
+Unimplemented Features
+</h2>
+
+<h3>1.1.
+Ex Mode
+</h3>
+<p>
+The main area in which <b>xvi</b> is lacking is <b>vi</b>'s
+<b>ex</b>
+mode,
+which is not implemented at all (and neither are <b>edit</b>, <b>e</b>,
+and <b>open</b> modes).
+However, many of the <b>ex</b> commands are available in <b>xvi</b> as
+colon commands;
+the colon commands that have not been implemented are mostly those which offer
+the same functionality as other commands in <b>vi</b> mode.
+</p><p>
+Specifically, the following <b>ex</b> commands are not implemented,
+and probably never will be within <b>xvi</b>:
+</p><p>
+<table width="75%" align="CENTER" border="0">
+<tbody><tr><td width="25%"><b>insert</b>	</td><td width="25%"><b>undo</b>	</td><td width="25%"><b>ex</b>
+</td></tr><tr><td><b>change</b>	</td><td><b>open</b>	</td><td><b>|</b>
+</td></tr><tr><td><b>append</b>	</td><td><b>z</b>	</td><td>&nbsp;
+</td></tr></tbody></table>
+</p><p>
+while these <b>ex</b> commands, although not currently implemented,
+may be added as colon commands at some time in the future:
+</p><p>
+<table width="75%" align="CENTER" border="0">
+<tbody><tr><td width="25%"><b>abbreviate</b>	</td><td width="25%"><b>recover</b>	</td><td width="25%"><b>write&gt;&gt;</b>
+</td></tr><tr><td><b>unabbreviate</b>	</td><td><b>join</b>		</td><td>&nbsp;
+</td></tr></tbody></table>
+
+</p><h3>1.2.
+Vi commands
+</h3>
+The following <b>vi</b> mode commands are not implemented,
+although there is no real reason why they shouldn't be:
+<p>
+<table width="75%" align="CENTER" border="0">
+<tbody><tr><td width="25%"><b>U<b>	</b></b></td><td width="25%"><b>=</b>	</td><td width="25%">&nbsp;
+</td></tr></tbody></table>
+</p><p>
+while this one is inappropriate in the context of <b>xvi</b>,
+since there is no
+<b>ex</b>
+mode:
+</p><p>
+<table width="75%" align="CENTER" border="0">
+<tbody><tr><td width="25%"><b>Q<b>	</b></b></td><td width="25%">&nbsp;	</td><td width="25%">&nbsp;
+</td></tr></tbody></table>
+</p><p>
+
+</p><h3>1.3.
+Parameters
+</h3>
+The following parameters have not been implemented,
+and probably won't be:
+<p>
+<table width="75%" align="CENTER" border="0">
+<tbody><tr><td width="25%"><b>ada<b> </b></b></td><td width="25%"><b>lisp</b> </td><td width="25%"><b>redraw</b>
+</td></tr><tr><td><b>adapath</b>	</td><td><b>mesg	</b></td><td><b>slowopen
+</b></td></tr><tr><td><b>autoprint</b></td><td><b>modeline	</b></td><td><b>term
+</b></td></tr><tr><td><b>beautify</b>	</td><td><b>open	</b></td><td><b>terse
+</b></td></tr><tr><td><b>directory</b></td><td><b>optimize	</b></td><td><b>ttytype
+</b></td></tr><tr><td><b>edcompatible</b></td><td><b>prompt</b></td><td><b>window
+</b></td></tr><tr><td><b>hardtabs</b>	</td><td>&nbsp;	</td><td>&nbsp;
+</td></tr></tbody></table>
+</p><p>
+while these parameters may well be implemented at some point:
+</p><p>
+<table width="75%" align="CENTER" border="0">
+<tbody><tr><td width="25%"><b>ada<b> </b></b></td><td width="25%"><b>lisp</b> </td><td width="25%"><b>redraw</b>
+</td></tr><tr><td><b>autowrite</b>	</td><td><b>scroll</b>	</td><td><b>warn</b>
+</td></tr><tr><td><b>errorbells</b>	</td><td><b>sourceany</b>	</td><td><b>writeany</b>
+</td></tr></tbody></table>
+
+</p><h3>1.4.
+Miscellaneous
+</h3>
+
+Some features of certain commands do not work as they should.
+Specifically:
+<ul>
+ <li>Repeat counts before insertions don't work.
+ </li><li>Appending to named buffers is not yet implemented.
+ </li><li>Typing <b>^Q</b> in input mode does not mean the same as <b>^V</b>;
+it just inserts a ‘^Q’, assuming it gets as far as the editor at all.
+ </li><li>Typing <b>^W</b> in insert mode does not back up one word as in <b>vi</b>.
+ </li><li>It is not possible to interrupt the editor while it is
+performing certain operations.
+If you start off a big global command, you have to wait for it to finish.
+ </li><li>Flags and counts after colon commands are not supported.
+ </li><li>It is not possible to read the output of a system command using
+<blockquote>
+<b>:r&nbsp;!</b><i>command</i>
+</blockquote>
+or to write into a command using
+<blockquote>
+<b>:w&nbsp;!</b><i>command</i>
+</blockquote>
+ </li><li>The <b>:substitute</b> command does not support splitting of lines.
+ </li><li>Regular expressions, although implemented (see later for more details),
+do not support the <b>~</b> character;
+also, the <b>\u</b> and <b>\l</b> escape sequences are not supported on
+the right-hand side of a substitute replacement pattern.
+ </li><li>The <b>:global</b> command only supports the commands [<b>lps&amp;~d</b>].
+ </li><li><b>Undo</b> does not work properly when applied to macros (either
+<b>@</b>
+or
+<b>:map</b>); it should undo all the changes made by the macro, but in
+fact only the last command within the macro is undone.
+</li></ul>
+
+<h2>2.
+Enhancements
+</h2>
+<p>
+The following extensions are available in <b>xvi</b>.
+
+</p><h3>2.1.
+Parameter Handling
+</h3>
+
+<b>Xvi</b> supports 5 types of parameter:
+as well as <b>vi</b>'s
+<i>numeric</i>,
+<i>string</i> and
+<i>boolean</i>,
+it also has
+<i>enumerated</i> and
+<i>list</i> types.
+The former is used for e.g. <b>format</b> and <b>regextype</b>,
+while the latter is currently only used for <b>tags</b>.
+The advantage of the <i>enumerated</i> type is that if you try
+to set an illegal value, the set of correct values will be displayed,
+which is very useful if you have forgotten what the values may be.
+(Try <b>:set preserve</b> to see an example of this.)
+
+<h3>2.2.
+Windows
+</h3>
+
+<b>Xvi</b> supports multiple <i>buffers</i> and <i>windows</i>.
+A <i>buffer</i> is the object which holds a file in memory,
+while a <i>window</i> is an area of the screen which shows part of a buffer.
+Note that every window references a buffer, even if no file is being edited.
+<p>
+The following commands are available for operating on buffers and windows:
+</p><dl>
+
+<dt>
+<b>:buffer</b>
+</dt><dd>
+create a new buffer in a new window; can be followed
+by a filename, which will be edited in the new buffer.
+</dd><dt>
+<b>:split</b>
+</dt><dd>
+create a new window onto the current buffer by
+splitting the current window in half.
+The two resulting windows are similar to
+.I viewports
+on to a single editing buffer,
+in that changes made in one window are reflected in the other one.
+</dd><dt>
+<b>:close</b>
+</dt><dd>
+close the current window; will also close the buffer
+if this is the last window onto it.
+</dd><dt>
+<b>:x / ZZ</b>
+</dt><dd>
+close only the current window.
+If the window is the only one onto the buffer,
+the buffer will be closed as well,
+writing it first if it is modified.
+Hence, for a single window, this command does the
+same as in <b>vi</b>.
+</dd><dt>
+<b>g</b>
+</dt><dd>
+move to the next window.
+This is normally the window directly below the current one
+on the screen, or the top window on the screen if the current
+window is the bottom one.
+</dd><dt>
+<b>^W</b>
+</dt><dd>
+increase the size of the current window (may be
+given a numeric prefix, default is one line).
+</dd><dt>
+<b>^T</b>
+</dt><dd>
+decrease the size of the current window (may be
+given a numeric prefix, default is one line).
+</dd><dt>
+<b>^O</b>
+</dt><dd>
+make the current window as large as possible.
+</dd><dt>
+<b>^]</b>
+</dt><dd>
+as for <b>vi</b>, but creates a new buffer window
+if appropriate (and if <b>autosplit</b> allows).
+</dd></dl>
+<p>
+Note that the <b>:quit</b> command quits out of the editor,
+not out of a window.
+The <b>:close</b> command is thus the equivalent of <b>:quit</b> for windows.
+There is no equivalent of <b>:x</b> or <b>ZZ</b> for the whole editor;
+these have been hijacked for operations on windows.
+</p><p>
+Also the numeric <b>autosplit</b> parameter specifies the maximum number
+of buffer windows that will be created automatically whenever you
+either edit more than one file, or use tags to edit a different file.
+</p><p>
+Undo works per buffer, as do marks; yank/put and redo (the <b>.</b> command)
+work over all buffers, i.e. you can delete from one buffer and put
+the text into a different buffer.
+</p><p>
+The <b>minrows</b> parameter specifies the minimum number of rows
+to which a window may be shrunk, including the status line.
+The default value is 2; 0 and 1 may also be useful.
+
+</p><h3>2.3.
+Named Buffers
+</h3>
+
+As well as the normal named (conjugate) buffers, and the default one
+named <b>@</b>,
+several extra buffers named
+<b>:</b>,
+<b>/</b>,
+<b>?</b>
+and
+<b>!</b>
+contain the last command lines entered for each of the command types.
+So for instance,
+<b>@:</b>
+will re-execute the last colon command, or you can insert
+it into your buffer, edit it and then re-execute it (e.g. with
+<b>dd@@</b>).
+
+<h3>2.4.
+File Formats
+</h3>
+
+<b>Xvi</b> will handle different file formats, via the <b>format</b> parameter,
+which may be set to e.g.
+“<b>unix</b>”,
+“<b>msdos</b>”,
+etc.
+This means you can edit MS-DOS files under UNIX, etc.
+
+<h3>2.5.
+Regular Expressions
+</h3>
+<b>Vi</b>'s <b>magic</b> parameter is replaced by the <b>regextype</b> parameter,
+which can take the following values:
+<dl>
+<dt><b>tags</b>
+</dt><dd>only <b>^</b> and <b>$</b> are significant (used for tags).
+</dd><dt><b>grep</b>
+</dt><dd>like <b>grep</b>(1), but with <b>\&lt;</b> and <b>\&gt;</b> added.
+</dd><dt><b>egrep</b>
+</dt><dd>like <b>egrep</b>(1), but with <b>\&lt;</b> and <b>\&gt;</b> added.
+</dd></dl>
+
+<p>
+The default is
+<b>grep</b>.
+</p><p>
+The <b>sections</b> and <b>paragraphs</b> parameters define
+<b>egrep</b>-style
+patterns to search for, rather than
+<b>vi</b>'s
+simplistic (and
+<b>troff</b>-dependent)
+character pairs.
+</p><p>
+The <b>sentences</b> parameter is also implemented in this fashion,
+but this is not completely satisfactory at the moment.
+</p><p>
+Note that it is possible to set or unset the <b>magic</b> parameter
+as in <b>vi</b>; this will simply result in the <b>regextype</b> parameter
+being set as appropriate.
+
+</p><h3>2.6.
+Colour
+</h3>
+<b>Xvi</b> has a minimal amount of support for colours.
+Basically, there are considered to be four settable colours,
+each with a numeric parameter to say what its value is:
+<dl>
+<dt><b>colour</b>
+</dt><dd>colour used for text
+</dd><dt><b>statuscolour</b>
+</dt><dd>colour used for status lines
+</dd><dt><b>roscolour</b>
+</dt><dd>as statuscolour, but for readonly files
+</dd><dt><b>systemcolour</b>
+</dt><dd>colour used for system mode
+(i.e. subshells and after termination).
+</dd></dl>
+<p>
+The actual values of these parameters are system-dependent;
+on PC versions, they are hardware-dependent video attributes,
+while on UNIX they are indexes into the
+entries “<b>c0</b>” to “<b>c9</b>”
+in the
+<b>termcap</b>(5)
+database,
+which are assumed to be colour-setting
+escape sequences if they are present.
+If they are not present,
+“<b>so</b>”
+(begin standout mode)
+and
+“<b>se</b>”
+(end standout mode)
+are used instead.
+Values of 0 and 1 give normal text, 2 to 9 give standout mode.
+</p><p>
+The default colour for the <b>roscolour</b> parameter will usually involve red
+if colours are available;
+this is intended to provide a warning to the user that writing the file may
+not be possible.
+
+</p><p>
+The colour values may be entered in decimal, octal or hexadecimal form.
+This
+may be convenient for PC versions where the numbers actually
+represent colour bitmaps; for example, on MS-DOS,
+</p><blockquote>
+<b>:set co=0x1f</b>
+</blockquote>
+gives bright white text on a blue background.
+
+<h3>2.7.
+Replace Mode
+</h3>
+
+<b>Xvi</b>'s <i>replace</i> mode (entered by the <b>R</b> command)
+acts more intelligently when you press the return key --
+it leaves the rest of the current line alone, and just starts
+replacing text on the next line, starting at the screen column
+where you first typed <b>R</b>.
+
+<h3>2.8.
+Preserve
+</h3>
+
+Rather than use <b>vi</b>'s UNIX-specific method for preservation,
+<b>xvi</b> does periodic preservation of all files
+currently being edited into a temporary file in the same directory.
+<b>Xvi</b> tries to do this when you are not typing, so that you won't
+notice the short delay when the temporary file is written out.
+Obviously, only changed files are preserved in this way, and the
+temporary file is normally removed
+once the real file has been successfully written.
+As an additional safety measure,
+when a file is explicitly saved
+and it appears not to have been preserved recently,
+it is normally preserved first.
+This ensures that,
+even if the operating system crashes while the
+real file is being created,
+there should always be at least one recent copy of it in the filesystem.
+The <b>:preserve</b> command is available as in <b>vi</b> to preserve
+a specific buffer manually.
+
+<p>
+The level of safety provided by the preservation facility may be configured
+by changing the values of the
+<b>preserve</b>
+and
+<b>preservetime</b>
+parameters.
+The following values are available for
+<b>preserve</b>:
+</p><dl>
+<dt><b>unsafe</b>
+</dt><dd>Never preserve any buffer before an explicit save.
+This can be useful on old, slow, floppy-only systems,
+but is not generally recommended.
+</dd><dt><b>standard</b>
+The</dt><dd> default value.
+Only preserve a buffer before an explicit save if it appears not to have
+been preserved recently.
+</dd><dt><b>safe</b>
+</dt><dd>Always preserve buffers before they are written.
+</dd><dt><b>paranoid</b>
+</dt><dd>As for <b>safe</b>, but the preserve file is never removed,
+even after the file has been successfully written.
+</dd></dl>
+<p>
+In all cases,
+all modified buffers are preserved automatically after no user events
+have been received for
+<b>preservetime</b>
+seconds,
+if a minimum number of events (currently 60) have been received since the
+last automatic preservation.
+This behaviour can be more or less disabled by setting
+<b>preservetime</b>
+to a very high value.
+(For example,
+one of the authors sets it to 600 on the machine he uses at home,
+which is an 8088-based PC with no hard disk;
+by way of contrast,
+on the SparcStation IPX which he uses at work,
+he sets it to 2.)
+</p><p>
+The names given to preserve files are system-dependent,
+but are generally of the form “<i>filename</i>.tmp”,
+or “<i>filename</i>.001” to “<i>filename</i>.999”.
+If a preserve file already exists, it will not be overwritten;
+instead, a new filename will be generated.
+</p><p>
+The <b>-r</b> command line option is not supported.
+
+</p><h3>2.9.
+Help
+</h3>
+
+A primitive help facility is available; the command <b>:help</b>, also
+mapped to the HELP or F1 keys on many systems, simply creates a new
+buffer window onto a standard help file.
+The name of the file which is edited is given by the <b>helpfile</b>
+string parameter;
+the default on Unix versions is
+<b>"/usr/lib/xvi.help"</b>.
+
+<h3>2.10.
+Scrolling
+</h3>
+
+The
+<b>jumpscroll</b>
+enumerated parameter
+controls
+the editor's
+behaviour when the cursor moves beyond the limits of
+the current window.
+If its value is
+<b>off</b>,
+and the new position is still reasonably close to the current window,
+the window will be scrolled so that the new cursor position is at the
+top or bottom of it.
+Typically, the window will be scrolled one
+line at a time as the cursor is moved up or down.
+This behaviour may not always be desirable; for example,
+terminals without real scrolling regions
+may force the editor to do a lot of screen updating,
+possibly over a slow telephone line or overloaded network.
+Also, on LCD screens or other displays with a long image persistence,
+it may
+make the text more difficult to read.
+If
+<b>jumpscroll</b>
+is set to
+<b>on</b>,
+scrolling behaviour is modified so that,
+whenever
+the cursor moves beyond the limits of the current window,
+the window is redrawn so as to place the cursor as centrally as possible
+in it; thus, the window appears to
+<i>jump</i>
+to the new position.
+The default value for
+<b>jumpscroll</b>
+is <b>auto</b>,
+which causes
+the editor to jump
+instead of scrolling only if it can't scroll the affected window
+efficiently.
+<p>
+In all cases,
+if the distance from the top or bottom of the window
+to the new position is more than half the window size,
+the editor will jump instead of scrolling.
+</p><p>
+Explicit scroll commands (e.g. <b>^D</b>) are not affected by
+the <b>jumpscroll</b> parameter.
+
+</p><h3>2.11.
+8-bit Characters
+</h3>
+Characters with the top bit set may be displayed, although
+it is not yet possible to have null
+('\0')
+bytes in a file buffer.
+How the characters are displayed varies between systems;
+on UNIX, they will be shown as an octal escape sequence,
+while on MS-DOS, OS/2 and QNX they will be shown as the actual
+character in the PC character set.
+This can be controlled by setting the <b>cchars</b> and <b>mchars</b>
+variables; if these parameters are set,
+control- and meta-characters (respectively) are shown directly,
+otherwise they are shown as some sequence of printable characters.
+<p>
+You can use the <b>^_</b> (control-underscore) command to flip the
+top bit of the character the cursor is on.
+This may be useful on systems where it is otherwise impossible
+to enter 8-bit characters.
+</p><p>
+Tabs are normally displayed as a series of spaces of the appropriate
+length (according to the <b>tabstops</b> parameter);
+setting <b>list</b> mode will cause them to be displayed as a control
+character, as will unsetting the <b>tabs</b> parameter.
+How the tab character is displayed is then under the control of
+the <b>cchars</b> parameter.
+
+</p><h3>2.12.
+Mouse Support
+</h3>
+Some mouse support is available for micro-based systems and workstations.
+Clicking the mouse button on:
+<dl>
+<dt>any line outside current window
+ </dt><dd>changes current window to the one indicated by the mouse
+(can be used instead of <b>g</b>).
+</dd><dt>top line of any window
+ </dt><dd>scrolls window downwards (same as <b>^Y</b>).
+</dd><dt>bottom line of any window
+ </dt><dd>scrolls window upwards (same as <b>^E</b>).
+</dd><dt>status line of any window
+ </dt><dd>shows current file and lines (same as <b>^G</b>).
+</dd><dt>any text line of any window
+ </dt><dd>moves text cursor as near as possible to mouse cursor.
+</dd></dl>
+
+Also,
+windows can be resized by “dragging” the appropriate status line
+up or down with the mouse.
+
+<h3>2.13.
+Miscellaneous
+</h3>
+<ul>
+<li>
+The <b>:wn</b> (write file and edit next) command is provided, as per PC-vi.
+</li><li>
+There is no limit to the number or size of <b>map</b>s which may be defined,
+nor is there any fixed limit to the number of lines in a buffer.
+</li><li>
+The <b>edit</b> parameter controls whether a buffer can be modified.
+This may be used, together with the
+<b>readonly</b>
+parameter,
+to implement a nicer version of
+<b>view</b>(1)
+than
+<b>vi</b>'s version, since it won't fool you into thinking that editing
+the buffer is in any way safe.
+Be warned: once having set <b>noedit</b>, it is not possible to do a
+<b>:set edit</b>.
+It's a one-way street.
+</li><li>
+The <b>timeout</b> parameter is implemented as a numeric value,
+specifying the number of milliseconds after which to assume that
+no further input is available to continue with the parsing of a
+<b>map</b> sequence.
+This replaces <b>vi</b>'s boolean parameter of the same name.
+</li><li>
+The <b>vbell</b> parameter may be used to specify use of a visual,
+rather than audible, bell, if this is available.
+</li><li>
+The <b>:echo</b> command is available; it simply echoes its arguments,
+after expansion of % and # characters.
+</li><li>
+In insert and replace modes,
+<b>^A</b>
+has the same meaning as
+<b>^@</b>
+in vi, except that it
+works at any time,
+not just for the first character.
+Also, typing
+<b>^B</b><i>x</i>,
+where
+<i>x</i>
+is the name of a conjugate buffer, inserts the contents of that
+buffer into the input stream at that point.
+The buffer named
+<b>&lt;</b>
+always contains the last thing inserted,
+so that
+<b>^B&lt;</b>
+is the same as
+<b>^A</b>.
+</li></ul>
+
+<h2>3.
+Differences
+</h2>
+<ul>
+<li>
+Argument handling is somewhat different; for instance,
+<b>-R</b>
+is not supported, but
+“<b>-s&nbsp;parameter=value</b>”
+is, which is much more useful anyway.
+</li><li>
+The
+<b>XVINIT</b>
+environment variable is read instead of
+<b>EXINIT</b>.
+Whilst no files are sourced
+automatically,
+users who wish to have a startup file can arrange it very easily.
+<b>sh</b>(1)
+or
+<b>ksh</b>(1)
+users should add this line to their
+<b>"$HOME/.profile"</b>:
+<blockquote>
+<b>
+XVINIT='source <i>xvi-startup-file</i>'; export XVINIT
+</b>
+</blockquote>
+<b>csh</b>(1)
+users should add this to their
+<b>"$HOME/.login"</b>:
+<blockquote>
+<b>
+setenv XVINIT 'source <i>xvi-startup-file</i>'
+</b>
+</blockquote>
+and MS-DOS users should add this to their
+<b>autoexec.bat</b>:
+<blockquote>
+<b>
+set XVINIT=source <i>xvi-startup-file</i>
+</b>
+</blockquote>
+</li><li>
+The <b>tags</b> parameter can be used to specify multiple tags files;
+these can be separated by either
+“<b>\&nbsp;</b>”
+(backslash space) or
+“<b>,</b>”
+(comma).
+</li><li>
+Alternate files are handled slightly differently,
+owing to the presence of buffer and window handling.
+Essentially, when you close a buffer, its filename
+is remembered as the alternate file;
+when you invoke the <b>^^</b> or <b>:e&nbsp;#</b> commands,
+this filename is re-edited.
+Note that <b>^^</b> edits the alternate file in a new buffer window.
+</li><li>
+Hitting the escape key while in the command line does not terminate input;
+instead, it cancels input, returning the prompt to the beginning
+of the line.
+This applies to input for
+<b>:</b>,
+<b>/</b>,
+<b>?</b>
+and
+<b>!</b>.
+</li><li>
+Character-based yanks (or deletes) which span line boundaries are handled
+correctly (<b>vi</b> gets this wrong).
+</li></ul>
+<hr>
+HTMLed by martinwguy@users.sourceforge.net, 23 Nov 2005 from the version distributed with xvi 2.47.<br>
+Please report any errors or remaining <b>troff</b> markup.
+</body></html>
