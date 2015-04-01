@@ -444,11 +444,9 @@ In particular,
 .BR change ,
 .BR ex ,
 .BR insert ,
-.BR join ,
 .BR open ,
 .BR recover ,
 .BR unabbreviate ,
-.BR undo ,
 .BR write>> ,
 .B z
 and
@@ -483,8 +481,6 @@ gives a complete list, with current values,
 of those that have been.
 .SS Miscellaneous
 .LP
-Repeat counts before insertions don't work.
-.LP
 Appending to named buffers is not yet implemented.
 .LP
 Typing \fB^Q\fP in input mode does not mean the same as \fB^V\fP;
@@ -497,14 +493,6 @@ performing certain operations.
 If you start off a big global command, you have to wait for it to finish.
 .LP
 Flags and counts after \fBex\fP mode commands are not supported.
-.LP
-It is not possible to read the output of a system command using
-.IP
-\fB:r\ !\fP\fIcommand\fP
-.LP
-or to write into a command using
-.IP
-\fB:w\ !\fP\fIcommand\fP.
 .LP
 Regular expressions, although implemented (see above),
 do not support the \fB~\fP metacharacter;
@@ -536,6 +524,11 @@ users should add this to their
 .BR "$HOME/.login" :
 .IP
 .BI "setenv XVINIT \(fmsource " xvi-startup-file \(fm
+.LP
+and \%MS-DOS users should add this to their
+.BR autoexec.bat :
+.IP
+.BI "set XVINIT=source" xvi-startup-file
 .LP
 The \fBtags\fP parameter can be used to specify multiple tags files;
 these can be separated by either

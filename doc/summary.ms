@@ -78,9 +78,9 @@ Specifically, the following \fBex\fP commands are not implemented,
 and probably never will be within \fBxvi\fP:
 .DS
 .B
-.c3 insert undo ex
-.c3 change open |
-.c3 append z
+.c3 insert ex |
+.c3 change open z
+.c3 append
 .R
 .DE
 .KE
@@ -139,8 +139,8 @@ and probably won't be:
 while these parameters may well be implemented at some point:
 .DS
 .B
-.c3 autowrite scroll warn
-.c3 errorbells sourceany writeany
+.c3 autowrite scroll
+.c3 sourceany writeany
 .R
 .DE
 .KE
@@ -150,8 +150,6 @@ Miscellaneous
 .LP
 Some features of certain commands do not work as they should.
 Specifically:
-.IP \(bu 5
-Repeat counts before insertions don't work.
 .IP \(bu 5
 Appending to named buffers is not yet implemented.
 .IP \(bu 5
@@ -165,17 +163,6 @@ performing certain operations.
 If you start off a big global command, you have to wait for it to finish.
 .IP \(bu 5
 Flags and counts after colon commands are not supported.
-.KS
-.IP \(bu 5
-It is not possible to read the output of a system command using
-.DS
-\fB:r\ !\fP\fIcommand\fP
-.DE
-or to write into a command using
-.DS
-\fB:w\ !\fP\fIcommand\fP
-.DE
-.KE
 .IP \(bu 5
 The \fB:substitute\fP command does not support splitting of lines.
 .IP \(bu 5
@@ -307,8 +294,13 @@ File Formats
 .LP
 \fBXvi\fP will handle different file formats, via the \fBformat\fP parameter,
 which may be set to e.g.
-.qB unix ,
+.qB cstring ,
+.qB macinstosh ,
 .qB msdos ,
+.qB os2 ,
+.qB qnx ,
+.qB tos ,
+.qB unix ,
 etc.
 This means you can edit \%MS-DOS files under UNIX, etc.
 .KE
