@@ -1,9 +1,0 @@
-Document: xvi-summary
-Title: Summary of Differences between Vi and Xvi
-Author: Chris and John Downey
-Abstract: This document summarises the differences between the
- ``real'' vi and xvi
-Section: Apps/Editors
-
-Format: text
-Files: /usr/share/doc/xvi/summary.txt.gz

@@ -65,17 +65,36 @@ Go to the first occurrence of the specified \fIpattern\fP within
 the file being edited.
 .LP
 The \fB\-r\fP command line option is not supported.
+.\"---------------------------------------------------------------------------
 .SH ENHANCEMENTS
+.SS Parameter handling
+.LP
+\fBXvi\fP supports 5 types of parameter:
+as well as \fBvi\fP's
+\fInumeric\fP,
+\fIstring\fP and
+\fIboolean\fP,
+it also has
+\fIenumerated\fP and
+\fIlist\fP types.
+The former is used for e.g. \fBformat\fP and \fBregextype\fP,
+while the latter is currently only used for \fBtags\fP.
+The advantage of the \fIenumerated\fP type is that if you try
+to set an illegal value, the set of correct values will be displayed,
+which is very useful if you have forgotten what the values may be.
+(Try \fB:set preserve\fP to see an example of this.)
+.\"---------------------------------------------------------------------------
 .SS Multiple buffers and windows
 .LP
+\fBXvi\fP supports multiple \fIbuffers\fP and \fIwindows\fP.
 A
 .I buffer
 is the internal object
 which holds a file in memory, while a
 .I window
-is an area of the
-screen which shows part of a buffer.
+is an area of the screen which shows part of a buffer.
 Every window references a buffer, even if no file is being edited.
+.LP
 The following commands are
 available for operating on buffers and windows:
 .IP \fB:buffer\fP
@@ -141,6 +160,28 @@ Undo works per buffer, as do marks; yank/put and redo (the
 command)
 work over all buffers, i.e. you can delete from one buffer and put
 the text into a different buffer.
+.LP
+The \fBminrows\fP parameter specifies the minimum number of rows
+to which a window may be shrunk, including the status line.
+The default value is 2; 0 and 1 may also be useful.
+.\"---------------------------------------------------------------------------
+.SS "Named buffers"
+.LP
+As well as the normal named (conjugate) buffers, and the default one
+named \fB@\fP,
+several extra buffers named
+.BR : ,
+.BR / ,
+.B ?
+and
+.B !
+contain the last command lines entered for each of the command types.
+So for instance,
+.B @:
+will re-execute the last colon command, or you can insert
+it into your buffer, edit it and then re-execute it (e.g. with
+.BR dd@@ ).
+.\"---------------------------------------------------------------------------
 .SS "File preservation"
 .LP
 Rather than use
@@ -156,22 +197,81 @@ notice the short delay when the temporary file is written out.
 Obviously, only changed files are preserved in this way, and
 the temporary file is removed once the real file has been successfully
 written.
+.LP
+As an additional safety measure,
+when a file is explicitly saved
+and it appears not to have been preserved recently,
+it is normally preserved first.
+This ensures that,
+even if the operating system crashes while the
+real file is being created,
+there should always be at least one recent copy of it in the filesystem.
+The \fB:preserve\fP command is available as in \fBvi\fP to preserve
+a specific buffer manually.
+.LP
+The level of safety provided by the preservation facility may be configured
+by changing the values of the
+.B preserve
+and
+.B preservetime
+parameters.
+The following values are available for
+.BR preserve :
+.TP
+\fBunsafe\fP
+Never preserve any buffer before an explicit save.
+This can be useful on old, slow, floppy-only systems,
+but is not generally recommended.
+.TP
+\fBstandard\fP
+The default value.
+Only preserve a buffer before an explicit save if it appears not to have
+been preserved recently.
+.TP
+\fBsafe\fP
+Always preserve buffers before they are written.
+.TP
+\fBparanoid\fP
+As for \fBsafe\fP, but the preserve file is never removed,
+even after the file has been successfully written.
+.LP
+.nh
+In all cases,
+all modified buffers are preserved automatically after no user events
+have been received for
+.B preservetime
+seconds,
+if a minimum number of events (currently 60) have been received since the
+last automatic preservation.
+This behaviour can be more or less disabled by setting
+.B preservetime
+to a very high value.
+.LP
+The names given to preserve files are system-dependent,
+but are generally of the form ``\fIfilename\fP.tmp'',
+or ``\fIfilename\fP.001'' to ``\fIfilename\fP.999''.
+If a preserve file already exists, it will not be overwritten;
+instead, a new filename will be generated.
+.\"---------------------------------------------------------------------------
 .SS "8-bit character support"
 .LP
-Characters with the top bit set are accepted by
-.BR xvi ,
-but
+Characters with the top bit set may be displayed, although
 it is not yet possible to have null
 (\(fm\^\e\^0\^\(fm)
 bytes in a file buffer.
-How characters are displayed can be controlled by
-the \fBcchars\fP and \fBmchars\fP
-parameters, which, if set, cause
-control and meta-characters
-respectively 
-to be
-output unchanged;
-otherwise they are shown as sequences of printable characters.
+How the characters are displayed varies between systems;
+on UNIX, they will be shown as an octal escape sequence,
+while on \%MS-DOS, OS/2 and QNX they will be shown as the actual
+character in the PC character set.
+This can be controlled by setting the \fBcchars\fP and \fBmchars\fP
+variables; if these parameters are set,
+control- and meta-characters (respectively) are shown directly,
+otherwise they are shown as some sequence of printable characters.
+.LP
+You can use the \fB^_\fP (control-underscore) command to flip the
+top bit of the character the cursor is on.
+This may be useful on systems where it is otherwise impossible
+to enter 8-bit characters.
 .LP
 Tabs are normally displayed as a series of spaces of the appropriate
 length (according to the \fBtabstops\fP parameter);
@@ -186,6 +286,7 @@ You can use the
 top bit of the character the cursor is on.
 This may be useful on systems where it is otherwise impossible
 to enter 8-bit characters.
+.\"---------------------------------------------------------------------------
 .SS "File formats"
 .LP
 .B Xvi
@@ -193,10 +294,12 @@ can read and write text files in non-Unix formats.
 The current format is given by the value of the
 .B format
 parameter, which
-may be set to "\fBunix\fP", "\fBmsdos\fP", etc.
+may be set to "\fBunix\fP", "\fBmsdos\fP", and so on.
+This means you can edit \%MS-DOS files under UNIX, etc.
 To see a list of available formats, type
 .IP
 .B ":se fmt=?"
+.\"---------------------------------------------------------------------------
 .SS "Extended regular expressions"
 .LP
 .BR vi 's
@@ -242,6 +345,7 @@ patterns to search for, rather than
 simplistic (and
 .BR troff -dependent)
 character pairs.
+.\"---------------------------------------------------------------------------
 .SS "Improved replace mode"
 .LP
 The
@@ -253,6 +357,7 @@ replacing text on the next line,
 starting at the screen column
 where you first typed
 .BR R .
+.\"---------------------------------------------------------------------------
 .SS "Command re-execution"
 .LP
 As well as the normal named (conjugate) buffers,
@@ -271,7 +376,8 @@ So for instance,
 will re-execute the last \fBex\fP command, or you can insert
 it into your buffer, edit it and then re-execute it (e.g. with
 .BR dd\^@@ ).
-.SS Jumpscroll
+.\"---------------------------------------------------------------------------
+.SS Scrolling
 When multiple windows are used,
 .B xvi
 normally has to be able to scroll individual windows
@@ -320,23 +426,26 @@ and
 .BR ^E )
 are not affected by
 the \fBjumpscroll\fP parameter.
+.\"---------------------------------------------------------------------------
 .SS Colour
 .LP
 There are four new parameters to control screen colours:
-.ta 1.25i
-.LP
-\fBcolour\fP	colour used for text
-.LP
-\fBstatuscolour\fP	colour used for status lines
-.LP
-\fBroscolour\fP		as
+.TP
+\fBcolour\fP
+colour used for text
+.TP
+\fBstatuscolour\fP
+colour used for status lines
+.TP
+\fBroscolour\fP
+as
 .BR statuscolour ,
 but for readonly files
-.LP
-\fBsystemcolour\fP	colour used for system mode
+.TP
+\fBsystemcolour\fP
+colour used for system mode
 (i.e. subshells and after termination)
 .LP
-.DT
 These parameters are numeric, and the value means different
 things on different operating systems.
 On Unix, it is an index into the
@@ -354,14 +463,14 @@ are used instead.
 Values of 0 and 1 give normal text,
 whereas 2 and above give standout mode.
 .LP
-The default colour for
-the
+The default colour for the
 .B roscolour
 parameter will generally involve red
 if colours are available;
 this is intended
 to provide a warning to the user that writing the file
 may not be possible.
+.\"---------------------------------------------------------------------------
 .SS "On-line help"
 .LP
 A primitive help facility is available; the
@@ -375,9 +484,32 @@ is given by the
 string parameter;
 the default on Unix versions is
 \fB"/usr/lib/xvi.help"\fP.
+.LP
 Note that the help file buffer will be marked "not editable"
 when it is created, which prevents accidental overwriting
 of the help file even when the file permissions would allow it.
+.\"---------------------------------------------------------------------------
+.SS "Mouse support"
+.LP
+Some mouse support is available for micro-based systems and workstations
+.
+Clicking the mouse button on:
+.IP "any line outside current window"
+changes current window to the one indicated by the mouse
+(can be used instead of \fBg\fP).
+.IP "top line of any window"
+scrolls window downwards (same as \fB^Y\fP).
+.IP "bottom line of any window"
+scrolls window upwards (same as \fB^E\fP).
+.IP "status line of any window"
+shows current file and lines (same as \fB^G\fP).
+.IP "any text line of any window"
+moves text cursor as near as possible to mouse cursor.
+.LP
+Also,
+windows can be resized by \*Qdragging\*U the appropriate status line
+up or down with the mouse.
+.\"---------------------------------------------------------------------------
 .SS Miscellaneous
 .LP
 The command
@@ -422,6 +554,7 @@ so that
 .B ^B<
 is the same as
 .BR ^A .
+.\"---------------------------------------------------------------------------
 .SH LIMITATIONS
 .SS "Ex mode"
 .LP
@@ -452,6 +585,7 @@ In particular,
 and
 .B |
 have not been implemented as colon commands yet.
+.\"---------------------------------------------------------------------------
 .SS "Vi mode"
 .LP
 In
@@ -469,16 +603,44 @@ is inappropriate in the context of
 since there is no
 .B ex
 mode.
+.\"---------------------------------------------------------------------------
 .SS Parameters
 .LP
-Many of
-.BR vi 's
-parameters
-have not been implemented;
-the command
+The following parameters have not been implemented, and probably won't be:
+.RS
+.BR ada ,
+.BR adapath ,
+.BR autoprint ,
+.BR beautify ,
+.BR directory ,
+.BR edcompatible ,
+.BR hardtabs ,
+.BR lisp ,
+.BR mesg ,
+.BR modeline ,
+.BR open ,
+.BR optimize ,
+.BR prompt ,
+.BR redraw ,
+.BR slowopen ,
+.BR term ,
+.BR terse ,
+.BR ttytype ,
+.BR window
+.RE
+while these parameters may well be implemented at some point:
+.RS
+.BR autowrite ,
+.BR scroll ,
+.BR sourceany ,
+.BR writeany
+.RE
+.LP
+The command
 .B ":se all"
 gives a complete list, with current values,
 of those that have been.
+.\"---------------------------------------------------------------------------
 .SS Miscellaneous
 .LP
 Appending to named buffers is not yet implemented.
@@ -494,15 +656,22 @@ If you start off a big global command, you have to wait for it to finish.
 .LP
 Flags and counts after \fBex\fP mode commands are not supported.
 .LP
+The
+.B :substitute
+command does not support splitting of lines.
+.LP
 Regular expressions, although implemented (see above),
 do not support the \fB~\fP metacharacter;
 also, the \fB\e\^u\fP and \fB\e\^l\fP escape sequences are not supported in
 substitute replacement patterns.
-Newlines included on the right hand side of a substitution
-do not currently cause the line to be split;
-the newline character is literally inserted into the line.
 .LP
 The \fB:global\fP command only supports the commands [\fBlps&~d\fP].
+.LP
+.B Undo
+does not work properly when applied to macros (either \fB@\fP
+or \fB:map\fP); it should undo all the changes made by the  macro,
+but  in  fact  only  the  last  command  within the macro is
+undone.
 .SH "OTHER DIFFERENCES FROM VI"
 The
 .B XVINIT

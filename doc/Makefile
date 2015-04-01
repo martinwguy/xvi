@@ -1,6 +1,6 @@
 .SUFFIXES: .1 .ms .lst .ps
 
-all: summary.lst source.lst xvi.lst summary.ps source.ps xvi.ps
+all: source.lst xvi.lst source.ps xvi.ps
 
 .ms.lst:
 	tbl $< | nroff -ms -Tascii -c > $@

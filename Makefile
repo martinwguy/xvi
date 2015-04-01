@@ -34,10 +34,6 @@ install: all
 	$(INSTALL) -m 755 -s src/xvi $(BINDIR)
 	$(INSTALL) -m 644 src/xvi.help $(HELPDIR)
 	$(INSTALL) -m 644 doc/xvi.1 $(MANDIR)
-	# Need to remove backspacing from nroff output
-	GROFF_TYPESETTER=ascii \
-	nroff -ms  < doc/summary.ms | col -b > $(DOCDIR)/summary.txt
-	chmod 644 $(DOCDIR)/summary.txt
 
 clean:
 	$(MAKE) -C src -f makefile.pos clean
