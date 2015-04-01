@@ -250,7 +250,7 @@ long	msec;
 	lastvtime = vtime;
 	raw_state.c_cc[VMIN] = (vtime == 0 ? 1 : 0);
 	raw_state.c_cc[VTIME] = vtime;
-	setstate(&raw_state);
+	setstate((char *)&raw_state);
     }
 }
 
@@ -819,6 +819,8 @@ char	*srcname;
  */
 static void
 dup2c(oldfd, newfd)
+int oldfd;
+int newfd;
 {
     int tfd;
 

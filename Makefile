@@ -38,4 +38,6 @@ install: all
 clean:
 	$(MAKE) -C src -f makefile.pos clean
 	$(MAKE) -C doc clean
+ifneq (,$(DEB_BUILD_ARCH))
 	dh_clean
+endif
