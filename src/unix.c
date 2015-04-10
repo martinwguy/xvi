@@ -250,7 +250,11 @@ long	msec;
 	lastvtime = vtime;
 	raw_state.c_cc[VMIN] = (vtime == 0 ? 1 : 0);
 	raw_state.c_cc[VTIME] = vtime;
+#ifdef __hpux
 	setstate((char *)&raw_state);
+#else
+	setstate(&raw_state);
+#endif
     }
 }
 
