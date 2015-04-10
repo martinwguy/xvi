@@ -48,21 +48,13 @@ tagInit()
     register char	*cp;
     register int	c;
 
-    if (hashtable != NULL) {
-	return;			/* Already initialised */
-    } else {
-	/*
-	 * Using calloc() avoids having to clear memory.
-	 */
-	hashtable = (TAG **) calloc(hashtabsize, sizeof(TAG *));
-	if (hashtable == NULL) {
-	    return;
-	}
-    }
-
     tagfiles = Pl(P_tags);
     if (tagfiles == NULL) {
 	return;
+    }
+
+    if (hashtable != NULL) {
+	return;			/* Already initialised */
     }
 
     for (count = 0; tagfiles[count] != NULL; count++) {
@@ -70,6 +62,16 @@ tagInit()
 	fp = fopen(fexpand(tagfiles[count], FALSE), "r");
 	if (fp == NULL) {
 	    continue;
+	}
+
+	if (hashtable == NULL) {
+	    /*
+	     * Using calloc() avoids having to clear memory.
+	     */
+	    hashtable = (TAG **) calloc(hashtabsize, sizeof(TAG *));
+	    if (hashtable == NULL) {
+		return;
+	    }
 	}
 
 	while (TRUE) {
@@ -186,7 +188,8 @@ bool_t	split;			/* true if want to split */
     tp = tagLookup(tag, &l1, &l2);
     if (tp == NULL) {
 	if (interactive) {
-	    show_error(window, "Tag not found");
+	    show_error(window, hashtable==NULL	? "No tags file"
+						: "Tag not found");
 	}
 	return(FALSE);
     }
