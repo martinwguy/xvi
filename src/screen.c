@@ -320,8 +320,9 @@ Xviwin	*win;
 }
 
 void
-update_cline(win)
+update_cline(win,pos)
 Xviwin	*win;
+int pos;	/* Position of cursor within line */
 {
     Sline	*clp;
     int		colindex;
@@ -360,7 +361,8 @@ Xviwin	*win;
      * it because the line's contents have almost certainly changed.
      */
     xvUpdateScr(win, win->w_vs, (int) win->w_cmdline, 1);
-    VSgoto(win->w_vs, (int) win->w_cmdline, width);
+    VSgoto(win->w_vs, (int) win->w_cmdline, pos);
+    VSflush(win->w_vs);
 }
 
 /*

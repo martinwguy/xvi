@@ -1099,7 +1099,7 @@ extern	bool_t	eq P((Posn *, Posn *));
  */
 extern	void	updateline P((Xviwin *));
 extern	void	update_sline P((Xviwin *));
-extern	void	update_cline P((Xviwin *));
+extern	void	update_cline P((Xviwin *, int));
 extern	void	redraw_window P((Xviwin *, bool_t));
 extern	void	redraw_all P((Xviwin *, bool_t));
 extern	void	s_ins P((Xviwin *, int, int));

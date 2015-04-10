@@ -28,7 +28,8 @@
 #define	CMDSZ	80
 
 static	char		inbuf[CMDSZ];		/* command input buffer */
-static	unsigned int	inpos = 0;		/* posn of next input char */
+static	unsigned int	inpos = 0;		/* posn to put next input char */
+static	unsigned int	inend = 0;		/* one past the last char */
 static	unsigned char	colposn[CMDSZ];		/* holds n chars per char */
 
 /*
@@ -51,9 +52,10 @@ int	firstch;
     flexclear(&win->w_statusline);
     (void) flexaddch(&win->w_statusline, firstch);
     inbuf[0] = firstch;
-    inpos = 1;
-    update_cline(win);
     colposn[0] = 0;
+    inpos = 1; inend = 1;
+    colposn[1] = 1;
+    update_cline(win,colposn[1]);
 }
 
 /*
@@ -111,6 +113,7 @@ int	ch;
 {
     static bool_t	literal_next = FALSE;
     unsigned		len;
+    char *		stat; /* Pointer to status line text */
 
     if (!literal_next) {
 	switch (ch) {
@@ -120,8 +123,8 @@ int	ch;
 
 	case '\n':		/* end of line */
 	case '\r':
-	    inbuf[inpos] = '\0';	/* terminate input line */
-	    inpos = 0;
+	    inbuf[inend] = '\0';	/* terminate input line */
+	    inpos = 0; inend = 0;
 	    State = NORMAL;		/* return state to normal */
 	    update_sline(win);		/* line is now a message line */
 	    return(cmd_COMPLETE);	/* and indicate we are done */
@@ -129,11 +132,11 @@ int	ch;
 	case '\b':		/* backspace or delete */
 	case DEL:
 	case CTRL('W'):		/* delete last word */
-	    switch (ch) {
-		case '\b':
+	    { int oldinpos = inpos; int i;
+	      switch (ch) {
 		case DEL:
-		    ch = '\b';
-		    inbuf[--inpos] = '\0';
+		case '\b':
+		    --inpos;
 		    break;
 		case CTRL('W'):
 		{
@@ -143,8 +146,20 @@ int	ch;
 			--inpos;
 		    while (inpos > 1 && (c = inbuf[inpos - 1], !is_space(c)))
 			--inpos;
-		    inbuf[inpos] = '\0';
 		}
+	      }
+	      /* Remember the number of screen characters deleted */
+	      len = colposn[oldinpos] - colposn[inpos];
+	      /* Delete the characters from the command line buffer */
+	      memmove(inbuf+inpos, inbuf+oldinpos, inend-oldinpos);
+	      memmove(colposn+inpos, colposn+oldinpos, inend-oldinpos+1);
+	      inend -= (oldinpos - inpos);
+	      /* Update the screen columns */
+	      for (i=inpos; i <= inend; i++) colposn[i] -= len;
+	      /* Move the end of the status line down to fill the gap */
+              stat = &win->w_statusline.fxb_chars[win->w_statusline.fxb_rcnt];
+	      memmove(stat+colposn[inpos], stat+colposn[inpos]+len,
+		      colposn[inend]-colposn[inpos]);
 	    }
 	    if (inpos == 0) {
 		/*
@@ -154,10 +169,10 @@ int	ch;
 		State = NORMAL;
 		return(cmd_CANCEL);
 	    }
-	    len = colposn[inpos - 1] + 1;
+	    len = colposn[inend];
 	    while (flexlen(&win->w_statusline) > len)
 		(void) flexrmchar(&win->w_statusline);
-	    update_cline(win);
+	    update_cline(win,colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
 	case ESC:
@@ -168,7 +183,7 @@ int	ch;
 	    /*
 	     * Find the word to be expanded.
 	     */
-	    inbuf[inpos] = '\0';	/* ensure word is terminated */
+	    inbuf[inend] = '\0';	/* ensure word is terminated */
 	    to_expand = strrchr(inbuf, ' ');
 	    if (to_expand == NULL || *(to_expand + 1) == '\0') {
 	    	beep(win);
@@ -182,6 +197,7 @@ int	ch;
 	     */
 	    expansion = fexpand(to_expand, TRUE);
 	    if (*expansion != '\0') {
+		int oldinpos = inpos;
 		/*
 		 * Expanded okay - remove the original and stuff
 		 * the expansion into the input stream. Note that
@@ -189,7 +205,7 @@ int	ch;
 		 * this avoids problems updating the command line
 		 * when something like "*.h<ESC>" is typed.
 		 */
-		inpos = to_expand - inbuf - 1;
+		inend = inpos = to_expand - inbuf - 1;
 		len = colposn[inpos - 1] + 1;
 		while (flexlen(&win->w_statusline) > len)
 		    (void) flexrmchar(&win->w_statusline);
@@ -205,11 +221,28 @@ int	ch;
 
 	case EOF:
 	case CTRL('U'):		/* line kill */
-	    inpos = 1;
-	    inbuf[1] = '\0';
+	    inpos = 1; inend = 1;
 	    flexclear(&win->w_statusline);
 	    (void) flexaddch(&win->w_statusline, inbuf[0]);
-	    update_cline(win);
+	    update_cline(win, colposn[inpos]);
+	    return(cmd_INCOMPLETE);
+
+	/* Simple line editing */
+
+	case K_LARROW:
+	    if (inpos > 1) {
+		--inpos;
+	        update_cline(win, colposn[inpos]);
+	    }
+	    else beep(win);
+	    return(cmd_INCOMPLETE);
+
+	case K_RARROW:
+	    if (inpos < inend) {
+		++inpos;
+	        update_cline(win, colposn[inpos]);
+	    }
+	    else beep(win);
 	    return(cmd_INCOMPLETE);
 
 	default:
@@ -219,25 +252,43 @@ int	ch;
 
     literal_next = FALSE;
 
-    if (inpos >= sizeof(inbuf) - 1) {
+    if (inend >= sizeof(inbuf) - 1) {
 	/*
 	 * Must not overflow buffer.
 	 */
 	beep(win);
     } else {
-	unsigned	curposn;
+	unsigned	curposn, endposn;
 	unsigned	w;
 	char		*p;
 
 	curposn = colposn[inpos - 1];
-	w = vischar(ch, &p, (int) curposn);
-	if (curposn + w >= win->w_ncols - 1) {
+	endposn = colposn[inend - 1];
+	w = vischar(ch, &p, -1);
+	if (endposn + w >= win->w_ncols - 1) {
 	    beep(win);
 	} else {
-	    colposn[inpos] = curposn + w;
-	    inbuf[inpos++] = ch;
+	    int i;
+	    memmove(inbuf+inpos+1, inbuf+inpos, inend-inpos);
+	    memmove(colposn+inpos+1, colposn+inpos, inend-inpos+1);
+	    for (i=inpos+1; i <= inend+1; i++) colposn[i] += w;
+	    inend++; inbuf[inpos++] = ch;
+	    colposn[inpos] = colposn[inpos-1] + w;
+
 	    (void) lformat(&win->w_statusline, "%s", p);
-	    update_cline(win);
+	    /* That appended the representation of the char to the
+	     * status line, extending the flexbuf, but we were supposed
+	     * to insert the new char, not append it, so move the rest
+	     * of the status line up, then deposit the new char(s) in
+	     * the hole that this leaves.
+	     */
+            stat = &win->w_statusline.fxb_chars[win->w_statusline.fxb_rcnt];
+            memmove(stat+colposn[inpos],
+		    stat+colposn[inpos-1],
+		    colposn[inend-1]-colposn[inpos-1]+1);
+	    memcpy(stat+colposn[inpos-1],p,w);
+
+	    update_cline(win, colposn[inpos]);
 	}
     }
 
@@ -251,4 +302,3 @@ Xviwin	*win;
 {
     return(inbuf);
 }
-
