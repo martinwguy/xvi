@@ -358,6 +358,22 @@ starting at the screen column
 where you first typed
 .BR R .
 .\"---------------------------------------------------------------------------
+.SS "Command line editing and filename completion"
+.LP
+While entering a `:' command or a `/' search string, as well as the usual keys,
+\fBBackspace\fP to cancel the previous character,
+\fB^W\fP to cancel the previous word and
+\fB^U\fP to cancel the line,
+.B xvi
+also lets you move back and forth in the line with the arrow keys
+to correct typing errors.
+.LP
+The \fBEscape\fP key, instead of executing the line (the same as \fBEnter\fP),
+performs filename completion on the last word in the line, which can be the
+first part of a file's name or a filename regular expressions containing
+special characters \fB?\fP, \fB*\fP and maybe others, depending on your
+operating system.
+.\"---------------------------------------------------------------------------
 .SS "Command re-execution"
 .LP
 As well as the normal named (conjugate) buffers,
