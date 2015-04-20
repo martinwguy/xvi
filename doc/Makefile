@@ -1,18 +1,18 @@
-.SUFFIXES: .1 .ms .lst .ps
+.SUFFIXES: .1 .ms .txt .pdf
 
-all: source.lst xvi.lst source.ps xvi.ps
+all: source.txt xvi.txt source.pdf xvi.pdf
 
-.ms.lst:
-	tbl $< | nroff -ms -Tascii -c > $@
+.ms.txt:
+	tbl $< | nroff -ms -Tascii -c | col -b > $@
 
-.ms.ps:
-	tbl $< | troff -ms -Tps | grops > $@
+.ms.pdf:
+	tbl $< | troff -ms -Tps | grops | ps2pdf - - > $@
 
-.1.lst:
-	nroff -man -Tascii -c $< > $@
+.1.txt:
+	nroff -man -Tascii -c $< | col -b > $@
 
-.1.ps:
-	troff -man -Tps -c $< | grops > $@
+.1.pdf:
+	troff -man -Tps -c $< | grops | ps2pdf - - > $@
 
 clean:
-	rm -f *.lst *.ps
+	rm -f *.txt *.pdf
