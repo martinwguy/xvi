@@ -747,6 +747,7 @@ and
 .br
 .IR "Summary of Differences between Vi and Xvi" .
 .SH BUGS
+See also http://github.com/martinwguy/xvi/issues
 .IP \(bu
 When the cursor is on the last word of a buffer,
 the command
@@ -766,15 +767,6 @@ fails, then the
 \fBWORD\fR\^<\^\fIesc\fR\^>
 gets taken as normal input.
 The rest of the input should really be cancelled when part of a redo fails.
-.IP \(bu
-A command of the form
-.B :/pat/;+1m.
-will not work because the
-editor incorrectly detects a conflict between source and destination.
-.IP \(bu
-The editor
-in its present form
-is very inefficient in terms of CPU cycles.
 .IP \(bu
 Most
 .BR termcap (5)
