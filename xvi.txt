@@ -434,6 +434,8 @@ SEE ALSO
        Summary of Differences between Vi and Xvi.
 
 BUGS
+       See also http://github.com/martinwguy/xvi/issues
+
        o      When  the cursor is on the last word of a buffer, the command dw
 	      leaves the last character of the word undeleted.
 
@@ -445,16 +447,9 @@ BUGS
 	      rest of the input should really be cancelled when part of a redo
 	      fails.
 
-       o      A command of the form :/pat/;+1m.  will  not  work  because  the
-	      editor   incorrectly  detects  a	conflict  between  source  and
-	      destination.
-
-       o      The editor in its present form is very inefficient in  terms  of
-	      CPU cycles.
-
        o      Most termcap(5) terminal descriptions are only tested with vi(1)
-	      (and possibly rogue(6)).	Since  xvi  is,  in  some  ways,  more
-	      demanding  than  vi  in  its  use  of  termcap  capabilities, it
+	      (and  possibly  rogue(6)).   Since  xvi  is,  in some ways, more
+	      demanding than  vi  in  its  use	of  termcap  capabilities,  it
 	      sometimes exposes bugs or inadequacies in termcap entries.  This
 	      applies especially to scrolling regions.
 
