@@ -1,472 +1,472 @@
-XVI(1)                      General Commands Manual                     XVI(1)
+XVI(1)			    General Commands Manual			XVI(1)
 
 
 
-NNAAMMEE
+NAME
        xvi - multi-file text editor
 
-SSYYNNOOPPSSIISS
-       xxvvii  {  --ss  _p_a_r_a_m_e_t_e_r_-_a_s_s_i_g_n_m_e_n_t  }  [ --tt _t_a_g | ++_n_u_m_b_e_r | ++//_p_a_t_t_e_r_n ] {
-       _f_i_l_e_n_a_m_e ...  }
+SYNOPSIS
+       xvi  {  -s  parameter-assignment  }  [ -t tag | +number | +/pattern ] {
+       filename ...  }
 
-DDEESSCCRRIIPPTTIIOONN
-       XXvvii  (pronounced  _e_c_k_s_-_v_e_e_-_e_y_e)  is  a  free,  portable,   multi-window
-       implementation  of  the  popular  vvii(1)  editor.   It  has  some useful
-       enhancements, although, as described below, not all  of  vvii's  features
-       have been implemented yet, and some things work differently from vvii.
+DESCRIPTION
+       Xvi  (pronounced  ecks-vee-eye)	is  a  free,  portable,   multi-window
+       implementation  of  the	popular  vi(1)	editor.   It  has  some useful
+       enhancements, although, as described below, not all  of	vi's  features
+       have been implemented yet, and some things work differently from vi.
 
-OOPPTTIIOONNSS
+OPTIONS
        The following command-line options are available:
 
-       --ss _p_a_r_a_m_e_t_e_r_-_a_s_s_i_g_n_m_e_n_t
-              Set  the  value  of  the  specified  parameter  at startup.  The
-              assignment has the same form as when given as an editor command,
-              i.e:
+       -s parameter-assignment
+	      Set  the	value  of  the	specified  parameter  at startup.  The
+	      assignment has the same form as when given as an editor command,
+	      i.e:
 
-              _n_a_m_e==_s_t_r_i_n_g
-                     for string parameters
+	      name=string
+		     for string parameters
 
-              _n_a_m_e==_n_u_m_b_e_r
-                     for numeric parameters
+	      name=number
+		     for numeric parameters
 
-              _n_a_m_e   to turn a Boolean parameter on
+	      name   to turn a Boolean parameter on
 
-              nnoo_n_a_m_e to turn a Boolean parameter off
+	      noname to turn a Boolean parameter off
 
-       --tt _t_a_g Edit the file containing the definition specified as _t_a_g, at the
-              start of the definition (as per vvii).
+       -t tag Edit the file containing the definition specified as tag, at the
+	      start of the definition (as per vi).
 
-       ++_n_u_m_b_e_r
-              Go to the specified line number of the file being edited.
+       +number
+	      Go to the specified line number of the file being edited.
 
-       ++/_p_a_t_t_e_r_n
-              Go to the first occurrence of the specified _p_a_t_t_e_r_n  within  the
-              file being edited.
+       +/pattern
+	      Go to the first occurrence of the specified pattern  within  the
+	      file being edited.
 
-       The --rr command line option is not supported.
+       The -r command line option is not supported.
 
-EENNHHAANNCCEEMMEENNTTSS
-   PPaarraammeetteerr hhaannddlliinngg
-       XXvvii  supports 5 types of parameter: as well as vvii's _n_u_m_e_r_i_c, _s_t_r_i_n_g and
-       _b_o_o_l_e_a_n, it also has _e_n_u_m_e_r_a_t_e_d and _l_i_s_t types.  The former is used for
-       e.g.  ffoorrmmaatt and rreeggeexxttyyppee, while the latter is currently only used for
-       ttaaggss.  The advantage of the _e_n_u_m_e_r_a_t_e_d type is that if you try  to  set
+ENHANCEMENTS
+   Parameter handling
+       Xvi  supports 5 types of parameter: as well as vi's numeric, string and
+       boolean, it also has enumerated and list types.	The former is used for
+       e.g.  format and regextype, while the latter is currently only used for
+       tags.  The advantage of the enumerated type is that if you try  to  set
        an illegal value, the set of correct values will be displayed, which is
-       very useful if you have forgotten what the values may  be.   (Try  ::sseett
-       pprreesseerrvvee to see an example of this.)
+       very useful if you have forgotten what the values may  be.   (Try  :set
+       preserve to see an example of this.)
 
-   MMuullttiippllee bbuuffffeerrss aanndd wwiinnddoowwss
-       XXvvii  supports  multiple  _b_u_f_f_e_r_s and _w_i_n_d_o_w_s.  A _b_u_f_f_e_r is the internal
-       object which holds a file in memory, while a _w_i_n_d_o_w is an area  of  the
+   Multiple buffers and windows
+       Xvi  supports  multiple	buffers and windows.  A buffer is the internal
+       object which holds a file in memory, while a window is an area  of  the
        screen which shows part of a buffer.  Every window references a buffer,
        even if no file is being edited.
 
        The following commands are  available  for  operating  on  buffers  and
        windows:
 
-       ::bbuuffffeerr
-              create  a  new  buffer  in  a  new  window; can be followed by a
-              filename, which will be edited in the new buffer.
+       :buffer
+	      create  a  new  buffer  in  a  new  window; can be followed by a
+	      filename, which will be edited in the new buffer.
 
-       ::sspplliitt create a new window on to the current buffer  by  splitting  the
-              current  window  in half.  The two resulting windows are similar
-              to _v_i_e_w_p_o_r_t_s on to a single editing buffer, in that changes made
-              in one window are reflected in the other one.
+       :split create a new window on to the current buffer  by	splitting  the
+	      current  window  in half.  The two resulting windows are similar
+	      to viewports on to a single editing buffer, in that changes made
+	      in one window are reflected in the other one.
 
-       ::cclloossee close  the current window; will also close the buffer if this is
-              the last window on to it.
+       :close close  the current window; will also close the buffer if this is
+	      the last window on to it.
 
-       ::xx / ZZZZ
-              close only the current window.  If the window is the only one on
-              to  the  buffer,  the  buffer will be closed as well, writing it
-              first if it is modified.
+       :x / ZZ
+	      close only the current window.  If the window is the only one on
+	      to  the  buffer,	the  buffer will be closed as well, writing it
+	      first if it is modified.
 
-       gg      move to the next window.
+       g      move to the next window.
 
-       ^^WW     increase the size of the current window (may be given a  numeric
-              prefix, default is one line).
+       ^W     increase the size of the current window (may be given a  numeric
+	      prefix, default is one line).
 
-       ^^TT     decrease  the size of the current window (may be given a numeric
-              prefix, default is one line).
+       ^T     decrease	the size of the current window (may be given a numeric
+	      prefix, default is one line).
 
-       ^^OO     make the current window as large as possible.
+       ^O     make the current window as large as possible.
 
-       ^^]]     as for vvii, but create a new buffer window if appropriate (and if
-              aauuttoosspplliitt allows).
+       ^]     as for vi, but create a new buffer window if appropriate (and if
+	      autosplit allows).
 
-       Note  that  the  ::qquuiitt  command  quits  out of the editor, not out of a
-       window.  The ::cclloossee  command  is  thus  the  equivalent  of  ::qquuiitt  for
-       windows.   There  is  no  equivalent  of ::xx or ZZZZ for the whole editor;
+       Note  that  the	:quit  command	quits  out of the editor, not out of a
+       window.	The :close  command  is  thus  the  equivalent	of  :quit  for
+       windows.   There  is  no  equivalent  of :x or ZZ for the whole editor;
        these have been hijacked for operations on windows.
 
-       The numeric aauuttoosspplliitt parameter specifies the maximum number of  buffer
-       windows  that  will  be  created automatically whenever you either edit
+       The numeric autosplit parameter specifies the maximum number of	buffer
+       windows	that  will  be	created automatically whenever you either edit
        more than one file, or use tags to edit a different file.
 
-       Undo works per buffer, as do marks; yank/put and redo (the ..   command)
+       Undo works per buffer, as do marks; yank/put and redo (the .   command)
        work  over all buffers, i.e. you can delete from one buffer and put the
        text into a different buffer.
 
-       The mmiinnrroowwss parameter specifies the minimum number of rows to  which  a
+       The minrows parameter specifies the minimum number of rows to  which  a
        window  may be shrunk, including the status line.  The default value is
        2; 0 and 1 may also be useful.
 
-   NNaammeedd bbuuffffeerrss
+   Named buffers
        As well as the normal named (conjugate) buffers, and  the  default  one
-       named  @@,  several extra buffers named ::, //, ??  and !!  contain the last
+       named  @,  several extra buffers named :, /, ?  and !  contain the last
        command lines entered for each of the command types.  So for  instance,
-       @@::  will  re-execute  the last colon command, or you can insert it into
-       your buffer, edit it and then re-execute it (e.g. with dddd@@@@).
+       @:  will  re-execute  the last colon command, or you can insert it into
+       your buffer, edit it and then re-execute it (e.g. with dd@@).
 
-   FFiillee pprreesseerrvvaattiioonn
-       Rather than use vvii's Unix-specific method for  preservation,  xxvvii  does
-       periodic   preservation  of  all  files  currently  being  edited  into
+   File preservation
+       Rather than use vi's Unix-specific method for  preservation,  xvi  does
+       periodic   preservation	of  all  files	currently  being  edited  into
        temporary files in the same directory.  It tries to do  this  when  you
-       aren't  typing,  so  that  you  won't  notice  the short delay when the
-       temporary file is written  out.   Obviously,  only  changed  files  are
+       aren't  typing,	so  that  you  won't  notice  the short delay when the
+       temporary file is written  out.	 Obviously,  only  changed  files  are
        preserved  in this way, and the temporary file is removed once the real
        file has been successfully written.
 
        As an additional safety measure, when a file is explicitly saved and it
-       appears  not  to have been preserved recently, it is normally preserved
-       first.  This ensures that, even if the operating system  crashes  while
-       the  real  file  is  being created, there should always be at least one
-       recent copy  of  it  in  the  filesystem.   The  ::pprreesseerrvvee  command  is
-       available as in vvii to preserve a specific buffer manually.
+       appears	not  to have been preserved recently, it is normally preserved
+       first.  This ensures that, even if the operating system	crashes  while
+       the  real  file	is  being created, there should always be at least one
+       recent copy  of	it  in	the  filesystem.   The	:preserve  command  is
+       available as in vi to preserve a specific buffer manually.
 
        The  level  of  safety  provided  by  the  preservation facility may be
-       configured by changing the values  of  the  pprreesseerrvvee  and  pprreesseerrvveettiimmee
-       parameters.  The following values are available for pprreesseerrvvee:
+       configured by changing the values  of  the  preserve  and  preservetime
+       parameters.  The following values are available for preserve:
 
-       uunnssaaffee Never  preserve any buffer before an explicit save.  This can be
-              useful on old, slow, floppy-only systems, but is  not  generally
-              recommended.
+       unsafe Never  preserve any buffer before an explicit save.  This can be
+	      useful on old, slow, floppy-only systems, but is	not  generally
+	      recommended.
 
-       ssttaannddaarrdd
-              The  default  value.   Only preserve a buffer before an explicit
-              save if it appears not to have been preserved recently.
+       standard
+	      The  default  value.   Only preserve a buffer before an explicit
+	      save if it appears not to have been preserved recently.
 
-       ssaaffee   Always preserve buffers before they are written.
+       safe   Always preserve buffers before they are written.
 
-       ppaarraannooiidd
-              As for ssaaffee, but the preserve file is never removed, even  after
-              the file has been successfully written.
+       paranoid
+	      As for safe, but the preserve file is never removed, even  after
+	      the file has been successfully written.
 
        In all cases, all modified buffers are preserved automatically after no
-       user events have been received for pprreesseerrvveettiimmee seconds, if  a  minimum
+       user events have been received for preservetime seconds, if  a  minimum
        number  of  events  (currently  60)  have  been received since the last
-       automatic preservation.  This behaviour can be more or less disabled by
-       setting pprreesseerrvveettiimmee to a very high value.
+       automatic preservation.	This behaviour can be more or less disabled by
+       setting preservetime to a very high value.
 
-       The  names  given  to  preserve  files  are  system-dependent,  but are
-       generally  of  the  form  ``_f_i_l_e_n_a_m_e.tmp'',  or   ``_f_i_l_e_n_a_m_e.001''   to
-       ``_f_i_l_e_n_a_m_e.999''.   If  a  preserve file already exists, it will not be
+       The  names  given  to  preserve	files  are  system-dependent,  but are
+       generally  of  the  form  ``filename.tmp'',  or	 ``filename.001''   to
+       ``filename.999''.   If  a  preserve file already exists, it will not be
        overwritten; instead, a new filename will be generated.
 
-   88--bbiitt cchhaarraacctteerr ssuuppppoorrtt
+   8-bit character support
        Characters with the top bit set may be displayed, although  it  is  not
-       yet  possible  to  have  null  ('\0')  bytes in a file buffer.  How the
+       yet  possible  to  have	null  ('\0')  bytes in a file buffer.  How the
        characters are displayed varies between systems; on UNIX, they will  be
        shown  as  an octal escape sequence, while on MS-DOS, OS/2 and QNX they
-       will be shown as the actual character in the PC  character  set.   This
-       can  be controlled by setting the cccchhaarrss and mmcchhaarrss variables; if these
+       will be shown as the actual character in the PC	character  set.   This
+       can  be controlled by setting the cchars and mchars variables; if these
        parameters are set, control-  and  meta-characters  (respectively)  are
        shown  directly, otherwise they are shown as some sequence of printable
        characters.
 
        Tabs are normally displayed as a series of spaces  of  the  appropriate
-       length  (according  to  the ttaabbssttooppss parameter); setting lliisstt mode will
+       length  (according  to  the tabstops parameter); setting list mode will
        cause them to be displayed as control characters, as will unsetting the
-       ttaabbss  parameter.   How the tab character is displayed is then under the
-       control of the cccchhaarrss parameter.
+       tabs  parameter.   How the tab character is displayed is then under the
+       control of the cchars parameter.
 
-       You can use the ^^__ (control-underscore) command to flip the top bit  of
-       the character the cursor is on.  This may be useful on systems where it
+       You can use the ^_ (control-underscore) command to flip the top bit  of
+       the character the cursor is on.	This may be useful on systems where it
        is otherwise impossible to enter 8-bit characters.
 
-   FFiillee ffoorrmmaattss
-       XXvvii can read and write text files in  non-Unix  formats.   The  current
-       format  is given by the value of the ffoorrmmaatt parameter, which may be set
-       to "uunniixx", "mmssddooss", and so on.  This means you can  edit  MS-DOS  files
+   File formats
+       Xvi can read and write text files in  non-Unix  formats.   The  current
+       format  is given by the value of the format parameter, which may be set
+       to "unix", "msdos", and so on.  This means you can  edit  MS-DOS  files
        under UNIX, etc.  To see a list of available formats, type
 
-              ::ssee ffmmtt==??
+	      :se fmt=?
 
-   EExxtteennddeedd rreegguullaarr eexxpprreessssiioonnss
-       vvii's  mmaaggiicc  parameter  is superseded by the rreeggeexxttyyppee parameter, which
+   Extended regular expressions
+       vi's  magic  parameter  is superseded by the regextype parameter, which
        can take the following values:
 
-       ttaaggss   only ^^ and $$ are significant (used for tags)
+       tags   only ^ and $ are significant (used for tags)
 
-       ggrreepp   like ggrreepp(1), but with \\<< and \\>> added
+       grep   like grep(1), but with \< and \> added
 
-       eeggrreepp  like eeggrreepp(1), but with \\<< and \\>> added
+       egrep  like egrep(1), but with \< and \> added
 
-       The default is ggrreepp.
+       The default is grep.
 
-       Note that it is still possible to set or unset mmaaggiicc  as  in  vvii;  this
-       will simply result in rreeggeexxttyyppee being set as appropriate.
+       Note that it is still possible to set or unset magic  as  in  vi;  this
+       will simply result in regextype being set as appropriate.
 
-       The  sseeccttiioonnss  and ppaarraaggrraapphhss parameters define eeggrreepp-style patterns to
-       search for, rather than vvii's simplistic (and ttrrooffff-dependent) character
+       The  sections  and paragraphs parameters define egrep-style patterns to
+       search for, rather than vi's simplistic (and troff-dependent) character
        pairs.
 
-   IImmpprroovveedd rreeppllaaccee mmooddee
-       The  RR  command  acts  more  intelligently  when you press return -- it
+   Improved replace mode
+       The  R  command	acts  more  intelligently  when you press return -- it
        leaves the rest of the current line alone, and  just  starts  replacing
        text  on  the  next line, starting at the screen column where you first
-       typed RR.
+       typed R.
 
-   CCoommmmaanndd lliinnee eeddiittiinngg aanndd ffiilleennaammee ccoommpplleettiioonn
+   Command line editing and filename completion
        While entering a `:' command or a `/' search string,  as  well  as  the
-       usual  keys,  BBaacckkssppaaccee  to cancel the previous character, ^^WW to cancel
-       the previous word and ^^UU to cancel the line, xxvvii  also  lets  you  move
-       back  and  forth  in  the  line  with  the arrow keys to correct typing
+       usual  keys,  Backspace	to cancel the previous character, ^W to cancel
+       the previous word and ^U to cancel the line, xvi  also  lets  you  move
+       back  and  forth  in  the  line	with  the arrow keys to correct typing
        errors.
 
-       The EEssccaappee key, instead of executing the  line  (the  same  as  EEnntteerr),
+       The Escape key, instead of executing the  line  (the  same  as  Enter),
        performs filename completion on the last word in the line, which can be
-       the first part of a file's  name  or  a  filename  regular  expressions
-       containing  special characters ??, ** and maybe others, depending on your
+       the first part of a file's  name  or  a	filename  regular  expressions
+       containing  special characters ?, * and maybe others, depending on your
        operating system.
 
-   CCoommmmaanndd rree--eexxeeccuuttiioonn
+   Command re-execution
        As well as the normal named (conjugate) buffers, and  the  default  one
-       (named  @@),  there exist several extra ones named ::, //, ??  and !!, which
+       (named  @),  there exist several extra ones named :, /, ?  and !, which
        contain the last command lines typed to each of the given commands.  So
-       for instance, @@:: will re-execute the last eexx command, or you can insert
-       it into your buffer, edit it and then re-execute it (e.g. with dddd@@@@).
+       for instance, @: will re-execute the last ex command, or you can insert
+       it into your buffer, edit it and then re-execute it (e.g. with dd@@).
 
-   SSccrroolllliinngg
-       When multiple windows are used, xxvvii normally has to be able  to  scroll
-       individual  windows  without  scrolling  the whole screen.  This can be
+   Scrolling
+       When multiple windows are used, xvi normally has to be able  to	scroll
+       individual  windows  without  scrolling	the whole screen.  This can be
        very  inefficient  on  terminals  without  scrolling  regions,  so  the
-       jjuummppssccrroollll  parameter  is  provided  to  control the editor's scrolling
+       jumpscroll  parameter  is  provided  to	control the editor's scrolling
        behaviour.  It can be set to one of:
 
-       ooffff    When the cursor moves outside a window's boundaries, and the new
-              position  is  near  enough,  the  window  will scroll to the new
-              position.
+       off    When the cursor moves outside a window's boundaries, and the new
+	      position	is  near  enough,  the	window	will scroll to the new
+	      position.
 
-       oonn     When the cursor moves outside a window's boundaries, the  window
-              will always jump to the new position.
+       on     When the cursor moves outside a window's boundaries, the	window
+	      will always jump to the new position.
 
-       aauuttoo   A window will scroll only if it can do so efficiently; otherwise
-              it will jump.
+       auto   A window will scroll only if it can do so efficiently; otherwise
+	      it will jump.
 
-       The default value is aauuttoo.
+       The default value is auto.
 
        On  ISA-type  systems  which  have  memory-mapped  displays,   hardware
-       character  generators and reasonably fast processors, jjuummppssccrroollll should
-       generally be set to ooffff; however, on LCD screens or other displays with
-       a  long  image  persistence,  this  may  actually  make  the  text more
+       character  generators and reasonably fast processors, jumpscroll should
+       generally be set to off; however, on LCD screens or other displays with
+       a  long	image  persistence,  this  may	actually  make	the  text more
        difficult to read, and many users  may  be  more  comfortable  with  it
-       turned oonn.
+       turned on.
 
-       Explicit  scroll  commands  (e.g.   ^^DD  and ^^EE) are not affected by the
-       jjuummppssccrroollll parameter.
+       Explicit  scroll  commands  (e.g.   ^D  and ^E) are not affected by the
+       jumpscroll parameter.
 
-   CCoolloouurr
+   Colour
        There are four new parameters to control screen colours:
 
-       ccoolloouurr colour used for text
+       colour colour used for text
 
-       ssttaattuussccoolloouurr
-              colour used for status lines
+       statuscolour
+	      colour used for status lines
 
-       rroossccoolloouurr
-              as ssttaattuussccoolloouurr, but for readonly files
+       roscolour
+	      as statuscolour, but for readonly files
 
-       ssyysstteemmccoolloouurr
-              colour  used  for  system  mode  (i.e.   subshells   and   after
-              termination)
+       systemcolour
+	      colour  used  for  system  mode  (i.e.   subshells   and	 after
+	      termination)
 
        These  parameters  are numeric, and the value means different things on
        different operating  systems.   On  Unix,  it  is  an  index  into  the
-       tteerrmmccaapp(5) entries "cc00" to "cc99", which are assumed to be colour-setting
-       escape sequences if they are present.  If they are  not  present,  "ssoo"
-       (begin  standout  mode)  and "ssee" (end standout mode) are used instead.
-       Values of 0 and 1 give normal text, whereas 2 and above  give  standout
+       termcap(5) entries "c0" to "c9", which are assumed to be colour-setting
+       escape sequences if they are present.  If they are  not	present,  "so"
+       (begin  standout  mode)	and "se" (end standout mode) are used instead.
+       Values of 0 and 1 give normal text, whereas 2 and above	give  standout
        mode.
 
-       The  default  colour for the rroossccoolloouurr parameter will generally involve
+       The  default  colour for the roscolour parameter will generally involve
        red if colours are available; this is intended to provide a warning  to
        the user that writing the file may not be possible.
 
-   OOnn--lliinnee hheellpp
-       A  primitive  help  facility  is  available;  the  ::hheellpp command simply
-       creates a new buffer window on to a standard help file.   The  name  of
-       the file which is edited is given by the hheellppffiillee string parameter; the
-       default on Unix versions is ""//uussrr//lliibb//xxvvii..hheellpp"".
+   On-line help
+       A  primitive  help  facility  is  available;  the  :help command simply
+       creates a new buffer window on to a standard help file.	 The  name  of
+       the file which is edited is given by the helpfile string parameter; the
+       default on Unix versions is "/usr/lib/xvi.help".
 
        Note that the help file buffer will be marked "not editable" when it is
-       created,  which  prevents  accidental overwriting of the help file even
+       created,  which	prevents  accidental overwriting of the help file even
        when the file permissions would allow it.
 
-   MMoouussee ssuuppppoorrtt
-       Some  mouse  support  is  available   for   micro-based   systems   and
+   Mouse support
+       Some  mouse  support  is  available   for   micro-based	 systems   and
        workstations Clicking the mouse button on:
 
        any line outside current window
-              changes current window to the one indicated by the mouse (can be
-              used instead of gg).
+	      changes current window to the one indicated by the mouse (can be
+	      used instead of g).
 
        top line of any window
-              scrolls window downwards (same as ^^YY).
+	      scrolls window downwards (same as ^Y).
 
        bottom line of any window
-              scrolls window upwards (same as ^^EE).
+	      scrolls window upwards (same as ^E).
 
        status line of any window
-              shows current file and lines (same as ^^GG).
+	      shows current file and lines (same as ^G).
 
        any text line of any window
-              moves text cursor as near as possible to mouse cursor.
+	      moves text cursor as near as possible to mouse cursor.
 
        Also, windows can be resized by dragging the appropriate status line up
        or down with the mouse.
 
-   MMiisscceellllaanneeoouuss
-       The command ::wwnn (write file and edit next) is provided, as in PPCC--vvii.
+   Miscellaneous
+       The command :wn (write file and edit next) is provided, as in PC-vi.
 
-       The new eeddiitt parameter controls whether a buffer can be modified.  This
-       may be used to implement a nicer version of vviieeww(1) than  the  standard
-       vvii  version,  since  it  won't  fool you into thinking that editing the
-       buffer is in any way safe.  Be warned: once having set  nnooeeddiitt,  it  is
-       not possible to do a ::sseett eeddiitt any more.  It's a one-way street.
+       The new edit parameter controls whether a buffer can be modified.  This
+       may be used to implement a nicer version of view(1) than  the  standard
+       vi  version,  since  it	won't  fool you into thinking that editing the
+       buffer is in any way safe.  Be warned: once having set  noedit,	it  is
+       not possible to do a :set edit any more.  It's a one-way street.
 
-       In  insert  and  replace  modes,  ^^AA  has the same meaning as ^^@@ in vi,
-       except that it works at any time, not just  for  the  first  character.
-       Also, typing ^^BB_x where _x is the name of a conjugate buffer, inserts the
-       contents of that buffer into the  input  stream  at  that  point.   The
-       buffer  named << always contains the last thing inserted, so that ^^BB<< is
-       the same as ^^AA.
+       In  insert  and	replace  modes,  ^A  has the same meaning as ^@ in vi,
+       except that it works at any time, not just  for	the  first  character.
+       Also, typing ^Bx where x is the name of a conjugate buffer, inserts the
+       contents of that buffer into the  input	stream	at  that  point.   The
+       buffer  named < always contains the last thing inserted, so that ^B< is
+       the same as ^A.
 
-LLIIMMIITTAATTIIOONNSS
-   EExx mmooddee
-       The main area in which xxvvii is lacking is vvii's eexx  mode,  which  is  not
-       implemented  at all (and neither are eeddiitt, ee, or ooppeenn modes).  However,
-       many of the eexx commands are available in vvii mode as colon commands; the
-       colon  commands  that  have not been implemented are mostly those which
-       offer the same functionality as other commands in vvii mode.
+LIMITATIONS
+   Ex mode
+       The main area in which xvi is lacking is vi's ex  mode,	which  is  not
+       implemented  at all (and neither are edit, e, or open modes).  However,
+       many of the ex commands are available in vi mode as colon commands; the
+       colon  commands	that  have not been implemented are mostly those which
+       offer the same functionality as other commands in vi mode.
 
-       In particular, aabbbbrreevviiaattee, aappppeenndd, cchhaannggee, eexx, iinnsseerrtt,  ooppeenn,  rreeccoovveerr,
-       uunnaabbbbrreevviiaattee,  wwrriittee>>>>,  zz  and  ||  have  not been implemented as colon
+       In particular, abbreviate, append, change, ex, insert,  open,  recover,
+       unabbreviate,  write>>,	z  and	|  have  not been implemented as colon
        commands yet.
 
-   VVii mmooddee
-       In vvii mode, the UU and == commands are not implemented, although there is
-       no  real reason why they shouldn't be, whilst QQ is inappropriate in the
-       context of xxvvii, since there is no eexx mode.
+   Vi mode
+       In vi mode, the U and = commands are not implemented, although there is
+       no  real reason why they shouldn't be, whilst Q is inappropriate in the
+       context of xvi, since there is no ex mode.
 
-   PPaarraammeetteerrss
+   Parameters
        The following parameters have not been implemented, and probably  won't
        be:
-              aaddaa,  aaddaappaatthh,  aauuttoopprriinntt,  bbeeaauuttiiffyy,  ddiirreeccttoorryy,  eeddccoommppaattiibbllee,
-              hhaarrddttaabbss, lliisspp, mmeessgg, mmooddeelliinnee, ooppeenn, ooppttiimmiizzee, pprroommpptt,  rreeddrraaww,
-              sslloowwooppeenn, tteerrmm, tteerrssee, ttttyyttyyppee, wwiinnddooww
+	      ada,  adapath,  autoprint,  beautify,  directory,  edcompatible,
+	      hardtabs, lisp, mesg, modeline, open, optimize, prompt,  redraw,
+	      slowopen, term, terse, ttytype, window
        while these parameters may well be implemented at some point:
-              aauuttoowwrriittee, ssccrroollll, ssoouurrcceeaannyy, wwrriitteeaannyy
+	      autowrite, scroll, sourceany, writeany
 
-       The  command  ::ssee  aallll  gives  a complete list, with current values, of
+       The  command  :se  all  gives  a complete list, with current values, of
        those that have been.
 
-   MMiisscceellllaanneeoouuss
+   Miscellaneous
        Appending to named buffers is not yet implemented.
 
-       Typing ^^QQ in input mode does not mean the same as ^^VV; it just inserts a
-       `^^QQ', assuming it gets as far as the editor at all.
+       Typing ^Q in input mode does not mean the same as ^V; it just inserts a
+       `^Q', assuming it gets as far as the editor at all.
 
-       Typing ^^WW in insert mode does not back up one word as in vvii.
+       Typing ^W in insert mode does not back up one word as in vi.
 
        It  is  not  possible  to  interrupt  the editor while it is performing
        certain operations.  If you start off a big global command, you have to
        wait for it to finish.
 
-       Flags and counts after eexx mode commands are not supported.
+       Flags and counts after ex mode commands are not supported.
 
-       The ::ssuubbssttiittuuttee command does not support splitting of lines.
+       The :substitute command does not support splitting of lines.
 
-       Regular  expressions,  although implemented (see above), do not support
-       the ~~ metacharacter; also, the \\uu  and  \\ll  escape  sequences  are  not
+       Regular	expressions,  although implemented (see above), do not support
+       the ~ metacharacter; also, the \u  and  \l  escape  sequences  are  not
        supported in substitute replacement patterns.
 
-       The ::gglloobbaall command only supports the commands [llppss&&~~dd].
+       The :global command only supports the commands [lps&~d].
 
-       UUnnddoo  does not work properly when applied to macros (either @@ or ::mmaapp);
+       Undo  does not work properly when applied to macros (either @ or :map);
        it should undo all the changes made by the  macro, but  in  fact   only
        the  last  command  within the macro is undone.
 
-OOTTHHEERR DDIIFFFFEERREENNCCEESS FFRROOMM VVII
-       The  XXVVIINNIITT  environment variable is read instead of EEXXIINNIITT.  Whilst no
+OTHER DIFFERENCES FROM VI
+       The  XVINIT  environment variable is read instead of EXINIT.  Whilst no
        files are sourced automatically, users who wish to have a startup  file
-       can arrange it very easily.  sshh(1) or kksshh(1) users should add this line
-       to their $$HHOOMMEE//..pprrooffiillee:
+       can arrange it very easily.  sh(1) or ksh(1) users should add this line
+       to their $HOME/.profile:
 
-              XXVVIINNIITT==''ssoouurrccee _x_v_i_-_s_t_a_r_t_u_p_-_f_i_l_e'';; eexxppoorrtt XXVVIINNIITT
+	      XVINIT='source xvi-startup-file'; export XVINIT
 
-       ccsshh(1) users should add this to their $$HHOOMMEE//..llooggiinn:
+       csh(1) users should add this to their $HOME/.login:
 
-              sseetteennvv XXVVIINNIITT ''ssoouurrccee _x_v_i_-_s_t_a_r_t_u_p_-_f_i_l_e''
+	      setenv XVINIT 'source xvi-startup-file'
 
-       and MS-DOS users should add this to their aauuttooeexxeecc..bbaatt:
+       and MS-DOS users should add this to their autoexec.bat:
 
-              sseett XXVVIINNIITT==ssoouurrccee_x_v_i_-_s_t_a_r_t_u_p_-_f_i_l_e
+	      set XVINIT=sourcexvi-startup-file
 
-       The ttaaggss parameter can be used to specify multiple  tags  files;  these
+       The tags parameter can be used to specify multiple  tags  files;  these
        can be separated by either ``\ '' (backslash space) or ``,'' (comma).
 
        Alternate files are handled slightly differently, owing to the presence
        of buffer and window handling.  Essentially, when you close  a  buffer,
        its  filename  is remembered as the alternate file; when you invoke the
-       ^^^^ or ::ee ## commands, this file is re-edited.  Note that  ^^^^  edits  the
-       alternate file in a new buffer window, if aauuttoosspplliitt allows.
+       ^^ or :e # commands, this file is re-edited.  Note that	^^  edits  the
+       alternate file in a new buffer window, if autosplit allows.
 
-       Hitting  the  escape  key  while in the command line does not terminate
+       Hitting	the  escape  key  while in the command line does not terminate
        input; instead, it cancels input, returning the prompt to the beginning
-       of the line.  This applies to input for ::, //, ??  and !!.
+       of the line.  This applies to input for :, /, ?	and !.
 
-FFIILLEESS
-       //uussrr//lliibb//xxvvii..hheellppDefault help file.
+FILES
+       /usr/lib/xvi.helpDefault help file.
 
-SSEEEE AALLSSOO
-       eexx(1), vvii(1), tteerrmmccaapp(5).
-       _S_u_m_m_a_r_y _o_f _D_i_f_f_e_r_e_n_c_e_s _b_e_t_w_e_e_n _V_i _a_n_d _X_v_i.
+SEE ALSO
+       ex(1), vi(1), termcap(5).
+       Summary of Differences between Vi and Xvi.
 
-BBUUGGSS
-       +o      When  the cursor is on the last word of a buffer, the command ddww
-              leaves the last character of the word undeleted.
+BUGS
+       o      When  the cursor is on the last word of a buffer, the command dw
+	      leaves the last character of the word undeleted.
 
-       +o      Some screen updates do not get shown properly when  buffers  are
-              split, and certain commands (e.g.  xx) are executed.
+       o      Some screen updates do not get shown properly when  buffers  are
+	      split, and certain commands (e.g.  x) are executed.
 
-       +o      If  you do something like ccff..WWOORRDD<_e_s_c> and then redo it, and the
-              ff..  fails, then the WWOORRDD<_e_s_c> gets taken as normal  input.   The
-              rest of the input should really be cancelled when part of a redo
-              fails.
+       o      If  you do something like cf.WORD<esc> and then redo it, and the
+	      f.  fails, then the WORD<esc> gets taken as normal  input.   The
+	      rest of the input should really be cancelled when part of a redo
+	      fails.
 
-       +o      A command of the form :://ppaatt//;;++11mm..  will  not  work  because  the
-              editor   incorrectly  detects  a  conflict  between  source  and
-              destination.
+       o      A command of the form :/pat/;+1m.  will  not  work  because  the
+	      editor   incorrectly  detects  a	conflict  between  source  and
+	      destination.
 
-       +o      The editor in its present form is very inefficient in  terms  of
-              CPU cycles.
+       o      The editor in its present form is very inefficient in  terms  of
+	      CPU cycles.
 
-       +o      Most tteerrmmccaapp(5) terminal descriptions are only tested with vvii(1)
-              (and possibly rroogguuee(6)).  Since  xxvvii  is,  in  some  ways,  more
-              demanding  than  vvii  in  its  use  of  tteerrmmccaapp  capabilities, it
-              sometimes exposes bugs or inadequacies in tteerrmmccaapp entries.  This
-              applies especially to scrolling regions.
+       o      Most termcap(5) terminal descriptions are only tested with vi(1)
+	      (and possibly rogue(6)).	Since  xvi  is,  in  some  ways,  more
+	      demanding  than  vi  in  its  use  of  termcap  capabilities, it
+	      sometimes exposes bugs or inadequacies in termcap entries.  This
+	      applies especially to scrolling regions.
 
-AAVVAAIILLAABBIILLIITTYY
-       XXvvii has been ported to MS-DOS, OS/2, QNX and many different versions of
+AVAILABILITY
+       Xvi has been ported to MS-DOS, OS/2, QNX and many different versions of
        Unix.  Source code is available from the authors.
 
-AAUUTTHHOORRSS
+AUTHORS
        Chris and John Downey.
 
        Derived from STEVIE, written by Tim Thompson and Tony Andrews.
 
 
 
-Unix                               19/6/1992                            XVI(1)
+Unix				   19/6/1992				XVI(1)

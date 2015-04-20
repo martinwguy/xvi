@@ -6,154 +6,154 @@
 
 
 
-                       NNootteess oonn tthhee XXvvii SSoouurrccee CCooddee
+		       Notes on the Xvi Source Code
 
 
-                               _C_h_r_i_s _D_o_w_n_e_y
-                                _J_o_h_n _D_o_w_n_e_y
+			       Chris Downey
+				John Downey
 
 
-               XXvvii (pronounced _e_c_k_s_-_v_e_e_-_e_y_e) is a free, portable,
-          multi-window  implementation  of  the  popular  UNIX(R)
-          editor vvii.
+	       Xvi (pronounced ecks-vee-eye) is a free, portable,
+	  multi-window	implementation	of  the  popular  UNIX(R)
+	  editor vi.
 
-          This  document  contains information on how to port xxvvii
-          to systems not currently supported.  It  also  explains
-          how  the  xxvvii source code is arranged into modules, and
-          explains some of the data structures which are used, so
-          that modifications may be made if and when necessary to
-          the editor itself.
+	  This	document  contains information on how to port xvi
+	  to systems not currently supported.  It  also  explains
+	  how  the  xvi source code is arranged into modules, and
+	  explains some of the data structures which are used, so
+	  that modifications may be made if and when necessary to
+	  the editor itself.
 
 
-     11..  IINNTTRROODDUUCCTTIIOONN
+     1.  INTRODUCTION
 
-     XXvvii is intended to be portable to just about any system.  This is
+     Xvi is intended to be portable to just about any system.  This is
      one of the central reasons for its existence; the authors wish to
      be able to use the same editor everywhere.
 
-     The main body of  the  editor  is  (supposedly)  fully  portable,
-     relying  only  on  standard facilities defined by the White Book,
-     and on a set of _p_r_i_m_i_t_i_v_e_s which are provided by a set of one  or
-     more  modules for each operating system.  If ____SSTTDDCC____ is defined,
-     certain ANSI C facilities will  be  used,  but  the  editor  will
+     The main body of  the  editor  is	(supposedly)  fully  portable,
+     relying  only  on	standard facilities defined by the White Book,
+     and on a set of primitives which are provided by a set of one  or
+     more  modules for each operating system.  If __STDC__ is defined,
+     certain ANSI C facilities will  be  used,	but  the  editor  will
      compile with non-ANSI compilers.
 
-     Therefore,  in  order  to  port  xxvvii to a new system, all that is
-     necessary is to provide the defined set of _p_r_i_m_i_t_i_v_e_s,  and  then
+     Therefore,  in  order  to	port  xvi to a new system, all that is
+     necessary is to provide the defined set of primitives,  and  then
      build  the editor.  Or at least, that's the idea; we have refined
      the set of primitives as we port the editor to new  environments,
      and it's getting pretty easy now.
 
      The rest of this document is divided into sections as follows:
 
-     _S_e_c_t_i_o_n _2_: _S_y_s_t_e_m_-_S_p_e_c_i_f_i_c _M_o_d_u_l_e_s
-          This  section  deals  with  the  layout  of source files and
-          makefiles which you will have to deal with when porting xxvvii.
+     Section 2: System-Specific Modules
+	  This	section  deals	with  the  layout  of source files and
+	  makefiles which you will have to deal with when porting xvi.
 
-     _S_e_c_t_i_o_n _3_: _P_r_i_m_i_t_i_v_e_s _P_r_o_v_i_d_e_d _b_y _x_v_i
-          Discusses what primitives are provided by the main  body  of
-          the editor source code for use by the system interface code.
+     Section 3: Primitives Provided by xvi
+	  Discusses what primitives are provided by the main  body  of
+	  the editor source code for use by the system interface code.
 
-     _S_e_c_t_i_o_n _4_: _S_y_s_t_e_m _I_n_t_e_r_f_a_c_e
-          Explains  the  primitives which need to be provided in order
-          to make xxvvii work.
-
-
-
-
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                        _P_a_g_e _1
+     Section 4: System Interface
+	  Explains  the  primitives which need to be provided in order
+	  to make xvi work.
 
 
 
 
+     25th September 1992					Page 1
 
-     _2                                           _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
 
-     _S_e_c_t_i_o_n _5_: _D_a_t_a _S_t_r_u_c_t_u_r_e_s
-          Details the internal data types used in the editor, and  any
-          functions available for operating on those types.
 
-     _S_e_c_t_i_o_n _6_: _S_o_u_r_c_e _F_i_l_e_s
-          Lists  the  source files comprising the editor, and explains
-          what functionality is provided by each one.
 
-     22..  SSYYSSTTEEMM--SSPPEECCIIFFIICC MMOODDUULLEESS
+
+     2						 Xvi Source Code Notes
+
+     Section 5: Data Structures
+	  Details the internal data types used in the editor, and  any
+	  functions available for operating on those types.
+
+     Section 6: Source Files
+	  Lists  the  source files comprising the editor, and explains
+	  what functionality is provided by each one.
+
+     2.  SYSTEM-SPECIFIC MODULES
 
      The system-specific code normally consists  of  three  (or  more)
-     files; a "..cc" file, a "..hh" file, and a makefile.  For example:
+     files; a ".c" file, a ".h" file, and a makefile.  For example:
 
-          qqnnxx..cc
-          qqnnxx..hh
-          mmaakkeeffiillee..qqnnxx
+	  qnx.c
+	  qnx.h
+	  makefile.qnx
 
      comprise the system-specific module for the QNX operating system.
 
      In  most  cases,  the system-specific code is divided into two or
-     more modules, where one (called the _s_y_s_t_e_m _i_n_t_e_r_f_a_c_e  _m_o_d_u_l_e)  is
+     more modules, where one (called the system interface  module)  is
      concerned with general interactions with the operating system and
-     the other (called the _t_e_r_m_i_n_a_l _i_n_t_e_r_f_a_c_e _m_o_d_u_l_e) is designed  for
-     a  specific  interface to a display and keyboard (and possibly, a
+     the other (called the terminal interface module) is designed  for
+     a	specific  interface to a display and keyboard (and possibly, a
      mouse).
 
-     For example, the  generic  UNIX  implementation  has  uunniixx..cc  and
-     uunniixx..hh  for  the  system  interface  module,  and  tteerrmmccaapp..cc  and
-     tteerrmmccaapp..hh for the terminal interface  module;  this  should  work
+     For example, the  generic	UNIX  implementation  has  unix.c  and
+     unix.h  for  the  system  interface  module,  and	termcap.c  and
+     termcap.h for the terminal interface  module;  this  should  work
      reasonably with any full-duplex terminal that can be described in
-     the tteerrmmccaapp database.  On consoles with  memory-mapped  displays,
-     or  systems  with  graphic  user  interfaces,  however, it may be
-     possible to achieve faster display updating,  and  perhaps  other
-     benefits,  by  replacing the tteerrmmccaapp module with another one that
+     the termcap database.  On consoles with  memory-mapped  displays,
+     or  systems  with	graphic  user  interfaces,  however, it may be
+     possible to achieve faster display updating,  and	perhaps  other
+     benefits,	by  replacing the termcap module with another one that
      makes better use  of  whatever  facilities  are  available.   For
-     instance,  there  is  an  experimental version for SunView, which
+     instance,	there  is  an  experimental version for SunView, which
      allows mouse input on Sun workstations running the SunView window
      system.
 
-     On   the   other   hand,   the  tteerrmmccaapp-specific  routines  might
+     On   the	other	hand,	the  termcap-specific  routines  might
      conceivably be useful on some other operating  systems  (such  as
-     VMS),  so  in  general it seemed a good idea to make the tteerrmmccaapp-
+     VMS),  so	in  general it seemed a good idea to make the termcap-
      specific routines a separate module.
 
-     The  current  MS-DOS  implementation  has  a  separate   terminal
-     interface  module,  which  is  designed  specifically  for IBM PC
+     The  current  MS-DOS  implementation  has	a  separate   terminal
+     interface	module,  which	is  designed  specifically  for IBM PC
      compatible computers.  This is in the files
 
-          iibbmmppcc__aa..aassmm
-          iibbmmppcc__cc..cc
-          iibbmmppcc..hh
+	  ibmpc_a.asm
+	  ibmpc_c.c
+	  ibmpc.h
 
      The first of these is written in assembly language because  there
      are  not enough routines common to the various MS-DOS C compilers
-     which reliably access the display and keyboard at  a  low  enough
+     which reliably access the display and keyboard at	a  low	enough
      level.
 
 
-     _P_a_g_e _2                                        _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     Page 2					   25th September 1992
 
 
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                           _3
+     Xvi Source Code Notes					     3
 
      The hardware-independent system interface module for MS-DOS is in
 
-          mmssddooss__aa..aassmm
-          mmssddooss__cc..cc
-          mmssddooss..hh
+	  msdos_a.asm
+	  msdos_c.c
+	  msdos.h
 
      The  first  of these is written in assembly language for the same
-     reason as is iibbmmppcc__aa..aassmm.
+     reason as is ibmpc_a.asm.
 
      Theoretically, different  terminal  interface  modules  could  be
      written  for MS-DOS systems running on hardware which is not IBM-
      compatible but, unfortunately, such systems seem to be  virtually
      extinct nowadays.
 
-     Sometimes  more  than one makefile is provided, as in the case of
+     Sometimes	more  than one makefile is provided, as in the case of
      UNIX, where different versions work in slightly different ways.
 
-     It is, of couse, not necessary to provide all --  or  any  --  of
-     these  files  for  a  particular  implementation;  this is just a
+     It is, of couse, not necessary to provide all --  or  any	--  of
+     these  files  for	a  particular  implementation;	this is just a
      convention.  The makefile(s) for each system determine what files
      are used in the compilation of the editor.
 
@@ -193,1260 +193,1260 @@
 
 
 
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                        _P_a_g_e _3
+     25th September 1992					Page 3
 
 
 
 
 
-     _4                                           _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
+     4						 Xvi Source Code Notes
 
      +-----------------------+--------------+------------------------+
-     |        System         |   Makefile   |      Source Files      |
+     |	      System	     |	 Makefile   |	   Source Files      |
      +-----------------------+--------------+------------------------+
-     |UNIX                   |              |                        |
-     |  BSD                  | mmaakkeeffiillee..bbssdd | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
-     |  System V ||--           | mmaakkeeffiillee..uussgg | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
-     |  AIX                  | mmaakkeeffiillee..aaiixx | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
-     |  ULTRIX               | mmaakkeeffiillee..uulltt | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
-     |  Xenix ||--              | mmaakkeeffiillee..xxeenn | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
-     |  POSIX (e.g. BSDI)    | mmaakkeeffiillee..ppooss | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
-     |  SunOS                | mmaakkeeffiillee..ssuunn | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
-     |  SunView              | mmaakkeeffiillee..ssvv  | uunniixx..[[cchh]] ssuunnvviieeww..hh    |
-     |                       |              | ssuunnffrroonntt..cc ssuunnbbaacckk..cc   |
-     |                       |              | xxvvii..iiccnn                |
+     |UNIX		     |		    |			     |
+     |	BSD		     | makefile.bsd | unix.[ch] termcap.[ch] |
+     |	System V -	     | makefile.usg | unix.[ch] termcap.[ch] |
+     |	AIX		     | makefile.aix | unix.[ch] termcap.[ch] |
+     |	ULTRIX		     | makefile.ult | unix.[ch] termcap.[ch] |
+     |	Xenix - 	     | makefile.xen | unix.[ch] termcap.[ch] |
+     |	POSIX (e.g. BSDI)    | makefile.pos | unix.[ch] termcap.[ch] |
+     |	SunOS		     | makefile.sun | unix.[ch] termcap.[ch] |
+     |	SunView 	     | makefile.sv  | unix.[ch] sunview.h    |
+     |			     |		    | sunfront.c sunback.c   |
+     |			     |		    | xvi.icn		     |
      +-----------------------+--------------+------------------------+
-     |MS-DOS                 |              | mmssddooss__cc..cc mmssddooss..hh      |
-     |                       |              | iibbmmppcc__cc..cc iibbmmppcc..hh      |
-     |  Microsoft C 5.*      | mmaakkeeffiillee..mmsscc | 88008866mmmm..iinncc iibbmmppcc__aa..aassmm |
-     |  & MASM 5.*           |              | mmssddooss__aa..aassmm            |
-     |  Microsoft Quick C    | mmaakkeeffiillee..qqcc  | 88008866mmmm..iinncc iibbmmppcc__aa..aassmm |
-     |  & MASM 5.*           |              | mmssddooss__aa..aassmm            |
-     |  Zortech C++ 2.*      | mmaakkeeffiillee..zzcc22 | 88008866mmmm..iinncc iibbmmppcc__aa..aassmm |
-     |  & MASM 5.*           |              | mmssddooss__aa..aassmm            |
-     |  Zortech C++ 3.*      | mmaakkeeffiillee..zzcc33 | 88008866mmmm..iinncc iibbmmppcc__aa..aassmm |
-     |  & MASM 5.*           |              | mmssddooss__aa..aassmm            |
-     |  Zortech C++ 3.*      |              |                        |
-     |  386 protected mode   | mmaakkeeffiillee..338866 | ppcc338866..[[cchh]]             |
+     |MS-DOS		     |		    | msdos_c.c msdos.h      |
+     |			     |		    | ibmpc_c.c ibmpc.h      |
+     |	Microsoft C 5.*      | makefile.msc | 8086mm.inc ibmpc_a.asm |
+     |	& MASM 5.*	     |		    | msdos_a.asm	     |
+     |	Microsoft Quick C    | makefile.qc  | 8086mm.inc ibmpc_a.asm |
+     |	& MASM 5.*	     |		    | msdos_a.asm	     |
+     |	Zortech C++ 2.*      | makefile.zc2 | 8086mm.inc ibmpc_a.asm |
+     |	& MASM 5.*	     |		    | msdos_a.asm	     |
+     |	Zortech C++ 3.*      | makefile.zc3 | 8086mm.inc ibmpc_a.asm |
+     |	& MASM 5.*	     |		    | msdos_a.asm	     |
+     |	Zortech C++ 3.*      |		    |			     |
+     |	386 protected mode   | makefile.386 | pc386.[ch]	     |
      +-----------------------+--------------+------------------------+
-     |OS/2 ||--                 |              |                        |
-     |  Version 1, text mode |              |                        |
-     |  Microsoft C 5.1      | mmaakkeeffiillee..ooss22 | ooss22vviioo..[[cchh]]            |
-     |  & MASM 5.1           |              | ii228866..aassmm               |
+     |OS/2 -		     |		    |			     |
+     |	Version 1, text mode |		    |			     |
+     |	Microsoft C 5.1      | makefile.os2 | os2vio.[ch]	     |
+     |	& MASM 5.1	     |		    | i286.asm		     |
      +-----------------------+--------------+------------------------+
-     |QNX                    |              |                        |
-     |  Version 2/3 (CII)    | mmaakkeeffiillee..qqnnxx | qqnnxx..[[cchh]]               |
-     |  Version 4 (Watcom C) | mmaakkeeffiillee..qqnn44 | uunniixx..[[cchh]] tteerrmmccaapp..[[cchh]] |
+     |QNX		     |		    |			     |
+     |	Version 2/3 (CII)    | makefile.qnx | qnx.[ch]		     |
+     |	Version 4 (Watcom C) | makefile.qn4 | unix.[ch] termcap.[ch] |
      +-----------------------+--------------+------------------------+
-     |TOS ||--                  |              |                        |
-     |  Lattice C            | mmaakkeeffiillee..ttooss | ttooss..[[cchh]] ttooss..llnnkk       |
+     |TOS -		     |		    |			     |
+     |	Lattice C	     | makefile.tos | tos.[ch] tos.lnk	     |
      +-----------------------+--------------+------------------------+
 
-     ||-- Versions  marked  with  ||-- probably do not work, as systems have
+     - Versions  marked  with  - probably do not work, as systems have
        not been recently available to the authors for testing.
 
-     33..  PPRRIIMMIITTIIVVEESS PPRROOVVIIDDEEDD BBYY XXVVII
+     3.  PRIMITIVES PROVIDED BY XVI
 
-     33..11..  GGeenneerraall DDeeffiinniittiioonnss
+     3.1.  General Definitions
 
-     The file xxvvii..hh should be included by all system-specific modules;
+     The file xvi.h should be included by all system-specific modules;
      this  file should also be edited so that a system-specific header
      file (or files), as determined by a predefined keyword,  will  be
      included.
 
-     For instance, under UNIX, the word UUNNIIXX is defined by passing the
-     --DDUUNNIIXX flag to the  C  compiler  from  the  makefile,  and  xxvvii..hh
+     For instance, under UNIX, the word UNIX is defined by passing the
+     -DUNIX flag to the  C  compiler  from  the  makefile,  and  xvi.h
      contains the following lines:
 
 
-     _P_a_g_e _4                                        _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     Page 4					   25th September 1992
 
 
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                           _5
+     Xvi Source Code Notes					     5
 
-          ##iiffddeeff UUNNIIXX
-          ##   iinncclluuddee ""uunniixx..hh""
-          ##eennddiiff
+	  #ifdef UNIX
+	  #   include "unix.h"
+	  #endif
 
      in  order to obtain the UNIX-related definitions from that header
      file.
 
-     Among the definitions in xxvvii..hh are the following:
+     Among the definitions in xvi.h are the following:
 
-     bbooooll__tt
-          A Boolean type having values TTRRUUEE or FFAALLSSEE.
+     bool_t
+	  A Boolean type having values TRUE or FALSE.
 
-     ccoonnsstt
+     const
 
-     vvoollaattiillee
-          These are defined out when ____SSTTDDCC____ is not defined, so  that
-          it is always safe to use them.
+     volatile
+	  These are defined out when __STDC__ is not defined, so  that
+	  it is always safe to use them.
 
-     xxvvii..hh  also includes various other header files which are needed.
+     xvi.h  also includes various other header files which are needed.
      The following system header files are always included:
 
-          ssttddiioo..hh
-          ccttyyppee..hh
-          ssiiggnnaall..hh
-          ssttrriinngg..hh
+	  stdio.h
+	  ctype.h
+	  signal.h
+	  string.h
 
-     These files are included if ____SSTTDDCC____ is defined:
+     These files are included if __STDC__ is defined:
 
-          ssttddddeeff..hh
-          ssttddlliibb..hh
-          lliimmiittss..hh
+	  stddef.h
+	  stdlib.h
+	  limits.h
 
-     and if ____SSTTDDCC____ is  not  defined,  xxvvii..hh  will  provide  its  own
+     and if __STDC__ is  not  defined,	xvi.h  will  provide  its  own
      definitions for the following:
 
-          IINNTT__MMAAXX
-          IINNTT__MMIINN
-          UULLOONNGG__MMAAXX
+	  INT_MAX
+	  INT_MIN
+	  ULONG_MAX
 
-          FFIILLEE **ffooppeenn(());;
-          cchhaarr **mmaalllloocc(());;
-          cchhaarr **ggeetteennvv(());;
+	  FILE *fopen();
+	  char *malloc();
+	  char *getenv();
 
      Finally, one of the following header files will be included:
 
-          ssttddaarrgg..hh
-          vvaarraarrggss..hh
+	  stdarg.h
+	  varargs.h
 
-     depending  on  whether  ____SSTTDDCC____  is defined or not.  In order to
-     make coding of vvaarraarrggss functions easier, a  macro  VVAA__SSTTAARRTT()  is
-     defined,  which  takes  the  same  arguments  as  the  ANSI-style
-     vvaa__ssttaarrtt(), but which is also available in non-ANSI  environments
+     depending	on  whether  __STDC__  is defined or not.  In order to
+     make coding of varargs functions easier, a  macro	VA_START()  is
+     defined,  which  takes  the  same	arguments  as  the  ANSI-style
+     va_start(), but which is also available in non-ANSI  environments
      (e.g. BSD).
 
-     In  order  to  make  it possible to use ANSI-style prototypes for
+     In  order	to  make  it possible to use ANSI-style prototypes for
      function declarations, but still allow compilation under non-ANSI
 
 
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                        _P_a_g_e _5
+     25th September 1992					Page 5
 
 
 
 
 
-     _6                                           _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
+     6						 Xvi Source Code Notes
 
      environments, the following macro is provided:
 
-          ##iiffddeeff ____SSTTDDCC____
-          ##   ddeeffiinnee  PP((aarrggss)) aarrggss
-          ##eellssee
-          ##   ddeeffiinnee  PP(())     (())
-          ##eennddiiff
+	  #ifdef __STDC__
+	  #   define  P(args) args
+	  #else
+	  #   define  P()     ()
+	  #endif
 
      so that function declarations may be specified thus:
 
-          eexxtteerrnn FFIILLEE **ffooppeenn PP((((ccoonnsstt cchhaarr **,, ccoonnsstt cchhaarr **))));;
+	  extern FILE *fopen P((const char *, const char *));
 
      Please  use  this facility when you provide declarations for your
-     system  primitives,  unless  your  system  always  uses  an  ANSI
+     system  primitives,  unless  your	system	always	uses  an  ANSI
      compiler.
 
-     33..22..  PPaarraammeetteerrss
+     3.2.  Parameters
 
      An important facility provided for use by system-specific modules
      is access to the editor's parameter table.  This is  achieved  by
-     means  of  some  apparent  functions, and a set of ##ddeeffiinneed token
+     means  of	some  apparent	functions, and a set of #defined token
      values.  The functions are:
 
-     vvooiidd sseett__ppaarraamm((iinntt nn,, vvaall))
-          This function sets the indicated  parameter  to  the  passed
-          value,  which  must  be  of  an appropriate type.  Parameter
-          values may be obtained by means of the  following  functions
-          (actually macros):
+     void set_param(int n, val)
+	  This function sets the indicated  parameter  to  the	passed
+	  value,  which  must  be  of  an appropriate type.  Parameter
+	  values may be obtained by means of the  following  functions
+	  (actually macros):
 
-     cchhaarr **PPss((iinntt nn))
-          return value of string parameter
+     char *Ps(int n)
+	  return value of string parameter
 
-     iinntt PPnn((iinntt nn))
-          return value of numeric parameter
+     int Pn(int n)
+	  return value of numeric parameter
 
-     bbooooll__tt PPbb((iinntt nn))
-          return value of boolean parameter
+     bool_t Pb(int n)
+	  return value of boolean parameter
 
-     cchhaarr ****PPll((iinntt nn))
-          return  value  of list parameter (a NNUULLLL-terminated array of
-          character pointers)
+     char **Pl(int n)
+	  return  value  of list parameter (a NULL-terminated array of
+	  character pointers)
 
-     iinntt PPeenn((iinntt nn))
-          return numeric value (index) of enumerated parameter
+     int Pen(int n)
+	  return numeric value (index) of enumerated parameter
 
-     cchhaarr ****PPeess((iinntt nn))
-          return string value of enumerated parameter
+     char **Pes(int n)
+	  return string value of enumerated parameter
 
-     In all cases, the iinntt nn argument is the index of the parameter in
-     the table; a set of ##ddeeffiinnees is provided, of the form:
+     In all cases, the int n argument is the index of the parameter in
+     the table; a set of #defines is provided, of the form:
 
-          PP__nnaammee
+	  P_name
 
      which  map  the  parameter names into integral values.  Thus, for
-     example, we might obtain the value of the ccoolloouurr parameter:
+     example, we might obtain the value of the colour parameter:
 
 
 
-     _P_a_g_e _6                                        _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     Page 6					   25th September 1992
 
 
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                           _7
+     Xvi Source Code Notes					     7
 
-          ccoolloouurr == PPnn((PP__ccoolloouurr));;
+	  colour = Pn(P_colour);
 
-     or set the value of the hheellppffiillee parameter:
+     or set the value of the helpfile parameter:
 
-          sseett__ppaarraamm((PP__hheellppffiillee,, ""//uussrr//lliibb//xxvvii//hheellpp""));;
+	  set_param(P_helpfile, "/usr/lib/xvi/help");
 
 
-     44..  SSYYSSTTEEMM IINNTTEERRFFAACCEE
+     4.  SYSTEM INTERFACE
 
-     44..11..  IInnttrroodduuccttiioonn
+     4.1.  Introduction
 
      There follows a list of the primitives  which  must  be  provided
      either  by  the  system interface module or by the underlying OS.
      Note that it is perfectly acceptable to  implement  functions  or
      external  variables  as macros so long as they "look the same" as
      the definitions below.  As a guideline, anything which is (a)  in
-     capitals,  or  (b)  is a ccoonnsstt variable, will be implemented as a
-     ##ddeeffiinnee for most systems.
+     capitals,	or  (b)  is a const variable, will be implemented as a
+     #define for most systems.
 
      When you want to actually do the port, it is  highly  recommended
-     that  you  copy  the  system-specific  files for the system which
+     that  you	copy  the  system-specific  files for the system which
      seems closest to your own, and modify those  files,  rather  than
      starting from scratch.
 
-     All  the  following  symbols  should  be  defined  in  the system
+     All  the  following  symbols  should  be  defined	in  the system
      interface module, or by standard header files already included by
-     xxvvii..hh,  or  by  other  header  files  explicitly  included by the
+     xvi.h,  or  by  other  header  files  explicitly  included by the
      system-specific header file:
 
-     ccoonnsstt uunnssiiggnneedd iinntt MMAAXXPPAATTHHLLEENN
-          The maximum number of characters in a pathname.
+     const unsigned int MAXPATHLEN
+	  The maximum number of characters in a pathname.
 
-     ccoonnsstt uunnssiiggnneedd iinntt MMAAXXNNAAMMLLEENN
-          The maximum number of characters in a filename.
+     const unsigned int MAXNAMLEN
+	  The maximum number of characters in a filename.
 
-     iinntt rreemmoovvee((cchhaarr **ffiilleennaammee))
-          Remove the named file as per ANSI.
+     int remove(char *filename)
+	  Remove the named file as per ANSI.
 
-     iinntt rreennaammee((cchhaarr **oolldd,, cchhaarr **nneeww))
-          Rename the file oolldd to nneeww as per ANSI.
+     int rename(char *old, char *new)
+	  Rename the file old to new as per ANSI.
 
-     vvooiidd sslleeeepp((uunnssiiggnneedd iinntt sseeccoonnddss))
-          Put the process to sleep for the given number of seconds.
+     void sleep(unsigned int seconds)
+	  Put the process to sleep for the given number of seconds.
 
-     ccoonnsstt cchhaarr ** ccoonnsstt DDIIRRSSEEPPSS
-          The pathname separators supported  for  system  calls  (e.g.
-          ""\\\\//"" for MS-DOS).
+     const char * const DIRSEPS
+	  The pathname separators supported  for  system  calls  (e.g.
+	  "\\/" for MS-DOS).
 
-     FFIILLEE **ffooppeennrrbb((cchhaarr **ffiillee))
+     FILE *fopenrb(char *file)
 
-     FFIILLEE **ffooppeennwwbb((cchhaarr **ffiillee))
-          Like  the  standard ffooppeenn(()) library call, but they both open
-          files in "binary" mode (i.e. no conversion of cr/lf/crlf  is
-          done), for reading and writing respectively.
-
-
-
-
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                        _P_a_g_e _7
+     FILE *fopenwb(char *file)
+	  Like	the  standard fopen() library call, but they both open
+	  files in "binary" mode (i.e. no conversion of cr/lf/crlf  is
+	  done), for reading and writing respectively.
 
 
 
 
-
-     _8                                           _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
-
-     bbooooll__tt eexxiissttss((cchhaarr **ffiilleennaammee))
-          Returns TTRRUUEE if the named file exists.
-
-     bbooooll__tt ccaann__wwrriittee((cchhaarr **ffiilleennaammee))
-          Returns  TTRRUUEE  if  the  named file can be written, i.e. if a
-          ffooppeennwwbb((ffiilleennaammee)) will succeed.
-
-     cchhaarr **ffeexxppaanndd((cchhaarr **ffiilleennaammee))
-          Returns a filename-expanded version of the passed filename.
-
-     ##ddeeffiinnee SSEETTVVBBUUFF__AAVVAAIILL
-
-     ccoonnsstt uunnssiiggnneedd iinntt RREEAADDBBUUFFSSIIZZ
-
-     ccoonnsstt uunnssiiggnneedd iinntt WWRRTTBBUUFFSSIIZZ
-          If SSEETTVVBBUUFF__AAVVAAIILL (or ____SSTTDDCC____) is  defined,  these  constant
-          values are used to set I/O buffer sizes (using the sseettvvbbuuff(())
-          function) for reading  and  writing  files.   Note  that  if
-          buffers  of  these  sizes  are  unavailable  at runtime, the
-          editor will try to allocate smaller buffers  by  iteratively
-          halving  the  buffer size until the allocation succeeds.  It
-          is therefore acceptable for these values to be quite large.
-
-     cchhaarr **tteemmppffnnaammee((ccoonnsstt cchhaarr **ffiilleennaammee))
-          Create a unique name for a temporary  file,  possibly  using
-          ffiilleennaammee  as  a  base (this will be used by ddoo__pprreesseerrvvee(()) to
-          create a backup file for the file named by  ffiilleennaammee).   The
-          string  returned  must  have  been allocated using mmaalllloocc(());
-          NNUULLLL can be returned if there is no more memory available.
-
-     iinntt ccaallll__ssyysstteemm((cchhaarr **ccoommmmaanndd))
-          Invoke the given command in a subshell.  This  is  used  for
-          shell  escapes  from  xxvvii.   The  command string may contain
-          metacharacters which  are  expected  to  be  expanded  by  a
-          command interpreter, e.g.  UNIX //bbiinn//sshh, MS-DOS ccoommmmaanndd..ccoomm.
-          Return value is 0 for success.  In many  environments,  this
-          call may safely be ##ddeeffiinneed as ssyysstteemm((ccoommmmaanndd)).
-
-     iinntt ccaallll__sshheellll((cchhaarr **sshheellll))
-          Invoke  the  named  shell.   This  is  used  for  the ::sshheellll
-          command.  It  may  be  mapped  into  ccaallll__ssyysstteemm(()),  but  is
-          separate  on  some  systems for efficiency reasons (i.e. not
-          invoking two shells to get one).   Return  value  is  0  for
-          success.
-
-     bbooooll__tt
-
-     ssyyss__ppiippee((cchhaarr **ccmmdd,, iinntt ((**wwff))((FFIILLEE **)),, lloonngg ((**rrff))((FFIILLEE **))))
-          Used for the !!  command.  The first parameter is the command
-          to invoke, while the second and third  are  functions  which
-          should be called with an open file pointer in order to write
-          out old, or read in new lines (respectively).  Note that  if
-          "real"   pipes  are  not  available,  it  is  acceptable  to
-          implement this function using temporary files,  but  the  wwff
-          function must obviously be called before rrff.
-
-
-
-     _P_a_g_e _8                                        _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     25th September 1992					Page 7
 
 
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                           _9
+     8						 Xvi Source Code Notes
 
-     vvooiidd ssyyss__eexxiitt((iinntt ccooddee))
-          Exit  with given exit status.  This routine must not return.
-          The editor is considered "dead" once it has been called, and
-          no further calls to editor functions should be made.
+     bool_t exists(char *filename)
+	  Returns TRUE if the named file exists.
 
-     vvooiidd ddeellaayy((vvooiidd))
-          Delay  for a short time, about a fifth of a second.  This is
-          used for showing matching brackets when  sshhoowwmmaattcchh  is  set.
-          It  is acceptable to just return if implementing this is not
-          easy.
+     bool_t can_write(char *filename)
+	  Returns  TRUE  if  the  named file can be written, i.e. if a
+	  fopenwb(filename) will succeed.
 
-     44..22..  SSccrreeeenn CCoonnttrrooll
+     char *fexpand(char *filename)
+	  Returns a filename-expanded version of the passed filename.
+
+     #define SETVBUF_AVAIL
+
+     const unsigned int READBUFSIZ
+
+     const unsigned int WRTBUFSIZ
+	  If SETVBUF_AVAIL (or __STDC__) is  defined,  these  constant
+	  values are used to set I/O buffer sizes (using the setvbuf()
+	  function) for reading  and  writing  files.	Note  that  if
+	  buffers  of  these  sizes  are  unavailable  at runtime, the
+	  editor will try to allocate smaller buffers  by  iteratively
+	  halving  the	buffer size until the allocation succeeds.  It
+	  is therefore acceptable for these values to be quite large.
+
+     char *tempfname(const char *filename)
+	  Create a unique name for a temporary	file,  possibly  using
+	  filename  as	a  base (this will be used by do_preserve() to
+	  create a backup file for the file named by  filename).   The
+	  string  returned  must  have	been allocated using malloc();
+	  NULL can be returned if there is no more memory available.
+
+     int call_system(char *command)
+	  Invoke the given command in a subshell.  This  is  used  for
+	  shell  escapes  from	xvi.   The  command string may contain
+	  metacharacters which	are  expected  to  be  expanded  by  a
+	  command interpreter, e.g.  UNIX /bin/sh, MS-DOS command.com.
+	  Return value is 0 for success.  In many  environments,  this
+	  call may safely be #defined as system(command).
+
+     int call_shell(char *shell)
+	  Invoke  the  named  shell.   This  is  used  for  the :shell
+	  command.  It	may  be  mapped  into  call_system(),  but  is
+	  separate  on	some  systems for efficiency reasons (i.e. not
+	  invoking two shells to get one).   Return  value  is	0  for
+	  success.
+
+     bool_t
+
+     sys_pipe(char *cmd, int (*wf)(FILE *), long (*rf)(FILE *))
+	  Used for the !  command.  The first parameter is the command
+	  to invoke, while the second and third  are  functions  which
+	  should be called with an open file pointer in order to write
+	  out old, or read in new lines (respectively).  Note that  if
+	  "real"   pipes  are  not  available,	it  is	acceptable  to
+	  implement this function using temporary files,  but  the  wf
+	  function must obviously be called before rf.
+
+
+
+     Page 8					   25th September 1992
+
+
+
+
+
+     Xvi Source Code Notes					     9
+
+     void sys_exit(int code)
+	  Exit	with given exit status.  This routine must not return.
+	  The editor is considered "dead" once it has been called, and
+	  no further calls to editor functions should be made.
+
+     void delay(void)
+	  Delay  for a short time, about a fifth of a second.  This is
+	  used for showing matching brackets when  showmatch  is  set.
+	  It  is acceptable to just return if implementing this is not
+	  easy.
+
+     4.2.  Screen Control
 
      An instance of the following structure must be defined  in  order
      to allow screen output to take place:
 
-       ttyyppeeddeeff ssttrruucctt vviirrttssccrr {{
-         ggeennppttrr   **ppvv__wwiinnddooww;;
-         iinntt      ppvv__rroowwss;;
-         iinntt      ppvv__ccoollss;;
-     //** ppuubblliicc:: **//
-         VViirrttSSccrr  **((**vv__nneeww))((VViirrttSSccrr **));;
-         vvooiidd     ((**vv__cclloossee))((VViirrttSSccrr **));;
+       typedef struct virtscr {
+	 genptr   *pv_window;
+	 int	  pv_rows;
+	 int	  pv_cols;
+     /* public: */
+	 VirtScr  *(*v_new)(VirtScr *);
+	 void	  (*v_close)(VirtScr *);
 
-         iinntt      ((**vv__rroowwss))((VViirrttSSccrr **));;
-         iinntt      ((**vv__ccoollss))((VViirrttSSccrr **));;
+	 int	  (*v_rows)(VirtScr *);
+	 int	  (*v_cols)(VirtScr *);
 
-         vvooiidd     ((**vv__cclleeaarr__aallll))((VViirrttSSccrr **));;
-         vvooiidd     ((**vv__cclleeaarr__lliinnee))((VViirrttSSccrr **));;
+	 void	  (*v_clear_all)(VirtScr *);
+	 void	  (*v_clear_line)(VirtScr *);
 
-         vvooiidd     ((**vv__ggoottoo))((VViirrttSSccrr **,, iinntt rrooww,, iinntt ccooll));;
-         vvooiidd     ((**vv__aaddvviissee))((VViirrttSSccrr **,, iinntt rrooww,, iinntt ccooll,,
-                                   iinntt iinnddeexx,, cchhaarr **ssttrr));;
+	 void	  (*v_goto)(VirtScr *, int row, int col);
+	 void	  (*v_advise)(VirtScr *, int row, int col,
+				   int index, char *str);
 
-         vvooiidd     ((**vv__wwrriittee))((VViirrttSSccrr **,, iinntt rrooww,, iinntt ccooll,, cchhaarr **ssttrr));;
-         vvooiidd     ((**vv__ppuuttcc))((VViirrttSSccrr **,, iinntt rrooww,, iinntt ccooll,, iinntt cchh));;
+	 void	  (*v_write)(VirtScr *, int row, int col, char *str);
+	 void	  (*v_putc)(VirtScr *, int row, int col, int ch);
 
-         vvooiidd     ((**vv__sseett__ccoolloouurr))((VViirrttSSccrr **,, iinntt ccoolloouurr));;
-         iinntt      ((**vv__ccoolloouurr__ccoosstt))((VViirrttSSccrr **));;
+	 void	  (*v_set_colour)(VirtScr *, int colour);
+	 int	  (*v_colour_cost)(VirtScr *);
 
-         vvooiidd     ((**vv__fflluusshh))((VViirrttSSccrr **));;
+	 void	  (*v_flush)(VirtScr *);
 
-         vvooiidd     ((**vv__bbeeeepp))((VViirrttSSccrr **));;
+	 void	  (*v_beep)(VirtScr *);
 
-     //** ooppttiioonnaall:: nnoott uusseedd iiff NNUULLLL **//
-         vvooiidd     ((**vv__iinnsseerrtt))((VViirrttSSccrr **,, iinntt rrooww,, iinntt ccooll,, cchhaarr **ssttrr));;
+     /* optional: not used if NULL */
+	 void	  (*v_insert)(VirtScr *, int row, int col, char *str);
 
-         iinntt      ((**vv__ssccrroollll))((VViirrttSSccrr **,, iinntt ssttaarrtt,, iinntt eenndd,, iinntt nnlliinneess));;
-       }} VViirrttSSccrr;;
+	 int	  (*v_scroll)(VirtScr *, int start, int end, int nlines);
+       } VirtScr;
 
 
      The  first  three fields in this structure are "private", for use
      only within the implementation of the  "public"  functions.   The
-     remaining  fields  are  all  function pointers, and are described
-     below.  Note that all functions  have  at  least  one  parameter,
-     which  is  a  pointer to the instance of the VViirrttSSccrr in question.
+     remaining	fields	are  all  function pointers, and are described
+     below.  Note that all functions  have  at	least  one  parameter,
+     which  is	a  pointer to the instance of the VirtScr in question.
 
 
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                        _P_a_g_e _9
+     25th September 1992					Page 9
 
 
 
 
 
-     _1_0                                          _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
+     10 					 Xvi Source Code Notes
 
-     This is always referred to as vvss below.  Note also that the  top-
+     This is always referred to as vs below.  Note also that the  top-
      left-hand corner of the window is taken to be (0,0).
 
-     vv__nneeww((vvss))
-          Obtain  a  new VViirrttSSccrr, and return a pointer to it.  This is
-          not used at present, and should return NNUULLLL.
+     v_new(vs)
+	  Obtain  a  new VirtScr, and return a pointer to it.  This is
+	  not used at present, and should return NULL.
 
-     vv__cclloossee((vvss))
-          Close the window to which vvss refers.
+     v_close(vs)
+	  Close the window to which vs refers.
 
-     vv__rroowwss((vvss))
-          Return the number of rows in vvss.
+     v_rows(vs)
+	  Return the number of rows in vs.
 
-     vv__ccoollss((vvss))
-          Return the number of columns in vvss.
+     v_cols(vs)
+	  Return the number of columns in vs.
 
-     vv__cclleeaarr__aallll((vvss))
-          Clear the window completely.
+     v_clear_all(vs)
+	  Clear the window completely.
 
-     vv__cclleeaarr__lliinnee((vvss,, iinntt rrooww,, iinntt ccooll))
-          Clear the specified line, from the given column to the right
-          hand edge of the window, inclusive.
+     v_clear_line(vs, int row, int col)
+	  Clear the specified line, from the given column to the right
+	  hand edge of the window, inclusive.
 
-     vv__ggoottoo((vvss,, iinntt rrooww,, iinntt ccooll))
-          Move the cursor to the specified row and column.
+     v_goto(vs, int row, int col)
+	  Move the cursor to the specified row and column.
 
-     vv__aaddvviissee((vvss,, iinntt rrooww,, iinntt ccooll,, iinntt iinnddeexx,, cchhaarr **ssttrr))
-          This  function is called when the editor is about to produce
-          some output on  the  same  line  as  the  last  output,  but
-          separate from it by one or more characters.  The destination
-          position is the coordinate pair ((rrooww,, ccooll ++ iinnddeexx)), and  ssttrr
-          contains  the  string  of characters which are in the window
-          starting at position ((rrooww,, ccooll)).   Where  there  is  a  cost
-          incurred by moving the cursor to a specific screen position,
-          the terminal  interface  module  may  decide  to  write  the
-          intervening  characters  to  the  screen rather than using a
-          specific "move cursor" sequence, in order  to  minimise  the
-          number of characters written to the terminal.
+     v_advise(vs, int row, int col, int index, char *str)
+	  This	function is called when the editor is about to produce
+	  some output on  the  same  line  as  the  last  output,  but
+	  separate from it by one or more characters.  The destination
+	  position is the coordinate pair (row, col + index), and  str
+	  contains  the  string  of characters which are in the window
+	  starting at position (row, col).   Where  there  is  a  cost
+	  incurred by moving the cursor to a specific screen position,
+	  the terminal	interface  module  may	decide	to  write  the
+	  intervening  characters  to  the  screen rather than using a
+	  specific "move cursor" sequence, in order  to  minimise  the
+	  number of characters written to the terminal.
 
-          Note  that for many environments, the cost of re-positioning
-          the cursor  is  nil,  and  under  these  circumstances  this
-          function need not do anything.
+	  Note	that for many environments, the cost of re-positioning
+	  the cursor  is  nil,	and  under  these  circumstances  this
+	  function need not do anything.
 
-     vv__wwrriittee((vvss,, iinntt rrooww,, iinntt ccooll,, cchhaarr **ssttrr))
-          Write  the  specified  string of characters into the window,
-          starting at the specified row and  column.   The  parameters
-          will  be  such that the string will always fit into a single
-          line of the window,  i.e.  no  line-wrapping  is  necessary;
-          however,  it  is quite possible for the string to end on the
-          last character of a line, and some implementations will need
-          to take special precautions to handle this correctly.
+     v_write(vs, int row, int col, char *str)
+	  Write  the  specified  string of characters into the window,
+	  starting at the specified row and  column.   The  parameters
+	  will	be  such that the string will always fit into a single
+	  line of the window,  i.e.  no  line-wrapping	is  necessary;
+	  however,  it	is quite possible for the string to end on the
+	  last character of a line, and some implementations will need
+	  to take special precautions to handle this correctly.
 
-     vv__ppuuttcc((vvss,, iinntt rrooww,, iinntt ccooll,, iinntt cchh))
-          This is like vv__wwrriittee but for a single character.
-
-
-
-
-     _P_a_g_e _1_0                                       _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     v_putc(vs, int row, int col, int ch)
+	  This is like v_write but for a single character.
 
 
 
 
+     Page 10					   25th September 1992
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                          _1_1
 
-     vv__sseett__ccoolloouurr((vvss,, iinntt ccoolloouurr))
-          Set the colour for all subsequent output (including clearing
-          of lines or the whole window) to the specified colour.   The
-          meaning of the value is system-specific.
 
-     vv__ccoolloouurr__ccoosstt((vvss))
-          Return  the number of extra characters which are taken up in
-          the window by a colour change.  This is almost always 0, but
-          there exist some terminals for which it is not (see the "ssgg"
-          tteerrmmccaapp capability).
 
-     vv__fflluusshh((vvss))
-          Flush all screen output, and move the cursor on  the  screen
-          to  the  correct  position.  The screen need not actually be
-          updated  until  either   this   function   is   called,   or
-          xxvvii__hhaannddllee__eevveenntt(()) returns.
 
-     vv__bbeeeepp((vvss))
-          Beep.   It is acceptable to flash the screen or window if no
-          audio facility is available.
+     Xvi Source Code Notes					    11
 
-     vv__iinnsseerrtt((vvss,, iinntt rrooww,, iinntt ccooll,, cchhaarr **ssttrr))
-          This  function  inserts  the  given  string  at  the   given
-          position,  pushing  any  other characters on the same row to
-          the right.   If  such  a  facility  is  not  available,  the
-          function pointer should be set to NNUULLLL.
+     v_set_colour(vs, int colour)
+	  Set the colour for all subsequent output (including clearing
+	  of lines or the whole window) to the specified colour.   The
+	  meaning of the value is system-specific.
 
-     vv__ssccrroollll((vvss,, iinntt ssttaarrtt,, iinntt eenndd,, iinntt nnlliinneess))
-          This function scrolls the set of lines between ssttaarrtt and eenndd
-          (inclusive) by nnlliinneess lines.  If nnlliinneess is positive,  _n_o_r_m_a_l
-          scrolling  should  be  done,  i.e. the lines should be moved
-          upwards with respect to the window.  If nnlliinneess is  negative,
-          scrolling  should  be  in  the reverse direction.  The lines
-          which are left by the  scrolling  should  be  cleared.   The
-          function   should  return  non-zero  if  the  scrolling  was
-          successful, otherwise 0.
+     v_colour_cost(vs)
+	  Return  the number of extra characters which are taken up in
+	  the window by a colour change.  This is almost always 0, but
+	  there exist some terminals for which it is not (see the "sg"
+	  termcap capability).
 
-          If scrolling is not available, the function  pointer  should
-          be set to NNUULLLL.
+     v_flush(vs)
+	  Flush all screen output, and move the cursor on  the	screen
+	  to  the  correct  position.  The screen need not actually be
+	  updated  until  either   this   function   is   called,   or
+	  xvi_handle_event() returns.
 
-     44..33..  PPaarraammeetteerrss
+     v_beep(vs)
+	  Beep.   It is acceptable to flash the screen or window if no
+	  audio facility is available.
 
-     Default  values  should  be  ##ddeeffiinneed  for  certain parameters as
+     v_insert(vs, int row, int col, char *str)
+	  This	function  inserts  the	given  string  at  the	 given
+	  position,  pushing  any  other characters on the same row to
+	  the right.   If  such  a  facility  is  not  available,  the
+	  function pointer should be set to NULL.
+
+     v_scroll(vs, int start, int end, int nlines)
+	  This function scrolls the set of lines between start and end
+	  (inclusive) by nlines lines.	If nlines is positive,	normal
+	  scrolling  should  be  done,	i.e. the lines should be moved
+	  upwards with respect to the window.  If nlines is  negative,
+	  scrolling  should  be  in  the reverse direction.  The lines
+	  which are left by the  scrolling  should  be	cleared.   The
+	  function   should  return  non-zero  if  the	scrolling  was
+	  successful, otherwise 0.
+
+	  If scrolling is not available, the function  pointer	should
+	  be set to NULL.
+
+     4.3.  Parameters
+
+     Default  values  should  be  #defined  for  certain parameters as
      follows:
 
-                +---------------+---------+---------------+
-                |Parameter Name |  Type   | ##ddeeffiinnee name  |
-                +---------------+---------+---------------+
-                |ssyyssccoolloouurr      | numeric | DDEEFF__SSYYSSCCOOLLOOUURR |
-                |ccoolloouurr         | numeric | DDEEFF__CCOOLLOOUURR    |
-                |ssttaattuussccoolloouurr   | numeric | DDEEFF__SSTTCCOOLLOOUURR  |
-                |rroossccoolloouurr      | numeric | DDEEFF__RROOSSCCOOLLOOUURR |
-                |hheellppffiillee       | string  | HHEELLPPFFIILLEE      |
-                |ffoorrmmaatt         | string  | DDEEFF__TTFFFF       |
-                +---------------+---------+---------------+
+		+---------------+---------+---------------+
+		|Parameter Name |  Type   | #define name  |
+		+---------------+---------+---------------+
+		|syscolour	| numeric | DEF_SYSCOLOUR |
+		|colour 	| numeric | DEF_COLOUR	  |
+		|statuscolour	| numeric | DEF_STCOLOUR  |
+		|roscolour	| numeric | DEF_ROSCOLOUR |
+		|helpfile	| string  | HELPFILE	  |
+		|format 	| string  | DEF_TFF	  |
+		+---------------+---------+---------------+
 
 
 
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                       _P_a_g_e _1_1
+     25th September 1992				       Page 11
 
 
 
 
 
-     _1_2                                          _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
+     12 					 Xvi Source Code Notes
 
-     44..44..  FFiillee FFoorrmmaattss
+     4.4.  File Formats
 
-     The functions in xxvvii which read and write text files are aware of
-     several different newline conventions (for example, ""\\nn"" on UNIX,
-     ""\\rr\\nn"" on MS-DOS, and so on), so that any version of  the  editor
-     can  read  and  write any of the supported formats.  The value of
-     the ffoorrmmaatt parameter  (which  can  be  set  to  "uunniixx",  "mmssddooss",
-     "mmaacciinnttoosshh",  etc.)   determines  which format is currently being
-     used.  If you  are  porting  xxvvii  to  a  system  with  a  newline
+     The functions in xvi which read and write text files are aware of
+     several different newline conventions (for example, "\n" on UNIX,
+     "\r\n" on MS-DOS, and so on), so that any version of  the	editor
+     can  read	and  write any of the supported formats.  The value of
+     the format parameter  (which  can	be  set  to  "unix",  "msdos",
+     "macintosh",  etc.)   determines  which format is currently being
+     used.  If you  are  porting  xvi  to  a  system  with  a  newline
      convention  which isn't one of those currently supported (see the
-     table called ttffttaabbllee in ffiilleeiioo..cc) you may have to add a new entry
+     table called tftable in fileio.c) you may have to add a new entry
      to the table.
 
      Unfortunately,  the  current design is not as general as it ought
-     to be.  If you happen to be porting to VMS, or some other  system
+     to be.  If you happen to be porting to VMS, or some other	system
      which doesn't use either a single character or a consecutive pair
-     of characters to represent a newline, you will have quite  a  lot
+     of characters to represent a newline, you will have quite	a  lot
      of  work  to do if you want to retain the facility for converting
      between file formats within the editor.
 
-     In any case, your system interface module should  define  DDEEFF__TTFFFF
-     to  be  the  index  of  the entry in ttffttaabbllee which represents the
+     In any case, your system interface module should  define  DEF_TFF
+     to  be  the  index  of  the entry in tftable which represents the
      default  format  for  your  system.   This  is  the   value   for
-     PPeenn((PP__ffoorrmmaatt)) which will be compiled into the parameter table.
+     Pen(P_format) which will be compiled into the parameter table.
 
-     44..55..  NNootteess oonn TTeerrmmccaapp IImmpplleemmeennttaattiioonn
+     4.5.  Notes on Termcap Implementation
 
-     There  exists a tteerrmmccaapp implementation of the terminal interface,
+     There  exists a termcap implementation of the terminal interface,
      currently only used for the UNIX port.  This module  could  quite
      easily  be  re-used  for  other systems if desired; the following
      routines would need to be defined by the system module:
 
-     vvooiidd ffoouuttcchh((iinntt cc))
-          Output a single character to the  terminal.   This  must  be
-          implemented as a function, not a macro, because it is passed
-          as a parameter into the tteerrmmccaapp library.
+     void foutch(int c)
+	  Output a single character to the  terminal.	This  must  be
+	  implemented as a function, not a macro, because it is passed
+	  as a parameter into the termcap library.
 
-     vvooiidd mmoouuttcchh((iinntt cc))
-          Same as ffoouuttcchh(()) except that it  can  be  implemented  as  a
-          macro.  This will be used by the tteerrmmccaapp interface module to
-          write characters to the screen.
+     void moutch(int c)
+	  Same as foutch() except that it  can	be  implemented  as  a
+	  macro.  This will be used by the termcap interface module to
+	  write characters to the screen.
 
-     vvooiidd oofflluusshh((vvooiidd))
-          Flush buffered output to the terminal.
+     void oflush(void)
+	  Flush buffered output to the terminal.
 
-     44..66..  EEnntteerriinngg//LLeeaavviinngg VViissuuaall MMooddee
+     4.6.  Entering/Leaving Visual Mode
 
-     Some facility is commonly  necessary  for  the  system  interface
+     Some facility is commonly	necessary  for	the  system  interface
      module  to be able to tell the terminal interface module to enter
-     or exit _v_i_s_u_a_l mode.  This might mean changing the terminal state
+     or exit visual mode.  This might mean changing the terminal state
      between "raw" and "cooked" modes, or switching display pages.  No
      specific interface for this is  defined,  although  the  standard
-     UNIX  and  MS-DOS implementations do use such a facility, and the
+     UNIX  and	MS-DOS implementations do use such a facility, and the
      interface functions for both systems are identically defined.
 
 
 
 
-     _P_a_g_e _1_2                                       _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     Page 12					   25th September 1992
 
 
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                          _1_3
+     Xvi Source Code Notes					    13
 
-     44..77..  FFuunnccttiioonn KKeeyyss//MMoouussee HHaannddlliinngg
+     4.7.  Function Keys/Mouse Handling
 
-     Function key values are coded into a set of ##ddeeffiinneed constants in
-     the file aasscciiii..hh; e.g. the value KK__UUAARRRROOWW might be given as input
+     Function key values are coded into a set of #defined constants in
+     the file ascii.h; e.g. the value K_UARROW might be given as input
      when the keyboard up-arrow key has been pressed.
 
-     If the global variable SSttaattee is not equal to NNOORRMMAALL, all function
+     If the global variable State is not equal to NORMAL, all function
      keys except for a backspace key are invalid input.  If an invalid
      key is pressed, the safest strategy may be to beep and  wait  for
-     another key to be pressed.  NNOORRMMAALL is defined in xxvvii..hh.
+     another key to be pressed.  NORMAL is defined in xvi.h.
 
      Another facility which may be provided is handling mouse input on
      systems where it is available.   The  strategy  for  interpreting
-     mouse  input  is  controlled  by  the  mmoouusseecclliicckk(())  function (in
-     mmoouussee..cc); the idea is to make the  strategy  independent  of  any
+     mouse  input  is  controlled  by  the  mouseclick()  function (in
+     mouse.c); the idea is to make the	strategy  independent  of  any
      specific device interface.  If a mouse button is pressed before a
      keyboard key is pressed, the following routine should be called:
 
-          mmoouusseecclliicckk((iinntt rrooww,, iinntt ccoolluummnn));;
+	  mouseclick(int row, int column);
 
      where row and column are the  current  co-ordinates,  counted  in
-     character  positions,  of  the mouse pointer within the screen or
+     character	positions,  of	the mouse pointer within the screen or
      editing window.  If the mouse is moved while  a  button  is  held
      down, the routine
 
-          mmoouusseeddrraagg((iinntt ssttaarrttrrooww,, iinntt eennddrrooww,, iinntt ssttaarrttccoolluummnn,, iinntt eennddccoolluummnn));;
+	  mousedrag(int startrow, int endrow, int startcolumn, int endcolumn);
 
      should  be  called with co-ordinates describing the movement.  If
-     the global variable SSttaattee is not equal to NNOORRMMAALL, mouse input can
+     the global variable State is not equal to NORMAL, mouse input can
      be ignored altogether.
 
      All this will be considerably tidied up at a later stage, when we
-     have proper xxvvEEvveenntt types for function keys and mouse actions.
+     have proper xvEvent types for function keys and mouse actions.
 
-     44..88..  MMaaiinn
+     4.8.  Main
 
-     Finally, the  system  interface  module  must  provide  a  mmaaiinn(())
-     function.   This  function  must call xxvvii__ssttaarrttuupp((vvss,, aarrggcc,, aarrggvv,,
-     eennvv)) at startup, with parameters as follows:
+     Finally, the  system  interface  module  must  provide  a	main()
+     function.	 This  function  must call xvi_startup(vs, argc, argv,
+     env) at startup, with parameters as follows:
 
-     VViirrssttSSccrr **vvss;;
-          This is a pointer to the VViirrttSSccrr  structure  for  the  first
-          window, or for the terminal screen.
+     VirstScr *vs;
+	  This is a pointer to the VirtScr  structure  for  the  first
+	  window, or for the terminal screen.
 
-     iinntt aarrggcc,, cchhaarr ****aarrggvv;;
-          These are as for a mmaaiinn(()) function.
+     int argc, char **argv;
+	  These are as for a main() function.
 
-     cchhaarr **eennvv;;
-          This  is  an  environment  string, normally the return value
-          from  ggeetteennvv((""XXVVIINNIITT"")).   If  the  concept  of   environment
-          variables   does   not   exist,   a   string   of  the  form
-          ""ssoouurrccee _f_i_l_e_n_a_m_e"" may be passed  instead,  so  as  to  allow
-          users to localise their usage of the editor.
+     char *env;
+	  This	is  an	environment  string, normally the return value
+	  from	getenv("XVINIT").   If	the  concept  of   environment
+	  variables   does   not   exist,   a	string	 of  the  form
+	  "source filename" may be passed  instead,  so  as  to  allow
+	  users to localise their usage of the editor.
 
-     The  return  value from xxvvii__ssttaarrttuupp(()) is a pointer, which will be
+     The  return  value from xvi_startup() is a pointer, which will be
      used in future to identify the window for input events.  For now,
 
 
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                       _P_a_g_e _1_3
+     25th September 1992				       Page 13
 
 
 
 
 
-     _1_4                                          _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
+     14 					 Xvi Source Code Notes
 
-     it should be stored in the VViirrttSSccrr's ppvv__wwiinnddooww field.
+     it should be stored in the VirtScr's pv_window field.
 
-     Having  called  xxvvii__ssttaarrttuupp(()), input events may then be passed to
-     the editor by calling  xxvvii__hhaannddllee__eevveenntt  with  a  pointer  to  an
-     xxvvEEvveenntt  structure  as  the  sole  argument.   This  structure is
+     Having  called  xvi_startup(), input events may then be passed to
+     the editor by calling  xvi_handle_event  with  a  pointer	to  an
+     xvEvent  structure  as  the  sole	argument.   This  structure is
      defined as follows:
 
-          ttyyppeeddeeff ssttrruucctt eevveenntt {{
-              eennuumm {{
-                  EEvv__cchhaarr,,
-                  EEvv__ttiimmeeoouutt
-              }}                   eevv__ttyyppee;;
-              uunniioonn {{
-                  //** EEvv__cchhaarr:: **//
-                  iinntt eevvuu__iinncchhaarr;;
+	  typedef struct event {
+	      enum {
+		  Ev_char,
+		  Ev_timeout
+	      } 		  ev_type;
+	      union {
+		  /* Ev_char: */
+		  int evu_inchar;
 
-                  //** EEvv__ttiimmeeoouutt:: **//
-              }}                   eevv__uu;;
-          }} xxvvEEvveenntt;;
+		  /* Ev_timeout: */
+	      } 		  ev_u;
+	  } xvEvent;
 
-          ##ddeeffiinnee   eevv__iinncchhaarr eevv__uu..eevvuu__iinncchhaarr
+	  #define   ev_inchar ev_u.evu_inchar
 
 
-     The eevv__ttyyppee field is a tag which identifies  the  type  of  event
+     The ev_type field is a tag which identifies  the  type  of  event
      which  has  occurred.  At present, only two events are supported:
      an input character from the user, and a timeout.  The union which
      follows  contains data associated with each event type; currently
-     only the type EEvv__cchhaarr requires data, as may be seen.  The ##ddeeffiinnee
-     for eevv__iinncchhaarr is provided purely for convenience.
+     only the type Ev_char requires data, as may be seen.  The #define
+     for ev_inchar is provided purely for convenience.
 
-     The  return value from xxvvii__hhaannddllee__eevveenntt(()) is a long integer value
-     which is the  time  in  milliseconds  for  which  the  editor  is
+     The  return value from xvi_handle_event() is a long integer value
+     which is the  time  in  milliseconds  for	which  the  editor  is
      prepared to wait for more input.  If no input arrives within that
      time, the function should be called again with an event  of  type
-     EEvv__ttiimmeeoouutt.   The  timeout  value  returned may be 0L, indicating
+     Ev_timeout.   The	timeout  value	returned may be 0L, indicating
      that no timeout is necessary.  It is very important that timeouts
      should  actually  be  implemented because they are needed for the
-     pprreesseerrvvee facility.
+     preserve facility.
 
-     Currently,    if    a    keyboard    interrupt    is    received,
-     xxvvii__hhaannddllee__eevveenntt(())  need  not  be called (it should, in any case,
+     Currently,    if	 a    keyboard	  interrupt    is    received,
+     xvi_handle_event()  need  not  be called (it should, in any case,
      never be called from an asynchronous interrupt or signal handler)
-     but  the  global  variable  kkbbddiinnttrr  should  be set to a non-zero
+     but  the  global  variable  kbdintr  should  be set to a non-zero
      value.
 
-     55..  DDAATTAA SSTTRRUUCCTTUURREESS
+     5.  DATA STRUCTURES
 
-     Structures used in xxvvii are all typedef'd, and all  begin  with  a
-     capital  letter.   They are defined in xxvvii..hh.  The following data
+     Structures used in xvi are all typedef'd, and all	begin  with  a
+     capital  letter.	They are defined in xvi.h.  The following data
      structures are defined:
 
-     55..11..  LLiinnee
+     5.1.  Line
 
      This structure is used to hold a single text line.   It  contains
      forward  and  backward  pointers  which are connected together to
-     form a two-way linked list.  It also contains  a  pointer  to  an
+     form a two-way linked list.  It also contains  a  pointer	to  an
 
 
-     _P_a_g_e _1_4                                       _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     Page 14					   25th September 1992
 
 
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                          _1_5
+     Xvi Source Code Notes					    15
 
-     allocated  text  buffer, an integer recording the number of bytes
-     allocated for the text, and the line number (an  unsigned  long).
-     The  text  is null-terminated, and the space allocated for it may
+     allocated	text  buffer, an integer recording the number of bytes
+     allocated for the text, and the line number (an  unsigned	long).
+     The  text	is null-terminated, and the space allocated for it may
      be grown but is never shrunk.  The maximum size of this space  is
-     given by MMAAXX__LLIINNEE__LLEENNGGTTHH.
+     given by MAX_LINE_LENGTH.
 
      The  line number is used when showing line numbers on screen, but
      this is secondary to its main purpose of providing an ordering on
      lines;  the ordering of two lines in a list may be established by
-     simply comparing their line numbers  (macros  are  available  for
+     simply comparing their line numbers  (macros  are	available  for
      this purpose; see later for details).
 
-     55..22..  BBuuffffeerr
+     5.2.  Buffer
 
      This  structure  holds the internal representation of a file.  It
      contains pointers to the linked list of lines which comprise  the
      actual  text.   We always allocate an extra line at the beginning
-     and the end, with line numbers 0 and MMAAXX__LLIINNEENNOO respectively,  in
-     order  to  make  the code which deals with this structure easier.
-     The line numbers of  LLiinnee  structures  in  a  BBuuffffeerr  are  always
-     maintained by code in uunnddoo..cc, which is the only module which ever
-     changes the text of a BBuuffffeerr.
+     and the end, with line numbers 0 and MAX_LINENO respectively,  in
+     order  to	make  the code which deals with this structure easier.
+     The line numbers of  Line	structures  in	a  Buffer  are	always
+     maintained by code in undo.c, which is the only module which ever
+     changes the text of a Buffer.
 
-     The BBuuffffeerr structure also contains:
+     The Buffer structure also contains:
 
-     +o    flags, including readonly and modified
+     o	  flags, including readonly and modified
 
-     +o    current filename associated with the buffer
+     o	  current filename associated with the buffer
 
-     +o    temporary filename for buffer preservation
+     o	  temporary filename for buffer preservation
 
-     +o    space for the mmaarrkk module to store information about  marked
-          lines
+     o	  space for the mark module to store information about	marked
+	  lines
 
-     +o    space  for  the  uunnddoo  module to store information about the
-          last change
+     o	  space  for  the  undo  module to store information about the
+	  last change
 
-     +o    number of windows associated with the buffer
+     o	  number of windows associated with the buffer
 
      The following macros are used to  find  out  certain  information
-     about LLiinnees within BBuuffffeerrss:
+     about Lines within Buffers:
 
-     lliinneennoo((BBuuffffeerr **bb,, LLiinnee **ll))
-          Returns the line number of the specified LLiinnee, which belongs
-          to the specified BBuuffffeerr.
+     lineno(Buffer *b, Line *l)
+	  Returns the line number of the specified Line, which belongs
+	  to the specified Buffer.
 
-     eeaarrlliieerr((LLiinnee **ll11,, LLiinnee **ll22))
-          Returns TTRRUUEE if ll11 is earlier in the buffer than ll22.
+     earlier(Line *l1, Line *l2)
+	  Returns TRUE if l1 is earlier in the buffer than l2.
 
-     llaatteerr((LLiinnee **ll11,, LLiinnee **ll22))
-          Returns TTRRUUEE if ll11 is later in the buffer than ll22.
+     later(Line *l1, Line *l2)
+	  Returns TRUE if l1 is later in the buffer than l2.
 
-     iiss__llaassttlliinnee((LLiinnee **ll11))
-          Returns TTRRUUEE if ll11 is the last line (i.e. the extra line  at
-          the end, not the last text line) of the buffer.
-
-
-
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                       _P_a_g_e _1_5
+     is_lastline(Line *l1)
+	  Returns TRUE if l1 is the last line (i.e. the extra line  at
+	  the end, not the last text line) of the buffer.
 
 
 
+     25th September 1992				       Page 15
 
 
-     _1_6                                          _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
 
-     iiss__lliinnee00((LLiinnee **ll11))
-          Returns  TTRRUUEE  if ll11 is the 0th line (i.e. the extra line at
-          the start, not the first text line) of the buffer.
 
-     55..33..  PPoossnn
 
-     This structure is very simple; it contains a LLiinnee pointer and  an
-     integer  index  into  the  line's  text,  and is used to record a
+     16 					 Xvi Source Code Notes
+
+     is_line0(Line *l1)
+	  Returns  TRUE  if l1 is the 0th line (i.e. the extra line at
+	  the start, not the first text line) of the buffer.
+
+     5.3.  Posn
+
+     This structure is very simple; it contains a Line pointer and  an
+     integer  index  into  the	line's	text,  and is used to record a
      position within a buffer, e.g. the current cursor position.
 
-     These functions are available for operating on PPoossnn structures:
+     These functions are available for operating on Posn structures:
 
-     ggcchhaarr((PPoossnn **))
-          Returns the character which is at the given position.
+     gchar(Posn *)
+	  Returns the character which is at the given position.
 
-     iinncc((PPoossnn **))
-          Increments the given position, moving  past  end-of-line  to
-          the next line if necessary.  The following type is returned:
+     inc(Posn *)
+	  Increments the given position, moving  past  end-of-line  to
+	  the next line if necessary.  The following type is returned:
 
-            eennuumm mmvvttyyppee {{
-                mmvv__NNOOMMOOVVEE,,    //** aatt bbeeggiinnnniinngg oorr eenndd ooff bbuuffffeerr **//
-                mmvv__SSAAMMEELLIINNEE,,  //** ssttiillll wwiitthhiinn ssaammee lliinnee **//
-                mmvv__CCHHLLIINNEE,,    //** cchhaannggeedd ttoo ddiiffffeerreenntt lliinnee **//
-                mmvv__EEOOLL,,       //** aatt tteerrmmiinnaattiinngg ''\\00'' **//
-            }};;
-
-
-     ddeecc((PPoossnn **))
-          As for iinncc(()) but decrements the position.
-
-     lltt((PPoossnn **pp11,, PPoossnn **pp22))
-          Returns  TTRRUUEE  if the position specified by pp11 is earlier in
-          the buffer than that specified by pp22.
-
-     55..44..  XXvviiwwiinn
-
-     This structure maps a screen window onto a BBuuffffeerr.  It contains:
-
-     +o    a pointer to the BBuuffffeerr structure which it is mapped onto
-
-     +o    the  cursor's  _l_o_g_i_c_a_l  position  in  the  buffer  (a   PPoossnn
-          structure)
-
-     +o    the  cursor's  _p_h_y_s_i_c_a_l  position  in  the  window  (row and
-          column)
-
-     +o    information about size and location of screen window
-
-     +o    current text of status line
-
-     +o    forward and backward pointers to other windows
-
-     Note that there is at least one XXvviiwwiinn for every BBuuffffeerr.
-
-     When the editor was modified  to  support  buffer  windows,  many
-     global   variables   were   moved  into  the  BBuuffffeerr  and  XXvviiwwiinn
+	    enum mvtype {
+		mv_NOMOVE,    /* at beginning or end of buffer */
+		mv_SAMELINE,  /* still within same line */
+		mv_CHLINE,    /* changed to different line */
+		mv_EOL,       /* at terminating '\0' */
+	    };
 
 
-     _P_a_g_e _1_6                                       _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     dec(Posn *)
+	  As for inc() but decrements the position.
+
+     lt(Posn *p1, Posn *p2)
+	  Returns  TRUE  if the position specified by p1 is earlier in
+	  the buffer than that specified by p2.
+
+     5.4.  Xviwin
+
+     This structure maps a screen window onto a Buffer.  It contains:
+
+     o	  a pointer to the Buffer structure which it is mapped onto
+
+     o	  the  cursor's  logical  position  in	the  buffer  (a   Posn
+	  structure)
+
+     o	  the  cursor's  physical  position  in  the  window  (row and
+	  column)
+
+     o	  information about size and location of screen window
+
+     o	  current text of status line
+
+     o	  forward and backward pointers to other windows
+
+     Note that there is at least one Xviwin for every Buffer.
+
+     When the editor was modified  to  support	buffer	windows,  many
+     global   variables   were	 moved	into  the  Buffer  and	Xviwin
 
 
+     Page 16					   25th September 1992
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                          _1_7
 
-     structures; some were left as globals.  For  instance,  the  _u_n_d_o
-     and  _m_a_r_k  facilities  are  obviously buffer-related, but _y_a_n_k is
+
+     Xvi Source Code Notes					    17
+
+     structures; some were left as globals.  For  instance,  the  undo
+     and  mark	facilities  are  obviously buffer-related, but yank is
      useful if it is global (actually static within its  own  module);
-     it was decided that _s_e_a_r_c_h and _r_e_d_o should also be global.
+     it was decided that search and redo should also be global.
 
      Some  modules have their own internal static data structures; for
-     instance, the sseeaarrcchh module remembers the last  pattern  searched
-     for.   Also,  certain  modules  use  data  structures  which  are
-     included in more global ones; e.g. each BBuuffffeerr structure contains
-     some  data  used  only  within  uunnddoo..cc.   This  is  not very well
-     structured, but in practice it's quite clean  because  we  simply
+     instance, the search module remembers the last  pattern  searched
+     for.   Also,  certain  modules  use  data	structures  which  are
+     included in more global ones; e.g. each Buffer structure contains
+     some  data  used  only  within  undo.c.   This  is  not very well
+     structured, but in practice it's quite clean  because  we	simply
      ensure  that  references to such structures are kept local to the
      module which "owns" them.
 
-     55..55..  MMaarrkk
+     5.5.  Mark
 
-     This data structure records a mark (defined by  the  mm  command).
-     It contains a PPoossnn and a character field to hold the letter which
-     defines the  mark.   Each  BBuuffffeerr  contains  an  array  of  these
+     This data structure records a mark (defined by  the  m  command).
+     It contains a Posn and a character field to hold the letter which
+     defines the  mark.   Each	Buffer	contains  an  array  of  these
      structures  for  holding  alphabetic  marks,  plus  one  for  the
-     previous context mark (as used by the '''' and ````  commands).   The
-     file mmaarrkk..cc deals with marks.
+     previous context mark (as used by the '' and ``  commands).   The
+     file mark.c deals with marks.
 
-     55..66..  CChhaannggee
+     5.6.  Change
 
      This  structure  records a single change which has been made to a
-     buffer.  It also contains a pointer, so that  it  may  be  formed
-     into  a  list.   See  the  discussion of uunnddoo..cc below for further
+     buffer.  It also contains a pointer, so that  it  may  be	formed
+     into  a  list.   See  the	discussion of undo.c below for further
      details.
 
-     55..77..  FFlleexxbbuuff
+     5.7.  Flexbuf
 
      This structure is used to store text strings for which the length
      is  unknown.  The following operations are defined for this type.
      All functions take a Flexbuf pointer as a parameter.
 
-     fflleexxnneeww((ff))
-          Initialise a Flexbuf; not needed for static Flexbufs.
+     flexnew(f)
+	  Initialise a Flexbuf; not needed for static Flexbufs.
 
-     fflleexxcclleeaarr((ff))
-          Truncate a Flexbuf  to  zero  length,  but  don't  free  its
-          storage.
+     flexclear(f)
+	  Truncate a Flexbuf  to  zero	length,  but  don't  free  its
+	  storage.
 
-     fflleexxddeelleettee((ff))
-          Free all storage belonging to a Flexbuf.
+     flexdelete(f)
+	  Free all storage belonging to a Flexbuf.
 
-     fflleexxeemmppttyy((ff))
-          Return TTRRUUEE if the Flexbuf is empty.
+     flexempty(f)
+	  Return TRUE if the Flexbuf is empty.
 
-     fflleexxlleenn((ff))
-          Return the number of characters in the Flexbuf.
+     flexlen(f)
+	  Return the number of characters in the Flexbuf.
 
-     fflleexxrrmmcchhaarr((ff))
-          Remove the last character from a Flexbuf.
-
-
-
-
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                       _P_a_g_e _1_7
+     flexrmchar(f)
+	  Remove the last character from a Flexbuf.
 
 
 
 
+     25th September 1992				       Page 17
 
-     _1_8                                          _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
 
-     fflleexxppooppcchh((ff))
-          Remove the first character from a Flexbuf and return it.
 
-     fflleexxggeettssttrr((ff))
-          Return a pointer to the string contained in the Flexbuf.
 
-     fflleexxaaddddcchh((ff,, cc))
-          Add the character cc to the end of the Flexbuf.
 
-     llffoorrmmaatt((ff,, ffmmtt,, ......))
-          A subset of sspprriinnttff(()) but for Flexbufs.
+     18 					 Xvi Source Code Notes
 
-     vvffoorrmmaatt((ff,, ffmmtt,, vvaa__lliisstt))
-          A subset of vvsspprriinnttff(()) but for Flexbufs.
+     flexpopch(f)
+	  Remove the first character from a Flexbuf and return it.
 
-     The  last  two  functions are especially useful, since they avoid
-     the usual problems with the lack of bounds-checking in sspprriinnttff(()).
-     All  code  in  the  editor  itself now uses Flexbufs to avoid the
+     flexgetstr(f)
+	  Return a pointer to the string contained in the Flexbuf.
+
+     flexaddch(f, c)
+	  Add the character c to the end of the Flexbuf.
+
+     lformat(f, fmt, ...)
+	  A subset of sprintf() but for Flexbufs.
+
+     vformat(f, fmt, va_list)
+	  A subset of vsprintf() but for Flexbufs.
+
+     The  last	two  functions are especially useful, since they avoid
+     the usual problems with the lack of bounds-checking in sprintf().
+     All  code	in  the  editor  itself now uses Flexbufs to avoid the
      possibility of buffer overruns, and to reduce  the  size  of  the
      executable.  Some OS-specific modules, however, may still use the
-     pprriinnttff(()) family.  The subset  of  pprriinnttff-like  format  specifiers
+     printf() family.  The subset  of  printf-like  format  specifiers
      implemented  includes those for integers and strings, but not for
      floating-point numbers.
 
-     55..88..  bbooooll__tt
+     5.8.  bool_t
 
-     A simple Boolean type; has  values  TTRRUUEE  and  FFAALLSSEE,  which  are
+     A simple Boolean type; has  values  TRUE  and  FALSE,  which  are
      defined  as  1  and  0  so  as to be compatible with C comparison
      operators.
 
-     55..99..  xxvvEEvveenntt
+     5.9.  xvEvent
 
      This type is defined in the previous section, since it forms part
      of the porting interface.
 
-     55..1100..  VViirrttSSccrr
+     5.10.  VirtScr
 
      This  type  represents  a virtual screen, and is constructed in a
-     similar way to a _c_l_a_s_s.  It contains some function pointers which
+     similar way to a class.  It contains some function pointers which
      may  be  used  to manipulate the screen in various ways, and some
      private data which is used by the implementation of the class.
 
      The old terminal interface, which consisted of a set of disparate
-     functions,  is being replaced by the VViirrttSSccrr interface; the first
+     functions,  is being replaced by the VirtScr interface; the first
      step in this process has been accomplished by the provision of  a
-     default VViirrttSSccrr implementation using the old primitive functions.
-     New, native, VViirrttSSccrr implementations may now be coded, which will
+     default VirtScr implementation using the old primitive functions.
+     New, native, VirtScr implementations may now be coded, which will
      increase the efficiency of screen output.
 
-     As  the  final  stage,  a windowing implementation of the VViirrttSSccrr
-     class  will   be   provided,   using   the   underlying   VViirrttSSccrr
+     As  the  final  stage,  a windowing implementation of the VirtScr
+     class  will   be	provided,   using   the   underlying   VirtScr
      implementations,  and the window-handling code in the editor will
-     be modified to that each occurrence of an XXvviiwwiinn  references  its
-     own  VViirrttSSccrr.  It will then be possible to build a version of the
+     be modified to that each occurrence of an Xviwin  references  its
+     own  VirtScr.  It will then be possible to build a version of the
      editor which operates in a true windowing environment by using  a
      separate  screen  window  for each buffer, instead of the current
 
 
-     _P_a_g_e _1_8                                       _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     Page 18					   25th September 1992
 
 
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                          _1_9
+     Xvi Source Code Notes					    19
 
      vertical-split method.
 
-     A full definition of the  VViirrttSSccrr  type  will  be  found  in  the
+     A full definition of the  VirtScr	type  will  be	found  in  the
      previous section.
 
-     55..1111..  GGlloobbaall VVaarriiaabblleess
+     5.11.  Global Variables
 
      There  are  only a few global variables in the editor.  These are
      the important ones:
 
-     ccuurrbbuuff
-            pointer to the current BBuuffffeerr
+     curbuf
+	    pointer to the current Buffer
 
-     ccuurrwwiinn
-            pointer to the current XXvviiwwiinn
+     curwin
+	    pointer to the current Xviwin
 
-     SSttaattee
-            the current _s_t_a_t_e of the editor; controls what we do  with
-            input characters.  The value is one of the following:
+     State
+	    the current state of the editor; controls what we do  with
+	    input characters.  The value is one of the following:
 
-            NNOORRMMAALL    The  default  state;  vvii-mode  commands  may  be
-                      executed
+	    NORMAL    The  default  state;  vi-mode  commands  may  be
+		      executed
 
-            IINNSSEERRTT    Insert mode, i.e. characters typed get  inserted
-                      into the current buffer
+	    INSERT    Insert mode, i.e. characters typed get  inserted
+		      into the current buffer
 
-            RREEPPLLAACCEE
-                      Replace  mode,  characters  in  the  buffer  get
-                      overwritten by what is typed
+	    REPLACE
+		      Replace  mode,  characters  in  the  buffer  get
+		      overwritten by what is typed
 
-            CCMMDDLLIINNEE
-                      Reading a colon-command, regular  expression  or
-                      pipe command
+	    CMDLINE
+		      Reading a colon-command, regular	expression  or
+		      pipe command
 
-            DDIISSPPLLAAYY
-                      Displaying  text,  i.e.  ::pp  command, or ::sseett or
-                      ::mmaapp with no argument
+	    DISPLAY
+		      Displaying  text,  i.e.  :p  command, or :set or
+		      :map with no argument
 
-     eecchhoo
-            This  variable   controls   what   output   is   currently
-            displayable.   It  is  used  at  various points within the
-            editor to stop certain output which is either  undesirable
-            or  sub-optimal.   It  must  always  be  restored  to  its
-            previous  value  after  the  code  which  changed  it  has
-            finished what it is doing.
+     echo
+	    This  variable   controls	what   output	is   currently
+	    displayable.   It  is  used  at  various points within the
+	    editor to stop certain output which is either  undesirable
+	    or	sub-optimal.   It  must  always  be  restored  to  its
+	    previous  value  after  the  code  which  changed  it  has
+	    finished what it is doing.
 
-     kkbbddiinnttrr
-            This  can  be  set to a non-zero value to indicate that an
-            asynchronous user-generated interrupt (such as a  keyboard
-            interrupt)  has  occurred.   See  the  discussion of event
-            handling in the previous section.
+     kbdintr
+	    This  can  be  set to a non-zero value to indicate that an
+	    asynchronous user-generated interrupt (such as a  keyboard
+	    interrupt)	has  occurred.	 See  the  discussion of event
+	    handling in the previous section.
 
-     66..  SSOOUURRCCEE FFIILLEESS
+     6.  SOURCE FILES
 
-     The header file xxvvii..hh contains  all  the  type  definitions  used
+     The header file xvi.h contains  all  the  type  definitions  used
      within the editor, as well as function declarations etc.
 
 
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                       _P_a_g_e _1_9
+     25th September 1992				       Page 19
 
 
 
 
 
-     _2_0                                          _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
+     20 					 Xvi Source Code Notes
 
      The  following  source  files  form  the primary interface to the
      editor:
 
-     ssttaarrttuupp..cc
-               Entry point for the editor.  Deals  with  argument  and
-               option   parsing  and  initial  setup,  calling  module
-               initialisation functions as necessary.
+     startup.c
+	       Entry point for the editor.  Deals  with  argument  and
+	       option	parsing  and  initial  setup,  calling	module
+	       initialisation functions as necessary.
 
-     eevveennttss..cc
-               Contains the routine xxvvii__hhaannddllee__eevveenntt(()), which  is  the
-               entry  point for handling input to the editor; input is
-               passed to different routines  according  to  the  SSttaattee
-               variable.   Timeouts on input are also handled here, by
-               calling appropriate routines in mmaapp..cc or pprreesseerrvvee..cc.
+     events.c
+	       Contains the routine xvi_handle_event(), which  is  the
+	       entry  point for handling input to the editor; input is
+	       passed to different routines  according	to  the  State
+	       variable.   Timeouts on input are also handled here, by
+	       calling appropriate routines in map.c or preserve.c.
 
-     eeddiitt..cc    Deals with insert and replace modes.
+     edit.c    Deals with insert and replace modes.
 
-     nnoorrmmaall..cc
-               Handles normal-mode commands.
+     normal.c
+	       Handles normal-mode commands.
 
-     mmaapp..cc     This file is responsible for all  input  mapping  (both
-               set up by the ::mmaapp command and internally for function-
-               key mappings; it also  implements  a  stuff-characters-
-               into-the-input-stream   function  for  use  within  the
-               editor.   This  is  used,  for  example,  to  implement
-               command  redo (but _n_o_t to implement "undo" and "put" as
-               in STEVIE).
+     map.c     This file is responsible for all  input	mapping  (both
+	       set up by the :map command and internally for function-
+	       key mappings; it also  implements  a  stuff-characters-
+	       into-the-input-stream   function  for  use  within  the
+	       editor.	 This  is  used,  for  example,  to  implement
+	       command	redo (but not to implement "undo" and "put" as
+	       in STEVIE).
 
 
-     Colon (eexx-type) commands are handled by this group:
+     Colon (ex-type) commands are handled by this group:
 
-     ccmmddlliinnee..cc
-               Decodes and executes colon commands.
+     cmdline.c
+	       Decodes and executes colon commands.
 
-     eexx__ccmmddss11..cc
-               File-, BBuuffffeerr- and XXvviiwwiinn-related colon commands.
+     ex_cmds1.c
+	       File-, Buffer- and Xviwin-related colon commands.
 
-     eexx__ccmmddss22..cc
-               Other colon commands (e.g. shell escape).
+     ex_cmds2.c
+	       Other colon commands (e.g. shell escape).
 
 
      Screen updating is done within the following files:
 
-     ssccrreeeenn..cc
-               Screen updating code, including handling of  line-based
-               entry  (for  colon  commands, searches etc) as they are
-               typed  in,  and  display-mode  stuff   (for   parameter
-               displaying, ::gg//rree//pp etc).
+     screen.c
+	       Screen updating code, including handling of  line-based
+	       entry  (for  colon  commands, searches etc) as they are
+	       typed  in,  and	display-mode  stuff   (for   parameter
+	       displaying, :g/re/p etc).
 
-     ccuurrssoorr..cc
-               This  file  contains  the single function ccuurrssuuppddaattee(()),
-               which is responsible for deciding  where  the  physical
-               screen  cursor  should be, according to the position of
-               the logical cursor in the buffer and  the  position  of
-               the  window onto that buffer.  This routine is not very
-               optimal, and will probably disappear in due course.
-
-
-     _P_a_g_e _2_0                                       _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+     cursor.c
+	       This  file  contains  the single function cursupdate(),
+	       which is responsible for deciding  where  the  physical
+	       screen  cursor  should be, according to the position of
+	       the logical cursor in the buffer and  the  position  of
+	       the  window onto that buffer.  This routine is not very
+	       optimal, and will probably disappear in due course.
 
 
+     Page 20					   25th September 1992
 
 
 
-     _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s                                          _2_1
 
-     ddeeffssccrr..cc
-               This file contains the default  implementation  of  the
-               VViirrttSSccrr  class,  on  top  of  the  old  terminal/system
-               interface.
 
-     ssttaattuuss..cc
-               Functions to update the status line of a window;  there
-               are  different  functions  to  display file information
-               (name, position etc.)  and error/information messages.
+     Xvi Source Code Notes					    21
+
+     defscr.c
+	       This file contains the default  implementation  of  the
+	       VirtScr	class,	on  top  of  the  old  terminal/system
+	       interface.
+
+     status.c
+	       Functions to update the status line of a window;  there
+	       are  different  functions  to  display file information
+	       (name, position etc.)  and error/information messages.
 
 
      These files deal with specific areas of functionality:
 
-     ffiinndd..cc    Search functions:  all  kinds  of  searches,  including
-               character-based   and  word-based  commands,  sections,
-               paragraphs,  and  the  interface  to  "real"  searching
-               (which is actually done in sseeaarrcchh..cc).
+     find.c    Search functions:  all  kinds  of  searches,  including
+	       character-based	 and  word-based  commands,  sections,
+	       paragraphs,  and  the  interface  to  "real"  searching
+	       (which is actually done in search.c).
 
-     mmaarrkk..cc    Provides  primitives  to  record marks within a BBuuffffeerr,
-               and to find the marks again.
+     mark.c    Provides  primitives  to  record marks within a Buffer,
+	       and to find the marks again.
 
-     mmoouussee..cc
-               Code to  handle  mice  moving  the  cursor  around  and
-               resizing windows.
+     mouse.c
+	       Code to	handle	mice  moving  the  cursor  around  and
+	       resizing windows.
 
-     ppaarraamm..[[cchh]]
-               Code  to  handle setting of, and access to, parameters.
-               (These are things like ttaabbssttooppss, aauuttooiinnddeenntt, etc.)
+     param.[ch]
+	       Code  to  handle setting of, and access to, parameters.
+	       (These are things like tabstops, autoindent, etc.)
 
-     ppiippee..cc    Handles piping through system commands.
+     pipe.c    Handles piping through system commands.
 
-     pprreesseerrvvee..cc
-               File preservation routines.
+     preserve.c
+	       File preservation routines.
 
-     sseeaarrcchh..cc
-               Code  for  pattern-searching  in  a  buffer,  and   for
-               substitutions  and  global execution.  Uses rreeggeexxpp..[[cchh]]
-               for the actual regular expression stuff.
+     search.c
+	       Code  for  pattern-searching  in  a  buffer,  and   for
+	       substitutions  and  global execution.  Uses regexp.[ch]
+	       for the actual regular expression stuff.
 
-     ttaaggss..cc    Routines to handle tags -- for ::ttaagg, --tt and ^^]].
+     tags.c    Routines to handle tags -- for :tag, -t and ^].
 
-     uunnddoo..cc    Code to deal with doing and undoing;  i.e.  making  and
-               unmaking  changes to a buffer.  This is one of the more
-               complex and delicate files.
+     undo.c    Code to deal with doing and undoing;  i.e.  making  and
+	       unmaking  changes to a buffer.  This is one of the more
+	       complex and delicate files.
 
-     yyaannkkppuutt..cc
-               Code to deal with yanking and putting  text,  including
-               named buffers.
+     yankput.c
+	       Code to deal with yanking and putting  text,  including
+	       named buffers.
 
 
      while these files provide lower-level functions:
 
-     aalllloocc..cc
-               Memory allocation routines.
+     alloc.c
+	       Memory allocation routines.
 
 
 
 
-     _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2                                       _P_a_g_e _2_1
-
-
-
-
-
-     _2_2                                          _X_v_i _S_o_u_r_c_e _C_o_d_e _N_o_t_e_s
-
-     aasscciiii..[[cchh]]
-               Deals   with   the  visual  representation  of  special
-               characters on the display (e.g. tabs, control chars).
-
-     bbuuffffeerrss..cc
-               Routines dealing with the  allocation  and  freeing  of
-               BBuuffffeerrss.
-
-     ffiilleeiioo..cc
-               File  I/O routines; reading, writing, re-editing files.
-               Also handling of the ffoorrmmaatt parameter.
-
-     fflleexxbbuuff..cc
-               Flexible-length character-buffer routines.
-
-     mmiissccccmmddss..cc
-               Miscellaneous functions.
-
-     mmoovveemmeenntt..cc
-               Code to deal with  moving  the  cursor  around  in  the
-               buffer, and scrolling the screen etc.
-
-     ppttrrffuunncc..[[cchh]]
-               Primitives to handle PPoossnn structures; including various
-               operators to compare positions in a text buffer.
-
-     rreeggeexxpp..[[cchh]],, rreeggmmaaggiicc..hh
-               Regular-expression stuff, originally written  by  Henry
-               Spencer  (thanks  Henry)  and  slightly  hacked for use
-               within xxvvii.
-
-     ssiiggnnaall..cc
-               Handling  of  terminal-generated  signals  in  an  ANSI
-               environment.
-
-     vviirrttssccrr..hh
-               Virtual  Screen  interface  definition.   This is a new
-               part of xxvvii, and is not yet fully completed.   When  it
-               is  finished,  it will provide the ability to implement
-               "native"  versions  of  xxvvii  under  various   windowing
-               systems, in a clean and wholesome way.  Currently there
-               is a single instance of the  VViirrttSSccrr  class,  which  is
-               defined on top of the old system/terminal interface.
-
-     wwiinnddoowwss..cc
-               Code to deal with creating, deleting, resizing windows.
-
-     vveerrssiioonn..cc
-               Contains only the version string.
+     25th September 1992				       Page 21
 
 
 
 
 
+     22 					 Xvi Source Code Notes
+
+     ascii.[ch]
+	       Deals   with   the  visual  representation  of  special
+	       characters on the display (e.g. tabs, control chars).
+
+     buffers.c
+	       Routines dealing with the  allocation  and  freeing  of
+	       Buffers.
+
+     fileio.c
+	       File  I/O routines; reading, writing, re-editing files.
+	       Also handling of the format parameter.
+
+     flexbuf.c
+	       Flexible-length character-buffer routines.
+
+     misccmds.c
+	       Miscellaneous functions.
+
+     movement.c
+	       Code to deal with  moving  the  cursor  around  in  the
+	       buffer, and scrolling the screen etc.
+
+     ptrfunc.[ch]
+	       Primitives to handle Posn structures; including various
+	       operators to compare positions in a text buffer.
+
+     regexp.[ch], regmagic.h
+	       Regular-expression stuff, originally written  by  Henry
+	       Spencer	(thanks  Henry)  and  slightly	hacked for use
+	       within xvi.
+
+     signal.c
+	       Handling  of  terminal-generated  signals  in  an  ANSI
+	       environment.
+
+     virtscr.h
+	       Virtual	Screen	interface  definition.	 This is a new
+	       part of xvi, and is not yet fully completed.   When  it
+	       is  finished,  it will provide the ability to implement
+	       "native"  versions  of  xvi  under  various   windowing
+	       systems, in a clean and wholesome way.  Currently there
+	       is a single instance of the  VirtScr  class,  which  is
+	       defined on top of the old system/terminal interface.
+
+     windows.c
+	       Code to deal with creating, deleting, resizing windows.
+
+     version.c
+	       Contains only the version string.
 
 
 
 
-     _P_a_g_e _2_2                                       _2_5_t_h _S_e_p_t_e_m_b_e_r _1_9_9_2
+
+
+
+
+
+     Page 22					   25th September 1992
 
 
