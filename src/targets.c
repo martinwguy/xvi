@@ -279,6 +279,22 @@ Cmd	*cmd;
 	    MakeInclusive(cmd);
 	}
 
+	if (n == 1 && cmd->cmd_operator == 'd' && lc == 'w') {
+	    if (inc(newpos)==mv_EOL) {
+		/* Special case for deleting the last word of the file:
+		 * fwd_word() returns the last char of the word
+		 * instead of the following space char, so either the
+		 * command now needs to include the target character
+		 * or we can just not undo the inc() used to test for
+		 * this case.
+		 * When deleting the last word of all other lines, the
+		 * above inc() returns mv_CHLINE.
+		 */
+		MakeInclusive(cmd);
+	    }
+	    dec(newpos);	/* Undo the bogus move */
+	}
+
 	if (skip_whites == FALSE) {
 	    (void) dec(newpos);
 	}
