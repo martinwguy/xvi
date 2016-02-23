@@ -981,6 +981,7 @@ extern	bool_t	lformat P((Flexbuf *, char *, ...));
  * map.c
  */
 extern	void	stuff P((char *, ...));
+extern	void	unstuff P((void));
 extern	int	map_getc P((void));
 extern	void	map_char P((int));
 extern	void	map_timeout P((void));

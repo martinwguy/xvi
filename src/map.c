@@ -119,6 +119,16 @@ stuff
     va_end(argp);
 }
 
+/* Undo all previous "stuff"'s, leaving the input buffer empty.
+ * This is needed when a "redo" command has been stuffed into the
+ * input but its execution fails half way through.
+ */
+void
+unstuff()
+{
+	flexclear(npos.mp_dest);
+}
+
 /*
  * This routine inserts a newly-arrived character into the raw input queue.
  */

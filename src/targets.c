@@ -339,6 +339,11 @@ Cmd	*cmd;
     }
     if (pos != NULL) {
 	cmd->cmd_target = *pos;
+    } else {
+	/* When redoing, a failed search's replacement text gets executed as
+	 * vi commands, so if a search fails, cancel stuffed input
+	 */
+	unstuff();
     }
 }
 
