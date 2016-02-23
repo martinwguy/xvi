@@ -455,8 +455,14 @@ bool_t	skip_white;
 
     pos = *p;
 
-    if (inc(&pos) == mv_NOMOVE)
+    switch (inc(&pos)) {
+    case mv_NOMOVE:
 	return(NULL);
+    case mv_EOL:
+	/* At end of file we get EOL then NOMOVE. */
+	if (inc(&pos) == mv_NOMOVE) return(NULL);
+	else dec(&pos);
+    }
 
     /*
      * If we're in the middle of a word, we just have to
