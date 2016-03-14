@@ -287,7 +287,7 @@ Xviwin	*window;
  * Interface used by rest of editor code to _replchars(). We do two
  * extra things here: call init_change_data() and push the anti-change
  * onto the undo stack. These are only valid when we are making a real
- * change; _repllines() gets called when we are undoing or redoing a
+ * change; _replchars() gets called when we are undoing or redoing a
  * change, when we don't want those things to happen.
  */
 void
@@ -474,6 +474,8 @@ char	*newstring;
     while (*from != '\0') {
 	*to++ = *from++;
     }
+
+    xvUpdateAllBufferWindows(curbuf);
 
     buffer->b_flags |= FL_MODIFIED;
 
