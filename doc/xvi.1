@@ -749,24 +749,10 @@ and
 .SH BUGS
 See also http://github.com/martinwguy/xvi/issues
 .IP \(bu
-When the cursor is on the last word of a buffer,
-the command
-.B dw 
-leaves the last character of the word undeleted.
-.IP \(bu
 Some screen updates do not get shown properly when buffers are split,
 and certain commands (e.g.
 .BR x )
 are executed.
-.IP \(bu
-If you do something like
-\fBcf.WORD\fR\^<\^\fIesc\fR\^>
-and then redo it, and the
-.B f.
-fails, then the
-\fBWORD\fR\^<\^\fIesc\fR\^>
-gets taken as normal input.
-The rest of the input should really be cancelled when part of a redo fails.
 .IP \(bu
 Most
 .BR termcap (5)
