@@ -462,6 +462,8 @@ bool_t	skip_white;
 	/* At end of file we get EOL then NOMOVE. */
 	if (inc(&pos) == mv_NOMOVE) return(NULL);
 	else dec(&pos);
+    default:
+	;
     }
 
     /*
