@@ -17,9 +17,6 @@ INSTALL?=install
 MAKE?=make
 
 OPTFLAG = -O2
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	OPTFLAG = -O0
-endif
 
 # Default target for "make"
 all:
@@ -38,6 +35,3 @@ install: all
 clean:
 	$(MAKE) -C src -f makefile.pos clean
 	$(MAKE) -C doc clean
-ifneq (,$(DEB_BUILD_ARCH))
-	dh_clean
-endif
