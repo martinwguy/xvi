@@ -309,7 +309,7 @@ char	*argv[];
     {
 	struct sigaction act;
 	act.sa_handler = win_sig_handler;
-	act.sa_mask = 0;
+	sigemptyset(&act.sa_mask);
 	act.sa_flags = 0;
 	sigaction(SIGWINCH, &act, NULL);
     }
