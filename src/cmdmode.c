@@ -25,7 +25,7 @@
  * Size of command buffer - we won't allow anything more
  * to be typed when we get to this limit.
  */
-#define	CMDSZ	80
+#define	CMDSZ	132
 
 static	char		inbuf[CMDSZ];		/* command input buffer */
 static	unsigned int	inpos = 0;		/* posn to put next input char */

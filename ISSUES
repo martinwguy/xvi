@@ -1,0 +1,27 @@
+----------------------------------------------------------------------
+Screen corruption when exposing a line the width of the screen
+
+Repeat-by:
+
+Create a long file containing one line the exact width of the screen
+followed by another the width of the screen minus one character.
+
+Scroll down until the lines are off the top of the screen.
+
+Bring the lines back onto the screen either by moving up or by ^Y-ing.
+
+Result:
+
+When the "width-1" line is exposed it is intact but when the "width"
+line above it is exposed the "width-1" line's final character disappears
+(or is replaced by a space).  It's still there really, as shown by a
+^R redraw. It's just not displayed any more.
+
+The same effect can be seen by creating two lines of width-1 characters
+then moving on to the first of them and adding a character in any way
+(e.g. "Ax" or "ix"). The cursor moves to the column 0 of the second line
+as it should and the last character of the 2nd line disappears.
+Stranger still, if you have lots of consecutive lines of width-1 characters
+and append a character to one of them, the last character disappears from
+all the following consecutive lines!
+----------------------------------------------------------------------
