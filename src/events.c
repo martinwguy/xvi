@@ -93,6 +93,9 @@ xvEvent	*ev;
     case Ev_breakin:
 	if (State == DISPLAY) {
 	    map_char(CTRL('C'));
+	} else if (State == CMDLINE) {
+	    cmd_input(curwin, ESC);
+	    show_file_info(curwin, TRUE);
 	} else {
 	    /*
 	     * We don't have to handle this any better; any code
