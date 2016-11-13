@@ -57,8 +57,8 @@ wxvi:		$(GENOBJ) $(MACHOBJ)
 
 purify:		$(GENOBJ) $(MACHOBJ)
 		$(CC) $(CFLAGS) -c -D_exit=exit unix.c
-		PURIFYHOME=$(PURIFYHOME) $(PURIFY) $(CC) $(CFLAGS) -o xvi \
-			$(GENOBJ) $(MACHOBJ) $(LIBS)
+		PURIFYHOME=$(PURIFYHOME) $(PURIFY) $(CC) $(CFLAGS) $(LDFLAGS) \
+			-o xvi $(GENOBJ) $(MACHOBJ) $(LIBS)
 
 .c.o:		$< $(GENINC) $(MACHINC) param.c
 		$(CC) $(CFLAGS) -c -o $@ $<

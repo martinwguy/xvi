@@ -60,10 +60,10 @@ ALL=		$(FRONT) $(BACK)
 all:		$(ALL)
 
 $(FRONT):	$(FRONTOBJ)
-		$(CC) $(CFLAGS) -o $@ $(FRONTOBJ) $(FRONTLIB)
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(FRONTOBJ) $(FRONTLIB)
 
 $(BACK):	$(BACKOBJ)
-		$(CC) $(CFLAGS) -o $@ $(BACKOBJ) $(BACKLIB)
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(BACKOBJ) $(BACKLIB)
 
 $(FRONTOBJ):	$(FRONTSRC) $(GENINC) $(MACHINC)
 		$(CC) $(CFLAGS) -DXVI_MAINPROG=\"$(BACK)\" \

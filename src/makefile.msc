@@ -71,7 +71,7 @@ LINKFILE=	xvi.lnk
 all:		xvi.exe
 
 xvi.exe:	$(GENOBJ) $(MACHOBJ) $(LINKFILE) version.c
-		$(CC) $(CFLAGS) -c version.c
+		$(CC) $(CFLAGS) $(LDFLAGS) -c version.c
 		$(LD) @$(LINKFILE)
 
 $(LINKFILE):	$(THISFILE)

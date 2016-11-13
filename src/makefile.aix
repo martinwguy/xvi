@@ -59,7 +59,7 @@ GENOBJ=		alloc.o altstack.o ascii.o buffers.o \
 all:		xvi
 
 xvi:		$(GENOBJ) $(MACHOBJ)
-		$(CC) $(CFLAGS) -o xvi $(GENOBJ) $(MACHOBJ) $(LIBS)
+		$(CC) $(CFLAGS) $(LDFLAGS) -o xvi $(GENOBJ) $(MACHOBJ) $(LIBS)
 
 .c.o:		$< $(GENINC) $(MACHINC) param.c
 		$(CC) $(CFLAGS) -c -o $@ $<
