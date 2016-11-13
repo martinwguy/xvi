@@ -185,6 +185,12 @@ short		ospeed;			/* tty's baud rate */
 static int	kb_nchars;
 
 /*
+ * The current input timeout to use for checking for pending
+ * keyboard input.
+ */
+static long current_timeout = DEF_TIMEOUT;
+
+/*
  * If this variable is TRUE, we can call subshells.
  * Set to TRUE in sys_init().
  */
@@ -204,8 +210,28 @@ kbgetc()
     static unsigned char	kbuf[48];
     static unsigned char	*kbp;
 
+    if (kbdintr == TRUE)
+	return EOF;
+
     if (kb_nchars <= 0) {
-	int nread;
+        fd_set rfds;
+        struct timeval tv;
+        int retval;
+        int nread;
+
+        FD_ZERO(&rfds);
+        FD_SET(0, &rfds);
+        while (1) {
+	    tv.tv_sec = (long) (current_timeout / 1000);
+	    tv.tv_usec = ((long) current_timeout * 1000) % (long) 1000000;
+            retval = select(1, &rfds, NULL, NULL, &tv);
+            if (retval > 0)
+                 break;
+            if (retval == 0)
+                return EOF;
+            if (errno == EINTR)
+                continue;
+        }
 
 	if ((nread = read(0, (char *) kbuf, sizeof kbuf)) <= 0) {
 	    return EOF;
@@ -227,38 +253,22 @@ kbgetc()
     return(*kbp++);
 }
 
-#ifdef TERMIO
-
 /*
  * Set a timeout on standard input. 0 means no timeout.
  *
- * This depends on raw_state having been properly initialized, which
- * should have been done by sys_startv().
  */
 static void
 input_timeout(msec)
 long	msec;
 {
-    int		vtime;
-    static int	lastvtime;
-
     /*
-     * If the device state hasn't been changed since last time, we
+     * If the current timeout hasn't been changed since last time, we
      * don't need to do anything.
      */
-    if ((vtime = (msec + 99) / 100) != lastvtime) {
-	lastvtime = vtime;
-	raw_state.c_cc[VMIN] = (vtime == 0 ? 1 : 0);
-	raw_state.c_cc[VTIME] = vtime;
-#ifdef __hpux
-	setstate((char *)&raw_state);
-#else
-	setstate(&raw_state);
-#endif
+    if (msec != current_timeout) {
+	current_timeout = msec;
     }
 }
-
-#endif	/* TERMIO */
 
 /*
  * Get a character from the keyboard.
@@ -285,35 +295,12 @@ long	timeout;
      */
     (void) fflush(stdout);
 
-#ifdef TERMIO
     if (timeout != 0) {
 	input_timeout(timeout);
 	c = kbgetc();
-	input_timeout(0L);
+	input_timeout(DEF_TIMEOUT);
 	return(c);
     }
-#else	/* no TERMIO */
-    if (timeout != 0) {
-	struct timeval	tv;
-	fd_set_type	readfds;
-
-	tv.tv_sec = (long) (timeout / 1000);
-	tv.tv_usec = ((long) timeout * 1000) % (long) 1000000;
-
-	FD_ZERO(&readfds);
-	FD_SET(0, &readfds);
-
-	/*
-	 * If select does not return 0, some input is available
-	 * (ignoring the possibility of errors). Otherwise, we
-	 * timed out, so return EOF.
-	 */
-	if (select(1, &readfds, (fd_set_type *) NULL,
-		    (fd_set_type *) NULL, &tv) == 0) {
-	    return(EOF);
-	}
-    }
-#endif	/* no TERMIO */
 
     /*
      * Keep trying until we get at least one character,
