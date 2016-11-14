@@ -227,6 +227,7 @@ int	ch;
 	    update_cline(win, colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
+	case CTRL('C'):
 	case ESC:
 	    inpos = 0; inend = 0;
 	    flexclear(&win->w_statusline);
