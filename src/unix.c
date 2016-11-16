@@ -57,6 +57,12 @@ FILE *fdopen(int fd, const char *mode);
 #	include <sys/wait.h>
 #endif
 
+#if defined  _POSIX_C_SOURCE && _POSIX_C_SOURCE >= 200112L
+#include	<sys/select.h>
+#else
+#include	<sys/time.h>
+#endif
+
 #if defined(sun) && !defined(POSIX)
 #   ifndef TERMIOS
 #	define	TERMIOS
