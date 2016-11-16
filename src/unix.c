@@ -398,7 +398,7 @@ char	*command;
 }
 
 #if defined(ITIMER_REAL) && !defined(cray)
-#   if defined(POSIX) || defined(HPUX)
+#   if defined(POSIX) || defined(HPUX) || defined(AIX)
 	static void nothing P((int i)) { }
 #   else
 	static int  nothing() { return(0); }

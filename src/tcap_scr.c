@@ -58,19 +58,6 @@
 
 
 #include "xvi.h"
-/*
- * CTRL is defined by term.h (or by a file it includes)
- * so we undefine it here to avoid conflicts with the
- * version defined in "xvi.h".
- */
-#undef	CTRL
-
-#include <term.h>
-
-/* and make sure it it exists, just in case */
-#ifndef CTRL
-#define CTRL(x) ((x) & 0x1f)
-#endif
 
 static	VirtScr		*newscr P((VirtScr *, genptr *));
 static	void		closescr P((VirtScr *));
