@@ -175,7 +175,7 @@ int	ch;
 	    update_cline(win,colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
-	case ESC:
+	case '\t':
 	{
 	    char	*to_expand;
 	    char	*expansion;
@@ -226,6 +226,14 @@ int	ch;
 	    (void) flexaddch(&win->w_statusline, inbuf[0]);
 	    update_cline(win, colposn[inpos]);
 	    return(cmd_INCOMPLETE);
+
+	case CTRL('C'):
+	case ESC:
+	    inpos = 0; inend = 0;
+	    flexclear(&win->w_statusline);
+	    update_cline(win, colposn[inpos]);
+	    State = NORMAL;
+	    return(cmd_CANCEL);
 
 	/* Simple line editing */
 
