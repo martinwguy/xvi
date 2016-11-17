@@ -91,10 +91,9 @@ xvEvent	*ev;
 	break;
 
     case Ev_breakin:
-	if (State == DISPLAY) {
-	    map_char(CTRL('C'));
-	} else if (State == CMDLINE) {
-	    keystrokes++;
+	if (State == DISPLAY || State == CMDLINE ||
+	    State == INSERT || State == REPLACE ||
+	    State == NORMAL || State == SUBNORMAL) {
 	    map_char(CTRL('C'));
 	} else {
 	    /*
