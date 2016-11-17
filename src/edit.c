@@ -91,7 +91,9 @@ int	c;
 	 * it for normal characters, or for literal-next mode.
 	 */
 	switch (c) {
-	case ESC:	/* an escape ends input mode */
+	case CTRL('C'):	/* an escape or ^C ends input mode */
+	    show_message(curwin, "Interrupted");
+	case ESC:
 	{
 	    char	*cltext;
 
@@ -481,7 +483,9 @@ int	c;
 
     } else if (!literal_next) {
 	switch (c) {
-	case ESC:			/* an escape ends input mode */
+	case CTRL('C'):			/* an escape or ^C ends input mode */
+	    show_message(curwin, "Interrupted");
+	case ESC:
 	    end_replace(c);
 	    return(TRUE);
 
