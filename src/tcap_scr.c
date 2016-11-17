@@ -59,6 +59,8 @@
 
 #include "xvi.h"
 
+#include <termcap.h>
+
 static	VirtScr		*newscr P((VirtScr *, genptr *));
 static	void		closescr P((VirtScr *));
 static	void		clear_all P((VirtScr *));
@@ -170,8 +172,8 @@ static	char	*VB;			/* visual bell */
 static	char	*colours[10];		/* colour caps c0 .. c9 */
 static	int	ncolours;		/* number of colour caps we have */
 
-static	char	BC;			/* backspace char */
-static	char	ND;			/* backspace char */
+static	char	bc;			/* backspace char */
+static	char	ND;			/* non-destructive forwward space */
 static	char	DO;			/* down one line */
 
 static	bool_t	can_backspace;		/* true if can backspace (bs/bc) */
@@ -871,9 +873,9 @@ unsigned int	*pcolumns;
 
     cp = tgetstr("bc", &strp);	/* backspace char if not ^H */
     if (cp != NULL && cp[1] == '\0')
-	BC = *cp;
+	bc = *cp;
     else
-	BC = '\b';
+	bc = '\b';
 
     cp = tgetstr("nd", &strp);	/* non-destructive forward space */
     if (cp != NULL && cp[1] == '\0') {
@@ -1456,7 +1458,7 @@ xyupdate()
 			moutch('\r');
 		    } else {
 			for (n = hdisp; n < 0; n++) {
-			    moutch(BC);
+			    moutch(bc);
 			}
 		    }
 		} else if (hdisp > 0) {
@@ -1495,7 +1497,7 @@ xyupdate()
 		     * Back a bit.
 		     */
 		    for (n = hdisp; n < 0; n++) {
-			moutch(BC);
+			moutch(bc);
 		    }
 
 		} else {
