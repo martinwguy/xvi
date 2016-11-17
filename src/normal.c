@@ -108,6 +108,16 @@ register int	c;
 	    return(FALSE);
 	}
 
+	/*
+	 * Abort on ^C, also.
+	 */
+	if (cmd->cmd_ch2 == CTRL('C')) {
+	    cmd->cmd_operator = NOP;
+	    cmd->cmd_prenum = 0;
+	    show_message(curwin, "Interrupted");
+	    return(TRUE);
+	}
+
     } else {
 
 	cmd->cmd_ch1 = c;
