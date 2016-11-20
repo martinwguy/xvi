@@ -59,7 +59,11 @@
 
 #include "xvi.h"
 
+#ifdef AIX
+#include <curses.h>
+#else
 #include <termcap.h>
+#endif
 
 static	VirtScr		*newscr P((VirtScr *, genptr *));
 static	void		closescr P((VirtScr *));
