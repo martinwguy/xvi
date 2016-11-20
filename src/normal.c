@@ -42,6 +42,20 @@ register int	c;
 
     cmd = curwin->w_cmd;
 
+    if (cmd->cmd_prenum != 0) {
+    	if (c == ESC) {
+	    cmd->cmd_operator = NOP;
+	    cmd->cmd_prenum = 0;
+	    return(FALSE);
+    	}
+    	if (c == CTRL('C')) {
+	    cmd->cmd_operator = NOP;
+	    show_message(curwin, "Interrupted");
+	    cmd->cmd_prenum = 0;
+	    return(TRUE);
+	}
+    }
+
     /*
      * If the character is a digit, and it is not a leading '0',
      * compute cmd->cmd_prenum instead of doing a command.  Leading
