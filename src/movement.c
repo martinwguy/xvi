@@ -312,8 +312,7 @@ int	index;
     oldline = p->p_line;
     p->p_line = lp;
     p->p_index = index;
-    if (oldline != lp)
-	info_update(win);
+    info_update(win);
 }
 
 /*
@@ -347,12 +346,12 @@ int		halfwinsize;
     xvUpdateAllBufferWindows(win->w_buffer);
 
     /*
-     * The result of calling show_file_info here is that if the
+     * The result of calling info_update here is that if the
      * cursor moves a long away - e.g. for a "G" command or a search
      * - the status line is updated with the correct line number.
      * This is a small cost compared to updating the whole window.
      */
-    show_file_info(win, TRUE);
+    info_update(win);
 }
 
 /*

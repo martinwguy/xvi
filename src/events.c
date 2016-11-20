@@ -256,7 +256,11 @@ int	c;
 	/*
 	 * Put the status line back as it should be.
 	 */
-	show_file_info(curwin, TRUE);
+	if (c == CTRL('C')) {
+	    show_message(curwin, "Interrupted");
+	} else {
+	    info_update(curwin);
+	}
 	retval = TRUE;
 	break;
 
