@@ -24,6 +24,23 @@
 
 /***************************************************************
  *                                                             *
+ * SECTION 0: PORTABILITY HACKS                                *
+ *                                                             *
+ * For xvi-local names that clash with those in AIX curses.h   *
+ *                                                             *
+ ***************************************************************/
+#ifdef AIX
+#define beep xvi_beep
+#define echo xvi_echo
+#define scroll xvi_scroll
+#undef inch
+#define inch xvi_inch
+#undef newline
+#define newline xvi_newline
+#endif
+
+/***************************************************************
+ *                                                             *
  * SECTION 1: ENVIRONMENT                                      *
  *                                                             *
  * Most of this section is concerned with including the right  *

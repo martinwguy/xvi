@@ -178,7 +178,7 @@ extern	int		call_shell P((char *));
 extern	int		call_system P((char *));
 extern	bool_t		sys_pipe P((char *, int (*)(FILE *), long (*)(FILE *)));
 extern	char		*tempfname P((char *));
-extern	void		getScreenSize P((unsigned *rows, unsigned *columns));
+extern	void		getScreenSize P((unsigned *rows, unsigned *cols));
 
 /*
  * This external variable says whether we can do subshells.
