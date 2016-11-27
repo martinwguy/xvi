@@ -399,12 +399,7 @@ Xviwin	*window;
 			(int) (curs_row + window->w_winpos),
 			(long) lineno(window->w_buffer, currline));
 
-    if (nlines != window->w_c_line_size) {
-	xvUpdateAllBufferWindows(window->w_buffer);
-    } else {
-	xvUpdateScr(window, window->w_vs,
-			(int) (curs_row + window->w_winpos), nlines);
-    }
+    xvUpdateAllBufferWindows(window->w_buffer);
 }
 
 /*
