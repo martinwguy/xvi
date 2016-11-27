@@ -380,7 +380,6 @@ int	c;
      * Update the screen.
      */
     if (!updated) {
-	s_inschar(curwin, c);
 	updateline(curwin);
     }
 
