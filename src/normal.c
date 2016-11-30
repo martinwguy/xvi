@@ -43,6 +43,11 @@ register int	c;
 
     cmd = curwin->w_cmd;
 
+    if (kbdintr) {
+	kbdintr = FALSE;
+	c = CTRL('C');
+    }
+
     switch (c) {
 	case CTRL('C'):
 	    show_message(curwin, "Interrupted");
