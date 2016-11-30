@@ -36,6 +36,12 @@ xvEvent	*ev;
     bool_t		do_update;
     int			c;
 
+    if (kbdintr) {
+	    ev->ev_type = Ev_breakin;
+	    ev->ev_inchar = CTRL('C');
+	    kbdintr = FALSE;
+    }
+
     switch (ev->ev_type) {
     case Ev_char:
 	keystrokes++;

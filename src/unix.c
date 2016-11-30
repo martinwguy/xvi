@@ -233,10 +233,8 @@ kbgetc()
             retval = select(1, &rfds, NULL, NULL, &tv);
             if (retval > 0)
                  break;
-            if (retval == 0)
+            if (retval == 0 || kbdintr)
                 return EOF;
-            if (errno == EINTR)
-                continue;
         }
 
 	if ((nread = read(0, (char *) kbuf, sizeof kbuf)) <= 0) {

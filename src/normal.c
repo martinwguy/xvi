@@ -39,21 +39,25 @@ normal(c)
 register int	c;
 {
     register Cmd	*cmd;
+    int ret = FALSE;
 
     cmd = curwin->w_cmd;
 
-    if (cmd->cmd_prenum != 0) {
-    	if (c == ESC) {
-	    cmd->cmd_operator = NOP;
-	    cmd->cmd_prenum = 0;
-	    return(FALSE);
-    	}
-    	if (c == CTRL('C')) {
-	    cmd->cmd_operator = NOP;
+    if (kbdintr) {
+	kbdintr = FALSE;
+	c = CTRL('C');
+    }
+
+    switch (c) {
+	case CTRL('C'):
 	    show_message(curwin, "Interrupted");
+	    ret = TRUE;
+	case ESC:
+	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;
-	    return(TRUE);
-	}
+	    return(ret);
+	default:
+	    break;
     }
 
     /*
@@ -111,27 +115,6 @@ register int	c;
 
 	State = NORMAL;
 	cmd->cmd_two_char = FALSE;
-
-	/*
-	 * This seems to be a universal rule - if a two-character
-	 * command has ESC as the second character, it means "abort".
-	 */
-	if (cmd->cmd_ch2 == ESC) {
-	    cmd->cmd_operator = NOP;
-	    cmd->cmd_prenum = 0;
-	    return(FALSE);
-	}
-
-	/*
-	 * Abort on ^C, also.
-	 */
-	if (cmd->cmd_ch2 == CTRL('C')) {
-	    cmd->cmd_operator = NOP;
-	    cmd->cmd_prenum = 0;
-	    show_message(curwin, "Interrupted");
-	    return(TRUE);
-	}
-
     } else {
 
 	cmd->cmd_ch1 = c;

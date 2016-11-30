@@ -73,6 +73,11 @@ int	c;
 
     curpos = curwin->w_cursor;
 
+    if (kbdintr) {
+	    kbdintr = FALSE;
+	    c = CTRL('C');
+    }
+
     if (wait_buffer || (!literal_next && c == CTRL('A'))) {
 	/*
 	 * Add contents of named buffer, or the last
@@ -468,6 +473,11 @@ int	c;
     static bool_t	wait_buffer = FALSE;
 
     curpos = curwin->w_cursor;
+
+    if (kbdintr) {
+	    kbdintr = FALSE;
+	    c = CTRL('C');
+    }
 
     if (wait_buffer || (!literal_next && c == CTRL('A'))) {
 	/*

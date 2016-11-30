@@ -115,6 +115,11 @@ int	ch;
     unsigned		len;
     char *		stat; /* Pointer to status line text */
 
+    if (kbdintr) {
+	    kbdintr = FALSE;
+	    ch = CTRL('C');
+    }
+
     if (!literal_next) {
 	switch (ch) {
 	case CTRL('V'):
