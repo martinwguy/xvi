@@ -475,8 +475,6 @@ char	*newstring;
 	*to++ = *from++;
     }
 
-    xvUpdateAllBufferWindows(curbuf);
-
     buffer->b_flags |= FL_MODIFIED;
 
     return(change);
