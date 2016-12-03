@@ -295,7 +295,7 @@ int	name;
 	 * the inserted text if this was a multi-line yank.
 	 */
 	replchars(win, currline, l, 0, yp_buf->y_1st_text);
-	updateline(win);
+	updateline(win, TRUE);
 	lastpos.p_line = win->w_cursor->p_line;
 	lastpos.p_index = win->w_cursor->p_index + strlen(yp_buf->y_1st_text);
 	if (direction == BACKWARD) {

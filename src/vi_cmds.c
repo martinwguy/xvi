@@ -81,7 +81,7 @@ Cmd	*cmd;
 	if (start_command(curwin)) {
 	    replchars(curwin, curwin->w_cursor->p_line,
 			curwin->w_cursor->p_index, IDEF1(cmd->cmd_prenum), "");
-	    updateline(curwin);
+	    updateline(curwin, FALSE);
 	    Redo.r_mode = r_insert;
 	    flexclear(&Redo.r_fb);
 	    (void) lformat(&Redo.r_fb, "%ds", IDEF1(cmd->cmd_prenum));
@@ -99,7 +99,7 @@ Cmd	*cmd;
 	(void) exAmpersand(curwin, curwin->w_cursor->p_line,
 				    curwin->w_cursor->p_line, "");
 	begin_line(curwin, TRUE);
-	updateline(curwin);
+	updateline(curwin, FALSE);
 	break;
 
     case 'R':
@@ -411,12 +411,14 @@ Cmd	*cmd;
     Posn	lastpos;
     int		nchars;
     int		i;
+    int		nlines;
 
     nchars = IDEF1(cmd->cmd_prenum);
     Redo.r_mode = r_normal;
     flexclear(&Redo.r_fb);
     (void) lformat(&Redo.r_fb, "%d%c", nchars, cmd->cmd_ch1);
     curp = curwin->w_cursor;
+    nlines = plines(curwin, curp->p_line);
 
     if (cmd->cmd_ch1 == 'X') {
 	for (i = 0; i < nchars && one_left(curwin, FALSE); i++)
@@ -455,7 +457,7 @@ Cmd	*cmd;
     if (curp->p_line->l_text[curp->p_index] == '\0') {
 	(void) one_left(curwin, FALSE);
     }
-    updateline(curwin);
+    updateline(curwin, nlines != plines(curwin, curp->p_line));
 }
 
 /*
@@ -506,7 +508,7 @@ Cmd	*cmd;
 
     newc[1] = '\0';
     replchars(curwin, cp->p_line, cp->p_index, 1, newc);
-    updateline(curwin);
+    updateline(curwin, FALSE);
     (void) one_right(curwin, FALSE);
 }
 

@@ -373,38 +373,46 @@ int pos;	/* Position of cursor within line */
  * insert mode operation. The only thing we have to watch for is when
  * the cursor line grows or shrinks around a row boundary. This means
  * we have to repaint other parts of the screen appropriately.
+ * If the flag argument is TRUE, all lines below the current line are
+ * also updated.
  */
 void
-updateline(window)
+updateline(window, flag)
 Xviwin	*window;
+bool_t	flag;
 {
+    Xviwin	*w;
     Line	*currline;
     int		nlines;
     int		curs_row;
 
     currline = window->w_cursor->p_line;
 
-    /*
-     * Find out which screen line the cursor line starts on.
-     * This is not necessarily the same as window->w_row,
-     * because longlines are different.
-     */
-    if (plines(window, currline) > 1) {
-	curs_row = (int) cntplines(window, window->w_topline, currline);
-    } else {
-	curs_row = window->w_row;
-    }
+    w = window;
+    do {
+	if (w->w_buffer == window->w_buffer &&
+		!earlier(currline, w->w_topline) &&
+		!later(currline, w->w_botline)) {
+	    /*
+	     * Find out which screen line the cursor line starts on.
+	     * This is not necessarily the same as window->w_row,
+	     * because longlines are different. 
+	     */
+	    curs_row = (int) cntplines(w, w->w_topline, currline);
 
-    nlines = line_to_new(window, currline,
-			(int) (curs_row + window->w_winpos),
-			(long) lineno(window->w_buffer, currline));
+	    nlines = line_to_new(w, currline,
+				    (int) (curs_row + w->w_winpos),
+				    (long) lineno(w->w_buffer, currline));
+	    if (flag) {
+		nlines = w->w_nrows - curs_row;
+		file_to_new(w);
+	    }
 
-    if (nlines != window->w_c_line_size) {
-	xvUpdateAllBufferWindows(window->w_buffer);
-    } else {
-	xvUpdateScr(window, window->w_vs,
-			(int) (curs_row + window->w_winpos), nlines);
-    }
+	    update_sline(w);
+	    xvUpdateScr(w, w->w_vs, (int) (curs_row + w->w_winpos), nlines);
+	}
+	w = xvNextDisplayedWindow(w);
+    } while (w != window);
 }
 
 /*
@@ -452,9 +460,8 @@ bool_t	clrflag;
 	if (w->w_nrows > 0) {
 	    do_sline(w);
 	}
+        xvUpdateScr(w, w->w_vs, 0, (int) VSrows(w->w_vs));
     } while ((w = xvNextDisplayedWindow(w)) != win);
-
-    xvUpdateScr(w, w->w_vs, 0, (int) VSrows(w->w_vs));
 }
 
 /*
