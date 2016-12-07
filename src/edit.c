@@ -70,8 +70,14 @@ int	c;
     static bool_t	wait_buffer = FALSE;
     bool_t		updated;
     bool_t		beginline;
+    int			nlines;
 
     curpos = curwin->w_cursor;
+
+    /*
+     * Get the number of physical lines the current line occupies.
+     */
+    nlines = plines(curwin, curpos->p_line);
 
     if (kbdintr) {
 	    kbdintr = FALSE;
@@ -173,7 +179,7 @@ int	c;
 		    indentchars = set_indent(curpos->p_line, 0);
 		    move_cursor(curwin, curpos->p_line, 0);
 		    cursupdate(curwin);
-		    updateline(curwin);
+		    updateline(curwin, nlines != plines(curwin, curpos->p_line));
 		    (void) flexaddch(&Insbuff, c);
 		    return(TRUE);
 		}
@@ -203,7 +209,7 @@ int	c;
 		indentchars = set_indent(lp, ind);
 		move_cursor(curwin, curpos->p_line, indentchars);
 		cursupdate(curwin);
-		updateline(curwin);
+		updateline(curwin, nlines != plines(curwin, curpos->p_line));
 		(void) flexaddch(&Insbuff, c);
 	    } else {
 		beep(curwin);
@@ -234,15 +240,11 @@ int	c;
 	    replchars(curwin, curpos->p_line, curpos->p_index, 1, "");
 	    (void) flexaddch(&Insbuff, '\b');
 	    cursupdate(curwin);
-	    if (curwin->w_col == 0) {
-		/*
-		 * Make sure backspacing over a physical line
-		 * break updates the screen correctly.
-		 */
-		xvUpdateAllBufferWindows(curbuf);
-	    } else {
-		updateline(curwin);
-	    }
+	    /*
+	     * Make sure backspacing over a physical line
+	     * break updates the screen correctly.
+	     */
+	    updateline(curwin, curwin->w_col == 0);
 	    return(TRUE);
 
 	case '\r':
@@ -275,7 +277,7 @@ int	c;
 
 		move_window_to_cursor(curwin);
 		cursupdate(curwin);
-		xvUpdateAllBufferWindows(curbuf);
+		updateline(curwin, TRUE);
 	    }
 	    return(TRUE);
 
@@ -316,8 +318,6 @@ int	c;
     /*
      * Deal with wrapmargin.
      */
-    updated = FALSE;
-
     if (Pn(P_wrapmargin) != 0 &&
 		curwin->w_virtcol >= curwin->w_ncols - Pn(P_wrapmargin)) {
 	register int	wspos;
@@ -375,8 +375,6 @@ int	c;
 		while ((c = newlp->l_text[newindex]) != '\0' && is_space(c))
 		    replchars(curwin, newlp, newindex, 1, "");
 		move_cursor(curwin, newlp, newindex + offset);
-		updateline(curwin);
-		updated = TRUE;
 	    }
 	}
     }
@@ -384,10 +382,7 @@ int	c;
     /*
      * Update the screen.
      */
-    if (!updated) {
-	s_inschar(curwin, c);
-	updateline(curwin);
-    }
+    updateline(curwin, nlines != plines(curwin, curpos->p_line));
 
     /*
      * If showmatch mode is set, check for right parens
@@ -507,7 +502,7 @@ int	c;
 				curpos->p_index, 1,
 				(curpos->p_index < nchars) ?
 				mkstr(saved_line[curpos->p_index]) : "");
-		updateline(curwin);
+		updateline(curwin, FALSE);
 		(void) flexaddch(&Insbuff, '\b');
 	    } else {
 		beep(curwin);
@@ -628,7 +623,7 @@ int	c;
 
     if (repstate == overwrite || repstate == replace_one) {
 	replchars(curwin, curpos->p_line, curpos->p_index, 1, mkstr(c));
-	updateline(curwin);
+	updateline(curwin, FALSE);
 	(void) one_right(curwin, TRUE);
     }
 

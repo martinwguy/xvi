@@ -1115,7 +1115,7 @@ extern	bool_t	eq P((Posn *, Posn *));
 /*
  * screen.c
  */
-extern	void	updateline P((Xviwin *));
+extern	void	updateline P((Xviwin *, bool_t));
 extern	void	update_sline P((Xviwin *));
 extern	void	update_cline P((Xviwin *, int));
 extern	void	redraw_window P((Xviwin *, bool_t));

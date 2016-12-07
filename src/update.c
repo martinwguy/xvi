@@ -202,12 +202,8 @@ int		row;
 	 * line, but the old one still has stuff on
 	 * it. We must therefore clear it.
 	 */
-	VSclear_line(vs, row, col);
-    }
-
-    if (ncoloured && n_used < columns) {
 	VSset_colour(vs, VSCcolour);
-	VSclear_line(vs, row, n_used);
+	VSclear_line(vs, row, col);
     }
 
     (void) memcpy(real->s_line, new->s_line, n_used);
