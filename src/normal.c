@@ -164,6 +164,17 @@ Cmd	*cmd;
     if (cmd->cmd_flags & TARGET) {
 
 	/*
+	 * An exceptional case is the yl command when the cursor is at the
+	 * end of a line, in which case it should yank the final character
+	 * even though the move would fail. Workaround: do "y$" instead.
+	 */
+	if (cmd->cmd_operator == 'y' && cmd->cmd_ch1 == 'l' &&
+	    endofline(&cmd->cmd_startpos)) {
+	    cmd->cmd_ch1 = '$';
+	    cmd->cmd_flags |= TGT_INCLUSIVE;
+	}
+
+	/*
 	 * A cursor movement command. Set the target position to NULL
 	 * before calling the function, so we know if it was successful.
 	 */
