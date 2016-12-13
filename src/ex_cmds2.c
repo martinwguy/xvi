@@ -189,10 +189,9 @@ exSource(interactive, file)
 bool_t	interactive;
 char	*file;
 {
-    static char		cmdbuf[256];
+    Flexbuf		cmd;
     FILE		*fp;
     register int	c;
-    register char	*bufp;
     bool_t		literal;
 
     fp = fopen(file, "r");
@@ -203,7 +202,7 @@ char	*file;
 	return(FALSE);
     }
 
-    bufp = cmdbuf;
+    flexnew(&cmd);
     literal = FALSE;
     while ((c = getc(fp)) != EOF) {
 	if (!literal && (c == CTRL('V') || c == '\n')) {
@@ -217,20 +216,19 @@ char	*file;
 		    imessage = TRUE;
 		    break;
 		}
-		if (bufp > cmdbuf) {
-		    *bufp = '\0';
-		    exCommand(cmdbuf, interactive);
+		if (!flexempty(&cmd)) {
+		    exCommand(flexgetstr(&cmd), interactive);
+		    flexclear(&cmd);
 		}
-		bufp = cmdbuf;
 		break;
 	    }
 	} else {
 	    literal = FALSE;
-	    if (bufp < &cmdbuf[sizeof(cmdbuf) - 1]) {
-		*bufp++ = c;
-	    }
+	    if (!flexaddch(&cmd, c))
+		return(FALSE);
 	}
     }
+    flexdelete(&cmd);
     (void) fclose(fp);
     return(TRUE);
 }
