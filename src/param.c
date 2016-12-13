@@ -185,7 +185,7 @@ Param	params[] = {
 {   "taglength",    "tlh",          P_NUM,      0,              tagSetParam,},
 {   "tags",         "tags",         P_LIST,     0,              tagSetParam,},
 {   "term",         "term",         P_STRING,   0,              not_imp,   },
-{   "terse",        "ters",         P_BOOL,     0,              not_imp,   },
+{   "terse",        "ters",         P_BOOL,     0,              nofunc,    },
 {   "timeout",      "ti",           P_NUM,      DEF_TIMEOUT,    nofunc,    },
 {   "ttytype",      "tt",           P_STRING,   0,              not_imp,   },
 {   "undolevels",   "ul",           P_NUM,      MAX_UNDO,      set_undolevels,},
