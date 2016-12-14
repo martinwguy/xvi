@@ -519,7 +519,7 @@ bool_t	do_clear;
 		to_go -= w->w_nrows;
 		spare -= (w->w_nrows - Pn(P_minrows));
 	    	w->w_nrows = 0;
-		if (curwin == w) {
+		if (curwin == w && w->w_last) {
 		    curwin = w->w_last;
 		}
 	    } else {
