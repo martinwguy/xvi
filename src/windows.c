@@ -478,6 +478,13 @@ bool_t	do_clear;
     }
     last_win = w;
 
+    if (first_win == last_win) {
+	w->w_nrows = VSrows(vs);
+	w->w_ncols = VScols(vs);
+	w->w_cmdline = w->w_nrows + w->w_winpos - 1;
+	return;
+    }
+
     /*
      * Count the total line usage, and at the same time
      * go to the bottom-most window onto the VirtScr.
