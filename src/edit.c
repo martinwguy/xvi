@@ -104,6 +104,7 @@ int	c;
 	switch (c) {
 	case CTRL('C'):	/* an escape or ^C ends input mode */
 	    show_message(curwin, "Interrupted");
+	    Ins_repeat = 0;
 	case ESC:
 	{
 	    char	*cltext;
