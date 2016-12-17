@@ -165,13 +165,26 @@ Cmd	*cmd;
 
 	/*
 	 * An exceptional case is the yl command when the cursor is at the
-	 * end of a line, in which case it should yank the final character
+	 * end of a line, in which case it should yank the final character.
 	 * even though the move would fail. Workaround: do "y$" instead.
+	 * Similarly, if we are on the penultimate character and they say
+	 * y2l, the move would fail, whereas it should yank 2 chars.
 	 */
-	if (cmd->cmd_operator == 'y' && cmd->cmd_ch1 == 'l' &&
-	    endofline(&cmd->cmd_startpos)) {
-	    cmd->cmd_ch1 = '$';
-	    cmd->cmd_flags |= TGT_INCLUSIVE;
+	if (cmd->cmd_operator == 'y' && cmd->cmd_ch1 == 'l') {
+	    if (endofline(&cmd->cmd_startpos)) {
+		cmd->cmd_ch1 = '$';
+	        cmd->cmd_flags |= TGT_INCLUSIVE;
+	    }
+	    /*
+	     * Similarly, a motion that should take several chars including
+	     * the last char on the line, would take up-to-but-not-including.
+	     * Take n-1 characters plus the final one, which is the the same
+	     * for non-end-of-line yanks.
+	     */
+	    if (cmd->cmd_prenum != 0) {
+		cmd->cmd_prenum--;
+	        cmd->cmd_flags |= TGT_INCLUSIVE;
+	    }
 	}
 
 	/*
