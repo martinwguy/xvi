@@ -210,6 +210,8 @@ Cmd	*cmd;
 	    beep(curwin);
 	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;
+	    /* Bad motions interrupt redos and mapped commands */
+	    unstuff();
 	    return(FALSE);
 	}
 

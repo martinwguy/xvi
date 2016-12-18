@@ -121,12 +121,16 @@ stuff
 
 /* Undo all previous "stuff"'s, leaving the input buffer empty.
  * This is needed when a "redo" command has been stuffed into the
- * input but its execution fails half way through.
+ * input but its execution fails half way through or when some command
+ * that is the result of a mapping fails half way through.
  */
 void
 unstuff()
 {
+	/* Clear stuffed input */
 	flexclear(npos.mp_dest);
+	/* Clear mapped input */
+	flexclear(npos.mp_src);
 }
 
 /*
