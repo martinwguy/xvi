@@ -502,13 +502,13 @@ expect_background {
 }
 
 # New and incomplete!
-bind $term <Configure> {
-    scan [wm geometry .] "%dx%dx" rows cols
-    stty rows $rows columns $cols < $spawn_out(slave,name)
-    
-    # when this is working, uncomment ...
-    # term_resize $rows $cols
-}
+#bind $term <Configure> {
+#    scan [wm geometry .] "%dx%dx" rows cols
+#    stty rows $rows columns $cols < $spawn_out(slave,name)
+#
+#    # when this is working, uncomment ...
+#    # term_resize $rows $cols
+#}
 
 bind $term <Any-Enter> {
     focus %W
