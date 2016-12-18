@@ -404,11 +404,10 @@ bool_t	flag;
 				    (int) (curs_row + w->w_winpos),
 				    (long) lineno(w->w_buffer, currline));
 	    if (flag) {
-		nlines = w->w_nrows - curs_row;
+		nlines = w->w_nrows - curs_row - 1;
 		file_to_new(w);
 	    }
 
-	    update_sline(w);
 	    xvUpdateScr(w, w->w_vs, (int) (curs_row + w->w_winpos), nlines);
 	}
 	w = xvNextDisplayedWindow(w);
