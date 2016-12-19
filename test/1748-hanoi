@@ -1,0 +1,54 @@
+#! /usr/bin/tclsh
+
+# See if the towers of hanoi solving vi macros work
+
+# After :so hanoi the screen should be
+set preInit [list "" "~"]
+# After I the screen should be:
+set postInit [list "" "01234567" "0" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
+# After L the screen should be:
+set postRun [list "" "0" "01234567" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
+
+# Boilerplate
+source tkterm
+source term_expect
+
+# Check the screen image starts with the lines in the given list.
+proc screen_is {prefix should} {
+    global term
+    # List is indexed from 0 by i but screen is indexed from 1
+    for {set i 0} {$i < [llength $should]} {incr i} {
+	set line [lindex $should $i]
+	set row [expr $i + 1]
+	set onscreen [string trimright [$term get $row.0 $row.end]]
+	if { $onscreen != $line } {
+	    puts "$prefix line $row should be $line but is $onscreen"
+	    exit $row
+	}
+    }
+}
+
+# Start xvi and give it a second to refresh the display.
+exp_send "../src/xvi\r"
+
+exp_send ":so hanoi\r"
+sleep 1
+screen_is "After :so hanoi" $preInit
+set statusline [string trimright [$term get 24.0 24.end]]
+if { [string trimright $statusline] != ":so hanoi" } {
+    puts "After :so hanoi status line is $statusline"
+    exit 11
+}
+
+exp_send "I"
+sleep 1
+screen_is "After I" $postInit
+# The cursor should be on the '/'
+if { $cur_row != 9 || $cur_col != 0 } { exit 90 }
+
+exp_send "L"
+sleep 1
+screen_is "After L" $postRun
+if { $cur_row != 2 || $cur_col != 0 } { exit 20 }
+
+exit 0
