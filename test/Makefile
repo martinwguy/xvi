@@ -1,5 +1,5 @@
 check:
-	./runtests
+	@./runtests
 
 nox:
 	startx -e "./runtests>errs" -- :1 -quiet -config xorg.conf
