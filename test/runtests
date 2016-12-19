@@ -24,4 +24,6 @@ do
 	fi
 done
 
+rm -f \#unnamed.*
+
 exit $status
