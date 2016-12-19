@@ -1,0 +1,27 @@
+#! /bin/sh
+
+# Run all tests in the test suite.
+#
+# This script exits with status 0 if all tests succeeded,
+# 1 if any failed.
+#
+# Unfortunately, this needs an X display at present because it uses tkterm.
+
+# Run the tests in numbered order. Test scripts are numbered, like in BASIC.
+
+status=0	# What to exit with; 0 means success.
+
+for testfile in [0-9][0-9][0-9][0-9]-*
+do
+	testname="`echo "$testfile" | sed 's/^.....//'`"
+	echo -n "Testing ${testname}: "
+	if ./$testfile
+	then
+		echo "PASS"
+	else
+		echo "FAILED with status $?"
+		status=1
+	fi
+done
+
+exit $status

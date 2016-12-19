@@ -1,0 +1,19 @@
+In this directory you can "make check" to run a series of tests on ../src/xvi
+
+You have to run it on an X display because the testsuite uses tkterm.
+
+You can run it without an X display by going:
+
+	sudo apt-get install xserver-xorg-video-dummy
+	startx -e "./runtests>errs" -- :1 -quiet -config $PWD/xorg.conf
+	grep -q FAILED errs && exit 1
+	
+but I don't know how you find out if the tests succeeded or not!
+
+The test mechanism is based on Don Libes' "tkterm".
+See his paper "Automation and Testing of Character-Graphic Programs".
+See his book "Exploring Expect", chapter 19, p.448 onwards.
+
+
+
+    Martin Guy <martinwguy@gmail.com>, December 2016.

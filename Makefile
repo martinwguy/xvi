@@ -26,6 +26,9 @@ all:
 		OPTFLAG="$(OPTFLAG) -DHELPFILE=\\\"$(HELPDIR)/xvi.help\\\"" \
 		xvi
 
+check:
+	@make -C test check
+
 install: all
 	$(INSTALL) -d $(BINDIR) $(HELPDIR) $(MANDIR) $(DOCDIR)
 	$(INSTALL) -m 755 -s src/xvi $(BINDIR)

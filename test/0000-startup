@@ -1,0 +1,26 @@
+#! /usr/bin/tclsh
+
+# Test xvi's startup screen.
+
+source tkterm
+source term_expect
+
+# Start xvi and give it a second to refresh the display.
+exp_send "../src/xvi\r"
+sleep 1
+
+# The first line should be blank
+if { [string trimright [$term get 1.0 1.end]] != "" } { exit 1 }
+
+# Lines 2 to 23 should have a single ~ at the left edge
+for {set i 2} {$i<24} {incr i} {
+    if { [string trimright [$term get $i.0 $i.end]] != "~" } { exit 2 }
+}
+
+# The last line should just say "No File" but we don't really care about that
+# if { [string trimright [$term get 24.0 24.end]] != "No File" } { exit 3 }
+
+# The cursor should be in the top left corner
+if { $cur_row != 1 || $cur_col != 0 } { exit 4 }
+
+exit 0
