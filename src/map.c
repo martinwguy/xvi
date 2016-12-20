@@ -224,7 +224,19 @@ register Mpos	*pos;
 		if (Pb(P_remap) && pos->mp_src != NULL) {
 		    Flexbuf flextmp;
 		    int tmpch;
+		    int offset = 0;	/* Chars to skip when adding rhs */
 
+		    /*
+		     * If the RHS starts with the LHS, don't remap those
+		     * characters.
+		     */
+		    {
+			int lhslen = strlen(tmp->m_lhs);
+			if (strncmp(tmp->m_lhs, tmp->m_rhs, lhslen) == 0) {
+			    lformat(pos->mp_dest, "%s", tmp->m_lhs);
+			    offset = lhslen;
+			}
+		    }
 		    /*
 		     * Get any characters waiting in the queue
 		     */
@@ -236,7 +248,7 @@ register Mpos	*pos;
 		     * Input queue is now the new rhs followed by the
 		     * characters that were there before (if any)
 		     */
-		    (void) lformat(pos->mp_src, "%s%s", tmp->m_rhs, flexgetstr(&flextmp));
+		    (void) lformat(pos->mp_src, "%s%s", tmp->m_rhs+offset, flexgetstr(&flextmp));
 		    flexdelete(&flextmp);
 		} else {
 		    (void) lformat(pos->mp_dest, "%s", tmp->m_rhs);
