@@ -479,9 +479,10 @@ bool_t	do_clear;
     last_win = w;
 
     if (first_win == last_win) {
-	w->w_nrows = VSrows(vs);
-	w->w_ncols = VScols(vs);
-	w->w_cmdline = w->w_nrows + w->w_winpos - 1;
+	first_win->w_nrows = VSrows(vs);
+	first_win->w_ncols = VScols(vs);
+	first_win->w_cmdline = first_win->w_nrows + first_win->w_winpos - 1;
+	redraw_all(first_win, TRUE);
 	return;
     }
 
