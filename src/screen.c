@@ -212,6 +212,9 @@ register Xviwin	*win;
     register Buffer	*buffer;
     long		lnum;
 
+    if (win->w_nrows < Pn(P_minrows))
+	return;
+
     buffer = win->w_buffer;
     row = win->w_winpos;
     line = win->w_topline;
@@ -284,6 +287,12 @@ Xviwin	*win;
     int			colindex;
     unsigned		colour;
     Sline		*slp;
+
+    if ((win->w_nrows == 0) ||
+	(VSrows(win->w_vs)  == 0) ||
+	(VScols(win->w_vs) == 0)) {
+	return;
+    }
 
     from = sline_text(win);
     slp = win->w_vs->pv_int_lines + win->w_cmdline;
