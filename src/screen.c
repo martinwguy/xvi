@@ -457,19 +457,25 @@ bool_t	clrflag;
 {
     Xviwin	*w;
 
+    if ((VSrows(win->w_vs) < Pn(P_minrows)) || (VScols(win->w_vs) == 0)) {
+	return;
+    }
+
+    if (clrflag) {
+	xvClear(win->w_vs);
+    }
+
     w = win;
     do {
-	if (clrflag) {
-	    xvClear(w->w_vs);
-	}
-	if (w->w_nrows > 1) {
-	    file_to_new(w);
-	}
 	if (w->w_nrows > 0) {
+	    if (w->w_nrows >= Pn(P_minrows))
+		file_to_new(w);
 	    do_sline(w);
 	}
-        xvUpdateScr(w, w->w_vs, 0, (int) VSrows(w->w_vs));
-    } while ((w = xvNextDisplayedWindow(w)) != win);
+	w = xvNextDisplayedWindow(w);
+    } while (w != win);
+
+    xvUpdateScr(win, win->w_vs, 0, (int) VSrows(win->w_vs));
 }
 
 /*
