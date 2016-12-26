@@ -81,7 +81,7 @@ int	rows, columns;
     int		new_cols;
     Sline	*ip, *ep;
 
-    if (rows == 0 && columns == 0) {
+    if ((rows == 0) && (columns == 0)) {
     	return(TRUE);
     }
 
@@ -103,9 +103,9 @@ int	rows, columns;
      * allocated. This ensures that the allocation will succeed.
      */
     vs->pv_int_lines = (Sline *) realloc((genptr *) vs->pv_int_lines,
-				(unsigned) new_rows * sizeof(Sline) + 1);
+				((unsigned) new_rows * sizeof(Sline)) + 1);
     vs->pv_ext_lines = (Sline *) realloc((genptr *) vs->pv_ext_lines,
-				(unsigned) new_rows * sizeof(Sline) + 1);
+				((unsigned) new_rows * sizeof(Sline)) + 1);
     if (vs->pv_int_lines == NULL || vs->pv_ext_lines == NULL) {
     	return(FALSE);
     }

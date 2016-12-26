@@ -465,6 +465,8 @@ bool_t	do_clear;
     Xviwin	*w;
     int		totlines;
     int		nw;
+    int		to_go, spare;
+    int		last_winpos, last_nrows;
 
     /*
      * Find the first and last windows onto this VirtScr.
@@ -479,9 +481,10 @@ bool_t	do_clear;
     last_win = w;
 
     if (first_win == last_win) {
-	w->w_nrows = VSrows(vs);
-	w->w_ncols = VScols(vs);
-	w->w_cmdline = w->w_nrows + w->w_winpos - 1;
+	first_win->w_nrows = VSrows(vs);
+	first_win->w_ncols = VScols(vs);
+	first_win->w_cmdline = first_win->w_nrows + first_win->w_winpos - 1;
+	redraw_all(first_win, TRUE);
 	return;
     }
 
@@ -489,20 +492,30 @@ bool_t	do_clear;
      * Count the total line usage, and at the same time
      * go to the bottom-most window onto the VirtScr.
      */
-    for (w = first_win, totlines = 0, nw = 1; w != NULL; w = w->w_next) {
+    for (w = first_win, totlines = 0, nw = 0; w != NULL; w = w->w_next) {
 	totlines += w->w_nrows;
 	nw++;
     }
     if (totlines <= VSrows(vs)) {
 	/*
-	 * Easy. Just increase the size of the bottom window.
+	 * First, we need to check for undisplayed windows
+	 * and redisplay them if feasible.
 	 */
-	last_win->w_nrows += VSrows(vs) - totlines;
-	last_win->w_cmdline = last_win->w_winpos + last_win->w_nrows - 1;
+	to_go = VSrows(vs) - totlines;
+	for (w = last_win; (w != NULL) && (to_go > 0); w = w->w_last) {
+	    if (w->w_nrows < Pn(P_minrows)) {
+		int inc = (to_go > Pn(P_minrows)) ? Pn(P_minrows) : to_go;
+		w->w_nrows += inc;
+		to_go -= inc;
+	    }
+	}
+	/*
+	 * Add remaining lines to bottom window.
+	 */
+	if (to_go > 0) {
+	    last_win->w_nrows += to_go;
+	}
     } else {
-    	int	spare;
-	int	to_go;
-
     	/*
 	 * VirtScr has got smaller. Shrink each window in turn from
 	 * the bottom up until we have freed up enough lines to make
@@ -512,22 +525,29 @@ bool_t	do_clear;
 	spare = totlines - (Pn(P_minrows) * nw);
 	to_go = totlines - VSrows(vs);
 
-	for (w = last_win; w != NULL; w = w->w_last) {
-	    if (to_go < w->w_nrows - Pn(P_minrows)) {
+	for (w = last_win; (w != NULL) && (to_go > 0); w = w->w_last) {
+	    if (w->w_nrows == 0) {
+		continue;
+	    }
+	    if (to_go < (w->w_nrows - Pn(P_minrows))) {
 		/*
 		 * Just have to reduce this window a bit.
 		 */
 		w->w_nrows -= to_go;
-		break;
+		to_go = 0;
 	    } else if (to_go > spare) {
 		/*
 		 * There is not enough room to keep this window displayed.
 		 */
 		to_go -= w->w_nrows;
-		spare -= (w->w_nrows - Pn(P_minrows));
+		spare += w->w_nrows;
 	    	w->w_nrows = 0;
-		if (curwin == w && w->w_last) {
-		    curwin = w->w_last;
+		if (curwin == w) {
+		    if (w->w_last != NULL) {
+			curwin = w->w_last;
+		    } else if (w->w_next != NULL) {
+			curwin = w->w_next;
+		    }
 		}
 	    } else {
 		/*
@@ -538,14 +558,21 @@ bool_t	do_clear;
 	    	w->w_nrows = Pn(P_minrows);
 	    }
 	}
+    }
 
-	/*
-	 * Adjust position of all the windows.
-	 */
-	first_win->w_cmdline = first_win->w_winpos + first_win->w_nrows - 1;
-	for (w = first_win->w_next; w != NULL; w = w->w_next) {
-	    w->w_winpos = w->w_last->w_winpos + w->w_last->w_nrows;
+    /*
+     * Adjust position of all the windows.
+     */
+    last_winpos = last_nrows = 0;
+    for (w = first_win; w != NULL; w = w->w_next) {
+	if (w->w_nrows != 0) {
+	    w->w_winpos = last_winpos + last_nrows;
 	    w->w_cmdline = w->w_winpos + w->w_nrows - 1;
+	    last_winpos = w->w_winpos;
+	    last_nrows = w->w_nrows;
+	} else {
+	    w->w_winpos = 0;
+	    w->w_cmdline = 0;
 	}
     }
 
@@ -745,8 +772,9 @@ Xviwin	*window;
     	return(NULL);
     }
 
-    for (wp = xvNextWindow(window); wp != window; wp = xvNextWindow(wp)) {
-	if (wp->w_nrows >= 2) {
+    for (wp = xvNextWindow(window); wp != window && wp != NULL;
+		wp = xvNextWindow(wp)) {
+	if (wp->w_nrows > 0) {
 	    break;
 	}
     }

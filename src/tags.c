@@ -382,8 +382,13 @@ int	*offsetptr;
     register TAG	*tp;
     register char	*cp;
     register unsigned	f;
-    register int	length;
+    register int	length, offset;
     int			max_chars;
+
+    if (name[0] == '\0') {
+	*offsetptr = 0;
+	return NULL;
+    }
 
     /*
      * Check that the tag cache is loaded; if not, load it now.
@@ -429,9 +434,10 @@ int	*offsetptr;
     /*
      * Skip over remaining identifier characters.
      */
-    for (*offsetptr = length; *cp != '\0' && IDCHAR(*cp); cp++) {
-	(*offsetptr)++;
+    for (offset = length; *cp != '\0' && IDCHAR(*cp); cp++) {
+	offset++;
     }
+    *offsetptr = offset;
 
     for (tp = hashtable[f % hashtabsize]; tp != NULL; tp = tp->t_next) {
 	/*
