@@ -50,19 +50,19 @@ VirtScr	*vs;
 	ip = vs->pv_int_lines + count;
 	ep = vs->pv_ext_lines + count;
 
-    	ip->s_line = alloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
+	ip->s_line = alloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
 	if (ip->s_line == NULL) {
 	    return(FALSE);
 	}
-    	ep->s_line = alloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
+	ep->s_line = alloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
 	if (ep->s_line == NULL) {
 	    return(FALSE);
 	}
-    	ip->s_colour = alloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
+	ip->s_colour = alloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
 	if (ip->s_colour == NULL) {
 	    return(FALSE);
 	}
-    	ep->s_colour = alloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
+	ep->s_colour = alloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
 	if (ep->s_colour == NULL) {
 	    return(FALSE);
 	}
@@ -91,7 +91,7 @@ int	rows, columns;
     Sline	*ip, *ep;
 
     if ((rows == 0) && (columns == 0)) {
-    	return(TRUE);
+	return(TRUE);
     }
 
     new_rows = VSrows(vs);
@@ -114,14 +114,14 @@ int	rows, columns;
      * allocated. This ensures that the allocation will succeed.
      */
     vs->pv_int_lines = re_alloc(vs->pv_int_lines,
-		    		(new_rows * sizeof(Sline)) + 1);
+				(new_rows * sizeof(Sline)) + 1);
     if (vs->pv_int_lines == NULL) {
-    	return(FALSE);
+	return(FALSE);
     }
     vs->pv_ext_lines = re_alloc(vs->pv_ext_lines,
 				(new_rows * sizeof(Sline)) + 1);
     if (vs->pv_ext_lines == NULL) {
-    	return(FALSE);
+	return(FALSE);
     }
 
     /*
@@ -160,7 +160,7 @@ int	rows, columns;
      */
     count = new_rows - 1;
     if (count > old_rows - 1) {
-    	count = old_rows - 1;
+	count = old_rows - 1;
     }
     for ( ; count >= 0; --count) {
 	ip = vs->pv_int_lines + count;

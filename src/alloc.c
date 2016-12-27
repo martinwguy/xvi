@@ -110,10 +110,9 @@ ralloc()
 	 * We turn off e_ALLOCFAIL for the first alloc to
 	 * prevent getting the same error message twice.
 	 */
-	unsigned savecho;
+	unsigned savecho = echo;
 
 #define RBLOCKSIZE (16 * sizeof (Reusable))
-	savecho = echo;
 	echo &= ~e_ALLOCFAIL;
 	if ((p = alloc(RBLOCKSIZE)) != NULL) {
 	    usemem((char *) p, RBLOCKSIZE);
@@ -159,10 +158,6 @@ void *ref;
 size_t size;
 {
     void *p;		/* pointer to new storage space */
-
-    if (ref == NULL) {
-	return(alloc(size));
-    }
 
     if ((p = realloc(ref, size)) == NULL) {
 	if (echo & e_ALLOCFAIL) {
