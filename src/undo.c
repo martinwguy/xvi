@@ -60,20 +60,20 @@ Buffer	*buffer;
     /*
      * Initialise the undo-related variables in the Buffer.
      */
-    cdp = (ChangeData *) alloc(sizeof(ChangeData));
+    cdp = alloc(sizeof(ChangeData));
     if (cdp == NULL) {
     	return;
     }
     cdp->cd_nlevels = 0;
 
-    cdp->cd_undo = (ChangeStack *) alloc(sizeof(ChangeStack));
+    cdp->cd_undo = alloc(sizeof(ChangeStack));
     if (cdp->cd_undo == NULL) {
 	return;
     }
     cdp->cd_undo->cs_stack[0] = NULL;
     cdp->cd_undo->cs_size = 0;
 
-    cdp->cd_redo = (ChangeStack *) alloc(sizeof(ChangeStack));
+    cdp->cd_redo = alloc(sizeof(ChangeStack));
     if (cdp->cd_redo == NULL) {
 	return;
     }

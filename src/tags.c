@@ -68,7 +68,7 @@ tagInit()
 	    /*
 	     * Using calloc() avoids having to clear memory.
 	     */
-	    hashtable = (TAG **) calloc(hashtabsize, sizeof(TAG *));
+	    hashtable = clr_alloc(hashtabsize, sizeof(TAG *));
 	    if (hashtable == NULL) {
 		return;
 	    }
@@ -322,7 +322,7 @@ Ev_resize	virtscr.h	/^	Ev_resize,$/;"	e	enum:xvevent::__anon25
      * the text. Then copy the string into the allocated space
      * and set up the pointers within the structure.
      */
-    tp = (TAG *) malloc(sizeof(TAG) + strlen(line) + 1);
+    tp = alloc(sizeof(TAG) + strlen(line) + 1);
     if (tp == NULL) {
 	return;
     }
@@ -471,10 +471,10 @@ tagFree()
 	for (tp = hashtable[count]; tp != NULL; ) {
 	    tmp = tp;
 	    tp = tp->t_next;
-	    free((genptr *) tmp);
+	    free(tmp);
 	}
     }
-    free((genptr *) hashtable);
+    free(hashtable);
     hashtable = NULL;
 }
 

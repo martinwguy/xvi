@@ -248,7 +248,7 @@ char *exp;
 	FAIL("Regular expression too big");
 
     /* Allocate space. */
-    r = (regexp *) alloc(sizeof(regexp) + (unsigned)regsize);
+    r = alloc(sizeof(regexp) + (unsigned)regsize);
     if (r == NULL)
 	return NULL;
 

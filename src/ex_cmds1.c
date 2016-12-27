@@ -606,7 +606,7 @@ bool_t	force;
 	 * There were no files before, so start from square one.
 	 */
 	if (numfiles == 0) {
-	    files = (char **) alloc((unsigned) argc * sizeof(char *));
+	    files = alloc((unsigned) argc * sizeof(char *));
 	    if (files == NULL) {
 		return;
 	    }
@@ -620,8 +620,7 @@ bool_t	force;
 		free(files[count]);
 	    }
 	    if (argc != numfiles) {
-		files = (char **) realloc((char *) files,
-				    (unsigned) argc * sizeof(char *));
+		files = re_alloc(files, (unsigned) argc * sizeof(char *));
 		if (files == NULL) {
 		    numfiles = 0;
 		    return;
@@ -641,7 +640,7 @@ bool_t	force;
 		 */
 		while (--count >= 0)
 		    free(files[count]);
-		free((char *) files);
+		free(files);
 		files = NULL;
 		numfiles = 0;
 		return;

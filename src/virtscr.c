@@ -32,11 +32,12 @@ VirtScr	*vs;
      * Allocate space for the lines. Notice that we allocate an
      * extra byte at the end of each line for null termination.
      */
-    vs->pv_int_lines = (Sline *) malloc(vs->pv_rows * sizeof(Sline));
-    vs->pv_ext_lines = (Sline *) malloc(vs->pv_rows * sizeof(Sline));
-
-    if (vs->pv_int_lines == NULL || vs->pv_ext_lines == NULL) {
-	/* What to do now? */
+    vs->pv_int_lines = alloc(vs->pv_rows * sizeof(Sline));
+    if (vs->pv_int_lines == NULL) {
+	return(FALSE);
+    }
+    vs->pv_ext_lines = alloc(vs->pv_rows * sizeof(Sline));
+    if (vs->pv_ext_lines == NULL) {
 	return(FALSE);
     }
 
@@ -49,12 +50,20 @@ VirtScr	*vs;
 	ip = vs->pv_int_lines + count;
 	ep = vs->pv_ext_lines + count;
 
-    	ip->s_line = malloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
-    	ep->s_line = malloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
-    	ip->s_colour = malloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
-    	ep->s_colour = malloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
-	if (ip->s_line == NULL || ep->s_line == NULL ||
-		ip->s_colour == NULL || ep->s_colour == NULL) {
+    	ip->s_line = alloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
+	if (ip->s_line == NULL) {
+	    return(FALSE);
+	}
+    	ep->s_line = alloc((vs->pv_cols + 1) * sizeof(ip->s_line[0]));
+	if (ep->s_line == NULL) {
+	    return(FALSE);
+	}
+    	ip->s_colour = alloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
+	if (ip->s_colour == NULL) {
+	    return(FALSE);
+	}
+    	ep->s_colour = alloc((vs->pv_cols + 1) * sizeof(ip->s_colour[0]));
+	if (ep->s_colour == NULL) {
 	    return(FALSE);
 	}
 
@@ -93,8 +102,10 @@ int	rows, columns;
      * Free up rows no longer required.
      */
     for (count = new_rows; count < old_rows; count++) {
-	free((genptr *) vs->pv_int_lines[count].s_line);
-	free((genptr *) vs->pv_ext_lines[count].s_line);
+	free(vs->pv_int_lines[count].s_line);
+	free(vs->pv_ext_lines[count].s_line);
+	free(vs->pv_int_lines[count].s_colour);
+	free(vs->pv_ext_lines[count].s_colour);
     }
 
     /*
@@ -102,11 +113,14 @@ int	rows, columns;
      * for new_rows to be 0, we add a single byte to the amount
      * allocated. This ensures that the allocation will succeed.
      */
-    vs->pv_int_lines = (Sline *) realloc((genptr *) vs->pv_int_lines,
-				((unsigned) new_rows * sizeof(Sline)) + 1);
-    vs->pv_ext_lines = (Sline *) realloc((genptr *) vs->pv_ext_lines,
-				((unsigned) new_rows * sizeof(Sline)) + 1);
-    if (vs->pv_int_lines == NULL || vs->pv_ext_lines == NULL) {
+    vs->pv_int_lines = re_alloc(vs->pv_int_lines,
+		    		(new_rows * sizeof(Sline)) + 1);
+    if (vs->pv_int_lines == NULL) {
+    	return(FALSE);
+    }
+    vs->pv_ext_lines = re_alloc(vs->pv_ext_lines,
+				(new_rows * sizeof(Sline)) + 1);
+    if (vs->pv_ext_lines == NULL) {
     	return(FALSE);
     }
 
@@ -117,14 +131,20 @@ int	rows, columns;
 	ip = vs->pv_int_lines + count;
 	ep = vs->pv_ext_lines + count;
 
-	ip->s_line = malloc((unsigned) (new_cols + 1) * sizeof(ip->s_line[0]));
-	ep->s_line = malloc((unsigned) (new_cols + 1) * sizeof(ip->s_line[0]));
-	ip->s_colour = malloc((unsigned)
-				(new_cols + 1) * sizeof(ip->s_colour[0]));
-	ep->s_colour = malloc((unsigned)
-				(new_cols + 1) * sizeof(ip->s_colour[0]));
-	if (ip->s_line == NULL || ep->s_line == NULL ||
-		ip->s_colour == NULL || ep->s_colour == NULL) {
+	ip->s_line = alloc((new_cols + 1) * sizeof(ip->s_line[0]));
+	if (ip->s_line == NULL) {
+	    return(FALSE);
+	}
+	ep->s_line = alloc((new_cols + 1) * sizeof(ip->s_line[0]));
+	if (ep->s_line == NULL) {
+	    return(FALSE);
+	}
+	ip->s_colour = alloc((new_cols + 1) * sizeof(ip->s_colour[0]));
+	if (ip->s_colour == NULL) {
+	    return(FALSE);
+	}
+	ep->s_colour = alloc((new_cols + 1) * sizeof(ip->s_colour[0]));
+	if (ep->s_colour == NULL) {
 	    return(FALSE);
 	}
 
@@ -146,16 +166,24 @@ int	rows, columns;
 	ip = vs->pv_int_lines + count;
 	ep = vs->pv_ext_lines + count;
 
-	ip->s_line = realloc(ip->s_line,
-			(unsigned) (new_cols + 1) * sizeof(ip->s_line[0]));
-	ep->s_line = realloc(ep->s_line,
-			(unsigned) (new_cols + 1) * sizeof(ep->s_line[0]));
-	ip->s_colour = realloc(ip->s_colour,
-			(unsigned) (new_cols + 1) * sizeof(ip->s_colour[0]));
-	ep->s_colour = realloc(ep->s_colour,
-			(unsigned) (new_cols + 1) * sizeof(ep->s_colour[0]));
-	if (ip->s_line == NULL || ep->s_line == NULL ||
-		ip->s_colour == NULL || ep->s_colour == NULL) {
+	ip->s_line = re_alloc(ip->s_line,
+			(new_cols + 1) * sizeof(ip->s_line[0]));
+	if (ip->s_line == NULL) {
+	    return(FALSE);
+	}
+	ep->s_line = re_alloc(ep->s_line,
+			(new_cols + 1) * sizeof(ep->s_line[0]));
+	if (ep->s_line == NULL) {
+	    return(FALSE);
+	}
+	ip->s_colour = re_alloc(ip->s_colour,
+			(new_cols + 1) * sizeof(ip->s_colour[0]));
+	if (ip->s_colour == NULL) {
+	    return(FALSE);
+	}
+	ep->s_colour = re_alloc(ep->s_colour,
+			(new_cols + 1) * sizeof(ep->s_colour[0]));
+	if (ep->s_colour == NULL) {
 	    return(FALSE);
 	}
     }
@@ -173,13 +201,13 @@ VirtScr	*vs;
      * Now delete the memory used for the screen image.
      */
     for (count = 0; count < vs->pv_rows; count++) {
-	free((genptr *) vs->pv_int_lines[count].s_line);
-	free((genptr *) vs->pv_ext_lines[count].s_line);
-	free((genptr *) vs->pv_int_lines[count].s_colour);
-	free((genptr *) vs->pv_ext_lines[count].s_colour);
+	free(vs->pv_int_lines[count].s_line);
+	free(vs->pv_ext_lines[count].s_line);
+	free(vs->pv_int_lines[count].s_colour);
+	free(vs->pv_ext_lines[count].s_colour);
     }
-    free((genptr *) vs->pv_int_lines);
-    free((genptr *) vs->pv_ext_lines);
+    free(vs->pv_int_lines);
+    free(vs->pv_ext_lines);
     VSclose(vs);
 }
 

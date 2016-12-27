@@ -48,7 +48,7 @@ int	ch;
 	} else {
 	    unsigned newsize = f->fxb_wcnt + FLEXEXTRA;
 
-	    if ((f->fxb_chars = realloc(f->fxb_chars, newsize)) == NULL) {
+	    if ((f->fxb_chars = re_alloc(f->fxb_chars, newsize)) == NULL) {
 		f->fxb_wcnt = f->fxb_max = 0;
 		return FALSE;
 	    } else {
@@ -127,7 +127,7 @@ flexdelete(f)
 Flexbuf	*f;
 {
     if (f->fxb_max > 0) {
-	(void) free(f->fxb_chars);
+	free(f->fxb_chars);
 	f->fxb_wcnt = f->fxb_max = 0;
     }
 }

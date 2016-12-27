@@ -502,7 +502,7 @@ char		*rhs;
     Map		**p;			/* used for loop to find position */
     int		rel;
 
-    mptr = (Map *) alloc(sizeof(Map));
+    mptr = alloc(sizeof(Map));
     if (mptr == NULL) {
 	free(lhs);
 	free(rhs);
@@ -526,7 +526,7 @@ char		*rhs;
 	 * We need to replace the rhs of the first map.
 	 */
 	free(lhs);
-	free((char *) mptr);
+	free(mptr);
 	free((*p)->m_rhs);
 	(*p)->m_rhs = rhs;
 	calc_same(*p);
@@ -557,7 +557,7 @@ char		*rhs;
 		     * Replace the old rhs with the new.
 		     */
 		    free(lhs);
-		    free((char *) mptr);
+		    free(mptr);
 		    mptr = (*p)->m_next;
 		    free(mptr->m_rhs);
 		    mptr->m_rhs = rhs;
@@ -617,7 +617,7 @@ char	*lhs;
 		p->m_next = p->m_next->m_next;
 		free(tmp->m_lhs);
 		free(tmp->m_rhs);
-		free((char *) tmp);
+		free(tmp);
 		calc_same(p);
 	    }
 	}
