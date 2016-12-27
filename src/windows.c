@@ -44,16 +44,16 @@ VirtScr	*vs;
     }
 
     newwin->w_vs = vs;
-    newwin->w_vs->pv_window = (genptr *) newwin;
+    newwin->w_vs->pv_window = newwin;
 
     if (alloc_window(newwin) == FALSE) {
-	free((genptr *) newwin);
+	free(newwin);
 	return(NULL);
     }
 
     if (!vs_init(vs)) {
 	dealloc_window(newwin);
-	free((genptr *) newwin);
+	free(newwin);
 	return(NULL);
     }
 
@@ -645,7 +645,7 @@ Xviwin	*win;
     /*
      * Allocate a Posn structure for the cursor.
      */
-    win->w_cursor = (Posn *) malloc(sizeof(Posn));
+    win->w_cursor = alloc(sizeof(Posn));
     if (win->w_cursor == NULL) {
 	return(FALSE);
     }
@@ -653,7 +653,7 @@ Xviwin	*win;
     win->w_colour_cost = VScolour_cost(vs);
     win->w_spare_cols = 1 + (win->w_colour_cost * 2);
 
-    win->w_cmd = (Cmd *) malloc(sizeof(Cmd));
+    win->w_cmd = alloc(sizeof(Cmd));
     if (win->w_cmd == NULL) {
 	return(FALSE);
     }
@@ -670,8 +670,8 @@ static void
 dealloc_window(win)
 Xviwin	*win;
 {
-    free((genptr *) win->w_cursor);
-    free((genptr *) win->w_cmd);
+    free(win->w_cursor);
+    free(win->w_cmd);
     flexdelete(&win->w_statusline);
 }
 
@@ -692,7 +692,7 @@ Xviwin	*last, *next;
 {
     Xviwin	*newwin;
 
-    newwin = (Xviwin *) malloc(sizeof(Xviwin));
+    newwin = alloc(sizeof(Xviwin));
     if (newwin == NULL) {
 	return(NULL);
     }

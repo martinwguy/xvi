@@ -832,7 +832,7 @@ void
 		if (pp->p_list[0] != NULL) {
 		    free(pp->p_list[0]);
 		}
-		free((char *) pp->p_list);
+		free(pp->p_list);
 	    }
 	    pp->p_list = argv;
 	}

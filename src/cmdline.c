@@ -857,7 +857,7 @@ bool_t	interactive;			/* true if reading from tty */
     echo = savecho;
 
     if (argc > 0 && argv != NULL) {
-	free((char *) argv);
+	free(argv);
     }
 }
 

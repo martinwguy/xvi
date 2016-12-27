@@ -489,7 +489,7 @@ char	*whites;
     if (*str == '\0')
 	return;
 
-    argv = (char **) alloc(sizeof(char *) * 8);
+    argv = alloc(sizeof(char *) * 8);
     if (argv == NULL)
 	return;
     argv_size = 8;
@@ -498,8 +498,7 @@ char	*whites;
     do {
 	if (argc >= (argv_size - 1)) {
 	    argv_size += 8;
-	    argv = (char **) realloc((char *) argv,
-				(unsigned) argv_size * sizeof(char *));
+	    argv = re_alloc(argv, argv_size * sizeof(char *));
 	    if (argv == NULL)
 		return;
 	}

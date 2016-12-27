@@ -237,10 +237,10 @@ rn_new(str)
 {
     Rnode	*retp;
 
-    if ((retp = (Rnode *) alloc(sizeof (Rnode))) == NULL)
+    if ((retp = alloc(sizeof (Rnode))) == NULL)
 	return NULL;
     if ((retp->rn_ptr = regcomp(str)) == NULL) {
-	free ((char *) retp);
+	free (retp);
 	return NULL;
     }
     retp->rn_count = 1;
@@ -264,8 +264,8 @@ rn_delete(rp)
 Rnode	*rp;
 {
     if (rp != NULL && --rp->rn_count <= 0) {
-	free((char *) rp->rn_ptr);
-	free((char *) rp);
+	free(rp->rn_ptr);
+	free(rp);
     }
 }
 

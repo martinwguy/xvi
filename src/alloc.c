@@ -78,20 +78,20 @@ static
 #endif
 void
 usemem(p, nbytes)
-    char *p;
+    void *p;
     register int nbytes;
 {
     if (nbytes >= sizeof(Reusable)) {
 	register Reusable * rp1;
 	register Reusable * rp2;
 
-	rp2 = (Reusable *) p;
+	rp2 = p;
 	do {
 	    rp1 = rp2;
 	    rp1->ru_next = rp2 = &rp1[1];
 	} while ((nbytes -= sizeof(Reusable)) >= sizeof (Reusable));
 	rp1->ru_next = reuselist;
-	reuselist = (Reusable *) p;
+	reuselist = p;
     }
 }
 
@@ -104,19 +104,22 @@ ralloc()
     Reusable *p;
 
     if (reuselist == NULL) {
-	    /*
-	     * Try to allocate a block of 16 Reusable objects.
-	     *
-	     * We don't use alloc() for this because that could cause
-	     * it to display the same error message twice.
-	     */
+	/*
+	 * Try to allocate a block of 16 Reusable objects.
+	 *
+	 * We turn off e_ALLOCFAIL for the first alloc to
+	 * prevent getting the same error message twice.
+	 */
+	unsigned savecho;
 
 #define RBLOCKSIZE (16 * sizeof (Reusable))
-
-	    if ((p = (Reusable *) malloc(RBLOCKSIZE)) != NULL) {
-		usemem((char *) p, RBLOCKSIZE);
+	savecho = echo;
+	echo &= ~e_ALLOCFAIL;
+	if ((p = alloc(RBLOCKSIZE)) != NULL) {
+	    usemem((char *) p, RBLOCKSIZE);
 #undef  RBLOCKSIZE
-	    }
+	}
+	echo = savecho;
     }
     if (reuselist) {
 	p = reuselist;
@@ -127,7 +130,7 @@ ralloc()
      * If we get to here, either there isn't much memory left or it's
      * very badly fragmented, so we just try for a single Reusable.
      */
-    return (Reusable *) alloc(sizeof(Reusable));
+    return alloc(sizeof(Reusable));
 }
 
 Change *
@@ -136,11 +139,11 @@ challoc()
     return (Change *) ralloc();
 }
 
-char *
+void *
 alloc(size)
-unsigned size;
+size_t size;
 {
-    char *p;		/* pointer to new storage space */
+    void *p;		/* pointer to new storage space */
 
     if ((p = malloc(size)) == NULL) {
 	if (echo & e_ALLOCFAIL) {
@@ -150,13 +153,66 @@ unsigned size;
     return(p);
 }
 
+void *
+re_alloc(ref, size)
+void *ref;
+size_t size;
+{
+    void *p;		/* pointer to new storage space */
+
+    if (ref == NULL) {
+	return(alloc(size));
+    }
+
+    if ((p = realloc(ref, size)) == NULL) {
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Not enough memory!");
+	}
+    }
+    return(p);
+}
+
+void *
+clr_alloc(num, size)
+size_t num, size;
+{
+    void *p;		/* pointer to new storage space */
+#if 0
+    size_t total;	/* total size to allocate */
+
+    total = num * size;
+    if ((size != 0) && ((total / size) != num)) {
+	/* overflow */
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Allocation size overflow!");
+	}
+	return(NULL);
+    }
+
+    if ((p = malloc(total)) == NULL) {
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Not enough memory!");
+	}
+    } else {
+	memset(p, 0, total);
+    }
+#else
+    if ((p = calloc(num, size)) == NULL) {
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Not enough memory!");
+	}
+    }
+#endif
+    return(p);
+}
+
 char *
 strsave(string)
 const char *string;
 {
     char	*space;
 
-    space = alloc((unsigned) strlen(string) + 1);
+    space = alloc(strlen(string) + 1);
     if (space != NULL) {
 	(void) strcpy(space, string);
     }
@@ -191,7 +247,7 @@ int	nchars;
      * this will break on many systems.
      */
     nchars = (nchars == 0) ? MEMCHUNK : MC_ROUNDUP(nchars);
-    ltp = alloc((unsigned) nchars);
+    ltp = alloc(nchars);
     if (ltp == NULL) {
 	return(NULL);
     }
@@ -270,7 +326,7 @@ register unsigned	newsize;
     oldtext = lp->l_text;
 
     if (newsize < oldsize && oldtext != NULL) {
-	if ((newtext = realloc(oldtext, newsize)) == NULL) {
+	if ((newtext = re_alloc(oldtext, newsize)) == NULL) {
 	    newtext = oldtext;
 	}
     } else {

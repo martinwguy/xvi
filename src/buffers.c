@@ -29,18 +29,18 @@ static	bool_t	setup_buffer P((Buffer *));
 Buffer *
 new_buffer()
 {
-    Buffer	*new;
+    Buffer	*newbuf;
 
-    new = (Buffer *) alloc(sizeof(Buffer));
-    if (new == NULL) {
+    newbuf = alloc(sizeof(Buffer));
+    if (newbuf == NULL) {
 	return(NULL);
     }
 
     /*
      * Allocate memory for lines etc.
      */
-    if (setup_buffer(new) == FALSE) {
-	free((char *) new);
+    if (setup_buffer(newbuf) == FALSE) {
+	free(newbuf);
 	return(NULL);
     }
 
@@ -48,12 +48,12 @@ new_buffer()
      * Since setup_buffer() does not set up
      * the filenames, we must do it ourselves.
      */
-    new->b_filename = NULL;
-    new->b_tempfname = NULL;
+    newbuf->b_filename = NULL;
+    newbuf->b_tempfname = NULL;
 
-    new->b_nwindows = 0;
+    newbuf->b_nwindows = 0;
 
-    return(new);
+    return(newbuf);
 }
 
 /*
@@ -76,7 +76,7 @@ Buffer	*buffer;
      */
     free_undo(buffer);
 
-    free((char *) buffer);
+    free(buffer);
 }
 
 /*

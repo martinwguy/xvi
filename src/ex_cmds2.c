@@ -252,9 +252,14 @@ exChangeDirectory(dir)
     char	*ret;
     char	*curdir;
 
-    if (dir == NULL && homedir == NULL &&
-    				(homedir = getenv("HOME")) == NULL) {
-	return("HOME environment variable not set");
+    if (dir == NULL && homedir == NULL) {
+	if ((ret = getenv("HOME")) == NULL) {
+	    return("HOME environment variable not set");
+	}
+	homedir = strsave(ret);
+	if (homedir == NULL) {
+	    return("Failed to save HOME environment variable");
+	}
     }
 
     if (dir == NULL) {
@@ -267,20 +272,25 @@ exChangeDirectory(dir)
 	}
     }
 
-    curdir = malloc(MAXPATHLEN + 2);
-    if (curdir != NULL && getcwd(curdir, MAXPATHLEN + 2) == NULL) {
+    curdir = alloc(MAXPATHLEN + 1);
+    if (curdir == NULL) {
+	return("Failed to allocate space for current directory variable");
+    }
+    if (getcwd(curdir, MAXPATHLEN + 1) == NULL) {
 	free(curdir);
 	curdir = NULL;
     }
-    ret = (chdir(dir) == 0 ? NULL : "Invalid directory");
+    if (chdir(dir) != 0) {
+	return(strerror(errno));
+    }
     if (prevdir) {
 	free(prevdir);
 	prevdir = NULL;
     }
     if (curdir) {
-	prevdir = realloc(curdir, (unsigned) strlen(curdir) + 1);
+	prevdir = re_alloc(curdir, strlen(curdir) + 1);
     }
-    return(ret);
+    return(NULL);
 }
 
 /*

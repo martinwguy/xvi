@@ -511,7 +511,7 @@ Posn	*from, *to;
     char	*cp;
 
     nchars = to->p_index - from->p_index + 1;
-    cp = (char *) alloc((unsigned) nchars + 1);
+    cp = alloc((unsigned) nchars + 1);
     if (cp == NULL) {
 	return(NULL);
     }
