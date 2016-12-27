@@ -136,17 +136,70 @@ challoc()
     return (Change *) ralloc();
 }
 
-char *
+void *
 alloc(size)
-unsigned size;
+size_t size;
 {
-    char *p;		/* pointer to new storage space */
+    void *p;		/* pointer to new storage space */
 
     if ((p = malloc(size)) == NULL) {
 	if (echo & e_ALLOCFAIL) {
 	    show_error(curwin, "Not enough memory!");
 	}
     }
+    return(p);
+}
+
+void *
+re_alloc(ref, size)
+void *ref;
+size_t size;
+{
+    void *p;		/* pointer to new storage space */
+
+    if (ref == NULL) {
+	return(alloc(size));
+    }
+
+    if ((p = realloc(ref, size)) == NULL) {
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Not enough memory!");
+	}
+    }
+    return(p);
+}
+
+void *
+clr_alloc(num, size)
+size_t num, size;
+{
+    void *p;		/* pointer to new storage space */
+#if 0
+    size_t total;	/* total size to allocate */
+
+    total = num * size;
+    if ((size != 0) && ((total / size) != num)) {
+	/* overflow */
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Allocation size overflow!");
+	}
+	return(NULL);
+    }
+
+    if ((p = malloc(total)) == NULL) {
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Not enough memory!");
+	}
+    } else {
+	memset(p, 0, total);
+    }
+#else
+    if ((p = calloc(num, size)) == NULL) {
+	if (echo & e_ALLOCFAIL) {
+	    show_error(curwin, "Not enough memory!");
+	}
+    }
+#endif
     return(p);
 }
 

@@ -840,7 +840,9 @@ extern	struct redo	Redo;
 /*
  * alloc.c
  */
-extern	char	*alloc P((unsigned int));
+extern	void	*alloc P((size_t));
+extern	void	*re_alloc P((void *, size_t));
+extern	void	*clr_alloc P((size_t, size_t));
 extern	char	*strsave P((const char *));
 extern	Line	*newline P((int));
 extern	bool_t	lnresize P((Line *, unsigned));
