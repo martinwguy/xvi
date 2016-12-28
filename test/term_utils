@@ -1,0 +1,54 @@
+# Utility functions for xvi's tkterm test rig
+
+# Does the screen image start with the lines in the given list
+# and is the cursor at the expected position?
+proc screen_is {crow ccol should} {
+    global term
+    if { ! [cursor_at $crow $ccol] } { return FALSE }
+    for {set i 0} {$i < [llength $should]} {incr i} {
+	set line [lindex $should $i]
+	# List of lines is indexed from 0 by i but screen is indexed from 1
+	set row [expr $i + 1]
+	set onscreen [string trimright [$term get $row.0 $row.end]]
+	if { $onscreen != $line } { return FALSE }
+    }
+    return TRUE
+}
+
+# Is the cursor at the specified row and column?
+proc cursor_at {row col} {
+    global term cur_row cur_col
+    # There must be a snappier way to say this, but I can't find it!
+    if { $cur_row == $row && $cur_col == $col } {
+	return TRUE
+    } else {
+	return FALSE
+    }
+}
+
+# What's on the last line of the screen (minus trailing spaces)?
+proc statusline {} {
+    global term
+    return [string trimright [$term get 24.0 24.end]]
+}
+
+# Is the status line (with trailing spaces stripped from it) this text?
+proc statusline_is {str} {
+    global term
+    if { $str == [statusline] } {
+	return TRUE
+    } else {
+	return FALSE
+    }
+}
+
+# Is the status line (with trailing spaces stripped from it)
+# different from this text?
+proc statusline_isnt {str} {
+    global term
+    if { $str == [statusline] } {
+	return FALSE
+    } else {
+	return TRUE
+    }
+}
