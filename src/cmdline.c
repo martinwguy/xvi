@@ -309,11 +309,12 @@ bool_t	interactive;			/* true if reading from tty */
     unsigned	savecho;		/* previous value of echo */
 
     /*
-     * Skip a leading colon to make life easier.
+     * Skip leading colons and blanks
      */
-    if (cmdline[0] == ':') {
-    	cmdline++;
+    while (cmdline[0] == ':') {
+	++cmdline;
     }
+    /* get_range() skips space characters after the : */
 
     /*
      * Parse a range, if present (and update the cmdline pointer).
