@@ -1,0 +1,83 @@
+#! /usr/bin/tclsh
+
+# Check that it says "Interrupted" when it should.
+
+# Boilerplate
+
+source tkterm
+source term_expect
+source term_utils
+
+# Utilities
+
+# Set the status line to anything other than "Interrupted"
+proc clear_statusline { } {
+    exp_send "\x07"	;# Ctrl-G prints the current filename etc
+    term_expect timeout { exit 110 } \
+	{ statusline_isnt "Interrupted" }
+}
+	
+
+# Tests begin
+
+# Start xvi
+exp_send "exec ../src/xvi\r"
+
+# Check it started up OK
+set timeout 1
+term_expect timeout { exit 100 } \
+	{ screen_is 1 0 [list "" "~"] }
+
+
+# Interrupt it in keystroke command mode
+
+exp_send "\x03"
+term_expect timeout { exit 101 } \
+    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+
+
+# Interrupt it after one char of a 2-char command
+
+clear_statusline
+exp_send "z\x03"
+term_expect timeout { exit 102 } \
+    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+
+
+# Interrupt it in insert mode
+
+clear_statusline
+exp_send "ii"
+term_expect timeout { exit 103 } \
+    { screen_is 1 1 "i" }
+exp_send "\x03"
+term_expect timeout { exit 104 } \
+    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "i"]] } }
+
+
+# Interrupt it in replace mode
+
+clear_statusline
+exp_send "0Daabc\x1Bh"
+term_expect timeout { exit 105 } \
+    { screen_is 1 1 "abc" }
+exp_send "RX"
+term_expect timeout { exit 106 } \
+    { screen_is 1 2 "aXc" }
+exp_send "\x03"
+term_expect timeout { exit 107 } \
+    { expr { [statusline_is "Interrupted"] && [screen_is 1 1 "aXc"] } }
+
+
+# Interrupt it in command line mode
+
+clear_statusline
+exp_send "0D:"
+term_expect timeout { exit 108 } \
+    { expr { [statusline_is ":"] && [screen_is 24 1 [list "" "~"]] } }
+exp_send "\x03"
+term_expect timeout { exit 109 } \
+    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+
+
+exit 0
