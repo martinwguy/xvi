@@ -471,6 +471,7 @@ Cmd	*cmd;
     char	*tp;
     int		c;
     char	newc[2];
+    int		count;
 
     Redo.r_mode = r_normal;
     flexclear(&Redo.r_fb);
@@ -484,32 +485,38 @@ Cmd	*cmd;
 	beep(curwin);
 	return;
     }
-    c = tp[cp->p_index];
+    count = IDEF1(cmd->cmd_prenum);
+    start_command(curwin);
+    do {
+	c = tp[cp->p_index];
 
-    switch (cmd->cmd_ch1) {
-    case '~':
-	newc[0] = is_alpha(c) ?
-		    is_lower(c) ?
-		    	to_upper(c)
-			: to_lower(c)
-		    : c;
-	break;
-    case CTRL('_'):			/* flip top bit */
+	switch (cmd->cmd_ch1) {
+	case '~':
+	    newc[0] = is_alpha(c) ?
+			is_lower(c) ?
+			    to_upper(c)
+			    : to_lower(c)
+			: c;
+	    break;
+	case CTRL('_'):			/* flip top bit */
 #ifdef	TOP_BIT
-	newc[0] = c ^ TOP_BIT;
-	if (newc[0] == '\0') {
-	    newc[0] = c;
-	}
+	    newc[0] = c ^ TOP_BIT;
+	    if (newc[0] == '\0') {
+		newc[0] = c;
+	    }
 #else	/* not TOP_BIT */
-	beep(curwin);
-	return;
+	    beep(curwin);
+	    return;
 #endif	/* TOP_BIT */
-    }
+	}
 
-    newc[1] = '\0';
-    replchars(curwin, cp->p_line, cp->p_index, 1, newc);
-    updateline(curwin, FALSE);
-    (void) one_right(curwin, FALSE);
+	newc[1] = '\0';
+	replchars(curwin, cp->p_line, cp->p_index, 1, newc);
+	updateline(curwin, FALSE);
+	if (!one_right(curwin, FALSE))
+	    break;
+    } while (--count > 0);
+    end_command(curwin);
 }
 
 /*
