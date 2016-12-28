@@ -165,7 +165,7 @@ Param	params[] = {
 {   "readonly",     "ro",           P_BOOL,     0,              nofunc,	   },
 {   "redraw",       "red",          P_BOOL,     0,              not_imp,   },
 {   "regextype",    "rt",           P_ENUM,     0,              xvpSetRT,  },
-{   "remap",        "rem",          P_BOOL,     0,              nofunc,    },
+{   "remap",        "rem",          P_BOOL,     TRUE,           nofunc,    },
 {   "report",       "rep",          P_NUM,      5,              nofunc,    },
 {   "roscolour",    "rst",          P_STRING,   0,              xvpSetColour,},
 {   "scroll",       "sc",           P_NUM,      0,              not_imp,   },
