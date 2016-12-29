@@ -59,7 +59,7 @@ tagInit()
 
     for (count = 0; tagfiles[count] != NULL; count++) {
 
-	fp = fopen(fexpand(tagfiles[count], FALSE), "r");
+	fp = fopen(tagfiles[count], "r");
 	if (fp == NULL) {
 	    continue;
 	}
