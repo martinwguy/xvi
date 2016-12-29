@@ -336,11 +336,8 @@ char	*argv[];
 		getScreenSize(&new_rows, &new_cols);
 		if (new_rows != 0 && new_cols != 0) {
 		    event.ev_type = Ev_resize;
-		    event.ev_rows = new_rows - vs->pv_rows;
-		    event.ev_columns = new_cols - vs->pv_cols;
-
-		    vs->pv_rows = LI = new_rows;
-		    vs->pv_cols = CO = new_cols;
+		    event.ev_rows = new_rows;
+		    event.ev_columns = new_cols;
 		} else {
 		    pbeep(vs);
 		    continue;		/* don't process this event */

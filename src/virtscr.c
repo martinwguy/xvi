@@ -81,31 +81,31 @@ VirtScr	*vs;
  * Returns TRUE if we did it, FALSE for failure.
  */
 bool_t
-vs_resize(vs, rows, columns)
+vs_resize(vs, new_rows, new_cols)
 VirtScr	*vs;
-int	rows, columns;
+int	new_rows, new_cols;
 {
     int		count;
-    int		old_rows, new_rows;
-    int		new_cols;
+    int		old_rows, old_cols;
     Sline	*ip, *ep;
 
-    if ((rows == 0) && (columns == 0)) {
+    old_rows = VSrows(vs);
+    old_cols = VScols(vs);
+
+    if ((new_rows == old_rows) && (new_cols == old_cols)) {
 	return(TRUE);
     }
-
-    new_rows = VSrows(vs);
-    old_rows = new_rows - rows;
-    new_cols = VScols(vs);
 
     /*
      * Free up rows no longer required.
      */
-    for (count = new_rows; count < old_rows; count++) {
-	free(vs->pv_int_lines[count].s_line);
-	free(vs->pv_ext_lines[count].s_line);
-	free(vs->pv_int_lines[count].s_colour);
-	free(vs->pv_ext_lines[count].s_colour);
+    if (new_rows < old_rows) {
+	for (count = new_rows; count < old_rows; count++) {
+	    free(vs->pv_int_lines[count].s_line);
+	    free(vs->pv_ext_lines[count].s_line);
+	    free(vs->pv_int_lines[count].s_colour);
+	    free(vs->pv_ext_lines[count].s_colour);
+	}
     }
 
     /*
@@ -113,80 +113,86 @@ int	rows, columns;
      * for new_rows to be 0, we add a single byte to the amount
      * allocated. This ensures that the allocation will succeed.
      */
-    vs->pv_int_lines = re_alloc(vs->pv_int_lines,
-				(new_rows * sizeof(Sline)) + 1);
-    if (vs->pv_int_lines == NULL) {
-	return(FALSE);
-    }
-    vs->pv_ext_lines = re_alloc(vs->pv_ext_lines,
-				(new_rows * sizeof(Sline)) + 1);
-    if (vs->pv_ext_lines == NULL) {
-	return(FALSE);
+    if (new_rows != old_rows) {
+	vs->pv_int_lines = re_alloc(vs->pv_int_lines,
+					(new_rows * sizeof(Sline)) + 1);
+	if (vs->pv_int_lines == NULL) {
+	    return(FALSE);
+	}
+	vs->pv_ext_lines = re_alloc(vs->pv_ext_lines,
+					(new_rows * sizeof(Sline)) + 1);
+	if (vs->pv_ext_lines == NULL) {
+	    return(FALSE);
+	}
     }
 
     /*
      * Allocate space for newly acquired rows.
      */
-    for (count = old_rows; count < new_rows; count++) {
-	ip = vs->pv_int_lines + count;
-	ep = vs->pv_ext_lines + count;
+    if (new_rows > old_rows) {
+	for (count = old_rows; count < new_rows; count++) {
+	    ip = vs->pv_int_lines + count;
+	    ep = vs->pv_ext_lines + count;
 
-	ip->s_line = alloc((new_cols + 1) * sizeof(ip->s_line[0]));
-	if (ip->s_line == NULL) {
-	    return(FALSE);
-	}
-	ep->s_line = alloc((new_cols + 1) * sizeof(ip->s_line[0]));
-	if (ep->s_line == NULL) {
-	    return(FALSE);
-	}
-	ip->s_colour = alloc((new_cols + 1) * sizeof(ip->s_colour[0]));
-	if (ip->s_colour == NULL) {
-	    return(FALSE);
-	}
-	ep->s_colour = alloc((new_cols + 1) * sizeof(ip->s_colour[0]));
-	if (ep->s_colour == NULL) {
-	    return(FALSE);
-	}
+	    ip->s_line = alloc((new_cols + 1) * sizeof(ip->s_line[0]));
+	    if (ip->s_line == NULL) {
+		return(FALSE);
+	    }
+	    ep->s_line = alloc((new_cols + 1) * sizeof(ip->s_line[0]));
+	    if (ep->s_line == NULL) {
+		return(FALSE);
+	    }
+	    ip->s_colour = alloc((new_cols + 1) * sizeof(ip->s_colour[0]));
+	    if (ip->s_colour == NULL) {
+		return(FALSE);
+	    }
+	    ep->s_colour = alloc((new_cols + 1) * sizeof(ip->s_colour[0]));
+	    if (ep->s_colour == NULL) {
+		return(FALSE);
+	    }
 
-	ip->s_line[0] = '\0';
-	ep->s_line[0] = '\0';
-	ip->s_used = ep->s_used = 0;
-	ip->s_flags = ep->s_flags = S_DIRTY;
+	    ip->s_line[0] = '\0';
+	    ep->s_line[0] = '\0';
+	    ip->s_used = ep->s_used = 0;
+	    ip->s_flags = ep->s_flags = S_DIRTY;
+	}
     }
 
     /*
      * If the number of columns has changed, change the size of the
      * screen rows for the smaller of the old and new screen sizes.
      */
-    count = new_rows - 1;
-    if (count > old_rows - 1) {
-	count = old_rows - 1;
-    }
-    for ( ; count >= 0; --count) {
-	ip = vs->pv_int_lines + count;
-	ep = vs->pv_ext_lines + count;
+    if (new_cols != old_cols) {
+	count = (new_rows > old_rows ? old_rows : new_rows) - 1;
+	for ( ; count >= 0; --count) {
+	    ip = vs->pv_int_lines + count;
+	    ep = vs->pv_ext_lines + count;
 
-	ip->s_line = re_alloc(ip->s_line,
-			(new_cols + 1) * sizeof(ip->s_line[0]));
-	if (ip->s_line == NULL) {
-	    return(FALSE);
-	}
-	ep->s_line = re_alloc(ep->s_line,
-			(new_cols + 1) * sizeof(ep->s_line[0]));
-	if (ep->s_line == NULL) {
-	    return(FALSE);
-	}
-	ip->s_colour = re_alloc(ip->s_colour,
-			(new_cols + 1) * sizeof(ip->s_colour[0]));
-	if (ip->s_colour == NULL) {
-	    return(FALSE);
-	}
-	ep->s_colour = re_alloc(ep->s_colour,
-			(new_cols + 1) * sizeof(ep->s_colour[0]));
-	if (ep->s_colour == NULL) {
-	    return(FALSE);
+	    ip->s_line = re_alloc(ip->s_line,
+			    (new_cols + 1) * sizeof(ip->s_line[0]));
+	    if (ip->s_line == NULL) {
+		return(FALSE);
+	    }
+	    ep->s_line = re_alloc(ep->s_line,
+			    (new_cols + 1) * sizeof(ep->s_line[0]));
+	    if (ep->s_line == NULL) {
+		return(FALSE);
+	    }
+	    ip->s_colour = re_alloc(ip->s_colour,
+			    (new_cols + 1) * sizeof(ip->s_colour[0]));
+	    if (ip->s_colour == NULL) {
+		return(FALSE);
+	    }
+	    ep->s_colour = re_alloc(ep->s_colour,
+			    (new_cols + 1) * sizeof(ep->s_colour[0]));
+	    if (ep->s_colour == NULL) {
+		return(FALSE);
+	    }
 	}
     }
+
+    vs->pv_rows = LI = new_rows;
+    vs->pv_cols = CO = new_cols;
 
     return(TRUE);
 }
