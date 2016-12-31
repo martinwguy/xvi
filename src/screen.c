@@ -95,6 +95,16 @@ long		line;
 	    if (curr_index == norm_colour_pos) {
 		colour = VSCcolour;
 	    }
+#if 0
+	    /* This can be an incredible performance hit if there are no
+	     * tags files. In that case, every line that gets refreshed
+	     * will call tagLookup, whick will in turn will call tagInit,
+	     * which will then try to open any files listed in the 'tags'
+	     * param. That will be for every line that is being refreshed!
+	     * Also, bugs in the tags handling can show up when just
+	     * refreshing displayed lines. This needs serious consideration
+	     * before being added back to such a crucial part of the code.
+	     */
 	    if (curr_index == possible_tag) {
 		int	len, offset;
 
@@ -104,7 +114,7 @@ long		line;
 		}
 		possible_tag += offset;
 	    }
-
+#endif
 	    c = (unsigned char) (ltext[curr_index++]);
 
 	    /*
