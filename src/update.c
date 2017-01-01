@@ -287,7 +287,22 @@ unsigned	line;
 {
     vs->pv_ext_lines[line].s_used = 0;
     vs->pv_ext_lines[line].s_line[0] = '\0';
-    xvMarkDirty(vs, (int) line);
+    xvMarkDirty(vs, line);
+}
+
+void
+xvClearWindow(vs, win)
+VirtScr		*vs;
+Xviwin		*win;
+{
+    register unsigned	row;
+    register unsigned	nrows;
+
+    VSset_colour(vs, VSCcolour);
+
+    for (row = 0; row < win->w_nrows; row++) {
+	xvClearLine(vs, win->w_winpos + row);
+    }
 }
 
 void

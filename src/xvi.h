@@ -1199,6 +1199,7 @@ extern	bool_t	set_undolevels P((Xviwin *, Paramval, bool_t));
 extern	void	xvUpdateScr P((Xviwin *, VirtScr *, int, int));
 extern	void	xvMarkDirty P((VirtScr *, int));
 extern	void	xvClearLine P((VirtScr *, unsigned));
+extern	void	xvClearWindow P((VirtScr *, Xviwin *));
 extern	void	xvClear P((VirtScr *));
 
 /*

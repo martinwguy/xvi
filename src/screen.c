@@ -95,6 +95,16 @@ long		line;
 	    if (curr_index == norm_colour_pos) {
 		colour = VSCcolour;
 	    }
+#if 0
+	    /* This can be an incredible performance hit if there are no
+	     * tags files. In that case, every line that gets refreshed
+	     * will call tagLookup, whick will in turn will call tagInit,
+	     * which will then try to open any files listed in the 'tags'
+	     * param. That will be for every line that is being refreshed!
+	     * Also, bugs in the tags handling can show up when just
+	     * refreshing displayed lines. This needs serious consideration
+	     * before being added back to such a crucial part of the code.
+	     */
 	    if (curr_index == possible_tag) {
 		int	len, offset;
 
@@ -104,7 +114,7 @@ long		line;
 		}
 		possible_tag += offset;
 	    }
-
+#endif
 	    c = (unsigned char) (ltext[curr_index++]);
 
 	    /*
@@ -290,7 +300,8 @@ Xviwin	*win;
 
     if ((win->w_nrows == 0) ||
 	(VSrows(win->w_vs)  == 0) ||
-	(VScols(win->w_vs) == 0)) {
+	(VScols(win->w_vs) == 0) ||
+	(win->w_cmdline > VSrows(win->w_vs))) {
 	return;
     }
 
@@ -437,8 +448,8 @@ bool_t	flag;
     	return;
     }
     if (flag) {
-	xvClear(window->w_vs);
-	update_sline(window);
+	xvClearWindow(window->w_vs, window);
+	do_sline(window);
     }
     if (window->w_nrows > 1) {
 	file_to_new(window);
@@ -472,10 +483,9 @@ bool_t	clrflag;
 		file_to_new(w);
 	    do_sline(w);
 	}
-	w = xvNextDisplayedWindow(w);
-    } while (w != win);
+    } while ((w = xvNextWindow(w)) != win);
 
-    xvUpdateScr(win, win->w_vs, 0, (int) VSrows(win->w_vs));
+    xvUpdateScr(win, win->w_vs, 0, VSrows(win->w_vs));
 }
 
 /*

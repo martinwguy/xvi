@@ -286,6 +286,7 @@ init_params()
      * parameter structures.
      */
     for (i = 0; i < NSTRS; i++) {
+	params[init_str[i].index].p_str = NULL;
 	set_param(init_str[i].index, init_str[i].value);
     }
     for (i = 0; i < NENUMS; i++) {
