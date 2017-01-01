@@ -300,7 +300,8 @@ Xviwin	*win;
 
     if ((win->w_nrows == 0) ||
 	(VSrows(win->w_vs)  == 0) ||
-	(VScols(win->w_vs) == 0)) {
+	(VScols(win->w_vs) == 0) ||
+	(win->w_cmdline > VSrows(win->w_vs))) {
 	return;
     }
 
@@ -447,8 +448,8 @@ bool_t	flag;
     	return;
     }
     if (flag) {
-	xvClear(window->w_vs);
-	update_sline(window);
+	xvClearWindow(window->w_vs, window);
+	do_sline(window);
     }
     if (window->w_nrows > 1) {
 	file_to_new(window);
@@ -482,10 +483,9 @@ bool_t	clrflag;
 		file_to_new(w);
 	    do_sline(w);
 	}
-	w = xvNextDisplayedWindow(w);
-    } while (w != win);
+    } while ((w = xvNextWindow(w)) != win);
 
-    xvUpdateScr(win, win->w_vs, 0, (int) VSrows(win->w_vs));
+    xvUpdateScr(win, win->w_vs, 0, VSrows(win->w_vs));
 }
 
 /*
