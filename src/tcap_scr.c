@@ -316,9 +316,9 @@ char	*argv[];
 
 	r = inch(timeout);
 	if (r == EOF) {
-	    if (kbdintr) {
+	    if (kbdintr == KBD_INTR_PENDING) {
 		event.ev_type = Ev_breakin;
-		kbdintr = FALSE;
+		kbdintr = KBD_INTR_MESSAGE;
 	    } else if (SIG_terminate) {
 		event.ev_type = Ev_terminate;
 		SIG_terminate = FALSE;

@@ -133,7 +133,7 @@ int_handler(sig)
 int	sig;
 {
     (void) signal(SIGINT, int_handler);
-    kbdintr = TRUE;
+    kbdintr = KBD_INTR_PENDING;
 }
 #endif
 

@@ -418,6 +418,7 @@ bool_t	flag;
 	    }
 
 	    xvUpdateScr(w, w->w_vs, (int) (curs_row + w->w_winpos), nlines);
+	    info_update(w);
 	}
 	w = xvNextDisplayedWindow(w);
     } while (w != window);

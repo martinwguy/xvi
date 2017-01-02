@@ -736,13 +736,12 @@ extern	char		Version[];	/* version string for :ve command */
 /*
  * This flag is set when a keyboard interrupt is received.
  */
-extern volatile unsigned char kbdintr;
-
-/*
- * This one indicates whether we should display the "Interrupted"
- * message.
- */
-extern	bool_t		imessage;
+typedef enum kbd_intr_t {
+    KBD_INTR_CLEAR,	/* SIGINT handling is not required */
+    KBD_INTR_PENDING,	/* SIGINT received, requires handling */
+    KBD_INTR_MESSAGE	/* SIGINT handled, but message has not been output */
+} kbd_intr_t;
+extern volatile kbd_intr_t kbdintr;
 
 /*
  * This flag is set when a keyboard-generated suspension request

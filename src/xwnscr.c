@@ -477,9 +477,9 @@ long		timeout;
 	    /*
 	     * Either a timeout, or some kind of interrupt.
 	     */
-	    if (kbdintr) {
+	    if (kbdintr == KBD_INTR_PENDING) {
 		xvevent->ev_type = Ev_breakin;
-		kbdintr = FALSE;
+		kbdintr = KBD_INTR_MESSAGE;
 	    } else if (SIG_terminate) {
 		xvevent->ev_type = Ev_terminate;
 		SIG_terminate = FALSE;
