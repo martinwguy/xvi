@@ -734,12 +734,14 @@ extern	char		*altfilename;	/* name of current alternate file */
 extern	char		Version[];	/* version string for :ve command */
 
 /*
- * This flag is set when a keyboard interrupt is received.
+ * This variable is set to the current keyboard interrupt state.
  */
 typedef enum kbd_intr_t {
-    KBD_INTR_CLEAR,	/* SIGINT handling is not required */
-    KBD_INTR_PENDING,	/* SIGINT received, requires handling */
-    KBD_INTR_MESSAGE	/* SIGINT handled, but message has not been output */
+    KBD_INTR_CLEAR,	/* keyboard interrupts have been completely handled. */
+    KBD_INTR_PENDING,	/* keyboard interrupt received, but no code has
+			   acted on it yet. */
+    KBD_INTR_MESSAGE	/* keyboard interrupt has been acted on, message has
+			   yet to be output for it. */
 } kbd_intr_t;
 extern volatile kbd_intr_t kbdintr;
 

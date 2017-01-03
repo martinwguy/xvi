@@ -44,8 +44,13 @@ unsigned	echo;		/*
 int		indentchars;	/* number of chars indented on current line */
 
 volatile kbd_intr_t kbdintr;	/*
-				 * global state set when a keyboard interrupt
-				 * is pending, awaiting message, or clear.
+				 * This is the current keyboard interrupt state.
+				 * KBD_INTR_CLEAR: keyboard interrupts have been
+				 * 	completely handled.
+				 * KBD_INTR_PENDING: keyboard interrupt has been
+				 * 	received but no code has acted on it.
+				 * KBD_INTR_MESSAGE: keyboard interrupt has been
+				 * 	acted on but no message has been output.
 				 */
 
 /*
