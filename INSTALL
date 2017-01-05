@@ -14,6 +14,9 @@ To make the Debian/Ubuntu package, say
 which will create you ../xvi*.deb that you can install with
 	dpkg -i ../*.deb
 
+To compile for smallest code size, use
+	make OPTFLAG=-Os
+
 Other versions of Unix
 ----------------------
 makefile.aix
