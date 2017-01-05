@@ -95,16 +95,7 @@ long		line;
 	    if (curr_index == norm_colour_pos) {
 		colour = VSCcolour;
 	    }
-	    if (curr_index == possible_tag) {
-		int	len, offset;
-
-		if (tagLookup(&ltext[curr_index], &len, &offset) != NULL) {
-		    colour = VSCtagcolour;
-		    norm_colour_pos = curr_index + len;
-		}
-		possible_tag += offset;
-	    }
-
+	    
 	    c = (unsigned char) (ltext[curr_index++]);
 
 	    /*
