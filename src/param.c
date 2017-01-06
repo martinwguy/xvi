@@ -121,6 +121,8 @@ static	matchinfo_t	*findparam P((Xviwin *, char *));
  *	autodetect autogrow autonoedit autosplit colour edit equalsize
  *	format helpfile infoupdate jumpscroll preserve preservetime
  *	regextype roscolour statuscolour systemcolour tabindent vbell
+ *
+ * The string/list value field of Param[] is left uninitialized and gets NULL.
  */
 Param	params[] = {
 /*  fullname        shortname       flags       value           function ... */
