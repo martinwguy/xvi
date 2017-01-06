@@ -1,0 +1,59 @@
+#! /usr/bin/tclsh
+
+# Test numeric parameter before ~ command
+
+source tkterm
+source term_expect
+source term_utils
+
+set timeout 1
+
+# Start xvi and give it a second to refresh the display.
+exp_send "../src/xvi\r"
+exp_send "aabcdefgh"
+term_expect	timeout { exit 100 } \
+    		{ screen_is 1 8 "abcdefgh" }
+exp_send "\x1B"
+	# FAILS because it thinks the cursor is in the wrong position.
+	# WORKS if you send \x03 instead of \x1B (^C instead of Esc)
+	# WORKS if you "sleep 1" between here and the term_expect
+sleep 1
+term_expect	timeout { exit 101 } \
+		{ screen_is 1 7 "abcdefgh" }
+
+# Twiddle the first character
+exp_send "0~"
+term_expect	timeout { exit 102 } \
+    		{ screen_is 1 1 "Abcdefgh" }
+# Undo it
+exp_send "u"
+term_expect	timeout { exit 103 } \
+    		{ screen_is 1 0 "abcdefgh" }
+
+# move onto the d
+exp_send "fd"
+	# FAILS because it thinks the cursor is in the wrong position.
+	# tkterm continues reporting the cursor at (1,0)
+	# WORKS if you "sleep 1" between here and term_expect
+sleep 1
+term_expect	timeout { exit 104 } \
+    		{ screen_is 1 3 "abcdefgh" }
+# Set uppercase DEF
+exp_send "3~"
+term_expect	timeout { exit 105 } \
+    		{ screen_is 1 6 "abcDEFgh" }
+
+# Undo should undo all 3.
+exp_send "u"
+term_expect	timeout { exit 106 } \
+    		{ screen_is 1 3 "abcdefgh" }
+
+# Repeat count should stop when it gets to the end of the line,
+# and not flip the final character twice,
+# tested by moving onto the g and trying 3 ~'s
+exp_send "7|3~"
+term_expect	timeout { exit 107 } \
+    		{ screen_is 1 7 "abcdefGH" }
+
+
+exit 0
