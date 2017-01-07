@@ -115,8 +115,8 @@ int	ch;
     unsigned		len;
     char *		stat; /* Pointer to status line text */
 
-    if (kbdintr) {
-	    kbdintr = FALSE;
+    if (kbdintr == KBD_INTR_PENDING) {
+	    kbdintr = KBD_INTR_MESSAGE;
 	    ch = CTRL('C');
     }
 

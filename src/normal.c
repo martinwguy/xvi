@@ -39,25 +39,18 @@ normal(c)
 register int	c;
 {
     register Cmd	*cmd;
-    int ret = FALSE;
 
     cmd = curwin->w_cmd;
 
-    if (kbdintr) {
-	kbdintr = FALSE;
+    if (kbdintr == KBD_INTR_PENDING) {
+	kbdintr = KBD_INTR_MESSAGE;
 	c = CTRL('C');
     }
 
-    switch (c) {
-	case CTRL('C'):
-	    show_message(curwin, "Interrupted");
-	    ret = TRUE;
-	case ESC:
+    if ((c == ESC) || (c == CTRL('C'))) {
 	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;
-	    return(ret);
-	default:
-	    break;
+	    return(FALSE);
     }
 
     /*

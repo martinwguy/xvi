@@ -79,8 +79,8 @@ int	c;
      */
     nlines = plines(curwin, curpos->p_line);
 
-    if (kbdintr) {
-	    kbdintr = FALSE;
+    if (kbdintr == KBD_INTR_PENDING) {
+	    kbdintr = KBD_INTR_MESSAGE;
 	    c = CTRL('C');
     }
 
@@ -103,7 +103,6 @@ int	c;
 	 */
 	switch (c) {
 	case CTRL('C'):	/* an escape or ^C ends input mode */
-	    show_message(curwin, "Interrupted");
 	    Ins_repeat = 0;
 	case ESC:
 	{
@@ -470,8 +469,8 @@ int	c;
 
     curpos = curwin->w_cursor;
 
-    if (kbdintr) {
-	    kbdintr = FALSE;
+    if (kbdintr == KBD_INTR_PENDING) {
+	    kbdintr = KBD_INTR_MESSAGE;
 	    c = CTRL('C');
     }
 
@@ -490,7 +489,6 @@ int	c;
     } else if (!literal_next) {
 	switch (c) {
 	case CTRL('C'):			/* an escape or ^C ends input mode */
-	    show_message(curwin, "Interrupted");
 	case ESC:
 	    end_replace(c);
 	    return(TRUE);

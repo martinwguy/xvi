@@ -36,10 +36,10 @@ xvEvent	*ev;
     bool_t		do_update;
     int			c;
 
-    if (kbdintr) {
+    if (kbdintr == KBD_INTR_PENDING) {
 	    ev->ev_type = Ev_breakin;
 	    ev->ev_inchar = CTRL('C');
-	    kbdintr = FALSE;
+	    kbdintr = KBD_INTR_MESSAGE;
     }
 
     switch (ev->ev_type) {
@@ -195,6 +195,7 @@ xvEvent	*ev;
 	case INSERT:
 	case REPLACE:
 	    if (do_update) {
+		info_update(curwin);
 		move_window_to_cursor(curwin);
 		cursupdate(curwin);
 		wind_goto(curwin);
@@ -204,6 +205,17 @@ xvEvent	*ev;
 	case EXITING:
 	    break;
 	}
+
+	if (c == CTRL('C')) {
+	    /*
+	     * In some environments it's possible to type
+	     * control-C without actually generating an interrupt,
+	     * but if they do, in this context, they probably want
+	     * the semantics of an interrupt anyway.
+	     */
+	    kbdintr = KBD_INTR_MESSAGE;
+	    break;
+	}
     }
 
     if (State == EXITING) {
@@ -211,12 +223,10 @@ xvEvent	*ev;
 	return(&resp);
     }
 
-    if (kbdintr) {
-	if (imessage) {
-	    show_message(curwin, "Interrupted");
-	    wind_goto(curwin);	/* put cursor back */
-	}
-	imessage = (kbdintr = 0);
+    if (kbdintr == KBD_INTR_MESSAGE) {
+	show_message(curwin, "Interrupted");
+	wind_goto(curwin);	/* put cursor back */
+	kbdintr = KBD_INTR_CLEAR;
     }
 
     if (map_waiting()) {
@@ -259,15 +269,6 @@ int	c;
 
     switch (cmd_input(curwin, c)) {
     case cmd_CANCEL:
-	/*
-	 * Put the status line back as it should be.
-	 */
-	if (c == CTRL('C')) {
-	    show_message(curwin, "Interrupted");
-	} else {
-	    info_update(curwin);
-	}
-	retval = TRUE;
 	break;
 
     case cmd_INCOMPLETE:
@@ -303,14 +304,5 @@ static bool_t
 d_proc(c)
 int	c;
 {
-    if (c == CTRL('C')) {
-	/*
-	 * In some environments it's possible to type
-	 * control-C without actually generating an interrupt,
-	 * but if they do, in this context, they probably want
-	 * the semantics of an interrupt anyway.
-	 */
-	imessage = (kbdintr = 1);
-    }
     return(disp_screen(curwin, c));
 }

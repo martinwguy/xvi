@@ -240,9 +240,9 @@ process_event()
 	 * Assume that if we were interrupted, no event has been received,
 	 * so we can simply process the interrupt and then continue.
 	 */
-	if (kbdintr) {
+	if (kbdintr == KBD_INTR_PENDING) {
 	    event.ev_type = Ev_breakin;
-	    kbdintr = FALSE;
+	    kbdintr = KBD_INTR_MESSAGE;
 	} else if (SIG_terminate) {
 	    event.ev_type = Ev_terminate;
 	    SIG_terminate = FALSE;

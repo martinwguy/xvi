@@ -216,7 +216,7 @@ kbgetc()
     static unsigned char	kbuf[48];
     static unsigned char	*kbp;
 
-    if (kbdintr == TRUE)
+    if (kbdintr == KBD_INTR_PENDING)
 	return EOF;
 
     if (kb_nchars <= 0) {
@@ -233,7 +233,7 @@ kbgetc()
             retval = select(1, &rfds, NULL, NULL, &tv);
             if (retval > 0)
                  break;
-            if (retval == 0 || kbdintr)
+            if (retval == 0 || kbdintr == KBD_INTR_PENDING)
                 return EOF;
         }
 

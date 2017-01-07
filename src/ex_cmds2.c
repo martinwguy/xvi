@@ -212,8 +212,8 @@ char	*file;
 		break;
 
 	    case '\n':
-		if (kbdintr) {
-		    imessage = TRUE;
+		if (kbdintr == KBD_INTR_PENDING) {
+		    kbdintr = KBD_INTR_MESSAGE;
 		    break;
 		}
 		if (!flexempty(&cmd)) {

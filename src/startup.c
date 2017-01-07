@@ -43,15 +43,14 @@ unsigned	echo;		/*
 
 int		indentchars;	/* number of chars indented on current line */
 
-volatile unsigned char
-		kbdintr;	/*
-				 * global flag set when a keyboard interrupt
-				 * is received
-				 */
-
-bool_t		imessage;	/*
-				 * global flag to indicate whether we should
-				 * display the "Interrupted" message
+volatile kbd_intr_t kbdintr;	/*
+				 * This is the current keyboard interrupt state.
+				 * KBD_INTR_CLEAR: keyboard interrupts have been
+				 * 	completely handled.
+				 * KBD_INTR_PENDING: keyboard interrupt has been
+				 * 	received but no code has acted on it.
+				 * KBD_INTR_MESSAGE: keyboard interrupt has been
+				 * 	acted on but no message has been output.
 				 */
 
 /*
