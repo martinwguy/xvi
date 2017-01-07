@@ -38,3 +38,4 @@ install: all
 clean:
 	$(MAKE) -C src -f makefile.pos clean
 	$(MAKE) -C doc clean
+	rm -f configure-stamp build-stamp
