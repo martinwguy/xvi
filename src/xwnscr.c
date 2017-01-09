@@ -479,7 +479,6 @@ long		timeout;
 	     */
 	    if (kbdintr) {
 		xvevent->ev_type = Ev_breakin;
-		kbdintr = FALSE;
 	    } else if (SIG_terminate) {
 		xvevent->ev_type = Ev_terminate;
 		SIG_terminate = FALSE;

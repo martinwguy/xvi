@@ -45,13 +45,12 @@ register int	c;
 
     if (kbdintr) {
 	kbdintr = FALSE;
+	imessage = TRUE;
 	c = CTRL('C');
     }
 
     switch (c) {
 	case CTRL('C'):
-	    show_message(curwin, "Interrupted");
-	    ret = TRUE;
 	case ESC:
 	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;

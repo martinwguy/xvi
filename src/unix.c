@@ -216,7 +216,7 @@ kbgetc()
     static unsigned char	kbuf[48];
     static unsigned char	*kbp;
 
-    if (kbdintr == TRUE)
+    if (kbdintr)
 	return EOF;
 
     if (kb_nchars <= 0) {

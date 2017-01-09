@@ -36,12 +36,6 @@ xvEvent	*ev;
     bool_t		do_update;
     int			c;
 
-    if (kbdintr) {
-	    ev->ev_type = Ev_breakin;
-	    ev->ev_inchar = CTRL('C');
-	    kbdintr = FALSE;
-    }
-
     switch (ev->ev_type) {
     case Ev_char:
 	keystrokes++;
@@ -97,21 +91,16 @@ xvEvent	*ev;
 	break;
 
     case Ev_breakin:
-	if (State == DISPLAY || State == CMDLINE ||
-	    State == INSERT || State == REPLACE ||
-	    State == NORMAL || State == SUBNORMAL) {
-	    map_char(CTRL('C'));
-	} else {
-	    /*
-	     * We don't have to handle this any better; any code
-	     * which is actually interruptible will check the
-	     * kbdintr variable itself at appropriate points.
-	     * So this code only gets executed when we get an
-	     * interrupt in a non-interruptible code path, or
-	     * when we aren't doing anything at all.
-	     */
-	    beep(curwin);
-	}
+	/*
+	 * We don't have to handle this any better; any code
+	 * which is actually interruptible will check the
+	 * kbdintr variable itself at appropriate points.
+	 * So this code only gets executed when we get an
+	 * interrupt in a non-interruptible code path, or
+	 * when we aren't doing anything at all.
+	 */
+	map_char(CTRL('C'));
+	beep(curwin);
 	break;
 
     case Ev_suspend_request:
@@ -211,12 +200,10 @@ xvEvent	*ev;
 	return(&resp);
     }
 
-    if (kbdintr) {
-	if (imessage) {
-	    show_message(curwin, "Interrupted");
-	    wind_goto(curwin);	/* put cursor back */
-	}
-	imessage = (kbdintr = 0);
+    if (imessage) {
+	show_message(curwin, "Interrupted");
+	wind_goto(curwin);	/* put cursor back */
+	imessage = FALSE;
     }
 
     if (map_waiting()) {
@@ -262,12 +249,7 @@ int	c;
 	/*
 	 * Put the status line back as it should be.
 	 */
-	if (c == CTRL('C')) {
-	    show_message(curwin, "Interrupted");
-	} else {
-	    info_update(curwin);
-	}
-	retval = TRUE;
+	info_update(curwin);
 	break;
 
     case cmd_INCOMPLETE:
@@ -303,14 +285,5 @@ static bool_t
 d_proc(c)
 int	c;
 {
-    if (c == CTRL('C')) {
-	/*
-	 * In some environments it's possible to type
-	 * control-C without actually generating an interrupt,
-	 * but if they do, in this context, they probably want
-	 * the semantics of an interrupt anyway.
-	 */
-	imessage = (kbdintr = 1);
-    }
     return(disp_screen(curwin, c));
 }
