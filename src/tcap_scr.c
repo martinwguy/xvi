@@ -795,7 +795,7 @@ tty_open(prows, pcolumns)
 unsigned int	*prows;
 unsigned int	*pcolumns;
 {
-    char	tcbuf[1024];		/* buffer for termcap entry */
+    char	tcbuf[4096];		/* buffer for termcap entry */
     char	*termtype;		/* terminal type */
     static	char strings[512];	/* space for storing strings */
     char	*strp = strings;	/* ptr to space left in strings */
