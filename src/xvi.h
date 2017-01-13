@@ -471,12 +471,12 @@ typedef struct
 /*
  * Initialize a Flexbuf.
  */
-#define			flexnew(f)	((f)->fxb_wcnt = (f)->fxb_max = 0)
+#define			flexnew(f)	((f)->fxb_rcnt = (f)->fxb_wcnt = (f)->fxb_max = 0)
 /*
  * Reset a Flexbuf by clearing its contents, but without freeing the
  * dynamically allocated space.
  */
-#define			flexclear(f)	((f)->fxb_wcnt = 0)
+#define			flexclear(f)	((f)->fxb_rcnt = (f)->fxb_wcnt = 0)
 /*
  * Test whether a Flexbuf is empty.
  */
