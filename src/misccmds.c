@@ -66,7 +66,9 @@ bool_t	split_line;
      */
     if (Pb(P_autoindent)) {
 	*l->l_text = '\0';
-	indentchars = set_indent(l, get_indent(oldline));
+	if (next_indent == 0) next_indent = get_indent(oldline);
+	indentchars = set_indent(l, next_indent);
+	next_indent = 0;
     } else {
 	indentchars = 0;
     }

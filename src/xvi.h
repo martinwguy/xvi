@@ -729,7 +729,9 @@ extern volatile int	keystrokes;
 extern	Buffer		*curbuf;	/* current buffer */
 extern	Xviwin		*curwin;	/* current window */
 
-extern	int		indentchars;	/* auto-indentation on current line */
+extern	int		indentchars;	/* number of chars of auto-indentation
+					 * on current line */
+extern	int		next_indent;	/* auto-indent to apply to next line */
 extern	char		*altfilename;	/* name of current alternate file */
 extern	char		Version[];	/* version string for :ve command */
 

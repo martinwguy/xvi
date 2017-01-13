@@ -169,13 +169,18 @@ int	c;
 	    /*
 	     * If the only character on the line so far is a '0',
 	     * backspace over it and delete the entire indent.
+	     * If it's a '^', delete the indent for this line only
+	     * and autoindent the next line the same as the previous one.
 	     */
 	    if (c == CTRL('D') && curpos->p_index == indentchars + 1) {
 		Posn	pos;
+		char	gc;
 
 		pos = *curpos;
 		(void) dec(&pos);
-		if (gchar(&pos) == '0')  {
+		gc = gchar(&pos);
+		if (gc == '0' || gc == '^') {
+		    if (gc == '^') next_indent = get_indent(curpos->p_line);
 		    replchars(curwin, curpos->p_line, 0, indentchars + 1, "");
 		    indentchars = set_indent(curpos->p_line, 0);
 		    move_cursor(curwin, curpos->p_line, 0);
@@ -455,6 +460,7 @@ int	repeat;		/* number of times to repeat the insertion */
 	Insertloc.p_index = 0;
     flexclear(&Insbuff);
     Ins_repeat = repeat;
+    next_indent = 0;
     State = INSERT;
 }
 

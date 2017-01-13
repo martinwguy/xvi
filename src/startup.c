@@ -41,7 +41,8 @@ unsigned	echo;		/*
 				 * screen output (see xvi.h for details).
 				 */
 
-int		indentchars;	/* number of chars indented on current line */
+int		indentchars;	/* number of chars used to indent current line */
+int		next_indent;	/* auto-indent (in columns) for the next line */
 
 volatile unsigned char
 		kbdintr;	/*
