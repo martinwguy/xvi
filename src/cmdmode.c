@@ -122,6 +122,7 @@ int	ch;
 
     if (!literal_next) {
 	switch (ch) {
+	case CTRL('Q'):
 	case CTRL('V'):
 	    literal_next = TRUE;
 	    return(cmd_INCOMPLETE);

@@ -287,8 +287,9 @@ int	c;
 	    return(FALSE);
 	    break;
 
+	case CTRL('Q'):
 	case CTRL('V'):
-	    (void) flexaddch(&Insbuff, CTRL('V'));
+	    (void) flexaddch(&Insbuff, c);
 	    literal_next = TRUE;
 	    return(FALSE);
 	}
@@ -600,8 +601,9 @@ int	c;
 	    return(FALSE);
 	    break;
 
+	case CTRL('Q'):
 	case CTRL('V'):	
-	    (void) flexaddch(&Insbuff, CTRL('V'));
+	    (void) flexaddch(&Insbuff, c);
 	    literal_next = TRUE;
 	    return(TRUE);
 	}
