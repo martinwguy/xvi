@@ -81,6 +81,7 @@ int	c;
 
     if (kbdintr) {
 	    kbdintr = FALSE;
+	    imessage = TRUE;
 	    c = CTRL('C');
     }
 
@@ -103,7 +104,6 @@ int	c;
 	 */
 	switch (c) {
 	case CTRL('C'):	/* an escape or ^C ends input mode */
-	    show_message(curwin, "Interrupted");
 	    Ins_repeat = 0;
 	case ESC:
 	{
@@ -479,6 +479,7 @@ int	c;
 
     if (kbdintr) {
 	    kbdintr = FALSE;
+	    imessage = TRUE;
 	    c = CTRL('C');
     }
 
@@ -497,7 +498,6 @@ int	c;
     } else if (!literal_next) {
 	switch (c) {
 	case CTRL('C'):			/* an escape or ^C ends input mode */
-	    show_message(curwin, "Interrupted");
 	case ESC:
 	    end_replace(c);
 	    return(TRUE);

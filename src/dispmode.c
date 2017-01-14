@@ -68,7 +68,7 @@ int	ch;
 
     vs = win->w_vs;
 
-    if (finished || kbdintr) {
+    if (finished || kbdintr || ch == CTRL('C')) {
 	/*
 	 * Ensure that the window on the current buffer is
 	 * in the right place; then update the whole window.
@@ -84,6 +84,7 @@ int	ch;
 	}
 	finished = FALSE;
 	if (kbdintr) {
+	    kbdintr = FALSE;
 	    imessage = TRUE;
 	}
 	return(TRUE);

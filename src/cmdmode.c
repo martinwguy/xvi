@@ -117,6 +117,7 @@ int	ch;
 
     if (kbdintr) {
 	    kbdintr = FALSE;
+	    imessage = TRUE;
 	    ch = CTRL('C');
     }
 

@@ -205,6 +205,11 @@ char	*file;
     flexnew(&cmd);
     literal = FALSE;
     while ((c = getc(fp)) != EOF) {
+	if (kbdintr) {
+	    kbdintr = FALSE;
+	    imessage = TRUE;
+	    break;
+	}
 	if (!literal && (c == CTRL('V') || c == '\n')) {
 	    switch (c) {
 	    case CTRL('V'):
@@ -212,10 +217,6 @@ char	*file;
 		break;
 
 	    case '\n':
-		if (kbdintr) {
-		    imessage = TRUE;
-		    break;
-		}
 		if (!flexempty(&cmd)) {
 		    exCommand(flexgetstr(&cmd), interactive);
 		    flexclear(&cmd);
