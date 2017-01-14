@@ -418,6 +418,7 @@ Cmd	*cmd;
     cmd->cmd_target.p_line = NULL;
     cmd->cmd_ch1 = '\0';
     cmd->cmd_ch2 = '\0';
+    cmd->cmd_got_yp_name = FALSE;
     cmd->cmd_yp_name = '\0';
     cmd->cmd_buffer_name = '\0';
 }
