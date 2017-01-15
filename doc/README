@@ -27,9 +27,9 @@ COPYING
 	understand this license if you are going to re-distribute xvi.
 
 Makefile
-	Unix runes to generate the .lst and .ps files from the .ms files.
+	Unix runes to generate the .lst and .ps files from the source files.
 
-help
+../src/xvi.help
 	The help file used by xvi.
 
 source.ms
@@ -38,12 +38,6 @@ source.ps
 	A guide to the Xvi source code, including information about
 	how to port Xvi to different systems. Provided in [nt]roff -ms
 	source, nroff output and PostScript formats.
-
-summary.ms
-summary.lst
-summary.ps
-	A document describing the differences between vi and xvi.
-	Same formats.
 
 xvi.1
 xvi.lst
