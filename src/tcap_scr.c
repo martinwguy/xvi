@@ -1322,6 +1322,10 @@ xyupdate()
     register int	hdisp, vdisp;
     register int	totaldisp;
 
+    if (virt_row == real_row && virt_col == real_col) {
+	return;
+    }
+
     /*
      * Horizontal and vertical displacements needed
      * to get the cursor to the right position.
