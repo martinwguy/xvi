@@ -1041,6 +1041,10 @@ unsigned long	lnum;
 
 	    add_char_to_rhs(dest, c, ul);
 
+	    if (ul == 'u' || ul == 'l') {
+		ul = ' ';
+	    }
+
 	} else if (prog->startp[no] != NULL && prog->endp[no] != NULL) {
 
 	    /*
@@ -1056,12 +1060,16 @@ unsigned long	lnum;
 		    return;
 		} else {
 		    add_char_to_rhs(dest, *cp, ul);
+
+		    /* \u and \l only change the case of the first character
+		     * of a replacement string and if the replacement string is
+		     * empty, they change the first character of what follows.
+		     */
+		    if (ul == 'u' || ul == 'l') {
+			ul = ' ';
+		    }
 		}
 	    }
-	}
-
-	if (ul == 'u' || ul == 'l') {
-	    ul = ' ';
 	}
     }
 }
