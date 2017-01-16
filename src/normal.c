@@ -54,6 +54,7 @@ register int	c;
 	case ESC:
 	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;
+	    cmd->cmd_two_char = FALSE;
 	    return(ret);
 	default:
 	    break;
