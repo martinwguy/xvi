@@ -1,0 +1,43 @@
+#! /usr/bin/tclsh
+
+# Test fix for issue 66:
+#
+# "s/.../\u&/" which should change the case of the first character of
+# the replacement text (not all of it).
+# If the replacement test character results in no characters, if should
+# change the case of the following character.
+
+source tkterm
+source term_expect
+source term_utils
+
+set timeout 1
+
+# Start xvi and add the starting text
+
+exp_send "../src/xvi\r"
+exp_send "aThe cat sat on the mat.\x1B"
+sleep 1
+term_expect	timeout { exit 101 } \
+		{ screen_is 1 22 "{The cat sat on the mat.}" }
+
+# Run the POSIX tests
+# Remember to quote \, [ and $ inside "" strings
+
+exp_send ":s/\\<.at\\>/\\u&/g\r"	;# :s/\<.at\>/\u&/g
+term_expect	timeout { exit 102 } \
+    		{ screen_is 1 0 "{The Cat Sat on the Mat.}" }
+
+exp_send ":s/S\\(.*\\)M/S\\U\\1\\eM/\r"	;# :s/S\(.*\)M/S\U\1\eM/
+term_expect	timeout { exit 103 } \
+    		{ screen_is 1 0 "{The Cat SAT ON THE Mat.}" }
+
+# Check that \u or \l followed by an empty replacement string carries over
+# to the first char of the following text.
+exp_send ":s/ \\(x*\\)/ \\l\\1E/\r"		;# :s/ \(x*\)/\l\1E/
+term_expect	timeout { exit 104 } \
+    		{ screen_is 1 0 "{The eCat SAT ON THE Mat.}" }
+
+exp_send ":q!\r"
+
+exit 0
