@@ -76,6 +76,8 @@ proc term_expect {args} {
 	unset $strobe $tstrobe
     }
 
+    global errorCode errorInfo
+
     set code [catch {uplevel $act} string]
     if {$code > 4}  {return -code $code $string}
     if {$code == 4} {return -code continue}
