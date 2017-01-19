@@ -91,3 +91,30 @@ proc statusline_isnt {str} {
 	return TRUE
     }
 }
+
+# Write the screen contents to a named file
+proc term_dump {file} {
+	global term rows cols cur_row cur_col
+
+	if { [catch {open $file w} fid] } {
+	    puts "Cannot create $file"
+	    exit 1
+	}
+
+	for {set i 1} {$i <= $rows} {incr i} {
+	    catch { puts $fid [string trimright [$term get $i.0 $i.end]] } {
+		puts "Cannot write to $file"
+		exit 1
+	    }
+	}
+
+	catch { puts $fid "Cursor is at ($cur_row,$cur_col)" } {
+	    puts "Cannot finalize $file"
+	    exit 1
+	}
+
+	catch { close $fid } {
+	    puts "Cannot close $file"
+	    exit 1
+	}
+}
