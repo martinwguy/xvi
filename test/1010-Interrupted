@@ -4,7 +4,6 @@
 
 # Boilerplate
 
-source tkterm
 source term_expect
 source term_utils
 

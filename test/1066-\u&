@@ -7,7 +7,6 @@
 # If the replacement test character results in no characters, if should
 # change the case of the following character.
 
-source tkterm
 source term_expect
 source term_utils
 

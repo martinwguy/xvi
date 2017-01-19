@@ -1,90 +1,88 @@
-# term_expect, from Libes' book "Exploring Expect"
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
 
-set term_counter 0	;# distinguish different timers
+# This file is based on the version of "term_expect" in "example/term_expect"
+# from the expect-5.45 distribution.
+# Either source "tkterm", or source "term_expect" for tests that need both.
+#
+# 	Martin Guy <martinwguy@gmail.com>, January 2017.
 
+source tkterm
+
+set term_counter 0
 proc term_expect {args} {
-    set timeout [
-	uplevel {
-	    if [info exists timeout] {
-		set timeout
-	    } else {
-		uplevel #0 {
-		    if {[info exists timeout]} {
-			set timeout
-		    } else {
-			expr 10
-		    }
+	upvar timeout localTimeout
+	upvar #0 timeout globalTimeout
+	set timeout 10
+	catch {set timeout $globalTimeout}
+	catch {set timeout $localTimeout}
+
+	global term_counter
+	incr term_counter
+	global [set strobe _data_[set term_counter]]
+	global [set tstrobe _timer_[set term_counter]]
+
+	proc term_chars_changed {} "uplevel #0 set $strobe 1"
+
+	set $strobe 1
+	set $tstrobe 0
+
+	if {$timeout >= 0} {
+		set mstimeout [expr 1000*$timeout]
+		after $mstimeout "set $strobe 1; set $tstrobe 1"
+		set timeout_act {}
+	}
+
+	set argc [llength $args]
+	if {$argc%2 == 1} {
+		lappend args {}
+		incr argc
+	}
+
+	for {set i 0} {$i<$argc} {incr i 2} {
+		set act_index [expr $i+1]
+		if {[string compare timeout [lindex $args $i]] == 0} {
+			set timeout_act [lindex $args $act_index]
+			set args [lreplace $args $i $act_index]
+			incr argc -2
+			break
 		}
-	    }
 	}
-    ]
 
-    global term_counter
-    incr term_counter
-    global [set strobe _data_[set term_counter]]
-    global [set tstrobe _timer_[set term_counter]]
+	while {![info exists act]} {
+		if {![set $strobe]} {
+			tkwait var $strobe
+		}
+		set $strobe 0
 
-    proc term_chars_changed {} "uplevel #0 set $strobe 1"
-
-    set $strobe 1		;# force an initial test
-    set $tstrobe 0		;# no timeout yet
-    if {$timeout >= 0} {
-	set mstimeout [expr 1000*$timeout]
-	after $mstimeout "set $strobe 1; set $tstrobe 1"
-	set timeout_act {}
-    }
-
-    set argc [llength $args]
-    if {$argc%2 == 1} {
-	lappend args {}
-	incr argc
-    }
-
-    for {set i 0} {$i<$argc} {incr i 2} {
-	set act_index [expr $i+1]
-	if {! [string compare timeout [lindex $args $i]]} {
-	    set timeout_act [lindex $args $act_index]
-	    set args [lreplace $args $i $act_index]
-	    incr argc -2
-	    break
+		if {[set $tstrobe]} {
+			set act $timeout_act
+		} else {
+			for {set i 0} {$i<$argc} {incr i 2} {
+				if {[uplevel [lindex $args $i]]} {
+					set act [lindex $args [incr i]]
+					break
+				}
+			}
+		}
 	}
-    }
 
-    while {! [info exists act]} {
-	if {! [set $strobe]} {
-	    tkwait var $strobe
-	}
-	set $strobe 0
+	proc term_chars_changed {} {}
 
-	if {[set $tstrobe]} {
-	    set act $timeout_act
+	if {$timeout >= 0} {
+		after $mstimeout unset $strobe $tstrobe
 	} else {
-	    for {set i 0} {$i<$argc} {incr i 2} {
-		if {[uplevel [lindex $args $i]]} {
-		    set act [lindex $args [incr i]]
-		    break
-		}
-	    }
+		unset $strobe $tstrobe
 	}
-    }
 
-    proc term_chars_changed {} {}
-
-    if {$timeout >= 0} {
-	after $mstimeout unset $strobe $tstrobe
-    } else {
-	unset $strobe $tstrobe
-    }
-
-    global errorCode errorInfo
-
-    set code [catch {uplevel $act} string]
-    if {$code > 4}  {return -code $code $string}
-    if {$code == 4} {return -code continue}
-    if {$code == 3} {return -code break}
-    if {$code == 2} {return -code return}
-    if {$code == 1} {return -code error \
-    			-errorinfo $errorInfo \
-    			-errorcode $errorCode $string}
-    return $string
+	set code [catch {uplevel $act} string]
+	if {$code >  4} {return -code $code $string}
+	if {$code == 4} {return -code continue}
+	if {$code == 3} {return -code break}
+	if {$code == 2} {return -code return}
+	if {$code == 1} {return -code error -errorinfo $errorInfo \
+				-errorcode $errorCode $string}
+	return $string
 }

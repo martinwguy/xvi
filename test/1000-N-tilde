@@ -2,7 +2,6 @@
 
 # Test numeric parameter before ~ command
 
-source tkterm
 source term_expect
 source term_utils
 
