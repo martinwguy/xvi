@@ -2,12 +2,30 @@
 
 # Does the screen image start with the lines in the given list
 # and is the cursor at the expected position?
+#
+# If you are testing the first line of the screen against a literal string,
+# you can say:
+#	if [screen_is 1 0 "{Hello, world!}"] { ;# A list of one line
+# or
+#	term_expect 1 0 timeout { exit 100 } \
+#		 { screen_is "{Hello, world!}" }
+#
+# You can also check the first lines of the screen by passing a list of lines -
+# see the "hanoi" test for an example of this.
+# In the string between { and }, no further characters need escaping but
+# there is no way to include an unmatched { character.
+# If you use "list" to create the list, you can include the line strings in
+# double quotes, within which you need to escape literal $, [ and \ with a
+# preceding \ and can use sequences like \r mean newline and so on.
+#
+#	Martin Guy <martinwguy@gmail.com>, January 2017.
+
 proc screen_is {crow ccol should} {
     global term
     if { ! [cursor_at $crow $ccol] } { return FALSE }
     for {set i 0} {$i < [llength $should]} {incr i} {
 	set line [lindex $should $i]
-	# List of lines is indexed from 0 by i but screen is indexed from 1
+	# List of lines is indexed from 0 by i but screen row is indexed from 1
 	set row [expr $i + 1]
 	set onscreen [string trimright [$term get $row.0 $row.end]]
 	if { $onscreen != $line } { return FALSE }
