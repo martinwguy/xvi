@@ -586,7 +586,7 @@ proc term_expect {args} {
 	if {$code == 4} {return -code continue}
 	if {$code == 3} {return -code break}
 	if {$code == 2} {return -code return}
-	if {$code == 1} {return -code error -errorinfo $errorInfo \
-				-errorcode $errorCode $string}
+	if {$code == 1} {return -code error -errorinfo $::errorInfo \
+				-errorcode $::errorCode $string}
 	return $string
 }
