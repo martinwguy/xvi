@@ -1,6 +1,12 @@
+# Makefile for xvi's test suite
+
 check:
 	@# Use running X display if any, otherwise try it headless.
-	@if [ "$DISPLAY" ]; then ./runtests; else make nox; fi
+	@if [ "$DISPLAY" ]; then ./runtests; else \
+	    if [ `whoami` = root ]; then make nox; else \
+		echo 'You have to run "make check" under X or be root'; \
+	    fi \
+	fi
 
 nox:
 	@# Run the tests using a dummy X server.

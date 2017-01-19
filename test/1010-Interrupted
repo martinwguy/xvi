@@ -79,5 +79,6 @@ exp_send "\x03"
 term_expect timeout { exit 109 } \
     { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
 
+exp_send ":q!\r"
 
 exit 0

@@ -1,14 +1,27 @@
-In this directory you can "make check" to run a series of tests on ../src/xvi
+In this directory (or the one above) you can "make check" to run
+a series of tests on ../src/xvi.
 
-You have to run it on an X display because the testsuite uses tkterm.
+Each test is an executable file whose name starts with four digits and a hyphen.
+One day the tests will be divided into sections, 0XXX for POSIX items,
+1XXX for the regression tests for fixed issue XXX, 9XXX for non-specific tests
+(hanoi, maze). At present, the numbers are mostly random.
 
-You can run it without an X display by going:
+The syntax of a test file is fairly horrible because the test mechanism is based
+on Don Libes' "tkterm",(*) which is written in the fairly horrible language TCL,
+with its bizarre string quoting rules, lame lists represented as strings,
+needing to "sleep 1" after sending xvi a final [Escape] character for it to work
+and more.
+It's probably best to look at some of the existing tests and adapt them.
 
+*) See his paper "Automation and Testing of Character-Graphic Programs"
+   and his book "Exploring Expect", chapter 19, p.448 onwards.
+
+You have to run it on an X display because tkterm uses the TK text widget.
+You can run it (only as root) without an X display by going:
 	sudo apt-get install xserver-xorg-video-dummy
-	make nox
-	
-The test mechanism is based on Don Libes' "tkterm".
-See his paper "Automation and Testing of Character-Graphic Programs"
-and his book "Exploring Expect", chapter 19, p.448 onwards.
+	sudo make nox
+There is also "virterm" in the "expect" distribution's "examples" folder,
+a development of an earlier version of tkterm using arrays instead of
+the TK text widget to avoid needing X or root, but it doesn't work yet.
 
-    Martin Guy <martinwguy@gmail.com>, December 2016.
+	Martin Guy <martinwguy@gmail.com>, December 2016 - January 2017.

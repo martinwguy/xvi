@@ -55,5 +55,6 @@ exp_send "7|3~"
 term_expect	timeout { exit 107 } \
     		{ screen_is 1 7 "abcdefGH" }
 
+exp_send ":q!\r"
 
 exit 0

@@ -39,4 +39,6 @@ set screen [list "" "0" "01234567" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
 term_expect timeout { exit 102 } \
     { screen_is 2 0 $screen }
 
+exp_send ":q!\r"
+
 exit 0
