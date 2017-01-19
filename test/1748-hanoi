@@ -4,8 +4,7 @@
 
 # Boilerplate
 
-source term_expect
-source term_utils
+source term
 
 # Tests begin
 

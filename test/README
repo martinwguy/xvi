@@ -20,8 +20,9 @@ You have to run it on an X display because tkterm uses the TK text widget.
 You can run it (only as root) without an X display by going:
 	sudo apt-get install xserver-xorg-video-dummy
 	sudo make nox
-There is also "virterm" in the "expect" distribution's "examples" folder,
-a development of an earlier version of tkterm using arrays instead of
-the TK text widget to avoid needing X or root, but it doesn't work yet.
+
+Another way to avoid needing or root is to say
+	TKTERM=virterm make check
+but it doesn't work properly yet.
 
 	Martin Guy <martinwguy@gmail.com>, December 2016 - January 2017.

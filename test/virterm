@@ -336,3 +336,74 @@ expect_before {
 		# set term_standout 0
 	}
 }
+
+proc term_expect {args} {
+        global cur_row cur_col  # used by expect_background actions
+
+	set desired_timeout [
+	    uplevel {
+		if {[info exists timeout]} {
+			set timeout
+		} else {
+			uplevel #0 {
+				if {[info exists timeout]} {
+					set timeout
+				} else {
+					expr 10
+				}
+			}
+		}
+	    }
+	]
+
+        set timeout $desired_timeout
+
+        set timeout_act {}
+
+	set argc [llength $args]
+	if {$argc%2 == 1} {
+		lappend args {}
+		incr argc
+	}
+
+	for {set i 0} {$i<$argc} {incr i 2} {
+		set act_index [expr $i+1]
+		if {[string compare timeout [lindex $args $i]] == 0} {
+			set timeout_act [lindex $args $act_index]
+			set args [lreplace $args $i $act_index]
+			incr argc -2
+			break
+		}
+	}
+
+        set got_timeout 0
+
+        set start_time [timestamp]
+
+	while {![info exists act]} {
+                expect timeout {set got_timeout 1}
+                set timeout [expr $desired_timeout - [timestamp] + $start_time]
+                if {! $got_timeout} \
+                {
+			for {set i 0} {$i<$argc} {incr i 2} {
+				if {[uplevel [lindex $args $i]]} {
+					set act [lindex $args [incr i]]
+					break
+				}
+			}
+		} else { set act $timeout_act }
+
+                if {![info exists act]} {
+
+                }
+	}
+
+	set code [catch {uplevel $act} string]
+	if {$code >  4} {return -code $code $string}
+	if {$code == 4} {return -code continue}
+	if {$code == 3} {return -code break}
+	if {$code == 2} {return -code return}
+	if {$code == 1} {return -code error -errorinfo $errorInfo \
+				-errorcode $errorCode $string}
+	return $string
+}

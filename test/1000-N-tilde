@@ -2,8 +2,7 @@
 
 # Test numeric parameter before ~ command
 
-source term_expect
-source term_utils
+source term
 
 set timeout 1
 

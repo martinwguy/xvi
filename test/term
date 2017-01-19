@@ -1,3 +1,25 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# This file is included by all tests and includes an implementation of "term"
+# (either tkterm or virterm), of term_expect and our term_utils.
+#
+# 	Martin Guy <martinwguy@gmail.com>, January 2017.
+
+# Choose a terminal emulator with its associated term_expect routine:
+# either tkterm (which needs X) of virterm (which doesn't).
+# Usage:
+#	TKTERM=virterm make check
+
+global env
+if { [array get env TKTERM] != "" } {
+	source $env(TKTERM)
+} else {
+	source tkterm
+}
+
 # Utility functions for xvi's tkterm test rig
 
 # Does the screen image start with the lines in the given list
@@ -17,8 +39,6 @@
 # If you use "list" to create the list, you can include the line strings in
 # double quotes, within which you need to escape literal $, [ and \ with a
 # preceding \ and can use sequences like \r mean newline and so on.
-#
-#	Martin Guy <martinwguy@gmail.com>, January 2017.
 
 proc screen_is {crow ccol should} {
     global term
@@ -34,6 +54,7 @@ proc screen_is {crow ccol should} {
 }
 
 # Is the cursor at the specified row and column?
+# Note: row numbers are 1 to 24 but column numbers are 0 to 79
 proc cursor_at {row col} {
     global term cur_row cur_col
     # There must be a snappier way to say this, but I can't find it!

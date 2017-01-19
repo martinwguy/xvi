@@ -4,7 +4,7 @@
 #
 # Unlike the other tests, this doesn't use term_expect or term_utils
 
-source tkterm
+source term
 
 # Start xvi and give it a second to refresh the display.
 exp_send "../src/xvi\r"
