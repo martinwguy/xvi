@@ -14,6 +14,10 @@ To make the Debian/Ubuntu package, say
 which will create you ../xvi*.deb that you can install with
 	dpkg -i ../*.deb
 
+To run the test suite ("make check") you will also need to
+	apt-get install expect tclsh
+See test/README to run it without an X display.
+
 To compile for smallest code size, use
 	make OPTFLAG=-Os
 

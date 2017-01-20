@@ -16,12 +16,15 @@ It's probably best to look at some of the existing tests and adapt them.
 *) See his paper "Automation and Testing of Character-Graphic Programs"
    and his book "Exploring Expect", chapter 19, p.448 onwards.
 
-You have to run it on an X display because tkterm uses the TK text widget.
+On Debian systems, you need to
+    apt-get install expect tclsh
+
+It runs on an X display because tkterm uses the TK text widget.
 You can run it (only as root) without an X display by going:
 	sudo apt-get install xserver-xorg-video-dummy
 	sudo make nox
 
-Another way to avoid needing or root is to say
+Another way to avoid needing X or root is to say
 	TKTERM=virterm make check
 but it doesn't work properly yet.
 
