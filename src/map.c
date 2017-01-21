@@ -157,6 +157,13 @@ map_getc()
      * awaiting translation in the canonical queue.
      */
     while (flexempty(npos.mp_dest)) {
+       /* Allow them to interrupt loops due to recursive remapping */
+	if (kbdintr) {
+	    flexclear(&canon_queue);
+	    kbdintr = FALSE;
+	    imessage = TRUE;
+	    return(CTRL('C'));
+	}
 	if (!flexempty(npos.mp_src)) {
 	    mapthrough(&npos,
 			(State == NORMAL) ? cmd_map :
