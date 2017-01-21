@@ -14,12 +14,12 @@ sleep 1
 if { [string trimright [$term get 1.0 1.end]] != "" } { exit 1 }
 
 # Lines 2 to 23 should have a single ~ at the left edge
-for {set i 2} {$i<24} {incr i} {
+for {set i 2} {$i<$rows} {incr i} {
     if { [string trimright [$term get $i.0 $i.end]] != "~" } { exit 2 }
 }
 
 # The last line should just say "No File" but we don't really care about that
-# if { [string trimright [$term get 24.0 24.end]] != "No File" } { exit 3 }
+# if { [string trimright [$term get $rows.0 $rows.end]] != "No File" } { exit 3 }
 
 # The cursor should be in the top left corner
 if { $cur_row != 1 || $cur_col != 0 } { exit 4 }

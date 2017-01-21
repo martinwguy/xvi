@@ -54,7 +54,7 @@ proc screen_is {crow ccol should} {
 }
 
 # Is the cursor at the specified row and column?
-# Note: row numbers are 1 to 24 but column numbers are 0 to 79
+# Note: row numbers are 1 to $rows but column numbers are 0 to $cols-1
 proc cursor_at {row col} {
     global term cur_row cur_col
     # There must be a snappier way to say this, but I can't find it!
@@ -67,8 +67,8 @@ proc cursor_at {row col} {
 
 # What's on the last line of the screen (minus trailing spaces)?
 proc statusline {} {
-    global term
-    return [string trimright [$term get 24.0 24.end]]
+    global term rows
+    return [string trimright [$term get $rows.0 $rows.end]]
 }
 
 # Is the status line (with trailing spaces stripped from it) this text?
