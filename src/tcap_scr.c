@@ -1539,6 +1539,9 @@ xyupdate()
 		tputs(tgoto(CM, virt_col, virt_row),
 			(int) LI, foutch);
 	    }
+	} else {
+	    tputs(tgoto(CM, virt_col, virt_row),
+		    (int) LI, foutch);
 	}
     }
     real_row = virt_row;

@@ -214,6 +214,9 @@ xvEvent	*ev;
 	resp.xvr_timeout = 0;
     }
     resp.xvr_type = Xvr_timed_input;
+
+    VSflush(curwin->w_vs);
+
     return(&resp);
 }
 
