@@ -82,29 +82,23 @@ term_expect timeout { exit 109 } \
 
 exp_send ":map x y\r"
 exp_send ":map y x\r"
-exp_send "x:"
-# The x should send it into a loop and the ":" not appear
-term_expect timeout { exit 110 } \
-    { expr { [screen_is 1 0 [list "" "~"]] && [statusline_isnt ":"] } }
+exp_send "x"
 exp_send "\x03"
 term_expect timeout { exit 111 } \
     { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
 
 exp_send ":map! x axy\r"
 exp_send "ax"
-sleep 1
 # The x should send it into a loop, appending content
-# and if we press :, nothing should happen
-exp_send ":"
-term_expect timeout { exit 112 } \
-    { expr { [statusline_isnt ":"] } }
+sleep 1
 exp_send "\x03"
-term_expect timeout { exit 113 } \
+term_expect timeout { term_dump 113.dump; exit 113 } \
     { expr { [statusline_is "Interrupted"] } }
+
 # Now it should react to ":"
 exp_send ":"
-term_expect timeout { exit 114 } \
-    { expr { [statusline_is ":"] } }
+term_expect timeout { term_dump 114.dump; exit 114 } \
+    { expr { [statusline_is ":"] && [cursor_at $rows 1] } }
 
 exp_send "q!\r"
 
