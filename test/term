@@ -8,16 +8,17 @@ exec tclsh "$0" ${1+"$@"}
 #
 # 	Martin Guy <martinwguy@gmail.com>, January 2017.
 
-# Choose a terminal emulator with its associated term_expect routine:
-# either tkterm (which needs X) of virterm (which doesn't).
-# Usage:
-#	TKTERM=virterm make check
 
-global env
-if { [array get env TKTERM] != "" } {
-    source $env(TKTERM)
+# Choose a terminal emulator: either tkterm (needs X) of virterm (doesn't).
+# To force use of virterm, use
+#	TKTERM=virterm make check
+# or
+#	DISPLAY= make check
+
+if { [info exists ::env(TKTERM)] && $::env(TKTERM) != "" } {
+    source $::env(TKTERM)
 } else {
-    if { [array get env DISPLAY] == "" } {
+    if { ! [info exists ::env(DISPLAY)] || $::env(DISPLAY) == "" } {
 	source virterm
     } else {
 	source tkterm
