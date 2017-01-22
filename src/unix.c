@@ -292,14 +292,6 @@ long	timeout;
     /*
      * Keep trying until we get at least one character,
      * or we are interrupted.
-     *
-     * Code used to be:
-
-	while ((c = kbgetc()) == EOF && !win_size_changed) {
-	    ;
-	}
-
-	return(c);
      */
 
     return(kbgetc());
