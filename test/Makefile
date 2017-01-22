@@ -1,5 +1,8 @@
 # Makefile for xvi's test suite
 
+all:
+	@make -C ..
+
 check:
 	@./runtests
 
