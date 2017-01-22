@@ -1,11 +1,7 @@
 # Makefile for xvi's test suite
 
 check:
-	@# Use running X display if any, otherwise try virterm
-	@if [ "$$DISPLAY" ]; then ./runtests; \
-	 else echo "No X display; using virterm..."; \
-	      TKTERM=virterm ./runtests; \
-	 fi
+	@./runtests
 
 nox:
 	@# Run the tests using a dummy X server.

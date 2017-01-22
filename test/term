@@ -15,9 +15,13 @@ exec tclsh "$0" ${1+"$@"}
 
 global env
 if { [array get env TKTERM] != "" } {
-	source $env(TKTERM)
+    source $env(TKTERM)
 } else {
+    if { [array get env DISPLAY] == "" } {
+	source virterm
+    } else {
 	source tkterm
+    }
 }
 
 # Utility functions for xvi's tkterm test rig
