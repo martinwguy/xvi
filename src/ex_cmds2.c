@@ -126,11 +126,21 @@ Xviwin	*window;
 	extern	int	kill P((int, int));
 	extern	int	getpid P((void));
 #   endif	/* not POSIX */
+	extern volatile bool_t win_size_changed;
+
 	sys_endv();
 
 	WarnUnSaved(window);
 
 	(void) kill(getpid(), SIGSTOP);
+
+	/*
+	 * An X window size change that happened while we were suspended
+	 * does not result in a SIGWINCH signal being delivered to us
+	 * so when we restart, go check the window/tty size.
+	 * If it's the same as before, nothing will be done.
+	 */
+	win_size_changed = TRUE;
 
 	sys_startv();
 	redraw_all(window, TRUE);
