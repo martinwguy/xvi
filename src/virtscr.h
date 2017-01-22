@@ -64,7 +64,6 @@ typedef struct virtscr {
 #define	VSCstatuscolour	1
 #define	VSCroscolour	2
 #define	VSCsyscolour	3
-#define VSCtagcolour	4
 
 /* public: */
     struct virtscr

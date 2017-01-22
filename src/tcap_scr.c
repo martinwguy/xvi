@@ -520,7 +520,6 @@ int	colour;
 	 *	colour		1
 	 *	statcolour	2
 	 *	roscolour	3
-	 *	tagcolour	4
 	 */
 
 	if (colour == 1) {

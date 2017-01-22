@@ -59,14 +59,11 @@
 #define	DEF_SENTENCES	"([.!?][])\"']*(  |$))|^$"
 
 /*
- * Default setting for roscolour and tagcolour parameters is
+ * Default setting for roscolour parameters is
  * the same as the statuscolour if not specified otherwise.
  */
 #ifndef	DEF_ROSCOLOUR
 #define	DEF_ROSCOLOUR	DEF_STCOLOUR
-#endif
-#ifndef	DEF_TAGCOLOUR
-#define	DEF_TAGCOLOUR	DEF_STCOLOUR
 #endif
 
 /*
@@ -183,7 +180,6 @@ Param	params[] = {
 {   "tabindent",    "tabindent",    P_BOOL,     TRUE,           nofunc,    },
 {   "tabs",         "tabs",         P_BOOL,     TRUE,           nofunc,    },
 {   "tabstop",      "ts",           P_NUM,      8,              xvpSetTS,  },
-{   "tagcolour",    "tc",           P_STRING,   0,              xvpSetColour,},
 {   "taglength",    "tlh",          P_NUM,      0,              tagSetParam,},
 {   "tags",         "tags",         P_LIST,     0,              tagSetParam,},
 {   "term",         "term",         P_STRING,   0,              not_imp,   },
@@ -220,7 +216,6 @@ static struct {
     P_statuscolour,	DEF_STCOLOUR,
     P_systemcolour,	DEF_SYSCOLOUR,
     P_tags,		DEF_TAGS,
-    P_tagcolour,	DEF_TAGCOLOUR,
 };
 #define	NSTRS	(sizeof(init_str) / sizeof(init_str[0]))
 
@@ -1071,7 +1066,6 @@ bool_t		interactive;
 
     switch (new_value.pv_index) {
     case P_colour:		which = VSCcolour;		break;
-    case P_tagcolour:		which = VSCtagcolour;		break;
     case P_statuscolour:	which = VSCstatuscolour;	break;
     case P_systemcolour:	which = VSCsyscolour;		break;
     case P_roscolour:		which = VSCroscolour;
