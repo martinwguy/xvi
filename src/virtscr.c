@@ -78,6 +78,9 @@ VirtScr	*vs;
 
 /*
  * Re-initialise data structures for the new size of this window.
+ * Parameters "rows" and "columns" are the difference between the
+ * old and new sizes (positive if they grow, negative if they shrink).
+ * VS{rows,cols}(vs) (i.e. vs->pv_{rows,cols}) are the new size.
  * Returns TRUE if we did it, FALSE for failure.
  */
 bool_t
