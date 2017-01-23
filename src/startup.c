@@ -210,6 +210,10 @@ char	*envp;				/* init string from the environment */
 
 	if (argv[count][0] == '-') {
 	    switch (argv[count][1]) {
+	    case 'R':
+		Pb(P_readonly) = TRUE;
+		break;
+
 	    case 't':
 		/*
 		 * -t tag or -ttag
