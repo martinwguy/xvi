@@ -379,7 +379,7 @@ char	*command;
     static char	*args[] = { NULL, "-c", NULL, NULL };
 
     if (Ps(P_shell) == NULL) {
-	(void) puts("\007Can't execute command without SHELL parameter");
+	(void) fputs("\007Can't execute command without SHELL parameter", stdout);
 	return(-1);
     }
     args[0] = Ps(P_shell);
