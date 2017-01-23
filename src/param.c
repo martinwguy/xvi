@@ -191,7 +191,7 @@ Param	params[] = {
 {   "window",       "wi",           P_NUM,      0,              not_imp,   },
 {   "wrapmargin",   "wm",           P_NUM,      0,              nofunc,    },
 {   "wrapscan",     "ws",           P_BOOL,     TRUE,           nofunc,    },
-{   "writeany",     "wa",           P_BOOL,     0,              not_imp,   },
+{   "writeany",     "wa",           P_BOOL,     0,              nofunc,    },
 
 {   (char *) NULL,  (char *) NULL,  0,          0,              nofunc,    },
 

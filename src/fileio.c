@@ -531,7 +531,7 @@ bool_t	force;
 	show_error(window, "\"%s\" No such file or directory", fname);
 	return(FALSE);
     }
-    if (!can_write(fname)) {
+    if (!Pb(P_writeany) && !can_write(fname)) {
 	show_error(window, "\"%s\" Permission denied", fname);
 	return(FALSE);
     }
@@ -606,7 +606,7 @@ bool_t	force;
 	return(FALSE);
     }
 
-    if (!can_write(fname)) {
+    if (!Pb(P_writeany) && !can_write(fname)) {
 	show_error(window, "\"%s\" Permission denied", fname);
 	return(FALSE);
     }
