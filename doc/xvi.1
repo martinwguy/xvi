@@ -149,21 +149,21 @@ or
 for the whole editor; these have been
 hijacked for operations on windows.
 .LP
-The numeric
+The boolean
 .B autosplit
-parameter specifies the maximum number
+parameter specifies whether
 of buffer windows that will be created automatically whenever you
 either edit more than one file, or use tags to edit a different file.
+.LP
+The \fBminrows\fP parameter specifies the minimum number of rows
+to which a window may be shrunk, including the status line.
+The default value is 2; 0 and 1 may also be useful.
 .LP
 Undo works per buffer, as do marks; yank/put and redo (the
 .B .
 command)
 work over all buffers, i.e. you can delete from one buffer and put
 the text into a different buffer.
-.LP
-The \fBminrows\fP parameter specifies the minimum number of rows
-to which a window may be shrunk, including the status line.
-The default value is 2; 0 and 1 may also be useful.
 .\"---------------------------------------------------------------------------
 .SS "Named buffers"
 .LP
@@ -191,8 +191,7 @@ for preservation,
 .B xvi
 does periodic preservation of all files
 currently being edited into temporary files in the same directory.
-It
-tries to do this when you aren't typing, so that you won't
+It tries to do this when you aren't typing, so that you won't
 notice the short delay when the temporary file is written out.
 Obviously, only changed files are preserved in this way, and
 the temporary file is removed once the real file has been successfully
@@ -294,6 +293,12 @@ This means you can edit \%MS-DOS files under UNIX, etc.
 To see a list of available formats, type
 .IP
 .B ":se fmt=?"
+.LP
+If the new boolean
+.B autodetect
+parameter is set, xvi sniffs files before reading them to determine their
+newline style and sets the default file-saving newline style to that
+of the file read.
 .\"---------------------------------------------------------------------------
 .SS "Extended regular expressions"
 .LP
@@ -340,6 +345,9 @@ patterns to search for, rather than
 simplistic (and
 .BR troff -dependent)
 character pairs.
+.LP
+A similar parameter, \fBsentences\fP, defines a pattern
+for the \fB(\fP and \fB)\fP motions.
 .\"---------------------------------------------------------------------------
 .SS "Improved replace mode"
 .LP
@@ -363,7 +371,7 @@ While entering a `:' command or a `/' search string, as well as the usual keys,
 also lets you move back and forth in the line with the arrow keys
 to correct typing errors.
 .LP
-The \fBEscape\fP key, instead of executing the line (the same as \fBEnter\fP),
+The \fBTab\fP key
 performs filename completion on the last word in the line, which can be the
 first part of a file's name or a filename regular expressions containing
 special characters \fB?\fP, \fB*\fP and maybe others, depending on your
@@ -619,8 +627,8 @@ mode.
 .LP
 The following parameters have not been implemented, and probably won't be:
 .RS
-.BR ada ,
-.BR adapath ,
+.BR ada (vim),
+.BR adapath (vim),
 .BR autoprint ,
 .BR beautify ,
 .BR directory ,
@@ -628,7 +636,7 @@ The following parameters have not been implemented, and probably won't be:
 .BR hardtabs ,
 .BR lisp ,
 .BR mesg ,
-.BR modeline ,
+.BR modelines ,
 .BR open ,
 .BR optimize ,
 .BR prompt ,
@@ -643,6 +651,7 @@ while these parameters may well be implemented at some point:
 .RS
 .BR autowrite ,
 .BR scroll ,
+.BR showmode ,
 .BR sourceany ,
 .BR writeany
 .RE
@@ -680,9 +689,8 @@ The \fB:global\fP command only supports the commands [\fBlps&~d\fP].
 .LP
 .B Undo
 does not work properly when applied to macros (either \fB@\fP
-or \fB:map\fP); it should undo all the changes made by the  macro,
-but  in  fact  only  the  last  command  within the macro is
-undone.
+or \fB:map\fP); it should undo all the changes made by the macro,
+but in fact only the last command within the macro is undone.
 .SH "OTHER DIFFERENCES FROM VI"
 The
 .B XVINIT
