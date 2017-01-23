@@ -159,7 +159,7 @@ Cmd	*cmd;
 
     case 'u':
     case K_UNDO:
-	undo(curwin, FALSE, 0);
+	undo(curwin);
 	break;
 
     case CTRL('Z'):			/* suspend editor */

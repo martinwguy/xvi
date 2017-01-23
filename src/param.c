@@ -184,7 +184,6 @@ Param	params[] = {
 {   "terse",        "ters",         P_BOOL,     0,              nofunc,    },
 {   "timeout",      "ti",           P_NUM,      DEF_TIMEOUT,    nofunc,    },
 {   "ttytype",      "tt",           P_STRING,   0,              not_imp,   },
-{   "undolevels",   "ul",           P_NUM,      MAX_UNDO,      set_undolevels,},
 {   "vbell",        "vb",           P_BOOL,     FALSE,          xvpSetVBell, },
 {   "warn",         "war",          P_BOOL,     TRUE,           nofunc,    },
 {   "window",       "wi",           P_NUM,      0,              not_imp,   },

@@ -246,11 +246,6 @@ typedef	int		bool_t;
  */
 #define	DEF_TIMEOUT	200
 
-/*
- * Maximum number of levels for "infinite" undo :-).
- */
-#define	MAX_UNDO	100
-
 
 /***************************************************************
  *                                                             *
@@ -1183,9 +1178,8 @@ extern	void	end_command P((Xviwin *));
 extern	void	replchars P((Xviwin *, Line *, int, int, char *));
 extern	void	repllines P((Xviwin *, Line *, long, Line *));
 extern	void	replbuffer P((Xviwin *, Line *));
-extern	void	undo P((Xviwin *, bool_t, int));
+extern	void	undo P((Xviwin *));
 extern	bool_t	set_edit P((Xviwin *, Paramval, bool_t));
-extern	bool_t	set_undolevels P((Xviwin *, Paramval, bool_t));
 
 /*
  * update.c
