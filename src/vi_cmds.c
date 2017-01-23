@@ -327,18 +327,20 @@ void
 do_scroll(cmd)
 Cmd	*cmd;
 {
+    int scroll = Pn(P_scroll) > 0 ? Pn(P_scroll) : curwin->w_nrows / 2;
+
     switch (cmd->cmd_ch1) {
     case CTRL('D'):
-	scrollup(curwin, curwin->w_nrows / 2);
-	if (xvMoveDown(curwin->w_cursor, (long) (curwin->w_nrows / 2))) {
+	scrollup(curwin, scroll);
+	if (xvMoveDown(curwin->w_cursor, (long) scroll)) {
 	    info_update(curwin);
 	    xvMoveToColumn(curwin->w_cursor, curwin->w_curswant);
 	}
 	break;
 
     case CTRL('U'):
-	scrolldown(curwin, curwin->w_nrows / 2);
-	if (xvMoveUp(curwin->w_cursor, (long) (curwin->w_nrows / 2))) {
+	scrolldown(curwin, scroll);
+	if (xvMoveUp(curwin->w_cursor, (long) scroll)) {
 	    info_update(curwin);
 	    xvMoveToColumn(curwin->w_cursor, curwin->w_curswant);
 	}

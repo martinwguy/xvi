@@ -166,7 +166,7 @@ Param	params[] = {
 {   "remap",        "rem",          P_BOOL,     TRUE,           nofunc,    },
 {   "report",       "rep",          P_NUM,      5,              nofunc,    },
 {   "roscolour",    "rst",          P_STRING,   0,              xvpSetColour,},
-{   "scroll",       "sc",           P_NUM,      0,              not_imp,   },
+{   "scroll",       "sc",           P_NUM,      0,              nofunc,    },
 {   "sections",     "sec",          P_STRING,   0,              nofunc,    },
 {   "sentences",    "sen",          P_STRING,   0,              nofunc,    },
 {   "shell",        "sh",           P_STRING,   0,              nofunc,    },
