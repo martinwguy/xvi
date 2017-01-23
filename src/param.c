@@ -115,7 +115,7 @@ static	matchinfo_t	*findparam P((Xviwin *, char *));
 /*
  * These are the available parameters. The following are non-standard:
  *
- *	autodetect autogrow autonoedit autosplit colour edit equalsize
+ *	autodetect autonoedit autosplit colour edit equalsize
  *	format helpfile infoupdate jumpscroll preserve preservetime
  *	regextype roscolour statuscolour systemcolour tabindent vbell
  *
@@ -126,7 +126,6 @@ Param	params[] = {
 {   "ada",          "ada",          P_BOOL,     0,              not_imp,   },
 {   "adapath",      "adap",         P_STRING,   0,              not_imp,   },
 {   "autodetect",   "ad",           P_BOOL,     0,              nofunc,    },
-{   "autogrow",     "ag",           P_BOOL,     TRUE,           nofunc,    },
 {   "autoindent",   "ai",           P_BOOL,     0,              nofunc,    },
 {   "autonoedit",   "an",           P_BOOL,     0,              nofunc,    },
 {   "autoprint",    "ap",           P_BOOL,     0,              not_imp,   },
