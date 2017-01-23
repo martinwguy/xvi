@@ -669,19 +669,21 @@ bool_t			inter;		/* TRUE if called interactively */
     cp = mip->mi_str;
 
     switch (pp->p_flags & P_TYPE) {
+    int value;
     case P_NUM:
 
-	val.pv_i = xv_strtoi(&cp);
+	value = xv_strtoi(&cp);
 	/*
 	 * If there are extra characters after the number,
 	 * don't accept it.
 	 */
-	if (*cp != '\0') {
+	if (value < 0 || *cp != '\0') {
 	    if (window) {
 		show_error(window, "Invalid numeric parameter");
 	    }
 	    return(FALSE);
 	}
+	val.pv_i = value;
 	break;
 
     case P_ENUM:
