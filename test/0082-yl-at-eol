@@ -1,0 +1,55 @@
+#! /usr/bin/tclsh
+
+# Issue NN: "yl" and "dl" when cursor is at end of line and
+# dNl where N is a deimal number, near the end of the line.
+
+# Boilerplate
+
+source term
+
+# Tests begin
+
+# Start xvi
+exp_send "exec ../src/xvi\r"
+
+# Check it started up OK
+set timeout 1
+term_expect timeout { exit 100 } \
+	{ screen_is 1 0 [list "" "~"] }
+
+exp_send "aabcde\x1B"
+sleep 1
+term_expect timeout { exit 101 } \
+    { expr { [screen_is 1 4 [list "abcde" "~"]] } }
+
+# Try a one-character yank at end of line
+exp_send "ylp"
+term_expect timeout { exit 102 } \
+    { expr { [screen_is 1 5 [list "abcdee" "~"]] } }
+
+# Restore abcde and try exactly the last 2 characters
+exp_send "uhd2l"
+term_expect timeout { exit 103 } \
+    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+# Check the prefix the other way round too
+exp_send "uh2dl"
+term_expect timeout { exit 113 } \
+    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+
+# Restore and sitting on the d, try taking more than there are
+# (it should take 2)
+exp_send "ud3l"
+term_expect timeout { exit 104 } \
+    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+exp_send "u3dl"
+term_expect timeout { exit 114 } \
+    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+
+# Check that a numeric prefix is OK in the middle of the line too.
+exp_send "u0l2dl"
+term_expect timeout { exit 105 } \
+    { expr { [screen_is 1 1 [list "ade" "~"]] } }
+
+exp_send ":q!\r"
+
+exit 0
