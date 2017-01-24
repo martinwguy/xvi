@@ -131,7 +131,7 @@ Param	params[] = {
 {   "autoprint",    "ap",           P_BOOL,     0,              not_imp,   },
 {   "autosplit",    "as",           P_NUM,      2,              nofunc,    },
 {   "autowrite",    "aw",           P_BOOL,     0,              not_imp,   },
-{   "beautify",     "bf",           P_BOOL,     0,              not_imp,   },
+{   "beautify",     "bf",           P_BOOL,     0,              nofunc,    },
 {   "cchars",       "cc",           P_BOOL,     DEF_CCHARS,     nofunc,    },
 {   "colour",       "co",           P_STRING,   0,              xvpSetColour,},
 {   "directory",    "di",           P_STRING,   0,              not_imp,   },
