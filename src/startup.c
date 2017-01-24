@@ -359,11 +359,11 @@ char	*envp;				/* init string from the environment */
 	     * display the "no file" message.
 	     */
 	    sleep(2);
-	    show_file_info(curwin, TRUE);
+	    show_file_info(curwin);
 	}
     } else {
 	echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
-	show_file_info(curwin, TRUE);
+	show_file_info(curwin);
     }
 
     setpcmark(curwin);

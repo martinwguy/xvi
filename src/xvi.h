@@ -327,14 +327,6 @@ extern	char		*fmt_strings[];
 #define	js_AUTO		1
 #define	js_ON		2
 
-/*
- * Integer values for the P_infoupdate enumerated parameter. Note that
- * the entries in iu_strings (defined in param.c) must follow the same
- * order.
- */
-#define	iu_TERSE	0
-#define	iu_CONTINUOUS	1
-
 /***************************************************************
  *                                                             *
  * SECTION 6: EDITOR TYPE DEFINITIONS                          *
@@ -1160,7 +1152,7 @@ extern	void	startup_error P((char *));
 extern	void	init_sline P((Xviwin *));
 extern	void	show_message P((Xviwin *, char *, ...));
 extern	void	show_error P((Xviwin *, char *, ...));
-extern	void	show_file_info P((Xviwin *, bool_t));
+extern	void	show_file_info P((Xviwin *));
 extern	void	info_update P((Xviwin *));
 
 /*

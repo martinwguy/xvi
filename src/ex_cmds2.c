@@ -188,7 +188,7 @@ Xviwin	*window;
 	 */
 	curbuf->b_flags |= FL_READONLY | FL_NOEDIT;
 	move_window_to_cursor(curwin);
-	show_file_info(curwin, TRUE);
+	show_file_info(curwin);
 	redraw_window(curwin, FALSE);
     }
     echo = savecho;

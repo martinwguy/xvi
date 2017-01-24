@@ -206,7 +206,7 @@ int		col;	/* column the mouse cursor is in */
 	 * applies whether or not it was already the current
 	 * window.
 	 */
-	show_file_info(wp, TRUE);
+	show_file_info(wp);
     } else {
 	/*
 	 * Move the cursor as near as possible to where the
@@ -262,7 +262,7 @@ int ypos;
 	return;
     }
 
-    show_file_info(curwin, TRUE);
+    show_file_info(curwin);
 
     curwin = wp;
     curbuf = wp->w_buffer;

@@ -545,7 +545,7 @@ bool_t	interactive;			/* true if reading from tty */
 	move_window_to_cursor(curwin);
 	xvUpdateAllBufferWindows(curbuf);
 #if 0
-	show_file_info(curwin, TRUE);
+	show_file_info(curwin);
 #endif
 	break;
 
@@ -609,7 +609,7 @@ bool_t	interactive;			/* true if reading from tty */
     case EX_PRESERVE:
 	if (exPreserveAllBuffers()) {
 #if 0
-	    show_file_info(curwin, TRUE);
+	    show_file_info(curwin);
 #endif
 	}
 	break;
@@ -677,7 +677,7 @@ bool_t	interactive;			/* true if reading from tty */
 	    badcmd(interactive, "Missing filename");
 	} else if (exSource(interactive, arg) && interactive) {
 #if 0
-	    show_file_info(curwin, TRUE);
+	    show_file_info(curwin);
 #endif
 	    ;
 	}
