@@ -261,6 +261,7 @@ Xviwin	*window;
     }
 
     change->c_type = C_POSITION;
+    change->c_lineno =
     change->c_pline = lineno(window->w_buffer, window->w_cursor->p_line);
     change->c_pindex = window->w_cursor->p_index;
 
