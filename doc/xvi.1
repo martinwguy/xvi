@@ -9,6 +9,10 @@ xvi \- multi-file text editor
 .B \-R
 }
 {
+.B \-c
+.I command
+}
+{
 .B \-s
 .I parameter-assignment
 }
@@ -40,6 +44,10 @@ The following command-line options are available:
 \fB\-R\fP
 Start the editor in read-only mode.
 .TP
+\fB\-c\fP \fIcommand\fP
+Execute \fIcommand\fP as an ex command in the first buffer
+after reading input files or going to a tag.
+.TP
 \fB\-s\fP \fIparameter-assignment\fP
 Set the value of the specified parameter at startup.
 The assignment has the same form as when given as an editor command,
@@ -70,7 +78,7 @@ Go to the specified line number of the file being edited.
 Go to the first occurrence of the specified \fIpattern\fP within
 the file being edited.
 .LP
-The \fB\-c\fP, \fB\-l\fP, \fB\-L\fP, \fB\-r\fP, \fB\-V\fP
+The \fB\-l\fP, \fB\-L\fP, \fB\-r\fP, \fB\-V\fP
 and \fB\-w\fP command line options are not supported.
 .\"---------------------------------------------------------------------------
 .SH ENHANCEMENTS

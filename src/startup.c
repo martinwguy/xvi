@@ -74,6 +74,7 @@ char	*envp;				/* init string from the environment */
     int		numfiles = 0;
     int		count;
     char	*env;
+    char	*command = NULL;	/* Argument to -c flag */
 
     /*
      * The critical path this code has to follow is quite tricky.
@@ -210,6 +211,16 @@ char	*envp;				/* init string from the environment */
 
 	if (argv[count][0] == '-') {
 	    switch (argv[count][1]) {
+	    case 'c':
+		if (count < argc-1) {
+		    command = argv[++count];
+		} else {
+		    usage();
+		    return(NULL);
+		}
+
+		break;
+
 	    case 'R':
 		Pb(P_readonly) = TRUE;
 		break;
@@ -402,6 +413,11 @@ char	*envp;				/* init string from the environment */
 
     if (env != NULL) {
 	free(env);
+    }
+
+    /* Run any commands given with -c flag */
+    if (command != NULL) {
+	exCommand(command, FALSE);
     }
 
     return(curwin);
