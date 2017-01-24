@@ -4,9 +4,7 @@
 exec tclsh "$0" ${1+"$@"}
 
 # This file is based on the version of tkterm in "example/term_expect"
-# from the expect-5.45 distribution. Here there is just tkterm;
-# the "term_expect" routine is in the "term_expect" file here;
-# either source "tkterm" or source "term_expect" for tests that need both.
+# from the expect-5.45 distribution.
 #
 # 	Martin Guy <martinwguy@gmail.com>, January 2017.
 
