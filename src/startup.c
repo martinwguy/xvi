@@ -386,6 +386,11 @@ char	*envp;				/* init string from the environment */
 	show_file_info(curwin);
     }
 
+    /* Run any commands given with -c flag */
+    if (command != NULL) {
+	exCommand(command, FALSE);
+    }
+
     setpcmark(curwin);
 
     echo = e_CHARUPDATE | e_ALLOCFAIL;
@@ -413,11 +418,6 @@ char	*envp;				/* init string from the environment */
 
     if (env != NULL) {
 	free(env);
-    }
-
-    /* Run any commands given with -c flag */
-    if (command != NULL) {
-	exCommand(command, FALSE);
     }
 
     return(curwin);
