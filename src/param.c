@@ -171,6 +171,7 @@ Param	params[] = {
 {   "shell",        "sh",           P_STRING,   0,              nofunc,    },
 {   "shiftwidth",   "sw",           P_NUM,      8,              nofunc,    },
 {   "showmatch",    "sm",           P_BOOL,     0,              nofunc,    },
+{   "showmode",     "smd",          P_BOOL,     0,              nofunc,    },
 {   "slowopen",     "sl",           P_BOOL,     0,              not_imp,   },
 {   "sourceany",    "so",           P_BOOL,     0,              not_imp,   },
 {   "statuscolour", "st",           P_STRING,   0,              xvpSetColour,},
