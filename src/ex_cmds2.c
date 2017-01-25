@@ -169,7 +169,7 @@ Line	*line;
 	line = window->w_cursor->p_line;
     }
 
-    show_message(window, "Line %ld", lineno(window->w_buffer, line));
+    show_message(window, "%ld", lineno(window->w_buffer, line));
 }
 
 void
