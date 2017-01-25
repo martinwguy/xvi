@@ -142,7 +142,7 @@ Buffer	*buffer;
     int	i;
 
     for (i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_pos.p_line == line) {
+	if (mlist[i].m_name && mlist[i].m_pos.p_line == line) {
 	    mlist[i].m_name = '\0';
 	}
     }
