@@ -430,10 +430,10 @@ mapescape(lhsp, rhsp)
 
 	case ' ':
 	case '\t':
-	    while ((c = *s) != '\0' && is_space(c)) {
-		s++;
-	    }
 	    if (spp == lhsp) {
+		while ((c = *s) != '\0' && is_space(c)) {
+		    s++;
+		}
 		if ((*lhsp = flexdetach(&f)) == NULL) {
 		    return FALSE;
 		}
