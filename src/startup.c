@@ -134,7 +134,7 @@ char	*envp;				/* init string from the environment */
     if (envp != NULL) {
 	env = strsave(envp);
     } else {
-    	env = NULL;
+	env = NULL;
     }
 
     /*

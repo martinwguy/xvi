@@ -84,7 +84,7 @@ char	*command;
 
     newlines = NULL;
     if (sys_pipe(command, p_write, p_read)) {
-    	if (newlines != NULL) {
+	if (newlines != NULL) {
 	    repllines(window, line1, cntllines(line1, line2) - 1, newlines);
 	    xvUpdateAllBufferWindows(window->w_buffer);
 	    begin_line(window, TRUE);
@@ -269,7 +269,7 @@ Line	*l1, *l2;
     bool_t	success;
 
     if (!subshells) {
-    	show_error(window, "Can't shell escape from a window");
+	show_error(window, "Can't shell escape from a window");
 	return;
     }
 
@@ -347,7 +347,7 @@ Line	*atline;
     success = sys_pipe(command, NOFUNC, p_read);
 
     if (success) {
-    	if (newlines != NULL) {
+	if (newlines != NULL) {
 	    repllines(window, atline->l_next, 0L, newlines);
 	    xvUpdateAllBufferWindows(window->w_buffer);
 	    begin_line(window, TRUE);

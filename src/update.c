@@ -40,7 +40,7 @@ int			start_row;
 int			nlines;
 {
     register int	row;		/* current row */
-    int         	end_row;	/* row after last one to be updated */
+    int			end_row;	/* row after last one to be updated */
 
     if (!(echo & e_CHARUPDATE)) {
 	return;

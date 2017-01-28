@@ -194,7 +194,7 @@ Cmd	*cmd;
 
     pos = *(curwin->w_cursor);
     mvfunc = (cmd->cmd_ch1 == 'l' || cmd->cmd_ch1 == ' ' || cmd->cmd_ch1 == K_RARROW) ?
-    					xvMoveRight : xvMoveLeft;
+					xvMoveRight : xvMoveLeft;
     n = LDEF1(cmd->cmd_prenum);
     for (i = 0; i < n; i++) {
 	if (!(*mvfunc)(&pos, FALSE)) {

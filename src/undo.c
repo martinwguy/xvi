@@ -60,7 +60,7 @@ Buffer	*buffer;
      */
     cdp = alloc(sizeof(ChangeData));
     if (cdp == NULL) {
-    	return;
+	return;
     }
     cdp->cd_nlevels = 0;
     cdp->cd_undo = NULL;
@@ -747,7 +747,7 @@ Line		*newlines;
      * Point new_end at the last line of newlines.
      */
     for (new_end = newlines; new_end->l_next != NULL;
-    					new_end = new_end->l_next) {
+					new_end = new_end->l_next) {
 	;
     }
 
@@ -886,7 +886,7 @@ Xviwin	*window;
 
 	case C_POSITION:
 	    move_cursor(window,
-	    		gotoline(buffer, (unsigned long) tmp->c_pline),
+			gotoline(buffer, (unsigned long) tmp->c_pline),
 			tmp->c_pindex);
 	    break;
 

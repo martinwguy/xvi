@@ -351,7 +351,7 @@ bool_t	interactive;			/* true if reading from tty */
 	    a_line = NULL;
 	    skipblanks(cmdline);
 	    if (!get_line(&cmdline, curwin->w_cursor->p_line, &a_line) ||
-	    						a_line == NULL) {
+							a_line == NULL) {
 		command = EX_EBADARGS;
 	    }
 	    break;

@@ -157,7 +157,7 @@ Cmd	*cmd;
     if ((cmd->cmd_flags & COMMAND) == 0) {
 	cmd->cmd_operator = NOP;
 	cmd->cmd_prenum = 0;
-    	beep(curwin);
+	beep(curwin);
 	return(FALSE);
     }
 
@@ -237,7 +237,7 @@ Cmd	*cmd;
 	    HandleOperator(cmd);
 	} else {
 	    move_cursor(curwin, cmd->cmd_target.p_line,
-	    			cmd->cmd_target.p_index);
+				cmd->cmd_target.p_index);
 	}
 
     } else {

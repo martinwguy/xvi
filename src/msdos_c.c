@@ -343,7 +343,7 @@ long	(*readfunc) P((FILE *));
      */
     if (readfunc != NULL) {
 	if (
-	    (temp2 = tempfname("xvi_in")) == NULL 
+	    (temp2 = tempfname("xvi_in")) == NULL
 	    ||
 	    (fd2 = open(temp2,
 			O_WRONLY | O_CREAT | O_EXCL | O_BINARY, 0600)) < 3
@@ -388,7 +388,7 @@ long	(*readfunc) P((FILE *));
 	    free(temp2);
 	}
     } else {
-    	retval = TRUE;
+	retval = TRUE;
     }
 
     /*

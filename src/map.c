@@ -301,7 +301,7 @@ map_timeout()
     if (kpos.mp_map != NULL) {
 	map_failed(&kpos);
     } else {
-    	map_failed(&npos);
+	map_failed(&npos);
     }
 }
 

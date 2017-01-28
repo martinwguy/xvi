@@ -58,7 +58,7 @@ char	*command;
     int	c;
 
     if (!subshells) {
-    	show_error(window, "Can't shell escape from a window");
+	show_error(window, "Can't shell escape from a window");
 	return;
     }
 
@@ -86,7 +86,7 @@ Xviwin	*window;
     int	sysret;
 
     if (!subshells) {
-    	show_error(window, "Can't shell escape from a window");
+	show_error(window, "Can't shell escape from a window");
 	return;
     }
 

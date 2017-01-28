@@ -51,9 +51,9 @@ char *
 alt_file_name()
 {
     if (stack_empty()) {
-    	return(NULL);
+	return(NULL);
     } else {
-    	return(stack[prev_element].filename);
+	return(stack[prev_element].filename);
     }
 }
 
@@ -70,7 +70,7 @@ long	altline;
 
     p->filename = strsave(altfile);
     if (p->filename != NULL) {
-    	p->line = altline;
+	p->line = altline;
 	top = next_element;
 	if (n_elements < STACK_SIZE)
 	    n_elements++;
@@ -89,7 +89,7 @@ long	*linep;
     struct element *p;
 
     if (stack_empty()) {
-    	return(NULL);
+	return(NULL);
     }
     --n_elements;
     top = prev_element;

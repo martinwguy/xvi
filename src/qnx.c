@@ -250,7 +250,7 @@ long	(*readfunc) P((FILE *));
      * Run the command, with appropriate redirection.
      */
     (void) lformat(&cmdbuf, "%s < %s > %s", cmd,
-    			(writefunc != NULL) ? temp1 : "$null",
+			(writefunc != NULL) ? temp1 : "$null",
 			(readfunc != NULL) ? temp2 : "$null");
     args[2] = flexgetstr(&cmdbuf);
 
@@ -338,7 +338,7 @@ bool_t	do_completion;
 
     flexnew(&cmdbuf);
     (void) lformat(&cmdbuf, "echo %s%c > %s", name, do_completion ? '*' : ' ',
-    							temp);
+							temp);
     args[2] = flexgetstr(&cmdbuf);
 
     io[0] = io[1] = io[2] = "$tty99";
@@ -377,7 +377,7 @@ bool_t	do_completion;
     } else {
 	return(newname);
     }
-    
+
 fail:
     if (temp != NULL) {
 	free(temp);

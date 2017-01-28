@@ -224,7 +224,7 @@ bool_t	line_based;
 	tmp->l_prev = tmp->l_next = NULL;
 	(void) strcpy(tmp->l_text, str);
     } else {
-    	cp = strsave(str);
+	cp = strsave(str);
 	if (cp == NULL) {
 	    return(FALSE);
 	}
@@ -237,7 +237,7 @@ bool_t	line_based;
 	yp_buf->y_type = y_lines;
 	yp_buf->y_line_buf = tmp;
     } else {
-    	yp_buf->y_type = y_chars;
+	yp_buf->y_type = y_chars;
 	yp_buf->y_1st_text = cp;
     }
 
@@ -323,7 +323,7 @@ int	name;
 	    repllines(win, nextline, 0L, newl);
 	    nextline = newl;
 	    replchars(win, nextline, 0, 0,
-	    		currline->l_text + end_of_1st_text);
+			currline->l_text + end_of_1st_text);
 	    replchars(win, currline, end_of_1st_text,
 			strlen(currline->l_text + end_of_1st_text), "");
 	}
@@ -557,7 +557,7 @@ yp_push_deleted()
 
     yp_free(&yb[bufno('9')]);
     for (c = '9'; c > '1'; --c) {
-    	yb[bufno(c)] = yb[bufno(c - 1)];
+	yb[bufno(c)] = yb[bufno(c - 1)];
     }
     atp = &yb[bufno('@')];
     yb[bufno('1')] = *atp;

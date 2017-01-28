@@ -169,7 +169,7 @@ bool_t	split;			/* true if want to split */
      * Re-use previous tag if none given; if one is given, remember it.
      */
     if (tag == NULL || tag[0] == '\0') {
-    	tag = last_tag;
+	tag = last_tag;
     } else {
 	(void) strncpy(last_tag, tag, sizeof(last_tag));
     }
@@ -444,7 +444,7 @@ int	*offsetptr;
 	 * Match if strings are identical up to the tag length, AND
 	 * the stored tag string is not longer than that length.
 	 */
-    	if (strncmp(name, tp->t_name, length) == 0 &&
+	if (strncmp(name, tp->t_name, length) == 0 &&
 					strlen(tp->t_name) <= length) {
 	    return(tp);
 	}

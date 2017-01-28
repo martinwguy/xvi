@@ -611,7 +611,7 @@ event_t *ev;
     int xpos, ypos, old_xpos, old_ypos;
     bool_t done_drag;
     static xvEvent mouse_event = {
-    	Ev_mousedrag,
+	Ev_mousedrag,
     };
 
     old_xpos = ev->ev_x / wi->cwidth;
@@ -643,7 +643,7 @@ event_t *ev;
 	    mouse_event.ev_m_endcol = xpos;
 	    resp = xvi_handle_event(&mouse_event);
 	    if (resp->xvr_type == Xvr_exit) {
-	    	exit(0);
+		exit(0);
 	    }
 
 	    old_xpos = xpos;
@@ -689,7 +689,7 @@ int *p_cols, *p_rows;
 
     wn_get_window_size(wn, &win_width, &win_height);
     wi->wn = wn_create_subwin(wn, WIN_MARGIN,
-    				  WIN_MARGIN,
+				  WIN_MARGIN,
 				  win_width - 2 * WIN_MARGIN,
 				  win_height - 2 * WIN_MARGIN,
 				  WN_INPUT_OUTPUT);

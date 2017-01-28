@@ -95,7 +95,7 @@ long		line;
 	    if (curr_index == norm_colour_pos) {
 		colour = VSCcolour;
 	    }
-	    
+
 	    c = (unsigned char) (ltext[curr_index++]);
 
 	    /*
@@ -324,7 +324,7 @@ Xviwin	*win;
      */
     colour = is_readonly(win->w_buffer) ? VSCroscolour : VSCstatuscolour;
     for (colindex = win->w_ncols - win->w_spare_cols - 1; colindex >= 0;
-    							--colindex) {
+							--colindex) {
 	slp->s_colour[colindex] = colour;
     }
 
@@ -367,8 +367,8 @@ int pos;	/* Position of cursor within line */
      * However, if colour_cost is non-zero, we don't change the colour at all.
      */
     clp->s_colour[0] = (win->w_colour_cost != 0) ? VSCcolour :
-    			is_readonly(win->w_buffer) ?
-    					VSCroscolour : VSCstatuscolour;
+			is_readonly(win->w_buffer) ?
+					VSCroscolour : VSCstatuscolour;
     for (colindex = clp->s_used - 1; colindex >= 1; --colindex) {
 	clp->s_colour[colindex] = VSCcolour;
     }
@@ -413,7 +413,7 @@ bool_t	flag;
 	    /*
 	     * Find out which screen line the cursor line starts on.
 	     * This is not necessarily the same as window->w_row,
-	     * because longlines are different. 
+	     * because longlines are different.
 	     */
 	    curs_row = (int) cntplines(w, w->w_topline, currline);
 
@@ -442,7 +442,7 @@ Xviwin	*window;
 bool_t	flag;
 {
     if (window == NULL || window->w_nrows == 0) {
-    	return;
+	return;
     }
     if (flag) {
 	xvClear(window->w_vs);

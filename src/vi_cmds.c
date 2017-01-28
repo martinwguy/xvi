@@ -61,7 +61,7 @@ Cmd	*cmd;
 	break;
 
     case 'S':
-    	stuff("\"%c%dcc", cmd->cmd_yp_name, IDEF1(cmd->cmd_prenum));
+	stuff("\"%c%dcc", cmd->cmd_yp_name, IDEF1(cmd->cmd_prenum));
 	break;
 
     case 'p':

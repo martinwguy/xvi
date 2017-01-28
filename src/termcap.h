@@ -26,7 +26,7 @@ extern	unsigned int	LI;
 extern	unsigned int	CO;
 
 #define Rows		LI
-#define Columns 	CO
+#define Columns		CO
 
 /*
  * Standout glitch - see termcap.c.

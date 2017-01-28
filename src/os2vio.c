@@ -812,10 +812,10 @@ long	(*readfunc) P((FILE *));
 	    ||
 	    (fd1 = open(temp1, O_RDONLY | O_BINARY)) < 3
 	    ||
-	    (temp2 = tempfname("xvi_in")) == NULL 
+	    (temp2 = tempfname("xvi_in")) == NULL
 	    ||
 	    (fd2 = open(temp2,
-	    		O_WRONLY | O_CREAT | O_EXCL | O_BINARY, 0600)) < 3
+			O_WRONLY | O_CREAT | O_EXCL | O_BINARY, 0600)) < 3
 	) {
 	    retval = FALSE;
 	} else {

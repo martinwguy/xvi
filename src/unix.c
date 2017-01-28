@@ -251,7 +251,7 @@ kbgetc()
 	 * the input but a window size change has occurred, we should return EOF
 	 * and hold off the characters until it has been processed.
 	 */
-    	return(EOF);
+	return(EOF);
     }
     --kb_nchars;
     return(*kbp++);
@@ -406,7 +406,7 @@ Wait200ms()
 {
 #if defined(ITIMER_REAL) && !defined(cray)
     struct itimerval	timer;
-    
+
     (void) signal(SIGALRM, nothing);
 
     /*

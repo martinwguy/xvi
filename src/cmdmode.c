@@ -193,7 +193,7 @@ int	ch;
 	    inbuf[inend] = '\0';	/* ensure word is terminated */
 	    to_expand = strrchr(inbuf, ' ');
 	    if (to_expand == NULL || *(to_expand + 1) == '\0') {
-	    	beep(win);
+		beep(win);
 		return(cmd_INCOMPLETE);
 	    } else {
 		to_expand++;

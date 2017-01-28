@@ -1012,7 +1012,7 @@ unsigned long	lnum;
 	} else if (c == '\\') {
 	    switch (*src) {
 	    case '0': case '1': case '2': case '3': case '4':
-	    case '5': case '6': case '7': case '8': case '9': 
+	    case '5': case '6': case '7': case '8': case '9':
 		no = *src++ - '0';
 		break;
 	    case '#':
@@ -1022,10 +1022,10 @@ unsigned long	lnum;
 	    case 'u': case 'U':
 	    case 'l': case 'L':
 	    case 'e': case 'E':
-	    	ul = *src++;
+		ul = *src++;
 		continue;
 	    default:
-	    	no = -1;
+		no = -1;
 	    }
 	} else {
 	    no = -1;
@@ -1082,13 +1082,13 @@ register int		ulmode;
 {
     switch (ulmode) {
     case 'u': case 'U':
-    	if (is_lower(c)) {
+	if (is_lower(c)) {
 	    c = to_upper(c);
 	}
 	break;
 
     case 'l': case 'L':
-    	if (is_upper(c)) {
+	if (is_upper(c)) {
 	    c = to_lower(c);
 	}
     }
@@ -1129,7 +1129,7 @@ char	*command;
 
     delimiter = *copy;
     if (delimiter == '\0' ||
-    			(cp = compile(&copy[1], delimiter, TRUE)) == NULL) {
+			(cp = compile(&copy[1], delimiter, TRUE)) == NULL) {
 	regerror("Usage: :s/search pattern/replacement/");
 	free(copy);
 	return(0);

@@ -360,7 +360,7 @@ vformat
 		if (lnflag)
 		{
 		    n = (c == 'u' ?
-		    		(long) va_arg(argp, unsigned long) :
+				(long) va_arg(argp, unsigned long) :
 				va_arg(argp, long));
 		} else {
 		    n = (c == 'u' ?

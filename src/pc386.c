@@ -60,7 +60,7 @@ getvmode()
     unsigned	mode;
 
     if ((mode = disp_getmode()) == COLOUR25X80 || mode == MONO25X80 ||
-    							mode == MDA25X80) {
+							mode == MDA25X80) {
 	if (disp_numrows > 25) {
 	    return mode | MASK43;
 	}
@@ -266,7 +266,7 @@ pc_scroll(unsigned start, unsigned end, int nlines)
 	nlines = 0;
     }
     disp_scroll(nlines, start, 0, end, disp_numcols - 1,
-    					defscr.pv_colours[VSCcolour]);
+					defscr.pv_colours[VSCcolour]);
 }
 
 /*

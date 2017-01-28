@@ -213,7 +213,7 @@ bool_t	force;
     }
 
     if (win == xvNextWindow(win)) {
-    	if (more_files()) {
+	if (more_files()) {
 	    /*
 	     * If there are more files to be edited, and no other
 	     * windows are open, we should disallow the close.
@@ -248,7 +248,7 @@ bool_t	force;
      */
     curwin = xvCloseWindow(win);
     if (curwin == NULL) {
-    	/*
+	/*
 	 * This is not supposed to happen; if this is the last window
 	 * open, we should have spotted it above. Still, cope with it...
 	 */
@@ -700,7 +700,7 @@ bool_t	force;
 	while ((curfile + 1) < numfiles && xvCanSplit(curwin)) {
 	    bool_t	success;
 
-	    success = exNewBuffer(curwin, files[++curfile], 
+	    success = exNewBuffer(curwin, files[++curfile],
 			    Pb(P_equalsize) ? (winsize + sparelines) : 0);
 	    if (Pb(P_equalsize) && sparelines > 0) {
 		sparelines = 0;
@@ -829,7 +829,7 @@ bool_t	force;
      */
     if (
 	buffer->b_filename == NULL
-	&& 
+	&&
 	(l1 == NULL || is_line0(l1->l_prev))
 	&&
 	(l2 == NULL || is_lastline(l2->l_next))

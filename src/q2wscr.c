@@ -107,7 +107,7 @@ char	*argv[];
 
     timer_port = attach_port(0, 0);
     if (timer_port == 0) {
-    	fputs("Cannot obtain timer port\n", stderr);
+	fputs("Cannot obtain timer port\n", stderr);
 	exit(1);
     }
 
@@ -115,7 +115,7 @@ char	*argv[];
 
     env = getenv("WXVINIT");
     if (env == NULL) {
-    	env = getenv("XVINIT");
+	env = getenv("XVINIT");
     }
     ignore_signals();
     vs->pv_window = (genptr *) xvi_startup(vs, argc, argv, env);
@@ -147,7 +147,7 @@ win_open()
 
     vs = scr_init();
     if (vs == NULL) {
-    	return(NULL);
+	return(NULL);
     }
 
     SetName("Xvi", "editor");
@@ -195,7 +195,7 @@ win_open()
     for (i = 2; i <= 9; i++) {
 	lhs[0] = K_FUNC(i);
 	rhs[1] = i + '0';
-    	xvi_keymap(lhs, rhs);
+	xvi_keymap(lhs, rhs);
     }
 
     return(vs);
@@ -401,7 +401,7 @@ int	col;
     (void) memset(wlines[row].line + col, ' ', scr->pv_cols - col);
     wlines[row].dirty = 1;
     if (col < wlines[row].inv_cols) {
-    	wlines[row].inv_cols = col;
+	wlines[row].inv_cols = col;
 	wlines[row].inv_colour = curr_inv_colour;
     }
 }
@@ -440,15 +440,15 @@ char	*text;
     int	i;
 
     for (i = 0; text[i] != '\0'; i++) {
-    	wlines[row].line[col + i] = text[i];
+	wlines[row].line[col + i] = text[i];
     }
     wlines[row].dirty = 1;
 
     if (invert_colour && (col + i + 1) > wlines[row].inv_cols) {
-    	wlines[row].inv_cols = col + i + 1;
+	wlines[row].inv_cols = col + i + 1;
 	wlines[row].inv_colour = curr_inv_colour;
     } else if (!invert_colour && col < wlines[row].inv_cols) {
-    	wlines[row].inv_cols = col;
+	wlines[row].inv_cols = col;
     }
 }
 
@@ -464,10 +464,10 @@ int	c;
     wlines[row].dirty = 1;
 
     if (invert_colour && (col + 1) > wlines[row].inv_cols) {
-    	wlines[row].inv_cols = col + 1;
+	wlines[row].inv_cols = col + 1;
 	wlines[row].inv_colour = curr_inv_colour;
     } else if (!invert_colour && col < wlines[row].inv_cols) {
-    	wlines[row].inv_cols = col;
+	wlines[row].inv_cols = col;
     }
 }
 
@@ -711,7 +711,7 @@ scr_init(void)
 
     vs = (VirtScr *) malloc(sizeof(VirtScr));
     if (vs == NULL) {
-    	return(NULL);
+	return(NULL);
     }
 
     vs->pv_window = NULL;

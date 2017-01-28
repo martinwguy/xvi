@@ -90,7 +90,7 @@ bool_t	split_line;
 	     * with the automatic indentation we have just inserted.
 	     */
 	    while (*s != '\0' && is_space(*s)) {
-	    	s++;
+		s++;
 	    }
 	}
 
@@ -323,7 +323,7 @@ register Line	*lp;
     }
 
     for (indent = 0; *text != '\0' && (*text == ' ' || *text == '\t');
-    								text++) {
+								text++) {
 	indent += *text == ' ' ? 1 : ts - indent % ts;
     }
     return indent;

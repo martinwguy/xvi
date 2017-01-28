@@ -142,7 +142,7 @@ showmatch()
 {
     register char	initc;			/* initial char */
     register enum mvtype
-	    		(*move) P((Posn *));	/* function to move cursor */
+			(*move) P((Posn *));	/* function to move cursor */
     register char	findc;			/* terminating char */
     static Posn		pos;			/* current position */
     char		c;

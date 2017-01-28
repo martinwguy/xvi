@@ -99,7 +99,7 @@
 #define DEL		'\177'
 
 #undef	CTRL
-#define CTRL(x) 	((x) & 0x1f)
+#define CTRL(x)		((x) & 0x1f)
 
 /*
  * Convert a command character to an ASCII character.

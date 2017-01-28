@@ -167,7 +167,7 @@ char	*str;
     static int	called = 0;
 
     if (!called) {
-    	sys_endv();
+	sys_endv();
 	called = 1;
     }
     (void) fputs(str, stderr);
@@ -189,7 +189,7 @@ tty_init()
      * about the screen size if appropriate. Also set up scrolling function.
      */
     if (strcmp(tcap_entry.term_name, "qnx") == 0) {
-    	qnxscr.v_scroll = co_scroll;
+	qnxscr.v_scroll = co_scroll;
 
 	if (tcap_entry.term_type == VIDEO_MAPPED) {
 	    unsigned	console;
@@ -211,10 +211,10 @@ tty_init()
 
 	window_info(stdout);
 
-    	qnxscr.v_scroll = win_scroll;
+	qnxscr.v_scroll = win_scroll;
 
     } else if (strncmp(tcap_entry.term_name, "vt100", 5) == 0) {
-    	qnxscr.v_scroll = vt_scroll;
+	qnxscr.v_scroll = vt_scroll;
     }
 
     qnx_disp_inited = 1;
@@ -233,7 +233,7 @@ tty_init()
     for (i = 2; i <= 9; i++) {
 	lhs[0] = K_FUNC(i);
 	rhs[1] = i + '0';
-    	xvi_keymap(lhs, rhs);
+	xvi_keymap(lhs, rhs);
     }
 }
 
@@ -402,7 +402,7 @@ int	end;
     if (start == 0 && end == (scr->pv_rows - 1)) {
 	term_clear(_CLS_SCRH);
     } else {
-    	int	row;
+	int	row;
 
 	for (row = start; row <= end; row++) {
 	    term_cur(row, 0);
@@ -562,7 +562,7 @@ int	nlines;
 
     (void) printf("\0337");				/* save cursor */
     (void) printf("\033[%d;%dr", start_row + 1,
-    					end_row + 1);	/* set scroll region */
+					end_row + 1);	/* set scroll region */
     if (nlines < 0) {
 	/*
 	 * nlines negative means scroll reverse - i.e. move
@@ -604,7 +604,7 @@ int	nlines;
     char	*esc;
 
     if (end_row != scr->pv_rows - 1) {
-    	return(0);
+	return(0);
     }
 
     if (nlines < 0) {

@@ -32,7 +32,7 @@ register Cmd	*cmd;
      * Do the shift.
      */
     tabinout(cmd->cmd_operator, cmd->cmd_startpos.p_line,
-    				cmd->cmd_target.p_line);
+				cmd->cmd_target.p_line);
 
     /*
      * Put cursor on first non-white of line; this is good if the
@@ -103,7 +103,7 @@ register Cmd	*cmd;
 	     */
 	    n = (cmd->cmd_target.p_index - cmd->cmd_startpos.p_index) + 1;
 	    replchars(curwin, cmd->cmd_startpos.p_line,
-	    			cmd->cmd_startpos.p_index, n, "");
+			      cmd->cmd_startpos.p_index, n, "");
 	} else {
 	    /*
 	     * Character-based delete between lines.
@@ -120,14 +120,14 @@ register Cmd	*cmd;
 	     * First delete part of the last line.
 	     */
 	    replchars(curwin, cmd->cmd_target.p_line, 0,
-	    			cmd->cmd_target.p_index + 1, "");
+			      cmd->cmd_target.p_index + 1, "");
 
 	    /*
 	     * Now replace the rest of the top line with the
 	     * remainder of the bottom line.
 	     */
 	    replchars(curwin, cmd->cmd_startpos.p_line,
-	    			cmd->cmd_startpos.p_index,
+			      cmd->cmd_startpos.p_index,
 				INT_MAX,
 				cmd->cmd_target.p_line->l_text);
 
@@ -137,7 +137,7 @@ register Cmd	*cmd;
 	     */
 	    repllines(curwin, cmd->cmd_startpos.p_line->l_next,
 			    cntllines(cmd->cmd_startpos.p_line,
-			    		cmd->cmd_target.p_line) - 1,
+				      cmd->cmd_target.p_line) - 1,
 			    (Line *) NULL);
 
 	    end_command(curwin);

@@ -159,7 +159,7 @@ Xviwin	*win;
     }
 
     if (new == NULL) {
-    	/*
+	/*
 	 * Closing last window onto this VirtScr.
 	 */
 	vs_free(win->w_vs);
@@ -476,7 +476,7 @@ bool_t	do_clear;
     }
     first_win = w;
     for ( ; w->w_next != NULL; w = w->w_next) {
-    	;
+	;
     }
     last_win = w;
 
@@ -516,7 +516,7 @@ bool_t	do_clear;
 	    last_win->w_nrows += to_go;
 	}
     } else {
-    	/*
+	/*
 	 * VirtScr has got smaller. Shrink each window in turn from
 	 * the bottom up until we have freed up enough lines to make
 	 * all the windows fit. Leave "w" pointing at the topmost
@@ -541,7 +541,7 @@ bool_t	do_clear;
 		 */
 		to_go -= w->w_nrows;
 		spare += w->w_nrows;
-	    	w->w_nrows = 0;
+		w->w_nrows = 0;
 		if (curwin == w) {
 		    if (w->w_last != NULL) {
 			curwin = w->w_last;
@@ -555,7 +555,7 @@ bool_t	do_clear;
 		 */
 		to_go -= (w->w_nrows - Pn(P_minrows));
 		spare -= (w->w_nrows - Pn(P_minrows));
-	    	w->w_nrows = Pn(P_minrows);
+		w->w_nrows = Pn(P_minrows);
 	    }
 	}
     }
@@ -580,7 +580,7 @@ bool_t	do_clear;
      * Adjust the number of columns.
      */
     if (first_win->w_ncols != VScols(vs)) {
-    	do_clear = TRUE;
+	do_clear = TRUE;
     }
     for (w = first_win; w != NULL; w = w->w_next) {
 	w->w_ncols = VScols(vs);
@@ -607,7 +607,7 @@ xvUpdateAllBufferWindows(buffer)
 Buffer	*buffer;
 {
     Xviwin	*w;
-	    
+
     w = curwin;		/* as good a place as any to start */
     do {
 	if (w->w_buffer == buffer) {
@@ -769,7 +769,7 @@ Xviwin	*window;
     Xviwin	*wp;
 
     if (window == NULL) {
-    	return(NULL);
+	return(NULL);
     }
 
     for (wp = xvNextWindow(window); wp != window && wp != NULL;

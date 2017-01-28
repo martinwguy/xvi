@@ -169,7 +169,7 @@ int	end;
     if (start == 0 && end == (scr->pv_rows - 1)) {
 	erase_display();
     } else {
-    	int	row;
+	int	row;
 
 	for (row = start; row <= end; row++) {
 	    tty_goto(row, 0);

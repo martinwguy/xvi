@@ -130,7 +130,7 @@ bool_t	interactive;
     if (!txtformset(new_value.pv_i)) {
 	if (interactive) {
 	    show_error(window, "Invalid text file format (%d)",
-	    					new_value.pv_i);
+						new_value.pv_i);
 	}
 	return(FALSE);
     }

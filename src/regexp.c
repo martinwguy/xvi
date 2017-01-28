@@ -140,7 +140,7 @@ char	*cstrchr P((char *s, int c));
  * but allows patterns to get big without disasters.
  */
 #define OP(p)		(*(p))
-#define NEXT(p) 	(((*((p)+1)&0377)<<8) + (*((p)+2)&0377))
+#define NEXT(p)		(((*((p)+1)&0377)<<8) + (*((p)+2)&0377))
 #define OPERAND(p)	((p) + 3)
 
 /*
@@ -157,7 +157,7 @@ char	*cstrchr P((char *s, int c));
 #define UCHARAT(p)	((int)*(p)&CHARBITS)
 #endif
 
-#define FAIL(m) 	{ regerror(m); return(NULL); }
+#define FAIL(m)		{ regerror(m); return(NULL); }
 #define ISMULT(c)	((c) == '*' || (c) == '+' || (c) == '?')
 #define META		"^$.[()|?+*\\"
 

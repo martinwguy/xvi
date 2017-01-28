@@ -77,17 +77,17 @@
 #else	/* not __STDC__ */
 
 #   ifdef   ultrix
-#   	ifdef	mips
-#   	    define  USE_STDHDRS
-#   	endif   /* mips */
+#	ifdef	mips
+#	    define  USE_STDHDRS
+#	endif   /* mips */
 #   endif   /* ultrix */
 #   ifdef   sparc
-#   	define	USE_STDHDRS
+#	define	USE_STDHDRS
 #   endif   /* sparc */
 #   include <varargs.h>
 #   define  VA_START(a, b)	va_start(a)
 
-#   define  P(args) 		()
+#   define  P(args)		()
 
 #   define  const
 #   define  volatile
@@ -496,7 +496,7 @@ typedef struct buffer {
     char		*b_filename;	/* file name, if any */
     char		*b_tempfname;	/* name for temporary copy of file */
 
-    unsigned int 	b_flags;	/* flags */
+    unsigned int	b_flags;	/* flags */
 
     int			b_nwindows;	/* no of windows open on this buffer */
 
@@ -807,7 +807,7 @@ extern	int	cur_yp_name;
  */
 struct redo {
     enum {
-    	r_insert,
+	r_insert,
 	r_replace1,
 	r_normal
     }		r_mode;

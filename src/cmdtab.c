@@ -75,7 +75,7 @@ VI_COMMAND	cmd_types[NUM_VI_CMDS] = {
  /* - */	do_target,	COMMAND | TARGET | TGT_LINE | TGT_INCLUSIVE | SET_CURSOR_COL,
  /* . */	do_cmd,		COMMAND,
  /* / */	do_target,	COMMAND | TARGET | TGT_CHAR | TGT_EXCLUSIVE
- 					| TGT_DEFERRED,
+					| TGT_DEFERRED,
  /* 0 */	do_target,	COMMAND | TARGET | TGT_CHAR | TGT_EXCLUSIVE | SET_CURSOR_COL,
  /* 1 */	do_badcmd,	0,
  /* 2 */	do_badcmd,	0,
@@ -92,7 +92,7 @@ VI_COMMAND	cmd_types[NUM_VI_CMDS] = {
  /* = */	do_badcmd,	0,
  /* > */	do_operator,	COMMAND,
  /* ? */	do_target,	COMMAND | TARGET | TGT_CHAR | TGT_EXCLUSIVE
- 					| TGT_DEFERRED,
+					| TGT_DEFERRED,
  /* @ */	do_cmd,		COMMAND | TWO_CHAR,
  /* A */	do_ins,		COMMAND,
  /* B */	do_word,	COMMAND | TARGET | TGT_CHAR | TGT_EXCLUSIVE | SET_CURSOR_COL,
