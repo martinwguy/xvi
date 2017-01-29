@@ -71,6 +71,6 @@ tags:		$(GENSRC) $(MACHSRC)
 		ctags -t $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
 
 clean:
-		rm $(GENOBJ) $(MACHOBJ) xvi
+		rm -f $(GENOBJ) $(MACHOBJ) xvi
 
 $(GENOBJ):	$(GENINC) $(MACHINC)
