@@ -31,7 +31,9 @@ CC=		tcc
 WARNFLAGS=	-w-ccc -w-par -w-rch -w-stu
 OPTFLAGS=	-O -G-
 DEFS=		-D__STDC__=1 -DMSDOS
-CFLAGS=		-m$(MEMMODEL) -f- $(WARNFLAGS) $(OPTFLAGS) $(DEFS)
+TCDIR=		C:\TC
+TCFLAGS=	-I$(TCDIR)\INCLUDE -L$(TCDIR)LIB
+CFLAGS=		-m$(MEMMODEL) -f- $(WARNFLAGS) $(OPTFLAGS) $(DEFS) $(TCFLAGS)
 # AS=		e:\bin\msdos\masm.exe
 ASFLAGS=	-Ml -DMEMMODEL=$(MEMMODEL)
 LD=		tlink
