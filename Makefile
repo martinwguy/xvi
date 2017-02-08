@@ -22,12 +22,12 @@ OPTFLAG = -O2
 all:
 	@# makefile.pos sets CFLAGS itself; we apply the DEB_BUILD_OPTIONS by
 	@# overriding its OPTFLAG variable. Subvert it to set HELPFILE too.
-	$(MAKE) -C src -f makefile.pos \
+	(cd src && $(MAKE) -f makefile.pos \
 		OPTFLAG="$(OPTFLAG) -DHELPFILE=\\\"$(HELPDIR)/xvi.help\\\"" \
-		xvi
+		xvi)
 
 check: all
-	@make -C test check
+	@(cd test && make check)
 
 install: all
 	$(INSTALL) -d $(BINDIR) $(HELPDIR) $(MANDIR) $(DOCDIR)
@@ -36,7 +36,7 @@ install: all
 	$(INSTALL) -m 644 doc/xvi.1 $(MANDIR)
 
 clean:
-	$(MAKE) -C src -f makefile.pos clean
-	$(MAKE) -C doc clean
-	$(MAKE) -C test clean
+	(cd src && $(MAKE) -f makefile.pos clean)
+	(cd doc && $(MAKE) clean)
+	(cd test && $(MAKE) clean)
 	rm -f configure-stamp build-stamp
