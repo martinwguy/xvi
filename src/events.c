@@ -165,7 +165,7 @@ xvEvent	*ev;
 	default: /* EXITING */
 	    break;
 	}
-	if ((*func)(c)) {
+	if (State != EXITING && (*func)(c)) {
 	    do_update = TRUE;
 	}
 

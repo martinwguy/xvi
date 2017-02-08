@@ -1038,6 +1038,9 @@ cleanup:
 
 static Flexbuf	newname;
 
+/*
+ * Returns the number of lines read, or -1 for failure.
+ */
 static long
 readfunc(fp)
 FILE *fp;
@@ -1046,9 +1049,10 @@ FILE *fp;
 
     while ((c = getc(fp)) != EOF && c != '\n') {
 	if (!flexaddch(&newname, c)) {
-	    break;
+	    return(-1);
 	}
     }
+    return(1);
 }
 
 char *
@@ -1057,17 +1061,7 @@ char			*name;
 bool_t			do_completion;
 {
     static char		meta[] = "*?[]~${}`";
-    static char		*args[] = {
-	NULL,				/* path of shell */
-	"-c",
-	NULL,				/* echo %s */
-	NULL,
-    };
     char		*cp;
-    int			pd[2];
-    int			save0;
-    int			save1;
-    int			save2;
     int			has_meta;
     static Flexbuf	cmd;
     char		*retval;

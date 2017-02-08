@@ -111,7 +111,7 @@ inchar(long mstimeout)
 
 	if (kbcount == 0) {
 	    unsigned	prevbstate;
-	    unsigned	prevx, prevy;
+	    unsigned	prevx = 0, prevy = 0; /* =0 only shuts compilers up */
 	    bool_t	isdrag;
 
 	    if (State == NORMAL) {

@@ -68,7 +68,6 @@ int	c;
     register Posn	*curpos;
     static bool_t	literal_next = FALSE;
     static bool_t	wait_buffer = FALSE;
-    bool_t		updated;
     bool_t		beginline;
     int			nlines;
 

@@ -106,8 +106,6 @@ int		row;
     int			n_used;
     int			r_used;
     int			columns;
-    bool_t		ncoloured;	/* TRUE if ntextp has colour */
-    int			i;
     register int	col;		/* current column */
     register int	adv_col;	/* column after last to be updated */
     bool_t		do_advise;	/* TRUE if VSadvise() is advisory */
@@ -125,14 +123,6 @@ int		row;
 
     n_used = new->s_used;
     r_used = real->s_used;
-
-    ncoloured = FALSE;
-    for (i = 0; i < n_used; i++) {
-	if (ntextp[i] != VSCcolour) {
-	    ncoloured = TRUE;
-	    break;
-	}
-    }
 
     /*
      * Look at each character in the line, comparing the new version

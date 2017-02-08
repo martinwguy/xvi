@@ -226,7 +226,7 @@ const char *string;
 
 #define MC_SHIFT	3
 #define MEMCHUNK	(1 << MC_SHIFT)
-#define MC_MASK		(~0 << MC_SHIFT)
+#define MC_MASK		(~(unsigned)0 << MC_SHIFT)
 #define MC_ROUNDUP(n)	(((n) + MEMCHUNK - 1) & MC_MASK)
 
 Line *

@@ -39,7 +39,7 @@ static	int		top;		/* index of next element to use */
 #define	STACK_SIZE	(sizeof(stack) / sizeof(stack[0]))
 
 #define	stack_full()	FALSE
-#define	stack_empty()	(n_elements == 0)
+#define	stack_empty()	(!n_elements)
 
 #define prev_element	(top > 0 ? top - 1 : STACK_SIZE - 1)
 #define next_element	(top < STACK_SIZE - 1 ? top + 1 : 0)

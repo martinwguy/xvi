@@ -49,7 +49,6 @@ long		line;
     int			nextra = 0;	/* index into stack */
     int			srow, scol;	/* current screen row and column */
     int			vcol;		/* virtual column */
-    int			possible_tag;	/* next possible tag position */
     int			norm_colour_pos;/* pos where we switch off highlight */
     unsigned		colour;		/* current plotting colour */
 
@@ -58,7 +57,6 @@ long		line;
     scol = vcol = 0;
     curr_line = win->w_vs->pv_int_lines + srow;
     curr_index = 0;
-    possible_tag = 0;
     norm_colour_pos = 0;
     colour = VSCcolour;
     eoln = FALSE;
@@ -344,7 +342,6 @@ int pos;	/* Position of cursor within line */
     Sline	*clp;
     int		colindex;
     unsigned	width, maxwidth;
-    char	*cp;
 
     clp = win->w_vs->pv_int_lines + win->w_cmdline;
 

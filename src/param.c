@@ -205,15 +205,15 @@ static struct {
     int		index;
     char	*value;
 } init_str[] = {	/* strings and lists */
-    P_colour,		DEF_COLOUR,
-    P_helpfile,		HELPFILE,
-    P_paragraphs,	DEF_PARA,
-    P_roscolour,	DEF_ROSCOLOUR,
-    P_sections,		DEF_SECTIONS,
-    P_sentences,	DEF_SENTENCES,
-    P_statuscolour,	DEF_STCOLOUR,
-    P_systemcolour,	DEF_SYSCOLOUR,
-    P_tags,		DEF_TAGS,
+    { P_colour,		DEF_COLOUR	},
+    { P_helpfile,	HELPFILE	},
+    { P_paragraphs,	DEF_PARA	},
+    { P_roscolour,	DEF_ROSCOLOUR	},
+    { P_sections,	DEF_SECTIONS	},
+    { P_sentences,	DEF_SENTENCES	},
+    { P_statuscolour,	DEF_STCOLOUR	},
+    { P_systemcolour,	DEF_SYSCOLOUR	},
+    { P_tags,		DEF_TAGS	}
 };
 #define	NSTRS	(sizeof(init_str) / sizeof(init_str[0]))
 
@@ -236,10 +236,10 @@ static struct {
     int		value;
     char	**elist;
 } init_enum[] = {	/* enumerations */
-    P_format,		DEF_TFF,	fmt_strings,
-    P_jumpscroll,	js_AUTO,	js_strings,
-    P_preserve,		psv_STANDARD,	psv_strings,
-    P_regextype,	rt_GREP,	rt_strings,
+    { P_format,		DEF_TFF,	fmt_strings	},
+    { P_jumpscroll,	js_AUTO,	js_strings	},
+    { P_preserve,	psv_STANDARD,	psv_strings	},
+    { P_regextype,	rt_GREP,	rt_strings	}
 };
 #define	NENUMS	(sizeof(init_enum) / sizeof(init_enum[0]))
 
