@@ -1,0 +1,44 @@
+#! /usr/bin/tclsh
+
+# Issue 81: With tkterm, pending input chars prevent infinite map recursion
+#
+# When you say "xaa" below, xvi should go into an infinite loop.
+#
+# If you send all three together using tkterm, the "x" is ignored
+# and an "a" is added to the buffer. If you exp_send "x" and "aa" separately,
+# it loops as it should.
+# Using virterm it loops as it should either way.
+#
+# This issue may be correlated with the need to insert "sleep"s in N-tilde test.
+#
+# This file, 81-*, is not run as part of the test suite because
+# it always fails with tkterm, the default engine.
+
+# Boilerplate
+
+source term
+
+# Tests begin
+
+# Start xvi
+exp_send "exec ../src/xvi\r"
+
+# Check it started up OK
+set timeout 1
+term_expect timeout { exit 100 } \
+	{ screen_is 1 0 [list "" "~"] }
+
+exp_send ":map x y\r"
+exp_send ":map y x\r"
+exp_send "xaa"
+sleep 1
+term_expect timeout { exit 101 } \
+    { expr { [screen_is 1 0 [list "" "~"]] } }
+exp_send "\x03"
+
+term_expect timeout { exit 102 } \
+    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+
+exp_send ":q!\r"
+
+exit 0
