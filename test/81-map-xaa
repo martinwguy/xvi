@@ -1,8 +1,14 @@
 #! /usr/bin/tclsh
 
-# Issue 81: With tkterm, pending input chars prevent infinite map recursion
+# Issue 91, http://github.com/martinwguy/xvi/issues/91
 #
-# When you say "xaa" below, xvi should go into an infinite loop.
+# With tkterm, pending input chars prevent infinite map recursion
+#
+# When you say
+#    :map x y
+#    :map y x
+#    xaa
+# xvi should go into an infinite loop.
 #
 # If you send all three together using tkterm, the "x" is ignored
 # and an "a" is added to the buffer. If you exp_send "x" and "aa" separately,
