@@ -44,8 +44,6 @@
 
 static	void	save_position P((Xviwin *));
 static	bool_t	init_change_data P((Xviwin *));
-static	void	push_change_list P((ChangeStack *));
-static	bool_t	pop_change_list P((ChangeStack *, Change **));
 static	void	free_changes P((Change *));
 static	Change	*_replchars P((Xviwin *, Line *, int, int, char *));
 static	Change	*_repllines P((Xviwin *, Line *, long, Line *));
@@ -65,20 +63,7 @@ Buffer	*buffer;
     	return;
     }
     cdp->cd_nlevels = 0;
-
-    cdp->cd_undo = alloc(sizeof(ChangeStack));
-    if (cdp->cd_undo == NULL) {
-	return;
-    }
-    cdp->cd_undo->cs_stack[0] = NULL;
-    cdp->cd_undo->cs_size = 0;
-
-    cdp->cd_redo = alloc(sizeof(ChangeStack));
-    if (cdp->cd_redo == NULL) {
-	return;
-    }
-    cdp->cd_redo->cs_stack[0] = NULL;
-    cdp->cd_redo->cs_size = 0;
+    cdp->cd_undo = NULL;
 
     buffer->b_change = (genptr *) cdp;
 
@@ -105,79 +90,19 @@ Buffer	*buffer;
     /*
      * Remove all recorded changes for this buffer.
      */
-    while (pop_change_list(cdp->cd_undo, &chp)) {
-	free_changes(chp);
-    }
-    while (pop_change_list(cdp->cd_redo, &chp)) {
-	free_changes(chp);
-    }
+    free_changes(cdp->cd_undo);
+    cdp->cd_undo = NULL;
 
     free(buffer->b_change);
 }
 
-/*
- * Push a new change list onto the stack. We always start with
- * a NULL list, because we haven't actually changed anything yet.
- */
-static void
-push_change_list(csp)
-ChangeStack	*csp;
-{
-    int		i;
-
-    /*
-     * Discard any changes if we have reached our limit.
-     */
-    while (csp->cs_size >= Pn(P_undolevels)) {
-	free_changes(csp->cs_stack[csp->cs_size - 1]);
-	csp->cs_size -= 1;
-    }
-
-    /*
-     * Push the previous elements down the stack to make room.
-     */
-    for (i = csp->cs_size - 1; i >= 0; --i) {
-	csp->cs_stack[i + 1] = csp->cs_stack[i];
-    }
-
-    csp->cs_stack[0] = NULL;
-    csp->cs_size++;
-}
-
-static bool_t
-pop_change_list(csp, chpp)
-ChangeStack	*csp;
-Change		**chpp;
-{
-    int			i;
-
-    if (csp->cs_size == 0) {
-	return(FALSE);
-    }
-
-    /*
-     * Copy the top element off the stack.
-     */
-    *chpp = csp->cs_stack[0];
-
-    /*
-     * Copy the previous elements back up the stack.
-     */
-    csp->cs_size -= 1;
-    for (i = 0; i < csp->cs_size; i++) {
-	csp->cs_stack[i] = csp->cs_stack[i + 1];
-    }
-
-    return(TRUE);
-}
-
 static void
 push_change(csp, change)
-ChangeStack	*csp;
+Change		**csp;
 Change		*change;
 {
-    change->c_next = csp->cs_stack[0];
-    csp->cs_stack[0] = change;
+    change->c_next = *csp;
+    *csp = change;
 }
 
 /*
@@ -223,16 +148,8 @@ Xviwin	*window;
 	    return(FALSE);
 	}
 
-	/*
-	 * We are making a change to the buffer, so we have to ensure
-	 * that the redo stack is empty.
-	 */
-
-	while (pop_change_list(cdp->cd_redo, &chp)) {
-	    free_changes(chp);
-	}
-
-	push_change_list(cdp->cd_undo);
+	free_changes(cdp->cd_undo);
+	cdp->cd_undo = NULL;
 	cdp->cd_total_lines = 0;
 	cdp->cd_nlevels = 0;
 	save_position(window);
@@ -261,10 +178,11 @@ Xviwin	*window;
     }
 
     change->c_type = C_POSITION;
+    change->c_lineno =
     change->c_pline = lineno(window->w_buffer, window->w_cursor->p_line);
     change->c_pindex = window->w_cursor->p_index;
 
-    push_change(cdp->cd_undo, change);
+    push_change(&(cdp->cd_undo), change);
 }
 
 void
@@ -287,8 +205,8 @@ Xviwin	*window;
  * Interface used by rest of editor code to _replchars(). We do two
  * extra things here: call init_change_data() and push the anti-change
  * onto the undo stack. These are only valid when we are making a real
- * change; _replchars() gets called when we are undoing or redoing a
- * change, when we don't want those things to happen.
+ * change; _replchars() gets called when we are undoing a change,
+ * when we don't want those things to happen.
  */
 void
 replchars(window, line, start, nchars, newstring)
@@ -312,7 +230,7 @@ char	*newstring;
      * that form the current command.
      */
     if (change != NULL) {
-	push_change(cdp->cd_undo, change);
+	push_change(&(cdp->cd_undo), change);
     }
 }
 
@@ -320,8 +238,8 @@ char	*newstring;
  * Interface used by rest of editor code to _repllines(). We do two
  * extra things here: call init_change_data() and push the anti-change
  * onto the undo stack. These are only valid when we are making a real
- * change; _repllines() gets called when we are undoing or redoing a
- * change, when we don't want those things to happen.
+ * change; _repllines() gets called when we are undoing a change,
+ * when we don't want those things to happen.
  */
 void
 repllines(window, line, nolines, newlines)
@@ -344,7 +262,7 @@ Line		*newlines;
      * that form the current command.
      */
     if (change != NULL) {
-	push_change(cdp->cd_undo, change);
+	push_change(&(cdp->cd_undo), change);
     }
 
     if (cdp->cd_nlevels == 0) {
@@ -822,12 +740,8 @@ Line		*newlines;
     /*
      * Remove all recorded changes for this buffer.
      */
-    while (pop_change_list(cdp->cd_undo, &chp)) {
-	free_changes(chp);
-    }
-    while (pop_change_list(cdp->cd_redo, &chp)) {
-	free_changes(chp);
-    }
+    free_changes(cdp->cd_undo);
+    cdp->cd_undo = NULL;
 
     /*
      * Point new_end at the last line of newlines.
@@ -882,23 +796,17 @@ Line		*newlines;
 }
 
 /*
- * Perform an undo. Or a redo. Same thing. If specific is TRUE,
- * then we are moving in the direction specified (FORWARD or BACKWARD).
- * Otherwise, we are doing a vi-compatible undo, which means either a
- * redo or an undo depending on what we did last time. Sort of thing.
+ * Perform an undo.
  */
 void
-undo(window, specific, direction)
+undo(window)
 Xviwin	*window;
-bool_t	specific;
-int	direction;
 {
     register Buffer	*buffer;
     ChangeData		*cdp;
     Change		*chp;
     Change		*change;
-    ChangeStack		*cstack;
-    bool_t		can_undo;
+    Change		*redo;
 
     cdp = (ChangeData *) window->w_buffer->b_change;
     buffer = window->w_buffer;
@@ -909,36 +817,20 @@ int	direction;
     }
 
     /*
-     * If we are a "normal" undo, then we first check the redo stack;
-     * if it is non-empty, then we perform a redo, effectively undoing
-     * the last undo. Otherwise we perform a real undo of the last cmd,
-     * or a redo of the last (undone) command, according to direction.
+     * chp point to the list of changes to make to undi the last change.
      */
-    if (specific) {
-	can_undo = pop_change_list(
-		(direction == FORWARD) ? cdp->cd_redo : cdp->cd_undo, &chp);
-    } else {
-	if (pop_change_list(cdp->cd_redo, &chp)) {
-	    direction = FORWARD;
-	    can_undo = TRUE;
-	} else {
-	    direction = BACKWARD;
-	    can_undo = pop_change_list(cdp->cd_undo, &chp);
-	}
-    }
-    if (!can_undo) {
+    chp = cdp->cd_undo;
+    if (chp == NULL) {
 	show_error(window, "Nothing to undo!");
 	return;
     }
 
     /*
-     * cstack points to the stack where we will be constructing the
-     * opposite of the changes we are making, i.e. we push anti-changes
-     * onto the redo stack if we are undoing and vice versa.
+     * "redo" is the stack where we will be constructing the opposite
+     * of the changes we are making, i.e. we push anti-changes
+     * onto the redo stack.
      */
-    cstack = (direction == FORWARD) ? cdp->cd_undo : cdp->cd_redo;
-
-    push_change_list(cstack);
+    redo = NULL;
     cdp->cd_total_lines = 0;
     cdp->cd_nlevels = 0;
 
@@ -1004,10 +896,12 @@ int	direction;
 	    break;
 	}
 	if (change != NULL) {
-	    push_change(cstack, change);
+	    push_change(&redo, change);
 	}
 	chfree(tmp);
     }
+
+    cdp->cd_undo = redo;
 
     xvUpdateAllBufferWindows(buffer);
 }
@@ -1087,35 +981,4 @@ bool_t		interactive;
 	}
 	return(TRUE);
     }
-}
-
-bool_t
-set_undolevels(window, new_value, interactive)
-Xviwin		*window;
-Paramval	new_value;
-bool_t		interactive;
-{
-    ChangeStack	*csp = ((ChangeData *) window->w_buffer->b_change)->cd_undo;
-    int i;
-
-    /*
-     * Limits on undolevels: 1 to MAX_UNDO.
-     */
-    if ((i = new_value.pv_i) < 1 || i > MAX_UNDO) {
-	if (interactive) {
-	    show_error(window,
-		"The value for undolevels must be between 1 and %d", MAX_UNDO);
-	}
-	return(FALSE);
-    }
-
-    /*
-     * Discard any changes if the limit has been reduced.
-     */
-    while (csp->cs_size > i) {
-	free_changes(csp->cs_stack[csp->cs_size - 1]);
-	csp->cs_size -= 1;
-    }
-
-    return(TRUE);
 }

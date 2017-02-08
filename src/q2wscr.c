@@ -107,7 +107,7 @@ char	*argv[];
 
     timer_port = attach_port(0, 0);
     if (timer_port == 0) {
-    	fprintf(stderr, "Cannot obtain timer port\n");
+    	fputs("Cannot obtain timer port\n", stderr);
 	exit(1);
     }
 
@@ -295,12 +295,6 @@ process_event()
 		    if (new_cols < 20) {
 			new_cols = 20;
 		    }
-
-    #if 0
-		    (void) printf("code=%c height=%d, width=%d, rows=%d, cols=%d\n",
-				    msg.hdr.code, region.height, region.width,
-				    new_rows, new_cols);
-    #endif
 
 		    /*
 		     * Round the window size down to an integer number of
@@ -602,25 +596,6 @@ set_font()
     char_height = ((CHARH + LEADING + V_TPP - 1) / V_TPP) * V_TPP;
     char_base = ((CHARB + LEADING + V_TPP - 1) / V_TPP) * V_TPP;
     char_width = 66;
-#if 0
-    if (fontid > 0) {
-	REAL_EXTENT	size;
-	int		base;
-
-	ScreenFontInfo(fontid, NULL, NULL, &size, &base, NULL, NULL);
-	printf("id=%d\n", fontid);
-	printf("h=%d, w=%d, b=%d\n", size.h, size.w, base);
-	printf("V_TPP=%d, H_TPP=%d\n", V_TPP, H_TPP);
-	char_height = (size.h * V_TPP) / 8;
-	char_width = (size.w * H_TPP) / 8;
-	char_base = (base * V_TPP) / 8;
-	printf("ch=%d, cw=%d, cb=%d\n", char_height, char_width, char_base);
-    } else {
-	char_height = CHARH;
-	char_width = CHARW;
-	char_base = CHARB;
-    }
-#endif
 }
 
 static void
@@ -636,7 +611,7 @@ int	ncols;
 	wlines = (WinLine *) malloc(nlines * sizeof(*wlines));
     }
     if (wlines == NULL) {
-	(void) fprintf(stderr, "Out of memory\n");
+	(void) fputs("Out of memory\n", stderr);
 	exit(1);
     }
 

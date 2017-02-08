@@ -247,7 +247,7 @@ char		*no_file_str;
 #ifndef i386
     register
 #endif
-	unsigned long	nchars;		/* number of chars read */
+    unsigned long	nchars;		/* number of chars read */
     unsigned long	nlines;		/* number of lines read */
     unsigned long	nulls;		/* number of null chars */
     bool_t		incomplete;	/* incomplete last line */
@@ -447,6 +447,14 @@ char		*no_file_str;
 		nulls++;
 		continue;
 	    }
+	    /*
+	     * "If beautify is set, all non-printable characters, other than
+	     * <tab>, <newline>, and <form-feed> characters, shall be discarded
+	     * from text read in from files" -POSIX 1-2008
+	     */
+	    if (Pb(P_beautify) && !isprint(c) && c != '\t' && c != '\f')
+		continue;
+
 	    if (col >= lp->l_size - 1) {
 		if (!lnresize(lp, col + 2)) {
 		    if (lptr != NULL)
@@ -531,7 +539,7 @@ bool_t	force;
 	show_error(window, "\"%s\" No such file or directory", fname);
 	return(FALSE);
     }
-    if (!can_write(fname)) {
+    if (!Pb(P_writeany) && !can_write(fname)) {
 	show_error(window, "\"%s\" Permission denied", fname);
 	return(FALSE);
     }
@@ -606,7 +614,7 @@ bool_t	force;
 	return(FALSE);
     }
 
-    if (!can_write(fname)) {
+    if (!Pb(P_writeany) && !can_write(fname)) {
 	show_error(window, "\"%s\" Permission denied", fname);
 	return(FALSE);
     }

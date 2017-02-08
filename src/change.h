@@ -70,11 +70,6 @@ typedef	struct change {
 #define	c_pline		c_u.cu_p.cup_line
 #define	c_pindex	c_u.cu_p.cup_index
 
-typedef struct changestack {
-    Change	*cs_stack[MAX_UNDO];
-    int		cs_size;
-} ChangeStack;
-
 /*
  * One of these data structures exists for every buffer.
  * It contains the undo and redo stacks, and temporary
@@ -93,20 +88,12 @@ typedef	struct changedata {
     long		cd_total_lines;
 
     /*
-     * Array of pointers to LIFO lists of changes made. Each element
-     * of the array represents a composite command, and the elements
-     * are themselves stored as a LIFO, so that they may be replayed
-     * to return to any previous buffer configuration.
-     *
-     * The maximum number of undo levels retained is governed by two
-     * numeric parameters, maxundo and minundo; we always discard any
-     * changes once maxundo is reached, but will retain minundo even
-     * if it means we fail to execute a command. The MAX_UNDO define
-     * limits the value of Pn(P_maxundo).
+     * Pointers to LIFO lists of changes made. Each one represents
+     * a composite command, stored as a LIFO, so that they may be replayed
+     * to return to the previous buffer configuration.
      */
-    ChangeStack		*cd_undo;
-    ChangeStack		*cd_redo;
-
+    Change		*cd_undo;
+    Change		*cd_redo;
 } ChangeData;
 
 /*

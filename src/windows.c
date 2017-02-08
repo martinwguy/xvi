@@ -86,7 +86,7 @@ int	sizehint;
      * the point is to have enough space to actually display
      * a window, not just to have a zero-size one.
      */
-    if (oldwin->w_nrows < (MINROWS * 2) && Pb(P_autogrow)) {
+    if (oldwin->w_nrows < (MINROWS * 2)) {
 	/*
 	 * Try to grow the current window to make room for the new one.
 	 */
@@ -415,7 +415,7 @@ int	nlines;		/*
 	    nextwin->w_nrows += amount;
 	    (void) shiftdown(nextwin, (unsigned) amount);
 	    if (wp->w_nrows > 0) {
-		show_file_info(wp, TRUE);
+		show_file_info(wp);
 	    }
 	}
 	nlines = -amount;	/* return value */
@@ -441,7 +441,7 @@ int	nlines;		/*
 	    nextwin->w_nrows -= nlines;
 	    (void) shiftup(nextwin, (unsigned) nlines);
 	    if (wp->w_nrows > 0) {
-		show_file_info(wp, TRUE);
+		show_file_info(wp);
 	    }
 	}
     }

@@ -74,6 +74,7 @@ char	*envp;				/* init string from the environment */
     int		numfiles = 0;
     int		count;
     char	*env;
+    char	*command = NULL;	/* Argument to -c flag */
 
     /*
      * The critical path this code has to follow is quite tricky.
@@ -210,6 +211,20 @@ char	*envp;				/* init string from the environment */
 
 	if (argv[count][0] == '-') {
 	    switch (argv[count][1]) {
+	    case 'c':
+		if (count < argc-1) {
+		    command = argv[++count];
+		} else {
+		    usage();
+		    return(NULL);
+		}
+
+		break;
+
+	    case 'R':
+		Pb(P_readonly) = TRUE;
+		break;
+
 	    case 't':
 		/*
 		 * -t tag or -ttag
@@ -329,6 +344,15 @@ char	*envp;				/* init string from the environment */
 
 	exNext(curwin, numfiles, files, FALSE);
 
+	/* If there are more than one window, move to the first */
+	if (curwin->w_last != NULL) {
+	    do {
+		curwin = curwin->w_last;
+	    } while (curwin->w_last != NULL);
+	    xvUseWindow(curwin);
+	    curbuf = curwin->w_buffer;
+	}
+
 	if (pat != NULL) {
 	    Posn	*p;
 
@@ -355,11 +379,16 @@ char	*envp;				/* init string from the environment */
 	     * display the "no file" message.
 	     */
 	    sleep(2);
-	    show_file_info(curwin, TRUE);
+	    show_file_info(curwin);
 	}
     } else {
 	echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
-	show_file_info(curwin, TRUE);
+	show_file_info(curwin);
+    }
+
+    /* Run any commands given with -c flag */
+    if (command != NULL) {
+	exCommand(command, FALSE);
     }
 
     setpcmark(curwin);
@@ -408,6 +437,7 @@ usage()
     startup_error("       xvi { options } +[num] file\n");
     startup_error("       xvi { options } +/pat  file\n");
     startup_error("\nOptions are:\n");
+    startup_error("       -R\n");
     startup_error("       -s [no]boolean-parameter\n");
     startup_error("       -s parameter=value\n");
 }

@@ -379,7 +379,7 @@ char	*command;
     static char	*args[] = { NULL, "-c", NULL, NULL };
 
     if (Ps(P_shell) == NULL) {
-	(void) puts("\007Can't execute command without SHELL parameter");
+	(void) fputs("\007Can't execute command without SHELL parameter", stdout);
 	return(-1);
     }
     args[0] = Ps(P_shell);
@@ -1034,6 +1034,23 @@ cleanup:
     return(retval);
 }
 
+/* Bit and pieces for fexpand */
+
+static Flexbuf	newname;
+
+static long
+readfunc(fp)
+FILE *fp;
+{
+    register int	c;
+
+    while ((c = getc(fp)) != EOF && c != '\n') {
+	if (!flexaddch(&newname, c)) {
+	    break;
+	}
+    }
+}
+
 char *
 fexpand(name, do_completion)
 char			*name;
@@ -1072,89 +1089,31 @@ bool_t			do_completion;
 
     retval = name;
 
-    args[0] = Ps(P_shell);
-    flexclear(&cmd);
-    (void) lformat(&cmd, "echo %s%c", name, do_completion ? '*' : '\0');
-    args[2] = flexgetstr(&cmd);
     (void) fflush(stdout);
     (void) fflush(stderr);
-    save0 = save1 = save2 = pd[0] = pd[1] = -1;
-    if (
-	 (save0 = dup(0)) > 0
-	 &&
-	 (save1 = dup(1)) > 0
-	 &&
-	 (save2 = dup(2)) > 0
-	 &&
-	 pipe(pd) == 0
-    ) {
-	switch (fork()) {
-	case -1:			/* error */
-	    break;
+    flexclear(&cmd);
+    (void) lformat(&cmd, "echo %s%c", name, do_completion ? '*' : '\0');
 
-	case 0:				/* child */
-	    (void) signal(SIGINT, SIG_DFL);
-	    (void) signal(SIGQUIT, SIG_DFL);
-	    dup2c(pd[1], 1);
-	    (void) close(2);		/* redirect both stdout & stderr */
-	    save0= dup(1);
-	    (void) close(0);
-	    (void) execvp(args[0], args);
-	    _exit(0);
+    flexclear(&newname);
 
-	default:			/* parent */
-	{
-	    FILE		*pfp;
-	    static Flexbuf	newname;
-	    register int	c;
-	    char		*newstr;
+    if (sys_pipe(flexgetstr(&cmd), NULL, readfunc)) {
+	if (!flexempty(&newname)) {
+	    char *newstr;
+	    int	  namelen;
 
-	    (void) close(pd[1]);
-	    pd[1] = -1;
-	    flexclear(&newname);
-	    pfp = fdopen(pd[0], "r");
-	    if (pfp != NULL) {
-		while ((c = getc(pfp)) != EOF && c != '\n') {
-		    if (!flexaddch(&newname, c)) {
-			break;
-		    }
-		}
-		(void) fclose(pfp);
-		pd[0] = -1;
-	    }
-	    if (!flexempty(&newname)) {
-		int namelen;
-
-		newstr = flexgetstr(&newname);
-		namelen = strlen(name);
-		if (do_completion && strncmp(newstr, name, namelen) == 0 &&
-					newstr[namelen] == '*') {
-		    /*
-		     * Unable to complete filename - return zero
-		     * length string.
-		     */
-		    retval = "";
-		} else {
-		    retval = newstr;
-		}
+	    newstr = flexgetstr(&newname);
+	    namelen = strlen(name);
+	    if (do_completion && strncmp(newstr, name, namelen) == 0 &&
+				    newstr[namelen] == '*') {
+		/*
+		 * Unable to complete filename - return zero
+		 * length string.
+		 */
+		retval = "";
+	    } else {
+		retval = newstr;
 	    }
 	}
-	}
-	if (pd[0] >= 0) {
-	    (void) close(pd[0]);
-	}
-	if (pd[1] >= 0) {
-	    (void) close(pd[1]);
-	}
-    }
-    if (save0 > 0) {
-	dup2c(save0, 0);
-    }
-    if (save1 > 0) {
-	dup2c(save1, 1);
-    }
-    if (save2 > 0) {
-	dup2c(save2, 2);
     }
     return retval;
 }

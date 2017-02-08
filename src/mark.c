@@ -35,8 +35,10 @@ Buffer	*buffer;
     Mark	*mlist = buffer->b_mlist;
     int	i;
 
-    for (i = 0; i < NMARKS; i++)
+    for (i = 0; i < NMARKS; i++) {
 	mlist[i].m_name = '\0';
+	mlist[i].m_pos.p_line = NULL;
+    }
 
     buffer->b_pcvalid = FALSE;
 }
@@ -140,7 +142,7 @@ Buffer	*buffer;
     int	i;
 
     for (i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_pos.p_line == line) {
+	if (mlist[i].m_name && mlist[i].m_pos.p_line == line) {
 	    mlist[i].m_name = '\0';
 	}
     }

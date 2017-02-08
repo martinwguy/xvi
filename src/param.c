@@ -115,8 +115,8 @@ static	matchinfo_t	*findparam P((Xviwin *, char *));
 /*
  * These are the available parameters. The following are non-standard:
  *
- *	autodetect autogrow autonoedit autosplit colour edit equalsize
- *	format helpfile infoupdate jumpscroll preserve preservetime
+ *	autodetect autonoedit autosplit colour edit equalsize
+ *	format helpfile jumpscroll preserve preservetime
  *	regextype roscolour statuscolour systemcolour tabindent vbell
  *
  * The string/list value field of Param[] is left uninitialized and gets NULL.
@@ -126,13 +126,12 @@ Param	params[] = {
 {   "ada",          "ada",          P_BOOL,     0,              not_imp,   },
 {   "adapath",      "adap",         P_STRING,   0,              not_imp,   },
 {   "autodetect",   "ad",           P_BOOL,     0,              nofunc,    },
-{   "autogrow",     "ag",           P_BOOL,     TRUE,           nofunc,    },
 {   "autoindent",   "ai",           P_BOOL,     0,              nofunc,    },
 {   "autonoedit",   "an",           P_BOOL,     0,              nofunc,    },
 {   "autoprint",    "ap",           P_BOOL,     0,              not_imp,   },
 {   "autosplit",    "as",           P_NUM,      2,              nofunc,    },
 {   "autowrite",    "aw",           P_BOOL,     0,              not_imp,   },
-{   "beautify",     "bf",           P_BOOL,     0,              not_imp,   },
+{   "beautify",     "bf",           P_BOOL,     0,              nofunc,    },
 {   "cchars",       "cc",           P_BOOL,     DEF_CCHARS,     nofunc,    },
 {   "colour",       "co",           P_STRING,   0,              xvpSetColour,},
 {   "directory",    "di",           P_STRING,   0,              not_imp,   },
@@ -145,7 +144,6 @@ Param	params[] = {
 {   "hardtabs",     "ht",           P_NUM,      0,              not_imp,   },
 {   "helpfile",     "hf",           P_STRING,   0,              nofunc,    },
 {   "ignorecase",   "ic",           P_BOOL,     0,              nofunc,    },
-{   "infoupdate",   "iu",	    P_ENUM,     0,		nofunc,    },
 {   "jumpscroll",   "js",           P_ENUM,     0,              nofunc,    },
 {   "lisp",         "lisp",         P_BOOL,     0,              not_imp,   },
 {   "list",         "ls",           P_BOOL,     0,              nofunc,    },
@@ -167,12 +165,13 @@ Param	params[] = {
 {   "remap",        "rem",          P_BOOL,     TRUE,           nofunc,    },
 {   "report",       "rep",          P_NUM,      5,              nofunc,    },
 {   "roscolour",    "rst",          P_STRING,   0,              xvpSetColour,},
-{   "scroll",       "sc",           P_NUM,      0,              not_imp,   },
+{   "scroll",       "sc",           P_NUM,      0,              nofunc,    },
 {   "sections",     "sec",          P_STRING,   0,              nofunc,    },
 {   "sentences",    "sen",          P_STRING,   0,              nofunc,    },
 {   "shell",        "sh",           P_STRING,   0,              nofunc,    },
 {   "shiftwidth",   "sw",           P_NUM,      8,              nofunc,    },
 {   "showmatch",    "sm",           P_BOOL,     0,              nofunc,    },
+{   "showmode",     "smd",          P_BOOL,     0,              nofunc,    },
 {   "slowopen",     "sl",           P_BOOL,     0,              not_imp,   },
 {   "sourceany",    "so",           P_BOOL,     0,              not_imp,   },
 {   "statuscolour", "st",           P_STRING,   0,              xvpSetColour,},
@@ -186,13 +185,12 @@ Param	params[] = {
 {   "terse",        "ters",         P_BOOL,     0,              nofunc,    },
 {   "timeout",      "ti",           P_NUM,      DEF_TIMEOUT,    nofunc,    },
 {   "ttytype",      "tt",           P_STRING,   0,              not_imp,   },
-{   "undolevels",   "ul",           P_NUM,      MAX_UNDO,      set_undolevels,},
 {   "vbell",        "vb",           P_BOOL,     FALSE,          xvpSetVBell, },
 {   "warn",         "war",          P_BOOL,     TRUE,           nofunc,    },
 {   "window",       "wi",           P_NUM,      0,              not_imp,   },
 {   "wrapmargin",   "wm",           P_NUM,      0,              nofunc,    },
 {   "wrapscan",     "ws",           P_BOOL,     TRUE,           nofunc,    },
-{   "writeany",     "wa",           P_BOOL,     0,              not_imp,   },
+{   "writeany",     "wa",           P_BOOL,     0,              nofunc,    },
 
 {   (char *) NULL,  (char *) NULL,  0,          0,              nofunc,    },
 
@@ -233,26 +231,12 @@ static char *js_strings[] =
     NULL
 };
 
-/*
- * Names of values for the P_infoupdate enumerated parameter.
- *
- * It is essential that these are in the same order as the iu_...
- * symbolic constants defined in xvi.h.
- */
-static char *iu_strings[] =
-{
-    "terse",		/* iu_TERSE */
-    "continuous",	/* iu_CONTINUOUS */
-    NULL
-};
-
 static struct {
     int		index;
     int		value;
     char	**elist;
 } init_enum[] = {	/* enumerations */
     P_format,		DEF_TFF,	fmt_strings,
-    P_infoupdate,	iu_TERSE,	iu_strings,
     P_jumpscroll,	js_AUTO,	js_strings,
     P_preserve,		psv_STANDARD,	psv_strings,
     P_regextype,	rt_GREP,	rt_strings,
@@ -670,19 +654,21 @@ bool_t			inter;		/* TRUE if called interactively */
     cp = mip->mi_str;
 
     switch (pp->p_flags & P_TYPE) {
+    int value;
     case P_NUM:
 
-	val.pv_i = xv_strtoi(&cp);
+	value = xv_strtoi(&cp);
 	/*
 	 * If there are extra characters after the number,
 	 * don't accept it.
 	 */
-	if (*cp != '\0') {
+	if (value < 0 || *cp != '\0') {
 	    if (window) {
 		show_error(window, "Invalid numeric parameter");
 	    }
 	    return(FALSE);
 	}
+	val.pv_i = value;
 	break;
 
     case P_ENUM:

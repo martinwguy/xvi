@@ -164,13 +164,14 @@ Cmd	*cmd;
     if (cmd->cmd_flags & TARGET) {
 
 	/*
-	 * An exceptional case is the yl command when the cursor is at the
-	 * end of a line, in which case it should yank the final character.
-	 * even though the move would fail. Workaround: do "y$" instead.
+	 * Exceptional cases are the yl and dl commands when the cursor is
+	 * at the end of a line which should affect the final character
+	 * even though the move would fail. Workaround: do "[yd]$" instead.
 	 * Similarly, if we are on the penultimate character and they say
 	 * y2l, the move would fail, whereas it should yank 2 chars.
 	 */
-	if (cmd->cmd_operator == 'y' && cmd->cmd_ch1 == 'l') {
+	if ((cmd->cmd_operator == 'y' || cmd->cmd_operator == 'd')
+	    && cmd->cmd_ch1 == 'l') {
 	    if (endofline(&cmd->cmd_startpos)) {
 		cmd->cmd_ch1 = '$';
 	        cmd->cmd_flags |= TGT_INCLUSIVE;

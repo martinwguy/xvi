@@ -4,8 +4,8 @@
 exec tclsh "$0" ${1+"$@"}
 
 # This file is based on "example/virterm" from the expect-5.45 distribution,
-# removing its different version of term_expect and its script to interrogate
-# the Cornell Library catalog.
+# removing its script to interrogate the Cornell Library catalog.
+#
 #	Martin Guy <martinwguy@gmail.com>, January 2017.
 
 package require Expect
@@ -27,6 +27,7 @@ package require Expect
 # standout mode is not supported like it is in tkterm.
 # the only terminal widget operation that is supported for the user
 # is the "get" operation.
+
 ###############################################
 # Variables that must be initialized before using this:
 #############################################

@@ -6,6 +6,13 @@ xvi \- multi-file text editor
 .SH SYNOPSIS
 .B xvi
 {
+.B \-R
+}
+{
+.B \-c
+.I command
+}
+{
 .B \-s
 .I parameter-assignment
 }
@@ -31,8 +38,22 @@ not all of
 .BR vi 's
 features have been implemented yet, and some things work differently from
 .BR vi .
+.LP
+This manual page describes the differences between \fBxvi\nfP and
+POSIX, classic \fBvi\fP and other popular \fBvi\fP clones. For a full
+reference manual, see
+the manual page for classic vi under http://ex-vi.soureforge.net and
+the POSIX specifications for ex and vi. For a tutorial, see
+.IR "An Introduction to Display Editing with Vi" .
 .SH OPTIONS
 The following command-line options are available:
+.TP
+\fB\-R\fP
+Start the editor in read-only mode.
+.TP
+\fB\-c\fP \fIcommand\fP
+Execute \fIcommand\fP as an ex command in the first buffer
+after reading input files or going to a tag.
 .TP
 \fB\-s\fP \fIparameter-assignment\fP
 Set the value of the specified parameter at startup.
@@ -64,7 +85,8 @@ Go to the specified line number of the file being edited.
 Go to the first occurrence of the specified \fIpattern\fP within
 the file being edited.
 .LP
-The \fB\-r\fP command line option is not supported.
+The \fB\-l\fP, \fB\-L\fP, \fB\-r\fP, \fB\-V\fP
+and \fB\-w\fP command line options are not supported.
 .\"---------------------------------------------------------------------------
 .SH ENHANCEMENTS
 .SS Parameter handling
@@ -611,10 +633,8 @@ In
 .B vi
 mode, the
 .B U
-and
-.B =
-commands are not implemented,
-although there is no real reason why they shouldn't be,
+command is not implemented,
+although there is no real reason why it shouldn't be,
 whilst
 .B Q
 is inappropriate in the context of
@@ -630,7 +650,6 @@ The following parameters have not been implemented, and probably won't be:
 .BR ada (vim),
 .BR adapath (vim),
 .BR autoprint ,
-.BR beautify ,
 .BR directory ,
 .BR edcompatible ,
 .BR hardtabs ,
@@ -642,6 +661,7 @@ The following parameters have not been implemented, and probably won't be:
 .BR prompt ,
 .BR redraw ,
 .BR slowopen ,
+.BR sourceany ,
 .BR term ,
 .BR terse ,
 .BR ttytype ,
@@ -649,11 +669,7 @@ The following parameters have not been implemented, and probably won't be:
 .RE
 while these parameters may well be implemented at some point:
 .RS
-.BR autowrite ,
-.BR scroll ,
-.BR showmode ,
-.BR sourceany ,
-.BR writeany
+.BR autowrite
 .RE
 .LP
 The command
@@ -664,9 +680,6 @@ of those that have been.
 .SS Miscellaneous
 .LP
 Appending to named buffers is not yet implemented.
-.LP
-Typing \fB^Q\fP in input mode does not mean the same as \fB^V\fP;
-it just inserts a `\fB^Q\fR', assuming it gets as far as the editor at all.
 .LP
 Typing \fB^W\fP in insert mode does not back up one word as in \fBvi\fP.
 .LP
@@ -681,9 +694,7 @@ The
 command does not support splitting of lines.
 .LP
 Regular expressions, although implemented (see above),
-do not support the \fB~\fP metacharacter;
-also, the \fB\e\^u\fP and \fB\e\^l\fP escape sequences are not supported in
-substitute replacement patterns.
+do not support the \fB~\fP metacharacter.
 .LP
 The \fB:global\fP command only supports the commands [\fBlps&~d\fP].
 .LP
@@ -733,16 +744,6 @@ when you invoke the \fB^^\fP or \fB:e\ #\fP commands,
 this file is re-edited.
 Note that \fB^^\fP edits the alternate file in a new buffer window,
 if \fBautosplit\fP allows.
-.LP
-Hitting the escape key while in the command line does not terminate input;
-instead, it cancels input, returning the prompt to the beginning
-of the line.
-This applies to input for
-.BR : ,
-.BR / ,
-.B ?
-and
-.BR ! .
 .SH "FILES"
 .DS
 .ta 1.5i
@@ -752,8 +753,6 @@ and
 .BR ex (1),
 .BR vi (1),
 .BR termcap (5).
-.br
-.IR "Summary of Differences between Vi and Xvi" .
 .SH BUGS
 See also http://github.com/martinwguy/xvi/issues
 .IP \(bu

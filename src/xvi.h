@@ -246,11 +246,6 @@ typedef	int		bool_t;
  */
 #define	DEF_TIMEOUT	200
 
-/*
- * Maximum number of levels for "infinite" undo :-).
- */
-#define	MAX_UNDO	100
-
 
 /***************************************************************
  *                                                             *
@@ -326,14 +321,6 @@ extern	char		*fmt_strings[];
 #define	js_OFF		0
 #define	js_AUTO		1
 #define	js_ON		2
-
-/*
- * Integer values for the P_infoupdate enumerated parameter. Note that
- * the entries in iu_strings (defined in param.c) must follow the same
- * order.
- */
-#define	iu_TERSE	0
-#define	iu_CONTINUOUS	1
 
 /***************************************************************
  *                                                             *
@@ -1160,7 +1147,7 @@ extern	void	startup_error P((char *));
 extern	void	init_sline P((Xviwin *));
 extern	void	show_message P((Xviwin *, char *, ...));
 extern	void	show_error P((Xviwin *, char *, ...));
-extern	void	show_file_info P((Xviwin *, bool_t));
+extern	void	show_file_info P((Xviwin *));
 extern	void	info_update P((Xviwin *));
 
 /*
@@ -1191,9 +1178,8 @@ extern	void	end_command P((Xviwin *));
 extern	void	replchars P((Xviwin *, Line *, int, int, char *));
 extern	void	repllines P((Xviwin *, Line *, long, Line *));
 extern	void	replbuffer P((Xviwin *, Line *));
-extern	void	undo P((Xviwin *, bool_t, int));
+extern	void	undo P((Xviwin *));
 extern	bool_t	set_edit P((Xviwin *, Paramval, bool_t));
-extern	bool_t	set_undolevels P((Xviwin *, Paramval, bool_t));
 
 /*
  * update.c

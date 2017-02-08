@@ -272,7 +272,7 @@ bool_t	split;			/* true if want to split */
 		setpcmark(curwin);
 		move_cursor(curwin, p->p_line, p->p_index);
 		curwin->w_set_want_col = TRUE;
-		show_file_info(curwin, TRUE);
+		show_file_info(curwin);
 	    } else {
 		beep(curwin);
 	    }

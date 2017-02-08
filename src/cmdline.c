@@ -46,75 +46,74 @@ static	Line	*a_line;
 #define	EX_EBADARGS	-4		/* inappropriate args given */
 
 /*
- * To regenerate numbers: move this section into a separate buffer and
- * use:
- *	:%s,[0-9][0-9]*,\#,
+ * To regenerate numbers: pipe this section through
+ *
+ *	awk '{ printf "%s %-16.16s%d\n", $1, $2, NR }' | unexpand -a
  */
-#define	EX_NOCMD	     1  
-#define	EX_SHCMD	     2  
-#define	EX_UNUSED	     3  	/* unused */
-#define	EX_AMPERSAND	     4  
-#define	EX_EXBUFFER	     5  
-#define	EX_LSHIFT	     6  
-#define	EX_EQUALS	     7  
-#define	EX_RSHIFT	     8  
-#define	EX_COMMENT	     9  
-#define	EX_ABBREVIATE	    10  
-#define	EX_APPEND	    11  
-#define	EX_ARGS		    12  
-#define	EX_BUFFER	    13  
-#define	EX_CHDIR	    14  
-#define	EX_CHANGE	    15  
-#define	EX_CLOSE	    16  
-#define	EX_COMPARE	    17  
-#define	EX_COPY		    18  
-#define	EX_DELETE	    19  
-#define	EX_ECHO		    20  
-#define	EX_EDIT		    21  
-#define	EX_EQUALISE	    22  
-#define	EX_EX		    23  
-#define	EX_FILE		    24  
-#define	EX_GLOBAL	    25  
-#define	EX_HELP		    26  
-#define	EX_INSERT	    27  
-#define	EX_JOIN		    28  
-#define	EX_K		    29  
-#define	EX_LIST		    30  
-#define	EX_MAP		    31  
-#define	EX_MARK		    32  
-#define	EX_MOVE		    33  
-#define	EX_NEXT		    34  
-#define	EX_NUMBER	    35  
-#define	EX_OPEN		    36  
-#define	EX_PRESERVE	    37  
-#define	EX_PRINT	    38  
-#define	EX_PUT		    39  
-#define	EX_QUIT		    40  
-#define	EX_READ		    41  
-#define	EX_RECOVER	    42  
-#define	EX_REDO		    43  
-#define	EX_REWIND	    44  
-#define	EX_SET		    45  
-#define	EX_SHELL	    46  
-#define	EX_SOURCE	    47  
-#define	EX_SPLIT	    48  
-#define	EX_SUSPEND	    49  
-#define	EX_SUBSTITUTE	    50  
-#define	EX_TAG		    51  
-#define	EX_UNABBREV	    52  
-#define	EX_UNDO		    53  
-#define	EX_UNMAP	    54  
-#define	EX_V		    55  
-#define	EX_VERSION	    56  
-#define	EX_VISUAL	    57  
-#define	EX_WN		    58  
-#define	EX_WQ		    59  
-#define	EX_WRITE	    60  
-#define	EX_XIT		    61  
-#define	EX_YANK		    62  
-#define	EX_Z		    63  
-#define	EX_GOTO		    64  
-#define	EX_TILDE	    65  
+#define EX_NOCMD	1
+#define EX_SHCMD	2
+#define EX_UNUSED	3
+#define EX_AMPERSAND	4
+#define EX_EXBUFFER	5
+#define EX_LSHIFT	6
+#define EX_EQUALS	7
+#define EX_RSHIFT	8
+#define EX_COMMENT	9
+#define EX_ABBREVIATE	10
+#define EX_APPEND	11
+#define EX_ARGS		12
+#define EX_BUFFER	13
+#define EX_CHDIR	14
+#define EX_CHANGE	15
+#define EX_CLOSE	16
+#define EX_COMPARE	17
+#define EX_COPY		18
+#define EX_DELETE	19
+#define EX_ECHO		20
+#define EX_EDIT		21
+#define EX_EQUALISE	22
+#define EX_EX		23
+#define EX_FILE		24
+#define EX_GLOBAL	25
+#define EX_HELP		26
+#define EX_INSERT	27
+#define EX_JOIN		28
+#define EX_K		29
+#define EX_LIST		30
+#define EX_MAP		31
+#define EX_MARK		32
+#define EX_MOVE		33
+#define EX_NEXT		34
+#define EX_NUMBER	35
+#define EX_OPEN		36
+#define EX_PRESERVE	37
+#define EX_PRINT	38
+#define EX_PUT		39
+#define EX_QUIT		40
+#define EX_READ		41
+#define EX_RECOVER	42
+#define EX_REWIND	43
+#define EX_SET		44
+#define EX_SHELL	45
+#define EX_SOURCE	46
+#define EX_SPLIT	47
+#define EX_SUSPEND	48
+#define EX_SUBSTITUTE	49
+#define EX_TAG		50
+#define EX_UNABBREV	51
+#define EX_UNDO		52
+#define EX_UNMAP	53
+#define EX_V		54
+#define EX_VERSION	55
+#define EX_VISUAL	56
+#define EX_WN		57
+#define EX_WQ		58
+#define EX_WRITE	59
+#define EX_XIT		60
+#define EX_YANK		61
+#define EX_Z		62
+#define EX_GOTO		63
+#define EX_TILDE	64
 
 /*
  * Table of all ex commands, and whether they take an '!'.
@@ -229,7 +228,6 @@ static	struct	ecmd	{
 
   { "read",	    EX_READ,	    1,	EC_EXPALL|EC_RANGE0,	ec_filecmd },
   { "recover",	    EX_RECOVER,	    0,	0,			ec_none },
-  { "redo",	    EX_REDO,	    0,	0,			ec_none },
   { "rewind",	    EX_REWIND,	    0,	EC_EXCLAM,		ec_none },
 
   { "set",	    EX_SET,	    0,	0,			ec_strings },
@@ -545,7 +543,7 @@ bool_t	interactive;			/* true if reading from tty */
 	move_window_to_cursor(curwin);
 	xvUpdateAllBufferWindows(curbuf);
 #if 0
-	show_file_info(curwin, TRUE);
+	show_file_info(curwin);
 #endif
 	break;
 
@@ -609,7 +607,7 @@ bool_t	interactive;			/* true if reading from tty */
     case EX_PRESERVE:
 	if (exPreserveAllBuffers()) {
 #if 0
-	    show_file_info(curwin, TRUE);
+	    show_file_info(curwin);
 #endif
 	}
 	break;
@@ -651,10 +649,6 @@ bool_t	interactive;			/* true if reading from tty */
 	exQuit(curwin, exclam);
 	break;
 
-    case EX_REDO:
-	undo(curwin, TRUE, FORWARD);
-	break;
-
     case EX_REWIND:
 	exRewind(curwin, exclam);
 	break;
@@ -677,7 +671,7 @@ bool_t	interactive;			/* true if reading from tty */
 	    badcmd(interactive, "Missing filename");
 	} else if (exSource(interactive, arg) && interactive) {
 #if 0
-	    show_file_info(curwin, TRUE);
+	    show_file_info(curwin);
 #endif
 	    ;
 	}
@@ -729,7 +723,7 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_UNDO:
-	undo(curwin, TRUE, BACKWARD);
+	undo(curwin);
 	break;
 
     case EX_V:

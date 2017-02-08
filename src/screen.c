@@ -302,6 +302,23 @@ Xviwin	*win;
     }
     *to = '\0';
 
+    if(Pb(P_showmode)) {
+	char *s;
+	switch (State) {
+	case INSERT:
+	    s = "INSERT MODE";
+	    break;
+	case REPLACE:
+	    s = "REPLACE MODE";
+	    break;
+	default:
+	    s = NULL;
+	}
+	if (s && win->w_ncols > 20) {
+	    strncpy(slp->s_line + win->w_ncols - 20, s, strlen(s));
+        }
+    }
+
     /*
      * Set the colour of the status line.
      */
