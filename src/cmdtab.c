@@ -156,7 +156,7 @@ VI_COMMAND	cmd_types[NUM_VI_CMDS] = {
 					| TWO_CHAR | SET_CURSOR_COL },
  { /* u */	do_cmd,		COMMAND },
  { /* v */	do_badcmd,	0 },
- 
+ { /* w */	do_word,	COMMAND | TARGET | TGT_CHAR | TGT_EXCLUSIVE | SET_CURSOR_COL },
  { /* x */	do_x,		COMMAND },
  { /* y */	do_operator,	COMMAND },
  { /* z */	do_z,		COMMAND | TWO_CHAR },
