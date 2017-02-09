@@ -1,0 +1,105 @@
+#! /bin/sh
+
+# Download issues from github into the local directory.
+
+# This is an experiment in keeping the issues in the source repository,
+# which makes more sense than keeping them separately as content on
+# some web service.
+# 
+# Following https://adriansieber.com/download-github-issues-from-command-line
+# we imported the issues from github:
+#
+#    http -a martinwguy -b https://api.github.com/repos/martinwguy/xvi/issues\?state=all | json -0 -a | while read -r line
+#    do (( count++ ))
+#        echo $line | js-yaml > $count.yaml
+#    done
+#
+# using https://github.com/trentm/json and https://github.com/nodeca/js-yaml
+#
+# Github only seems to return up to 30 issues. We fetch 30 open and 30 closed
+# but it needs to fetch them all and the comments for each as well.
+#
+#	Martin Guy <martinwguy@gmail.com>, January 2017
+
+user=martinwguy
+project=xvi
+
+url="https://api.github.com/repos/$user/$project/issues"
+
+if true
+then
+
+# Works but only gets the last 30 issues with the initial description
+#
+# In the yaml output, the awk script picks out
+#     number: 88
+# and
+#     title: Fix issue #88.
+# as well as uniting extended titles of the form:
+#     title: >-
+#       If you resize the terminal window while xvi is suspended, it doesn't notice on
+#       CONT
+#     user: ...
+# and the shell script puts the downloaded issues into 88.yaml and so on.
+
+# This gets us 30 open and 30 closed issues instead of 30 total.
+for state in open closed
+do
+  #http -a martinwguy -b "$url?state=$state" | json -0 -a | \
+  curl -u martinwguy "$url?state=$state" | json -0 -a | \
+  while read -r line
+  do
+    printf "%s\n" "$line" | js-yaml > issue.yaml
+    cat issue.yaml | awk '/^number: / {
+			     print $2
+			  }
+			  /^title: >-$/ {
+			     first = "true"
+			     getline line
+			     while ( line ~ /^  / ) {
+				if (!first) { printf " " }
+				sub(/^  /, "", line)
+				printf "%s", line
+				first = ""
+			        getline line
+			     }
+			     printf "\n"
+			  }
+			  /^title: [^>][^-]/ {
+			     sub(/^title: /, ""); print
+			  }' | \
+    while read n
+    do
+	read -r title
+	echo "$n: $title"
+	mv -f issue.yaml $n.yaml
+    done
+  done
+done
+
+else
+
+# Should fetch more issues and their comments but doesn't work (does nothing).
+
+stty -echo
+echo -n "Password for $user: "
+read pass
+stty echo
+echo ''
+
+for state in open closed
+do
+    http -a "${user}:${pass}" -b "${url}?state=$state" | json -0 -a | \
+    while read -r line
+    do
+	no=$(printf "%s" "$line" | js-yaml | sed -n 's/^number: //p')
+	printf "%s" "$line" | js-yaml > $no.yaml
+	http -a "${user}:${pass}" -b "$url/$no/comments" | json -0 -a | \
+	while read -r comment
+	do
+	    printf "%s" "$comment" | js-yaml
+	done > $no.comments
+    done
+done
+
+fi

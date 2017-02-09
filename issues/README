@@ -1,0 +1,15 @@
+This is an experiment in keeping the issues in the source repository,
+which makes more sense than keeping them separately as content on
+some web service.
+
+Following https://adriansieber.com/download-github-issues-from-command-line
+we imported the issues from github using:
+
+    http -a martinwguy -b https://api.github.com/repos/martinwguy/xvi/issues\?state=all | json -0 -a | while read -r line
+    do (( count++ ))
+        echo $line | js-yaml > $count.yaml
+    done
+
+using https://github.com/trentm/json and https://github.com/nodeca/js-yaml
+
+	Martin Guy <martinwguy@gmail.com>, January 2017
