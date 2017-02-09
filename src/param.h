@@ -112,79 +112,75 @@ extern	Param	params[];
 /*
  * The following are the indices in the params array for each parameter.
  * They must not be changed without also changing the table in "param.c".
- *
- * If you add any new parameters, & you have access to awk, pipe this
- * list through
- *
- *	awk '{ printf "%s %-16.16s%d\n", $1, $2, NR-1 }' | unexpand -a
- *
- * to keep the numbers updated.
  */
-#define P_ada		0
-#define P_adapath	1
-#define P_autodetect	2
-#define P_autoindent	3
-#define P_autonoedit	4
-#define P_autoprint	5
-#define P_autosplit	6
-#define P_autowrite	7
-#define P_beautify	8
-#define P_cchars	9
-#define P_colour	10
-#define P_directory	11
-#define P_edcompatible	12
-#define P_edit		13
-#define P_equalsize	14
-#define P_errorbells	15
-#define P_flash		16
-#define P_format	17
-#define P_hardtabs	18
-#define P_helpfile	19
-#define P_ignorecase	20
-#define P_jumpscroll	21
-#define P_lisp		22
-#define P_list		23
-#define P_magic		24
-#define P_mchars	25
-#define P_mesg		26
-#define P_minrows	27
-#define P_modeline	28
-#define P_number	29
-#define P_open		30
-#define P_optimize	31
-#define P_paragraphs	32
-#define P_preserve	33
-#define P_preservetime	34
-#define P_prompt	35
-#define P_readonly	36
-#define P_redraw	37
-#define P_regextype	38
-#define P_remap		39
-#define P_report	40
-#define P_roscolour	41
-#define P_scroll	42
-#define P_sections	43
-#define P_sentences	44
-#define P_shell		45
-#define P_shiftwidth	46
-#define P_showmatch	47
-#define P_showmode	48
-#define P_slowopen	49
-#define P_sourceany	50
-#define P_statuscolour	51
-#define P_systemcolour	52
-#define P_tabindent	53
-#define P_tabs		54
-#define P_tabstop	55
-#define P_taglength	56
-#define P_tags		57
-#define P_term		58
-#define P_terse		59
-#define P_timeout	60
-#define P_ttytype	61
-#define P_vbell		62
-#define P_warn		63
-#define P_window	64
-#define P_wrapmargin	65
-#define P_wrapscan	66
-#define P_writeany	67
+enum {
+    P_ada = 0,
+    P_adapath,
+    P_autodetect,
+    P_autoindent,
+    P_autonoedit,
+    P_autoprint,
+    P_autosplit,
+    P_autowrite,
+    P_beautify,
+    P_cchars,
+    P_colour,
+    P_directory,
+    P_edcompatible,
+    P_edit,
+    P_equalsize,
+    P_errorbells,
+    P_flash,
+    P_format,
+    P_hardtabs,
+    P_helpfile,
+    P_ignorecase,
+    P_jumpscroll,
+    P_lisp,
+    P_list,
+    P_magic,
+    P_mchars,
+    P_mesg,
+    P_minrows,
+    P_modeline,
+    P_number,
+    P_open,
+    P_optimize,
+    P_paragraphs,
+    P_preserve,
+    P_preservetime,
+    P_prompt,
+    P_readonly,
+    P_redraw,
+    P_regextype,
+    P_remap,
+    P_report,
+    P_roscolour,
+    P_scroll,
+    P_sections,
+    P_sentences,
+    P_shell,
+    P_shiftwidth,
+    P_showmatch,
+    P_showmode,
+    P_slowopen,
+    P_sourceany,
+    P_statuscolour,
+    P_systemcolour,
+    P_tabindent,
+    P_tabs,
+    P_tabstop,
+    P_taglength,
+    P_tags,
+    P_term,
+    P_terse,
+    P_timeout,
+    P_ttytype,
+    P_vbell,
+    P_warn,
+    P_window,
+    P_wrapmargin,
+    P_wrapscan,
+    P_writeany,
+    P_sentinel	/* for check in param.c */
+};

@@ -120,6 +120,8 @@ static	matchinfo_t	*findparam P((Xviwin *, char *));
  *	regextype roscolour statuscolour systemcolour tabindent vbell
  *
  * The string/list value field of Param[] is left uninitialized and gets NULL.
+ *
+ * The order of these items must correspond to entries in the enum in param.h
  */
 Param	params[] = {
 /*  fullname        shortname       flags       value           function ... */
@@ -260,6 +262,18 @@ init_params()
     Paramval	pv;
     Param	*pp;
     int		i;
+
+    /*
+     * Sanity check. The test is constant at compile-time
+     * and should get compiled out if the check succeeds.
+     */
+    if (sizeof(params)/sizeof(params[0]) != P_sentinel + 1) {
+	sys_endv(); /* Get out of visual mode */
+	fprintf(stderr,
+		"FATAL: Tables in param.h and param.c do not correspond.\n");
+	sys_exit(1);
+    }
+
 
     /*
      * First go through the special string and enum initialisation
