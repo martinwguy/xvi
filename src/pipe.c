@@ -331,7 +331,6 @@ Xviwin	*window;
 char	*command;
 Line	*atline;
 {
-    int		c;
     bool_t	success;
 
     if (command[0] == '!' && command[1] == '\0' && lastcmd != NULL) {

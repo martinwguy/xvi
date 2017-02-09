@@ -120,6 +120,8 @@ static	matchinfo_t	*findparam P((Xviwin *, char *));
  *	regextype roscolour statuscolour systemcolour tabindent vbell
  *
  * The string/list value field of Param[] is left uninitialized and gets NULL.
+ *
+ * The order of these items must correspond to entries in the enum in param.h
  */
 Param	params[] = {
 /*  fullname        shortname       flags       value           function ... */
@@ -205,15 +207,15 @@ static struct {
     int		index;
     char	*value;
 } init_str[] = {	/* strings and lists */
-    P_colour,		DEF_COLOUR,
-    P_helpfile,		HELPFILE,
-    P_paragraphs,	DEF_PARA,
-    P_roscolour,	DEF_ROSCOLOUR,
-    P_sections,		DEF_SECTIONS,
-    P_sentences,	DEF_SENTENCES,
-    P_statuscolour,	DEF_STCOLOUR,
-    P_systemcolour,	DEF_SYSCOLOUR,
-    P_tags,		DEF_TAGS,
+    { P_colour,		DEF_COLOUR	},
+    { P_helpfile,	HELPFILE	},
+    { P_paragraphs,	DEF_PARA	},
+    { P_roscolour,	DEF_ROSCOLOUR	},
+    { P_sections,	DEF_SECTIONS	},
+    { P_sentences,	DEF_SENTENCES	},
+    { P_statuscolour,	DEF_STCOLOUR	},
+    { P_systemcolour,	DEF_SYSCOLOUR	},
+    { P_tags,		DEF_TAGS	}
 };
 #define	NSTRS	(sizeof(init_str) / sizeof(init_str[0]))
 
@@ -236,10 +238,10 @@ static struct {
     int		value;
     char	**elist;
 } init_enum[] = {	/* enumerations */
-    P_format,		DEF_TFF,	fmt_strings,
-    P_jumpscroll,	js_AUTO,	js_strings,
-    P_preserve,		psv_STANDARD,	psv_strings,
-    P_regextype,	rt_GREP,	rt_strings,
+    { P_format,		DEF_TFF,	fmt_strings	},
+    { P_jumpscroll,	js_AUTO,	js_strings	},
+    { P_preserve,	psv_STANDARD,	psv_strings	},
+    { P_regextype,	rt_GREP,	rt_strings	}
 };
 #define	NENUMS	(sizeof(init_enum) / sizeof(init_enum[0]))
 
@@ -260,6 +262,18 @@ init_params()
     Paramval	pv;
     Param	*pp;
     int		i;
+
+    /*
+     * Sanity check. The test is constant at compile-time
+     * and should get compiled out if the check succeeds.
+     */
+    if (sizeof(params)/sizeof(params[0]) != P_sentinel + 1) {
+	sys_endv(); /* Get out of visual mode */
+	fprintf(stderr,
+		"FATAL: Tables in param.h and param.c do not correspond.\n");
+	sys_exit(1);
+    }
+
 
     /*
      * First go through the special string and enum initialisation

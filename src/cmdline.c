@@ -38,82 +38,83 @@ static	Line	*a_line;
 
 /*
  * Definitions for all ex commands.
- */
-
-#define	EX_ENOTFOUND	-1		/* command not found */
-#define	EX_EAMBIGUOUS	-2		/* could be more than one */
-#define	EX_ECANTFORCE	-3		/* ! given where not appropriate */
-#define	EX_EBADARGS	-4		/* inappropriate args given */
-
-/*
- * To regenerate numbers: pipe this section through
  *
- *	awk '{ printf "%s %-16.16s%d\n", $1, $2, NR }' | unexpand -a
+ * Unlike the parameters in param.h, these do not corrispond to the
+ * order of the entries in cmdtable[] (multiple entries in cmdtable[]
+ * have the same EX_COMMAND.)
  */
-#define EX_NOCMD	1
-#define EX_SHCMD	2
-#define EX_UNUSED	3
-#define EX_AMPERSAND	4
-#define EX_EXBUFFER	5
-#define EX_LSHIFT	6
-#define EX_EQUALS	7
-#define EX_RSHIFT	8
-#define EX_COMMENT	9
-#define EX_ABBREVIATE	10
-#define EX_APPEND	11
-#define EX_ARGS		12
-#define EX_BUFFER	13
-#define EX_CHDIR	14
-#define EX_CHANGE	15
-#define EX_CLOSE	16
-#define EX_COMPARE	17
-#define EX_COPY		18
-#define EX_DELETE	19
-#define EX_ECHO		20
-#define EX_EDIT		21
-#define EX_EQUALISE	22
-#define EX_EX		23
-#define EX_FILE		24
-#define EX_GLOBAL	25
-#define EX_HELP		26
-#define EX_INSERT	27
-#define EX_JOIN		28
-#define EX_K		29
-#define EX_LIST		30
-#define EX_MAP		31
-#define EX_MARK		32
-#define EX_MOVE		33
-#define EX_NEXT		34
-#define EX_NUMBER	35
-#define EX_OPEN		36
-#define EX_PRESERVE	37
-#define EX_PRINT	38
-#define EX_PUT		39
-#define EX_QUIT		40
-#define EX_READ		41
-#define EX_RECOVER	42
-#define EX_REWIND	43
-#define EX_SET		44
-#define EX_SHELL	45
-#define EX_SOURCE	46
-#define EX_SPLIT	47
-#define EX_SUSPEND	48
-#define EX_SUBSTITUTE	49
-#define EX_TAG		50
-#define EX_UNABBREV	51
-#define EX_UNDO		52
-#define EX_UNMAP	53
-#define EX_V		54
-#define EX_VERSION	55
-#define EX_VISUAL	56
-#define EX_WN		57
-#define EX_WQ		58
-#define EX_WRITE	59
-#define EX_XIT		60
-#define EX_YANK		61
-#define EX_Z		62
-#define EX_GOTO		63
-#define EX_TILDE	64
+
+enum {
+    EX_ENOTFOUND  = -1,		/* command not found */
+    EX_EAMBIGUOUS = -2,		/* could be more than one */
+    EX_ECANTFORCE = -3,		/* ! given where not appropriate */
+    EX_EBADARGS	  = -4,		/* inappropriate args given */
+
+    EX_NOCMD = 1,
+    EX_SHCMD,
+    EX_UNUSED,
+    EX_AMPERSAND,
+    EX_EXBUFFER,
+    EX_LSHIFT,
+    EX_EQUALS,
+    EX_RSHIFT,
+    EX_COMMENT,
+    EX_ABBREVIATE,
+    EX_APPEND,
+    EX_ARGS,
+    EX_BUFFER,
+    EX_CHDIR,
+    EX_CHANGE,
+    EX_CLOSE,
+    EX_COMPARE,
+    EX_COPY,
+    EX_DELETE,
+    EX_ECHO,
+    EX_EDIT,
+    EX_EQUALISE,
+    EX_EX,
+    EX_FILE,
+    EX_GLOBAL,
+    EX_HELP,
+    EX_INSERT,
+    EX_JOIN,
+    EX_K,
+    EX_LIST,
+    EX_MAP,
+    EX_MARK,
+    EX_MOVE,
+    EX_NEXT,
+    EX_NUMBER,
+    EX_OPEN,
+    EX_PRESERVE,
+    EX_PRINT,
+    EX_PUT,
+    EX_QUIT,
+    EX_READ,
+    EX_RECOVER,
+    EX_REWIND,
+    EX_SET,
+    EX_SHELL,
+    EX_SOURCE,
+    EX_SPLIT,
+    EX_SUSPEND,
+    EX_SUBSTITUTE,
+    EX_TAG,
+    EX_UNABBREV,
+    EX_UNDO,
+    EX_UNMAP,
+    EX_V,
+    EX_VERSION,
+    EX_VISUAL,
+    EX_WN,
+    EX_WQ,
+    EX_WRITE,
+    EX_XIT,
+    EX_YANK,
+    EX_Z,
+    EX_GOTO,
+    EX_TILDE,
+};
 
 /*
  * Table of all ex commands, and whether they take an '!'.

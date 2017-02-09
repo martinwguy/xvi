@@ -399,7 +399,7 @@ typedef	struct	line {
  * Easy ways of finding out whether a given line is the first
  * or last line of a buffer, without needing a buffer pointer.
  */
-#define	is_lastline(lp)	((lp)->l_number == MAX_LINENO)
+#define	is_lastline(lp)	((lp)->l_number - MAX_LINENO == 0) /* i.e. == */
 #define	is_line0(lp)	((lp)->l_number == 0)
 
 

@@ -3,7 +3,7 @@ To build xvi on Linux systems:
 Linux
 -----
 	cd src
-	make -f makefile.lnx
+	make -f makefile.pos
 	install -s xvi /usr/local/bin/
 	install ../doc/help /usr/local/lib/xvi.help
 	install ../doc/xvi.1 /usr/local/share/man/man1/
@@ -12,14 +12,14 @@ To make the Debian/Ubuntu package, say
 	apt-get install debhelper build-essential libncurses-dev
 	dpkg-buildpackage -rfakeroot
 which will create you ../xvi*.deb that you can install with
-	dpkg -i ../*.deb
+	dpkg -i ../xvi*.deb
 
 To run the test suite ("make check") you will also need to
 	apt-get install expect tclsh
 See test/README to run it without an X display.
 
-To compile for smallest code size, use
-	make OPTFLAG=-Os
+To compile for smallest code size, install clang and use
+	make CC=clang OPTFLAG=-Os
 
 Other versions of Unix
 ----------------------

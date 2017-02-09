@@ -204,7 +204,6 @@ int	ch;
 	     */
 	    expansion = fexpand(to_expand, TRUE);
 	    if (*expansion != '\0') {
-		int oldinpos = inpos;
 		/*
 		 * Expanded okay - remove the original and stuff
 		 * the expansion into the input stream. Note that
@@ -273,11 +272,10 @@ int	ch;
 	 */
 	beep(win);
     } else {
-	unsigned	curposn, endposn;
+	unsigned	endposn;
 	unsigned	w;
 	char		*p;
 
-	curposn = colposn[inpos - 1];
 	endposn = colposn[inend - 1];
 	w = vischar(ch, &p, -1);
 	if (endposn + w >= win->w_ncols - 1) {

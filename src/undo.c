@@ -83,7 +83,6 @@ free_undo(buffer)
 Buffer	*buffer;
 {
     ChangeData	*cdp;
-    Change	*chp;
 
     cdp = (ChangeData *) buffer->b_change;
 
@@ -140,7 +139,6 @@ init_change_data(window)
 Xviwin	*window;
 {
     ChangeData	*cdp = (ChangeData *) window->w_buffer->b_change;
-    Change	*chp;
 
     if (cdp->cd_nlevels == 0) {
 	if (not_editable(window->w_buffer)) {
@@ -720,7 +718,6 @@ Line		*newlines;
     unsigned long	l;
     Xviwin		*wp;
     ChangeData		*cdp;
-    Change		*chp;
 
     cdp = (ChangeData *) window->w_buffer->b_change;
     buffer = window->w_buffer;

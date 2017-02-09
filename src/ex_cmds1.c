@@ -511,7 +511,6 @@ static char *
 show_arg()
 {
     static Flexbuf	fb;
-    int			c;
 
     if (curr_arg >= numfiles) {
 	return (char *) NULL;

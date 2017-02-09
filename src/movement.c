@@ -306,10 +306,8 @@ Line	*lp;
 int	index;
 {
     Posn *p;
-    Line *oldline;
 
     p = win->w_cursor;
-    oldline = p->p_line;
     p->p_line = lp;
     p->p_index = index;
     info_update(win);
