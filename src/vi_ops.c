@@ -85,18 +85,6 @@ register Cmd	*cmd;
 	repllines(curwin, cmd->cmd_startpos.p_line, nlines, (Line *) NULL);
 	begin_line(curwin, TRUE);
     } else {
-	/*
-	 * After a char-based delete, the cursor should always be
-	 * on the character following the last character of the
-	 * section being deleted. The easiest way to achieve this
-	 * is to put it on the character before the section to be
-	 * deleted (which will not be affected), and then move one
-	 * place right afterwards.
-	 */
-	move_cursor(curwin, cmd->cmd_startpos.p_line,
-			    cmd->cmd_startpos.p_index -
-				((cmd->cmd_startpos.p_index > 0) ? 1 : 0));
-
 	if (cmd->cmd_startpos.p_line == cmd->cmd_target.p_line) {
 	    /*
 	     * Delete characters within line.
@@ -143,9 +131,21 @@ register Cmd	*cmd;
 	    end_command(curwin);
 	}
 
-	if (cmd->cmd_startpos.p_index > 0) {
-	    (void) one_right(curwin, FALSE);
+	/*
+	 * After a char-based delete, the cursor should always be on the
+	 * character following the last character of the section being deleted,
+	 * i.e. the char now at what was the starting position.
+	 * if that has been deleted, it goes on the last character of the line.
+	 */
+	/* If past end of line, move to end of line */
+	{
+	    Posn *p = &(cmd->cmd_startpos);
+	    if (p->p_index > 0 && p->p_line->l_text[p->p_index] == '\0') {
+		p->p_index--;
+	    }
 	}
+	move_cursor(curwin, cmd->cmd_startpos.p_line,
+			    cmd->cmd_startpos.p_index);
     }
 
     /*
