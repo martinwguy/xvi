@@ -437,7 +437,8 @@ usage()
     startup_error("       xvi { options } +[num] file\n");
     startup_error("       xvi { options } +/pat  file\n");
     startup_error("\nOptions are:\n");
-    startup_error("       -R\n");
+    startup_error("       -c ex-command\n");
+    startup_error("       -R (set readonly mode)\n");
     startup_error("       -s [no]boolean-parameter\n");
     startup_error("       -s parameter=value\n");
 }
