@@ -551,6 +551,7 @@ Line		*newlines;
 	    savecho = echo;
 	    echo &= ~e_ALLOCFAIL;
 	    new_start = newline(1);
+	    new_start->l_number = 0;
 	    echo = savecho;
 	}
 	if (new_start == NULL) {
