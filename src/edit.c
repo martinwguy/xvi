@@ -102,6 +102,25 @@ int	c;
 	 * it for normal characters, or for literal-next mode.
 	 */
 	switch (c) {
+	case CTRL('@'):
+	    /*
+	     * If ^@ is the first character inserted, insert the last
+	     * text we inserted and return to command mode. Otherwise
+	     * insert it literally.
+	     */
+	    if (curpos->p_line == Insertloc.p_line &&
+		curpos->p_index == Insertloc.p_index) {
+		yp_stuff_input(curwin, '<', TRUE);
+		stuff("%c", ESC);
+	    } else {
+		/*
+		 * Xvi can't handle NULs in files because it
+		 * stores Lines as nul-terminated strings.
+		 */
+		beep(curwin);
+	    }
+	    return(FALSE);
+
 	case CTRL('C'):	/* an escape or ^C ends input mode */
 	    Ins_repeat = 0;
 	case ESC:
