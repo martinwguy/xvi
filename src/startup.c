@@ -260,6 +260,17 @@ char	*envp;				/* init string from the environment */
 		exSet(curwin, 1, &argv[count], FALSE);
 		break;
 
+	    case 'w':	/* "window" size, not used in xvi */
+		if (argv[count][2] != '\0') {		/* -wn */
+		    ;
+		} else if (count < (argc - 1)) {	/* -w n */
+		    count += 1;
+		} else {
+		    usage();
+		    return(NULL);
+		}
+		break;
+
 	    default:
 		usage();
 		return(NULL);
@@ -441,4 +452,5 @@ usage()
     startup_error("       -R (set readonly mode)\n");
     startup_error("       -s [no]boolean-parameter\n");
     startup_error("       -s parameter=value\n");
+    startup_error("       -w nlines (ignored)\n");
 }
