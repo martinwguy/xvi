@@ -1,4 +1,7 @@
-#! /usr/bin/tclsh
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
 
 # Issue NN: "yl" and "dl" when cursor is at end of line and
 # dNl where N is a deimal number, near the end of the line.
