@@ -132,6 +132,13 @@ static void
 int_handler(sig)
 int	sig;
 {
+    /*
+     * POSIX: "If the standard input is not a terminal device,
+     * ex shall not write the file or return to command or text input mode,
+     * and shall exit with a non-zero exit status."
+     */
+    if (!isatty(0)) sys_exit(-SIGINT);
+
     (void) signal(SIGINT, int_handler);
     kbdintr = TRUE;
 }
