@@ -608,10 +608,10 @@ unsigned int	*cp;
     /* Environment variables override all other kinds of screen size */
     {
 	char *s;
-	if ((s = getenv("LINES")) != NULL) {
+	if ((s = getenv("LINES")) != NULL && isdigit(s[0])) {
 	    *rp = (unsigned int) atol(s);
 	}
-	if ((s = getenv("COLUMNS")) != NULL) {
+	if ((s = getenv("COLUMNS")) != NULL && isdigit(s[0])) {
 	    *cp = (unsigned int) atol(s);
 	}
     }

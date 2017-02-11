@@ -801,8 +801,8 @@ unsigned int	*pcolumns;
     int	i;
 
     termtype = getenv("TERM");
-    if (termtype == NULL) {
-	fail("Can't find your terminal type.");
+    if (termtype == NULL || *termtype == '\0') {
+	termtype = "ansi";
     }
     switch (tgetent(tcbuf, termtype)) {
     case -1:
