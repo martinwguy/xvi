@@ -816,7 +816,7 @@ void
 		/*
 		 * This is not necessarily a good idea.
 		 */
-		show_error(curwin, "Can't allocate memory for parameter");
+		show_error(curwin, out_of_memory);
 		return;
 	    }
 
@@ -841,7 +841,7 @@ void
 	    /*
 	     * This is not necessarily a good idea.
 	     */
-	    show_error(curwin, "Can't allocate memory for parameter");
+	    show_error(curwin, out_of_memory);
 	} else {
 	    /*
 	     * We always free up the old string, because

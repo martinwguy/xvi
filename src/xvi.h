@@ -829,6 +829,7 @@ extern	struct redo	Redo;
 /*
  * alloc.c
  */
+extern	char	out_of_memory[];
 extern	void	*alloc P((size_t));
 extern	void	*re_alloc P((void *, size_t));
 extern	void	*clr_alloc P((size_t, size_t));

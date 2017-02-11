@@ -71,7 +71,7 @@ register Cmd	*cmd;
     yp_push_deleted();
     if (!do_yank(curbuf, &cmd->cmd_startpos, &cmd->cmd_target,
 			    IsCharBased(cmd), cmd->cmd_yp_name)) {
-	show_error(curwin, "Not enough memory to perform delete");
+	show_error(curwin, out_of_memory);
 	return;
     }
 
@@ -203,7 +203,7 @@ register Cmd	*cmd;
 	yp_push_deleted();
 	if (!do_yank(curbuf, &cmd->cmd_startpos, &cmd->cmd_target,
 						FALSE, cmd->cmd_yp_name)) {
-	    show_error(curwin, "Not enough memory to perform change");
+	    show_error(curwin, out_of_memory);
 	    return;
 	}
 

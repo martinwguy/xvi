@@ -67,8 +67,7 @@ xvEvent	*ev;
 		 * This is very difficult to fix...
 		 */
 		(void) exPreserveAllBuffers();
-		show_error(win,
-		    "Internal error: can't allocate space for new window size");
+		show_error(win, out_of_memory);
 	    }
 	    xvAdjustWindows(ev->ev_vs, (ev->ev_columns != 0));
 	    move_cursor_to_window(curwin);

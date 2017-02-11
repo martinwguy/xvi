@@ -61,7 +61,7 @@ Xviwin	*window;
 	    fname = "unnamed";
 	buffer->b_tempfname = tempfname(fname);
 	if (buffer->b_tempfname == NULL) {
-	    show_error(window, "Can't create name for preserve file");
+	    show_error(window, out_of_memory);
 	    return(NULL);
 	}
     }

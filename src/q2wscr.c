@@ -131,6 +131,7 @@ startup_error(str)
 char	*str;
 {
     (void) fputs(str, stderr);
+    (void) putc('\n', stderr);
 }
 
 static VirtScr *
@@ -611,7 +612,8 @@ int	ncols;
 	wlines = (WinLine *) malloc(nlines * sizeof(*wlines));
     }
     if (wlines == NULL) {
-	(void) fputs("Out of memory\n", stderr);
+	(void) fputs(out_of_memory, stderr);
+	(void) putc('\n', stderr);
 	exit(1);
     }
 
@@ -694,7 +696,7 @@ int	ncols;
     return;
 
 nomem:
-    Tell("Internal error", "Out of memory");
+    Tell("Internal error", out_of_memory);
     (void) exPreserveAllBuffers();
     exit(1);
 }

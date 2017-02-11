@@ -484,7 +484,7 @@ xvi_map(arg, exclam, inter)
 	lhs = arg;
 	if (!mapescape(&lhs, &rhs)) {
 	    if (inter) {
-		show_message(curwin, "No memory for that map");
+		show_message(curwin, out_of_memory);
 	    }
 	    return;
 	}

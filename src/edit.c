@@ -267,8 +267,7 @@ int	c;
 
 		if (openfwd(curwin, curpos, TRUE) == FALSE) {
 		    stuff("%c", ESC);
-		    show_error(curwin,
-			    "No buffer space - returning to command mode");
+		    show_error(curwin, out_of_memory);
 		    return(TRUE);
 		}
 
@@ -367,7 +366,7 @@ int	c;
 	    target.p_index = wspos;
 	    offset = curpos->p_index - nwspos;
 	    if (openfwd(curwin, &target, TRUE) == FALSE) {
-		show_error(curwin, "No buffer space - can't wrap line!");
+		show_error(curwin, out_of_memory);
 	    } else {
 		int	newindex = curpos->p_index;
 		Line	*newlp = curpos->p_line;
@@ -568,7 +567,7 @@ int	c;
 		 * Then split the line at the current position.
 		 */
 		if (openfwd(curwin, curpos, TRUE) == FALSE) {
-		    show_error(curwin, "No buffer space!");
+		    show_error(curwin, out_of_memory);
 		    return(TRUE);
 		}
 

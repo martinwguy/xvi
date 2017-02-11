@@ -408,7 +408,7 @@ char	*arg;
      * Clear out the old buffer and read the file.
      */
     if (clear_buffer(buffer) == FALSE) {
-	show_error(window, "Out of memory");
+	show_error(window, out_of_memory);
 	return(FALSE);
     }
 

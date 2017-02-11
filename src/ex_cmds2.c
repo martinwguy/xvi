@@ -285,7 +285,7 @@ exChangeDirectory(dir)
 
     curdir = alloc(MAXPATHLEN + 1);
     if (curdir == NULL) {
-	return("Failed to allocate space for current directory variable");
+	return(out_of_memory);
     }
     if (getcwd(curdir, MAXPATHLEN + 1) == NULL) {
 	free(curdir);
@@ -346,7 +346,7 @@ Line	*destline;		/* destination line for copy/move */
      * Yank the text to be copied.
      */
     if (do_yank(curbuf, &p1, &p2, FALSE, '@') == FALSE) {
-	show_error(curwin, "Not enough memory to yank text");
+	show_error(curwin, out_of_memory);
 	return;
     }
 

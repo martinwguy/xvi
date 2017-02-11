@@ -107,7 +107,7 @@ int	sizehint;
     newwin->w_vs->pv_window = (genptr *) newwin;
 
     if (alloc_window(newwin) == FALSE) {
-	show_error(oldwin, "Cannot allocate memory for new window!");
+	show_error(oldwin, out_of_memory);
 	free((genptr *) newwin);
 	return(NULL);
     }

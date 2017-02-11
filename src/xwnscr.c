@@ -666,7 +666,7 @@ int *p_cols, *p_rows;
     if ((wi = (wininfo_t *)malloc(sizeof(wininfo_t))) == NULL) {
 	/*  TODO: is this the right way to exit - probably not.
 	 */
-	fprintf(stderr, "Can't allocate memory (%s)", strerror(errno));
+	fprintf(stderr, out_of_memory);
 	exit(1);
     }
 
@@ -683,7 +683,7 @@ int *p_cols, *p_rows;
     wn_suggest_window_size(80, 24);
 
     if ((wn = wn_open_stdwin()) == -1) {
-	startup_error("Can't open window\n");
+	startup_error("Can't open window");
 	exit(1);
     }
 
@@ -704,7 +704,7 @@ int *p_cols, *p_rows;
     /*  The buffer is not NUL terminated, so no need for the usual +1.
      */
     if ((wi->line_text = malloc(*p_cols)) == NULL) {
-	fprintf(stderr, "Can't allocate memory (%s)", strerror(errno));
+	fprintf(stderr, out_of_memory);
 	exit(1);
     }
     forget_line(wi);	/* no valid contents yet */
@@ -751,7 +751,6 @@ char **argv;
 
     if ((mesg = wn_open_display()) != NULL) {
         startup_error(mesg);
-        startup_error("\n");
         exit(1);
     }
 

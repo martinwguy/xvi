@@ -171,6 +171,7 @@ char	*str;
 	called = 1;
     }
     (void) fputs(str, stderr);
+    (void) putc('\n', stderr);
 }
 
 void

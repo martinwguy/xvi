@@ -100,12 +100,12 @@ char	*envp;				/* init string from the environment */
      */
     curbuf = new_buffer();
     if (curbuf == NULL) {
-	startup_error("Can't allocate buffer memory.\n");
+	startup_error(out_of_memory);
 	return(NULL);
     }
     curwin = xvInitWindow(vs);
     if (curwin == NULL) {
-	startup_error("Can't allocate buffer memory.\n");
+	startup_error(out_of_memory);
 	return(NULL);
     }
 

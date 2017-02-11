@@ -508,7 +508,7 @@ char		*no_file_str;
 
 nomem:
     if (nlines == gf_NOMEM) {
-	show_error(window, "Out of memory trying to read \"%s\"", filename);
+	show_error(window, out_of_memory);
     }
     echo = savecho;
     return(nlines);

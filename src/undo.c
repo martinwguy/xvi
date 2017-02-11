@@ -555,7 +555,7 @@ Line		*newlines;
 	    echo = savecho;
 	}
 	if (new_start == NULL) {
-	    show_error(window, "Can't get memory to delete lines");
+	    show_error(window, out_of_memory);
 	    chfree(change);
 	    return(NULL);
 	}
