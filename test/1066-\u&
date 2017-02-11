@@ -7,16 +7,12 @@ exec tclsh "$0" ${1+"$@"}
 #
 # "s/.../\u&/" which should change the case of the first character of
 # the replacement text (not all of it).
-# If the replacement test character results in no characters, if should
+# If the replacement test character results in no characters, it should
 # change the case of the following character.
 
 source term
+start_vi
 
-set timeout 1
-
-# Start xvi and add the starting text
-
-exp_send "../src/xvi\r"
 exp_send "aThe cat sat on the mat.\x1B"
 sleep 1
 term_expect	timeout { exit 101 } \

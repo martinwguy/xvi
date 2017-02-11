@@ -5,12 +5,13 @@ exec tclsh "$0" ${1+"$@"}
 
 # Test xvi's startup screen.
 #
-# Unlike the other tests, this doesn't use term_expect or term_utils
+# Unlike the other tests, this doesn't use term_expect
+# or utility functions from file "term" (except for start_vi).
 
 source term
+start_vi
 
-# Start xvi and give it a second to refresh the display.
-exp_send "../src/xvi\r"
+# Give it a second to refresh the display.
 sleep 1
 
 # The first line should be blank

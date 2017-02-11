@@ -3,13 +3,12 @@
 # The next line is executed by /bin/sh, but not tcl \
 exec tclsh "$0" ${1+"$@"}
 
+#
 # Check that it says "Interrupted" when it should.
-
-# Boilerplate
+#
 
 source term
-
-# Utilities
+start_vi
 
 # Set the status line to anything other than "Interrupted"
 proc clear_statusline { } {

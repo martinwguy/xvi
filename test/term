@@ -45,6 +45,14 @@ if { [info exists ::env(TKTERM)] && $::env(TKTERM) != "" } {
 # double quotes, within which you need to escape literal $, [ and \ with a
 # preceding \ and can use sequences like \r mean newline and so on.
 
+# Most tests use timeouts but 1 second is appropriate than the default of 10.
+set timeout 1
+
+# Start the vi editor from the shell command prompt
+proc start_vi {} {
+    exp_send "exec ../src/xvi\r"
+}
+
 proc screen_is {crow ccol should} {
     global term
     if { ! [cursor_at $crow $ccol] } { return FALSE }

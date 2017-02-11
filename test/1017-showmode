@@ -7,11 +7,8 @@ exec tclsh "$0" ${1+"$@"}
 # or "REPLACE MODE" 20 columns from the right of screen
 # on the status line of the current window.
 
-# Boilerplate
-
 source term
-
-# Utility functions
+start_vi
 
 # Pick the "INSERT MODE" string from where it should be on the screen
 proc getmode {} {
@@ -25,7 +22,6 @@ proc getmode {} {
 exp_send "exec ../src/xvi\r"
 
 # Check it started up OK
-set timeout 1
 term_expect timeout { exit 100 } \
     { screen_is 1 0 [list "" "~"] }
 

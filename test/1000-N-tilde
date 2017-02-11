@@ -6,11 +6,8 @@ exec tclsh "$0" ${1+"$@"}
 # Test numeric parameter before ~ command
 
 source term
+start_vi
 
-set timeout 1
-
-# Start xvi and give it a second to refresh the display.
-exp_send "../src/xvi\r"
 exp_send "aabcdefgh"
 term_expect	timeout { exit 100 } \
     		{ screen_is 1 8 "abcdefgh" }
@@ -32,7 +29,7 @@ term_expect	timeout { exit 103 } \
     		{ screen_is 1 0 "abcdefgh" }
 
 # move onto the d
-exp_send "fd"
+exp_send "0lll"
 	# FAILS because it thinks the cursor is in the wrong position.
 	# tkterm continues reporting the cursor at (1,0)
 	# WORKS if you "sleep 1" between here and term_expect

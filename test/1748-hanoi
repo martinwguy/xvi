@@ -5,23 +5,17 @@ exec tclsh "$0" ${1+"$@"}
 
 # See if the towers of hanoi solving vi macros work
 
-# Boilerplate
-
 source term
+start_vi
 
-# Tests begin
-
-# Start xvi
-exp_send "../src/xvi\r"
-
-# Give it one second to read the macros
+# Read the macros
 exp_send ":so hanoi\r"
-set timeout 1
+
+# Buffer should still be empty
 set screen [list "" "~"]
 term_expect timeout { exit 100 } \
     { screen_is 1 0 $screen }
-
-# There should be no error messsages on the status line
+# There should be no error messages on the status line
 if { [statusline] != ":so hanoi" } {
     puts "After :so hanoi, status line is [statusline]"
     exit 11

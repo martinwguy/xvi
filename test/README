@@ -2,16 +2,20 @@ In this directory (or the one above) you can "make check" to run
 a series of tests on ../src/xvi.
 
 Each test is an executable file whose name starts with four digits and a hyphen.
-One day the tests will be divided into sections, 0XXX for POSIX items,
-1XXX for the regression tests for fixed issue XXX, 9XXX for non-specific tests
-(hanoi, maze). At present, the numbers are mostly random.
+Tests that begin with less than four digits are for unresolved issues and are
+not run automatically by "make check".
+
+One day the tests will be divided into sections, a thousand for POSIX tests,
+a thousand for regression tests for fixed issue XXX and so on.
+At present, the numbers are mostly random, with 0XXX being a regression test
+for issue XXX.
 
 The syntax of a test file is fairly horrible because the test mechanism is based
 on Don Libes' "tkterm",(*) which is written in the fairly horrible language TCL,
-with its bizarre string quoting rules, lame lists represented as strings,
-needing to "sleep 1" after sending xvi a final [Escape] character for it to work
-and more.
-It's probably best to look at some of the existing tests and adapt them.
+with its bizarre string quoting rules, lame lists represented as strings.
+Worse, "sleep 1" is sometimes needed between exp_send and term_expect
+for it to work. Check the bugs for labels "tkterm" and "virterm".
+It's probably best to look at some of the existing tests and copy them.
 
 *) See his paper "Automation and Testing of Character-Graphic Programs"
    and his book "Exploring Expect", chapter 19, p.448 onwards.
@@ -19,7 +23,7 @@ It's probably best to look at some of the existing tests and adapt them.
 On Debian systems, you need to
     apt-get install expect tclsh
 
-It runs on an X display because tkterm uses the TK text widget.
+It normally runs on an X display because tkterm uses the TK text widget.
 You can run it (only as root) without an X display by going:
 	sudo apt-get install xserver-xorg-video-dummy
 	sudo make nox
@@ -28,4 +32,4 @@ Another way to avoid needing X or root is to say
 	TKTERM=virterm make check
 but it doesn't work properly yet.
 
-	Martin Guy <martinwguy@gmail.com>, December 2016 - January 2017.
+	Martin Guy <martinwguy@gmail.com>, December 2016 - February 2017.

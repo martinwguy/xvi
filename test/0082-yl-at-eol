@@ -6,17 +6,10 @@ exec tclsh "$0" ${1+"$@"}
 # Issue NN: "yl" and "dl" when cursor is at end of line and
 # dNl where N is a deimal number, near the end of the line.
 
-# Boilerplate
-
 source term
-
-# Tests begin
-
-# Start xvi
-exp_send "exec ../src/xvi\r"
+start_vi
 
 # Check it started up OK
-set timeout 1
 term_expect timeout { exit 100 } \
 	{ screen_is 1 0 [list "" "~"] }
 
