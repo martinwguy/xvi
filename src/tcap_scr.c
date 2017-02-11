@@ -151,7 +151,11 @@ unsigned int	LI = 0;
 /*
  * Needed by termcap library.
  */
-char	PC;				/* pad character */
+#ifndef AIX
+extern	char	PC;				/* pad character */
+extern	char *	BC;				/* backspace char if not ^H */
+extern	char *	UP;				/* move up one line */
+#endif
 
 /*
  * Internal string, num and boolean defs.
@@ -174,11 +178,12 @@ static	char	*VB;			/* visual bell */
 static	char	*colours[10];		/* colour caps c0 .. c9 */
 static	int	ncolours;		/* number of colour caps we have */
 
+/* Single-char versions of BC, ND, DO */
 static	char	bc;			/* backspace char */
-static	char	ND;			/* non-destructive forwward space */
-static	char	DO;			/* down one line */
+static	char	nd;			/* non-destructive forward space */
+static	char	down;			/* down one line */
 
-static	bool_t	can_backspace;		/* true if can backspace (bs/bc) */
+static	bool_t	can_backspace = FALSE;	/* true if can backspace (bs/bc) */
 static	bool_t	can_fwdspace = FALSE;	/* true if can forward space (nd) */
 static	bool_t	can_movedown = FALSE;	/* true if can move down (do) */
 static	bool_t	auto_margins;		/* true if AM is set */
@@ -817,7 +822,6 @@ unsigned int	*pcolumns;
      * Booleans.
      */
     auto_margins = (bool_t) (tgetflag("am") && !tgetflag("xn"));
-    can_backspace = (bool_t) tgetflag("bs");
 
     /*
      * Integers.
@@ -867,21 +871,60 @@ unsigned int	*pcolumns;
      * every possible way; we basically assume that we
      * don't have infinite amounts of time or space.
      */
+#ifndef AIX
     cp = tgetstr("pc", &strp);	/* pad character */
     if (cp != NULL)
 	PC = *cp;
+#endif
 
-    cp = tgetstr("bc", &strp);	/* backspace char if not ^H */
-    if (cp != NULL && cp[1] == '\0')
-	bc = *cp;
-    else
+    /*
+     * Find the backspace character.
+     *
+     * Termcap capability "bs" means "you can move left with ^H" while
+     * string capability "bc" means "how to move left if "bs" is not set."
+     * In netbsd's termcap file, five terminals (dg6053, hp9845, z29a, z29b and
+     * superbrain) have both "bs" and "bc=" defined (as ^Y, ^U and \ED)
+     * which seem wrong.  We follow the manual page and ignore "bc=" if "bs".
+     */
+    if (tgetflag("bs")) {
 	bc = '\b';
+	can_backspace = TRUE;
+    } else {
+#ifndef AIX
+	if ((BC = tgetstr("bc", &strp)) != NULL && BC[1] == '\0') {
+	    bc = BC[0];
+	    can_backspace = TRUE;
+	}
+#else
+	/* AIX's curses.h has no extern char *BC */
+	if ((cp = tgetstr("bc", &strp)) != NULL && cp[1] == '\0') {
+	    bc = cp[0];
+	    can_backspace = TRUE;
+	}
+#endif
+    }
+    /*
+     * Lastly, there is the "le" capability to move the cursor left one place.
+     * 172 terminal descriptions in NetBSD's termcap have no bs and no bc but
+     * do define "le=", often as "^H" (!)
+     */
+    if (!can_backspace) {
+	if ((cp = tgetstr("le", &strp)) != NULL && cp[1] == '\0') {
+	    bc = cp[0];
+	    can_backspace = TRUE;
+	}
+    }
 
     cp = tgetstr("nd", &strp);	/* non-destructive forward space */
     if (cp != NULL && cp[1] == '\0') {
-	ND = *cp;
+	nd = *cp;
 	can_fwdspace = TRUE;
     }
+
+#ifndef AIX
+    /* Needs to be set for termcap library's use. xvi doesn't use UP (yet) */
+    UP = tgetstr("up", &strp);
+#endif
 
 #ifndef	AIX
     /*
@@ -894,7 +937,7 @@ unsigned int	*pcolumns;
 
     cp = tgetstr("do", &strp);	/* down a line */
     if (cp != NULL && cp[1] == '\0') {
-	DO = *cp;
+	down = *cp;
 	can_movedown = TRUE;
     }
 #endif
@@ -1179,7 +1222,7 @@ int	start_row, end_row, nlines;
 	int	i;
 
 	for (i = 0; i < nlines; i++) {
-	    moutch(DO);
+	    moutch(down);
 	}
     }
 
@@ -1450,7 +1493,7 @@ xyupdate()
 		 * Move down to the right line.
 		 */
 		for (n = vdisp; n > 0; n--) {
-		    moutch(DO);
+		    moutch(down);
 		}
 
 		if (hdisp < 0) {
@@ -1463,7 +1506,7 @@ xyupdate()
 		    }
 		} else if (hdisp > 0) {
 		    for (n = hdisp; n > 0; n--) {
-			moutch(ND);
+			moutch(nd);
 		    }
 		}
 
@@ -1486,7 +1529,7 @@ xyupdate()
 		     * Forward a bit.
 		     */
 		    for (n = hdisp; n > 0; n--) {
-			moutch(ND);
+			moutch(nd);
 		    }
 
 		} else if (can_backspace && hdisp < 0 &&
