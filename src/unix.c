@@ -604,6 +604,17 @@ unsigned int	*cp;
 #else
     *rp = *cp = 0;
 #endif
+
+    /* Environment variables override all other kinds of screen size */
+    {
+	char *s;
+	if ((s = getenv("LINES")) != NULL) {
+	    *rp = (unsigned int) atol(s);
+	}
+	if ((s = getenv("COLUMNS")) != NULL) {
+	    *cp = (unsigned int) atol(s);
+	}
+    }
 }
 
 static enum { m_SYS = 0, m_VI = 1 } curmode;
