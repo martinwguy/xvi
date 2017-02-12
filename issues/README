@@ -42,11 +42,11 @@ shouldn't be too hard to get a history of closed bugs with a script that
 trawls the git history and fishes out the last versions of any files
 that have been deleted from issues/.
 
-== Adding the Scientific Debugging workflow  ==
+== Adding Scientific Debugging ==
 
-More interesting yet would be to implement Scientific Debugging by adding
-paragraphs to a branch's BUGS file or to the master branch's issues/* files
-such as
+More interesting yet would be to implement the Scientific Debugging workflow
+by adding paragraphs to a branch's BUGS file (or to the master branch's
+issues/* file if work hasn't started yet) such as
 
 Defect: Observed behavior, different from expected.
 
