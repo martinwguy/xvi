@@ -1,15 +1,77 @@
+		  Keeping issues in the source tree
+
+		  Martin Guy <martinwguy@gmail.com>
+			January-February 2017
+
 This is an experiment in keeping the issues in the source repository,
-which makes more sense than keeping them separately as content on
-some web service.
+instead of separately on some web server. That way, the current set
+of issue files in the source tree refers to the exact version of the
+source code that it accompanies *and* you don't lose them all when
+the company closes down unexpectedly or when your mate's web server
+dies unexpectedly with no recent backups.
 
-Following https://adriansieber.com/download-github-issues-from-command-line
-we imported the issues from github using:
+The idea is to keep the description of each issue as text in a file
+in this directory. The file is created when the issue is discovered,
+modified as analysis progresses and either deleted with the commit
+that resolves it.
 
-    http -a martinwguy -b https://api.github.com/repos/martinwguy/xvi/issues\?state=all | json -0 -a | while read -r line
-    do (( count++ ))
-        echo $line | js-yaml > $count.yaml
-    done
+At present we just have a script "pull" that downloads issues from Github
+into files with names like "89.yaml" and from those we need to extract
+the title, description and comments into text files called "89".
 
-using https://github.com/trentm/json and https://github.com/nodeca/js-yaml
+For future bugs, short, blunt descriptive filenames would be better,
+not only to prevent two developers from each adding bug 90 to their
+respective copies and then being unable to sync, but also because
+speaking in bug numbers is barbaric.
 
-	Martin Guy <martinwguy@gmail.com>, January 2017
+== Branches with BUGS files ==
+
+To start work on an issue we craate a git branch, probably of the same
+short descriptive name as the issues/* file, or "issue89" for the numbered
+ones and, on that branch, copy the issues/* file into one called BUGS
+in the top directory. This is where notes about the work in progress on the
+branch go, and is where we keep issues that apply only to this branch,
+separated from the title and description (and from each other) by lines
+of ----- signs.
+
+Teething problems on the branch are added sas issues to the BUGS file
+as they are discovered and are removed from it with the code commit that
+resolves them.
+
+When the branch is merged into the master branch, its BUGS file is deleted
+along with the issues/89 file in the master branch.
+
+== A bug mining tool ==
+
+Open bugs are those that have files in issues/ and the archival description
+of closed bugs would be the last version of any files that has been deleted
+from there.
+
+From the info left in git on the master branch it should be possible to
+reconstruct a history of each bug from when it was discovered and by who
+to the code change that resolves it and deletes its issues/ file.
+
+If you want to keep a copy of the bug's resolution process, you just have
+to keep its branch.
+
+== Adding the Scientific Debugging workflow  ==
+
+More interesting yet would be to implement Scientific Debugging in these files.
+For example, we could add paragraphs after each issue's title and description,
+such as:
+
+Defect: Observed behaviour, different from expected.
+
+Hypothesis:
+	What might be causing the defect.
+
+Experiment:
+	A test that should test the hypothesis.
+
+Observation:
+	The result of the experiment.
+
+Conclusion:
+	Hypothesis is confirmed or rejected by the result, or the outcome of
+	the experiment was inconclusive, leading us to refine the hypothesis,
+	replace it with a new hypothesis or devise a better experiment.
