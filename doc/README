@@ -37,13 +37,12 @@ source.lst
 source.ps
 	A guide to the Xvi source code, including information about
 	how to port Xvi to different systems. Provided in [nt]roff -ms
-	source, nroff output and PostScript formats.
+	source and nroff output as text and PostScript.
 
 xvi.1
 xvi.lst
 xvi.ps
-	A Unix-style manual page, in [nt]roff -man & nroff output
-	formats.
+	A Unix-style manual page, in [nt]roff -man & nroff output.
 
 Chances are, if you're on UNIX, MS-DOS or QNX, you'll be able
 to compile xvi without changing anything. Change directory
