@@ -3,12 +3,11 @@
 		  Martin Guy <martinwguy@gmail.com>
 			January-February 2017
 
-This is an experiment in keeping the issues in the source repository,
-instead of separately on some web server. That way, the current set
-of issue files in the source tree refers to the exact version of the
-source code that it accompanies *and* you don't lose them all when
-the company closes down unexpectedly or when your mate's web server
-dies unexpectedly with no recent backups.
+This is an experiment in keeping issues with the source code instead of
+separately on some web server. That way, the current set of issue files
+in the source tree refers to the exact version of the source code that it
+accompanies *and* you don't lose them all when the company closes down
+or when your mate's web server dies unexpectedly with no recent backups.
 
 The idea is to keep the description of each issue as text in a file
 in this directory. The file is created when the issue is discovered,
@@ -27,17 +26,14 @@ speaking in bug numbers is barbaric.
 == Works in progress on branches with BUGS files ==
 
 To start work on an issue we craate a git branch, probably of the same
-short descriptive name as its issues/* file, or "issue89" for the numbered
-ones and, copy the issues/* file into BUGS in the top directory.
-This is for notes about the work in progress on the issue, and it is
-where we keep any issues that apply only to this branch.
+short descriptive name as its issues/* file (or "issue89" for the numbered
+ones) and copy the issues/* file into BUGS in the top directory.
+This is for notes about the work in progress on the issue and is where we
+add any issues that only apply to the work on that branch, separated from
+the title and description and from each other by ----- lines.
 
-Any issues that only apply to the work on that branch can be added to
-its BUGS file, separated from the title and description and from each other
-by lines consisting of ----- signs.
-
-When the branch is merged into the master branch, its BUGS file is deleted
-as is its issues/* file on the master branch.
+When the branch is merged into the master branch, its BUGS file is deleted,
+as is the corresponding issues/* file on the master branch.
 
 == Open and closed bugs ==
 
