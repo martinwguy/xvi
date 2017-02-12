@@ -12,55 +12,47 @@ dies unexpectedly with no recent backups.
 
 The idea is to keep the description of each issue as text in a file
 in this directory. The file is created when the issue is discovered,
-modified as analysis progresses and either deleted with the commit
+modified as its analysis proceeds and is deleted with the commit
 that resolves it.
 
-At present we just have a script "pull" that downloads issues from Github
+At present we have a script "pull" that downloads issues from Github
 into files with names like "89.yaml" and from those we need to extract
-the title, description and comments into text files called "89".
+the title, description and comments into text files called "89" and so on.
 
-For future bugs, short, blunt descriptive filenames would be better,
-not only to prevent two developers from each adding bug 90 to their
+For future issues, short descriptive filenames would be better
+not only to prevent two developers from each adding bug 90 in their
 respective copies and then being unable to sync, but also because
 speaking in bug numbers is barbaric.
 
-== Branches with BUGS files ==
+== Works in progress on branches with BUGS files ==
 
 To start work on an issue we craate a git branch, probably of the same
-short descriptive name as the issues/* file, or "issue89" for the numbered
-ones and, on that branch, copy the issues/* file into one called BUGS
-in the top directory. This is where notes about the work in progress on the
-branch go, and is where we keep issues that apply only to this branch,
-separated from the title and description (and from each other) by lines
-of ----- signs.
+short descriptive name as its issues/* file, or "issue89" for the numbered
+ones and, copy the issues/* file into BUGS in the top directory.
+This is for notes about the work in progress on the issue, and it is
+where we keep any issues that apply only to this branch.
 
-Teething problems on the branch are added sas issues to the BUGS file
-as they are discovered and are removed from it with the code commit that
-resolves them.
+Any issues that only apply to the work on that branch can be added to
+its BUGS file, separated from the title and description and from each other
+by lines consisting of ----- signs.
 
 When the branch is merged into the master branch, its BUGS file is deleted
-along with the issues/89 file in the master branch.
+as is its issues/* file on the master branch.
 
-== A bug mining tool ==
+== Open and closed bugs ==
 
-Open bugs are those that have files in issues/ and the archival description
-of closed bugs would be the last version of any files that has been deleted
-from there.
-
-From the info left in git on the master branch it should be possible to
-reconstruct a history of each bug from when it was discovered and by who
-to the code change that resolves it and deletes its issues/ file.
-
-If you want to keep a copy of the bug's resolution process, you just have
-to keep its branch.
+Open bugs are easy to see because they still have files in issues/ and it
+shouldn't be too hard to get a history of closed bugs with a script that
+trawls the git history and fishes out the last versions of any files
+that have been deleted from issues/.
 
 == Adding the Scientific Debugging workflow  ==
 
-More interesting yet would be to implement Scientific Debugging in these files.
-For example, we could add paragraphs after each issue's title and description,
-such as:
+More interesting yet would be to implement Scientific Debugging by adding
+paragraphs to a branch's BUGS file or to the master branch's issues/* files
+such as
 
-Defect: Observed behaviour, different from expected.
+Defect: Observed behavior, different from expected.
 
 Hypothesis:
 	What might be causing the defect.
@@ -75,3 +67,7 @@ Conclusion:
 	Hypothesis is confirmed or rejected by the result, or the outcome of
 	the experiment was inconclusive, leading us to refine the hypothesis,
 	replace it with a new hypothesis or devise a better experiment.
+
+not as an eternal diary, like the github comments, but rewriting it as
+hypotheses are refined on the path the bug resolution, at which point
+a single hypothesis should remain with the experiment that confirms it.
