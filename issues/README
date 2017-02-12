@@ -16,16 +16,16 @@ that resolves it.
 
 At present we have a script "pull" that downloads issues from Github
 into files with names like "89.yaml" and from those we need to extract
-the title, description and comments into text files called "89" and so on.
+the title, description and comments into text files with names like "issue89".
 
-For future issues, short descriptive filenames would be better
+For future issues, short descriptive filenames would be better,
 not only to prevent two developers from each adding bug 90 in their
 respective copies and then being unable to sync, but also because
-speaking in bug numbers is barbaric.
+speaking in bug numbers is barbaric. "Add_-r_flag" would be fine.
 
 == Works in progress on branches with BUGS files ==
 
-To start work on an issue we craate a git branch, probably of the same
+To start work on an issue we create a git branch, probably of the same
 short descriptive name as its issues/* file (or "issue89" for the numbered
 ones) and copy the issues/* file into BUGS in the top directory.
 This is for notes about the work in progress on the issue and is where we
@@ -42,11 +42,11 @@ shouldn't be too hard to get a history of closed bugs with a script that
 trawls the git history and fishes out the last versions of any files
 that have been deleted from issues/.
 
-== Adding the Scientific Debugging workflow  ==
+== Adding Scientific Debugging ==
 
-More interesting yet would be to implement Scientific Debugging by adding
-paragraphs to a branch's BUGS file or to the master branch's issues/* files
-such as
+More interesting yet would be to implement the Scientific Debugging workflow
+by adding paragraphs to a branch's BUGS file (or to the master branch's
+issues/* file if work hasn't started yet) such as
 
 Defect: Observed behavior, different from expected.
 
