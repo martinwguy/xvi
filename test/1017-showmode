@@ -18,9 +18,6 @@ proc getmode {} {
 
 # Tests begin
 
-# Start xvi
-exp_send "exec ../src/xvi\r"
-
 # Check it started up OK
 term_expect timeout { exit 100 } \
     { screen_is 1 0 [list "" "~"] }

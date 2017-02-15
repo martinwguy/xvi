@@ -20,9 +20,6 @@ proc clear_statusline { } {
 
 # Tests begin
 
-# Start xvi
-exp_send "exec ../src/xvi\r"
-
 # Check it started up OK
 set timeout 1
 term_expect timeout { exit 100 } \
@@ -92,10 +89,13 @@ term_expect timeout { exit 111 } \
 exp_send ":map! x axy\r"
 exp_send "ax"
 # The x should send it into a loop, appending content
+# POSIX says "If there is a currently executing command, it shall be aborted
+# and a message displayed" and nvi shows "Interrupted: mapped keys discarded".
 sleep 1
 exp_send "\x03"
 term_expect timeout { term_dump 113.dump; exit 113 } \
-    { expr { [statusline_is "Interrupted"] } }
+    { expr { [string compare "Interrupted" \
+			     [string range [statusline] 0 10]] == 0 } }
 
 # Now it should react to ":"
 exp_send ":"
