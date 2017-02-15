@@ -3,18 +3,51 @@
 # The next line is executed by /bin/sh, but not tcl \
 exec tclsh "$0" ${1+"$@"}
 
-# Test "showmode" parameter, placing "INSERT MODE"
-# or "REPLACE MODE" 20 columns from the right of screen
-# on the status line of the current window.
+# Test the "showmode" parameter.
 
 source term
 start_vi
 
-# Pick the "INSERT MODE" string from where it should be on the screen
+# Utility functions
+
+# Pick the mode string from where it should be on the screen, returning
+# "INSERT", "REPLACE" or "" if no mode is shown.
+
+set vim FALSE
+
 proc getmode {} {
-    global cols
-    return [string trimright [string range [statusline] [expr $cols - 20] end]]
+    set _ ""
+    set mode ""
+
+    # Classic vi and xvi place "INSERT MODE" or "REPLACE MODE" on the
+    # current window's status line, starting 20 columns from the right edge.
+    if { [regexp " (\[A-Z\]*) MODE" [statusline] _ mode] } {
+	return $mode
+    }
+
+    # vim places "-- INSERT --" or "-- REPLACE --" bottom left.
+    # Must come before nvi's test because vim also puts "All" bottom right.
+    if { [regexp "^-- (\[A-Z\]*) --" [statusline] _ mode] } {
+	global vim
+	set vim TRUE
+	return $mode
+    }
+
+    # nvi shows "Insert" "Append" "Replace" "Change" or "Command"
+    # in the bottom right corner with its last character in the penultimate
+    # column, preceded by an asterisk if the buffer has been modified.
+    if { [regexp "(\[IRAC]\[nsertplacdhgom]*)$" [statusline] _ mode] } {
+	# Capitalize it and map its "Append" and "Change" to our "INSERT".
+	if { $mode eq "Command" } { return "" }
+	if { $mode eq "Append" } { set mode "Insert" }
+	if { $mode eq "Change" } { set mode "Insert" }
+	if { $mode eq "All" } { return "" }  ;# Vim with no mode displayed
+	return [string toupper $mode]
+    }
+
+    return ""
 }
+
 
 # Tests begin
 
@@ -23,54 +56,63 @@ term_expect timeout { exit 100 } \
     { screen_is 1 0 [list "" "~"] }
 
 # Set the parameter. If it succeeds, the command should remain.
+# Nvi, instead, wipes the command but displays "Command" bottom right.
 exp_send ":se showmode\r"
 term_expect timeout { exit 101 } \
-    { expr { [cursor_at 1 0] && [statusline_is ":se showmode"] } }
+    { expr { [cursor_at 1 0] && ( [statusline_starts ":se showmode"] ||
+				  [string trimleft [statusline]] eq "Command"
+	                        )
+    }      }
 
 # See if the flag appears in insert mode
 exp_send "i"
-term_expect timeout { exit 102 } { expr { [getmode] eq "INSERT MODE" } }
+term_expect timeout { puts "mode is [getmode]"; exit 102 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
 term_expect timeout { exit 103 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in append mode
 exp_send "a"
-term_expect timeout { exit 104 } { expr { [getmode] eq "INSERT MODE" } }
+term_expect timeout { exit 104 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
 term_expect timeout { exit 105 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in change mode
 exp_send "C"
-term_expect timeout { exit 106 } { expr { [getmode] eq "INSERT MODE" } }
+term_expect timeout { exit 106 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
 term_expect timeout { exit 107 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in substitute mode
 exp_send "s"
-term_expect timeout { exit 108 } { expr { [getmode] eq "INSERT MODE" } }
+term_expect timeout { exit 108 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
 term_expect timeout { exit 109 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in single-character replace mode
+# FIrst, put a character there to replace
+exp_send "ia\x1B"
+sleep 1
+term_expect timeout { exit 110 } { screen_is 1 0 [list "a" "~"] }
 exp_send "r"
-term_expect timeout { exit 110 } { expr { [getmode] eq "REPLACE MODE" } }
+				   # vim doesn't show anything for 'r'
+term_expect timeout { exit 111 } { expr { $vim || [getmode] eq "REPLACE" } }
 # See if it disappears after replacing one character
 exp_send "a"
-term_expect timeout { exit 111 } { expr { [getmode] eq "" } }
+term_expect timeout { term_dump 112.dump; exit 112 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in multi-character replace mode
 exp_send "R"
-term_expect timeout { exit 112 } { expr { [getmode] eq "REPLACE MODE" } }
+term_expect timeout { exit 113 } { expr { [getmode] eq "REPLACE" } }
 # See if it remains
 exp_send "aaa"
-term_expect timeout { exit 113 } { expr { [getmode] eq "REPLACE MODE" } }
+term_expect timeout { exit 114 } { expr { [getmode] eq "REPLACE" } }
 # See if it disappears after pressing Escape
 exp_send "\x1B"
-term_expect timeout { exit 114 } { expr { [getmode] eq "" } }
+term_expect timeout { exit 115 } { expr { [getmode] eq "" } }
 
 exp_send ":q!\r"
 

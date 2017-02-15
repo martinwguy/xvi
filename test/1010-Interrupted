@@ -27,18 +27,31 @@ term_expect timeout { exit 100 } \
 
 
 # Interrupt it in keystroke command mode
+#
+# xvi and nvi say "Interrupted"; vim has its own message.
+
+set vim FALSE	; # Are we running the tests using vim?
 
 exp_send "\x03"
-term_expect timeout { exit 101 } \
-    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+term_expect timeout { term_dump "101.dump"; exit 101 } \
+    { expr { [screen_is 1 0 [list "" "~"]] && \
+	[statusline_is "Interrupted"] } } { } \
+    { expr { [screen_is 1 0 [list "" "~"]] && \
+	[statusline_starts "Type  :quit<Enter>  to exit Vim"] } } {
+	set vim TRUE
+    }
 
 
 # Interrupt it after one char of a 2-char command
+#
+# vim doen't display anything when this happens but POSIX says:
+# "SIGINT: If in open or visual command mode, the terminal shall be alerted."
 
 clear_statusline
 exp_send "z\x03"
 term_expect timeout { exit 102 } \
-    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+    { expr { [screen_is 1 0 [list "" "~"]] &&
+	     ( $vim || [statusline_is "Interrupted"] ) } }
 
 
 # Interrupt it in insert mode
@@ -49,7 +62,8 @@ term_expect timeout { exit 103 } \
     { screen_is 1 1 "i" }
 exp_send "\x03"
 term_expect timeout { exit 104 } \
-    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "i"]] } }
+    { expr { [screen_is 1 0 [list "i" "~"]] &&
+	     ( $vim || [statusline_is "Interrupted"] ) } }
 
 
 # Interrupt it in replace mode
@@ -63,8 +77,8 @@ term_expect timeout { exit 106 } \
     { screen_is 1 2 "aXc" }
 exp_send "\x03"
 term_expect timeout { exit 107 } \
-    { expr { [statusline_is "Interrupted"] && [screen_is 1 1 "aXc"] } }
-
+    { expr { [screen_is 1 1 "aXc"] &&
+	     ( $vim || [statusline_is "Interrupted"] ) } }
 
 # Interrupt it in command line mode
 
@@ -74,7 +88,8 @@ term_expect timeout { exit 108 } \
     { expr { [statusline_is ":"] && [screen_is $rows 1 [list "" "~"]] } }
 exp_send "\x03"
 term_expect timeout { exit 109 } \
-    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+    { expr { [screen_is 1 0 [list "" "~"]] &&
+	     ( $vim || [statusline_is "Interrupted"] ) } }
 
 
 # Interrupt it while doing infinite macro recursion
@@ -84,19 +99,21 @@ exp_send ":map y x\r"
 exp_send "x"
 exp_send "\x03"
 term_expect timeout { exit 111 } \
-    { expr { [statusline_is "Interrupted"] && [screen_is 1 0 [list "" "~"]] } }
+    { expr { [screen_is 1 0 [list "" "~"]] &&
+	     ( $vim || [statusline_is "Interrupted"] ) } }
 
 exp_send ":map! x axy\r"
 exp_send "ax"
-# The x should send it into a loop, appending content
+# The x should send it into a loop, appending content madly.
 # POSIX says "If there is a currently executing command, it shall be aborted
-# and a message displayed" and nvi shows "Interrupted: mapped keys discarded".
+# and a message displayed".
+# and nvi shows "Interrupted: mapped keys discarded".
 sleep 1
 exp_send "\x03"
 term_expect timeout { term_dump 113.dump; exit 113 } \
-    { expr { [string compare "Interrupted" \
-			     [string range [statusline] 0 10]] == 0 } }
+    { expr { $vim || [statusline_starts "Interrupted"] } }
 
+sleep 1
 # Now it should react to ":"
 exp_send ":"
 term_expect timeout { term_dump 114.dump; exit 114 } \

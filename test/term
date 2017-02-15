@@ -4,8 +4,7 @@
 exec tclsh "$0" ${1+"$@"}
 
 # This file is included by all tests and includes an implementation of "term"
-# (either tkterm or virterm), of term_expect and our term_utils.
-#
+# (either tkterm or virterm), of term_expect and our term_utils. #
 # 	Martin Guy <martinwguy@gmail.com>, January 2017.
 
 
@@ -49,8 +48,16 @@ if { [info exists ::env(TKTERM)] && $::env(TKTERM) != "" } {
 set timeout 1
 
 # Start the vi editor from the shell command prompt
+#
+# To test other vi clones
+# use	VI=nvi make check
+# or	VI="vim -c redraw" make check
 proc start_vi {} {
-    exp_send "exec ../src/xvi\r"
+    set vi ../src/xvi
+    if { [info exists ::env(VI)] && $::env(VI) != "" } {
+	set vi $::env(VI)
+    }
+    exp_send "exec $vi\r"
 }
 
 proc screen_is {crow ccol should} {
@@ -102,6 +109,16 @@ proc statusline_isnt {str} {
 	return FALSE
     } else {
 	return TRUE
+    }
+}
+
+# Is the status line (with trailing spaces stripped from it) this text?
+proc statusline_starts {str} {
+    global term
+    if { $str eq [string range [statusline] 0 [expr { [string length $str] - 1 }] ] } {
+	return TRUE
+    } else {
+	return FALSE
     }
 }
 

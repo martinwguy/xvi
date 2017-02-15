@@ -32,4 +32,9 @@ Another way to avoid needing X or root is to say
 	TKTERM=virterm make check
 but it doesn't work properly yet.
 
+To run other vi clones against this test suite, you can use
+	VI=nvi make check
+or
+	VI="vim -c redraw" make check
+
 	Martin Guy <martinwguy@gmail.com>, December 2016 - February 2017.

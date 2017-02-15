@@ -26,6 +26,13 @@
 " (For maze solving macros, see alt.sources or comp.editors)
 " 
 " Greg
+"
+" This is changed from the original:
+"	< map K 1Go
+"	> map K 1Gc$
+" so that it works with nvi (based on elvis) which starts with 0 lines, not 1.
+"
+" Martinwguy
 " 
 "
 " ------------ REAL FILE STARTS HERE ---------------
@@ -49,7 +56,7 @@ map C "fp
 map e "fy2l
 map E "hp
 map F "hy2l
-map K 1Go
+map K 1Gc$
 map M dG
 map N yy
 map O p
