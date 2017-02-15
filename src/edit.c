@@ -677,6 +677,22 @@ startreplace(c, repeat)
 int	c;
 int	repeat;
 {
+    /*
+     * 'r' on an empty line or 'Nr' when there are less than N characters
+     * under and after the cursor, is an error.
+     */
+    if (c == 'r') {
+	Posn *curp = curwin->w_cursor;
+	char *line = curp->p_line->l_text + curp->p_index;
+
+	if (repeat + 1 > strlen(line)) {
+	    beep(curwin);
+	    /* Failed commands interrupt redos and mapped commands */
+	    unstuff();
+	    return;
+	}
+    }
+
     if (!start_command(curwin)) {
 	return;
     }

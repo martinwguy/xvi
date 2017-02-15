@@ -1,0 +1,61 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test that 'r' on an empty line (or Nr with less than N characters
+# uder/after the cursor) fails.
+
+source term
+start_vi
+
+# Tests begin
+
+# Check it started up OK
+term_expect timeout { exit 100 } \
+    { screen_is 1 0 [list "" "~"] }
+
+# Try replace on an empty line. The 'r' should be ignored and the : should
+# take us to the command prompt.
+# Have to send these separately because a failed "r" unstuffs buffered input.
+exp_send "r"
+exp_send ":"
+term_expect timeout { exit 101 } \
+    { screen_is [expr $rows] 1 [list "" "~"] }
+
+# Try the same with a repeat count.
+exp_send "\x1Baabc\x1B0l"	;# sit on the b
+term_expect timeout { exit 102 } \
+    { screen_is 1 1 [list "abc" "~"] }
+
+# A multi-char replacement with exactly the right number of chars available
+# should be carried out.
+exp_send "2r"
+exp_send "X"
+term_expect timeout { exit 103 } \
+    { screen_is 1 2 [list "aXX" "~"] }
+
+exp_send "u0fb"
+term_expect timeout { exit 104 } \
+    { screen_is 1 1 [list "abc" "~"] }
+
+# A multi-char replacement with one char too few available should fail
+# and the : should take us to the command line.
+exp_send "3r"
+exp_send ":"
+term_expect timeout { exit 105 } \
+    { screen_is [expr $rows] 1 [list "abc" "~"] }
+exp_send "\x1B"
+
+# Check that a failed 'r' cancels a map command.
+# If the 'r' fails as it should, the rest of the X macro should be ignored.
+# If the 'r' is done, it will insert an A and append "bcde" after it.
+exp_send ":map X rAabcde\r"
+exp_send "0DX"
+term_expect timeout { term_dump 106.dump; exit 106 } \
+    { screen_is 1 0 [list "" "~"] }
+exp_send "\x1B"
+
+exp_send ":q!\r"
+
+exit 0
