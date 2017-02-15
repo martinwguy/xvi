@@ -121,6 +121,12 @@ int	ch;
 	    ch = CTRL('C');
     }
 
+    /* Nuls are disallowed whether literal or not */
+    if (ch == CTRL('@')) {
+	beep(win);
+	return(cmd_INCOMPLETE);
+    }
+
     if (!literal_next) {
 	switch (ch) {
 	case CTRL('Q'):
