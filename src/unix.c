@@ -101,10 +101,11 @@ FILE *fdopen(int fd, const char *mode);
      * Table of line speeds ... exactly 16 long, and the CBAUD mask
      * is 017 (i.e. 15) so we will never access outside the array.
      */
+# ifndef POSIX
 #ifndef CBAUD
 #	define CBAUD 017
 #endif
-    short	speeds[] = {
+    static short speeds[] = {
 	/* B0 */	0,
 	/* B50 */	50,
 	/* B75 */	75,
@@ -126,8 +127,11 @@ FILE *fdopen(int fd, const char *mode);
 	 * so there is just no way of legally including it.
 	 */
 	/* EXTB */	38400,		/* not defined at V.2 */
+#else
+	/* EXTB */	32767,		/* The best we can do */
 #endif
     };
+# endif /* !POSIX */
 
 #else	/* not TERMIO */
 
@@ -176,7 +180,9 @@ static	Termstate	cooked_state, raw_state;
 /*
  * Expected for termcap's benefit.
  */
-short		ospeed;			/* tty's baud rate */
+#ifndef AIX
+extern short		ospeed;			/* tty's baud rate */
+#endif
 
 /*
  * We sometimes use a lot of system calls while trying to read from
@@ -557,6 +563,7 @@ sys_init()
     (void) setvbuf(stdout, outbuffer, _IOFBF, sizeof(outbuffer));
 #endif
 
+#ifndef AIX
     /*
      * This is for termcap's benefit.
      */
@@ -569,6 +576,7 @@ sys_init()
 #else
     ospeed = cooked_state.sg_ospeed;
 #endif
+#endif /* AIX */
 
     /*
      * Find out how big the kernel thinks the window is.
