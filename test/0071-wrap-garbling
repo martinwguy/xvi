@@ -1,0 +1,42 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Test file for screen corruption issue 71:
+# inserting chars near the end of a 79-character line garbles the screen.
+#
+# This test fails with xterm but succeeds with tkterm or virterm :(
+# This may be due to them having a more limited set of terminal capabilities
+# (for example, that doesn't include "insert character" or "insert mode") or
+# It may be that they react differently to a cursor motion to column 81
+# followed by backspaces.
+#
+# Note: after commit 83192720e, this bug has been papered over:
+# To see it again you need to remove the call to s_inschar() in edit.c
+# and perform the below test manually using xterm or similar.
+#
+# When this test fails, the Y is printed over the top of the X.
+#
+
+source term
+start_vi
+
+# Tests begin
+
+# Check it started up OK
+set timeout 1
+term_expect timeout { exit 100 } \
+	{ screen_is 1 0 [list "" "~"] }
+
+# The bug places the Y on top of the X.
+exp_send "79aa\x1BiXY"
+term_expect timeout { exit 101 } \
+	{ screen_is 2 0 [list "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXY" "a" "~"] }
+
+
+exp_send "q!\r"
+
+exit 0
+
