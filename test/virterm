@@ -100,8 +100,11 @@ if {$termcap} {
     set env(TERMCAP) {tt:
 	:cm=\E[%d;%dH:
 	:up=\E[A:
+	:nd=\E[C:
 	:cl=\E[H\E[J:
-	:do=^J:
+	:do=\n:
+	:sf=\n:
+	:cr=\r:
 	:so=\E[7m:
 	:se=\E[m:
 	:nd=\E[C:
@@ -120,6 +123,7 @@ if {$terminfo} {
 	cuu1=\E[A,
 	cuf1=\E[C,
 	clear=\E[H\E[J,
+	cud1=\n,
 	ind=\n,
 	cr=\r,
 	smso=\E[7m,

@@ -147,7 +147,9 @@ if {$termcap} {
 	:nd=\E[C:
 	:cl=\E[H\E[J:
 	:ce=\E[K:
-	:do=^J:
+	:do=\n:
+	:sf=\n:
+	:cr=\r:
 	:so=\E[7m:
 	:se=\E[m:
 	:k1=\EOP:
@@ -177,6 +179,7 @@ if {$terminfo} {
 	cuf1=\E[C,
 	clear=\E[H\E[J,
 	el=\E[K,
+	cud1=\n,
 	ind=\n,
 	cr=\r,
 	smso=\E[7m,
