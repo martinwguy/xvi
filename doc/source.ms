@@ -133,17 +133,20 @@ implementation has
 and
 .B unix.h
 for the system interface module, and
-.B termcap.c
+.BR tcapmain.c ,
+.B tcap_scr.c
 and
 .B termcap.h
 for the terminal interface module; this should
 work reasonably with any full-duplex terminal that can be
-described in the
+described by the
 .B termcap
-database.
-On consoles with memory-mapped displays, or systems with graphic user
-interfaces, however, it may be possible to achieve faster
-display updating, and perhaps other benefits, by replacing
+and
+.B terminfo
+databases.
+On consoles with memory-mapped displays and systems with graphic user
+interfaces, it may be possible to achieve faster display updating
+and perhaps other benefits by replacing
 the
 .B termcap
 module with another one that makes better use of
@@ -213,13 +216,13 @@ System	Makefile	Source Files
 _
 .sp 0.5v
 UNIX
-  BSD	\fBmakefile.bsd\fP	\fBunix.[ch] termcap.[ch]\fP
-  System V \fB\(dg\fP	\fBmakefile.usg\fP	\fBunix.[ch] termcap.[ch]\fP
-  AIX	\fBmakefile.aix\fP	\fBunix.[ch] termcap.[ch]\fP
-  ULTRIX	\fBmakefile.ult\fP	\fBunix.[ch] termcap.[ch]\fP
-  Xenix \fB\(dg\fP	\fBmakefile.xen\fP	\fBunix.[ch] termcap.[ch]\fP
-  POSIX (e.g. BSDI)	\fBmakefile.pos\fP	\fBunix.[ch] termcap.[ch]\fP
-  SunOS	\fBmakefile.sun\fP	\fBunix.[ch] termcap.[ch]\fP
+  BSD	\fBmakefile.bsd\fP	\fBunix.[ch] tcap*.c termcap.h\fP
+  System V \fB\(dg\fP	\fBmakefile.usg\fP	\fBunix.[ch] tcap*.c termcap.h\fP
+  AIX	\fBmakefile.aix\fP	\fBunix.[ch] tcap*.c termcap.h\fP
+  ULTRIX	\fBmakefile.ult\fP	\fBunix.[ch] tcap*.c termcap.h\fP
+  Xenix \fB\(dg\fP	\fBmakefile.xen\fP	\fBunix.[ch] tcap*.c termcap.h\fP
+  POSIX (e.g. BSDI)	\fBmakefile.pos\fP	\fBunix.[ch] tcap*.c termcap.h\fP
+  SunOS	\fBmakefile.sun\fP	\fBunix.[ch] tcap*.c termcap.h\fP
   SunView	\fBmakefile.sv\fP	\fBunix.[ch] sunview.h\fP
 		\fBsunfront.c sunback.c\fP
 		\fBxvi.icn\fP
@@ -255,7 +258,7 @@ _
 .sp 0.5v
 QNX
   Version 2/3 (CII)	\fBmakefile.qnx\fP	\fBqnx.[ch]\fP
-  Version 4 (Watcom C)	\fBmakefile.qn4\fP	\fBunix.[ch] termcap.[ch]\fP
+  Version 4 (Watcom C)	\fBmakefile.qn4\fP	\fBunix.[ch] tcap*.c termcap.h\fP
 .sp 0.5v
 _
 .sp 0.5v
