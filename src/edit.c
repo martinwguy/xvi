@@ -406,6 +406,7 @@ int	c;
     /*
      * Update the screen.
      */
+    s_inschar(curwin, c);
     updateline(curwin, nlines != plines(curwin, curpos->p_line));
 
     /*
