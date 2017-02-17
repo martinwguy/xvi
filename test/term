@@ -3,8 +3,12 @@
 # The next line is executed by /bin/sh, but not tcl \
 exec tclsh "$0" ${1+"$@"}
 
-# This file is included by all tests and includes an implementation of "term"
-# (either tkterm or virterm), of term_expect and our term_utils. #
+
+# term, part of the test suite for xvi
+#
+# This file is included by all tests, it chooses an implementation of "term"
+# and term_expect (either tkterm or virterm) and provides some utilities.
+#
 # 	Martin Guy <martinwguy@gmail.com>, January 2017.
 
 
@@ -13,45 +17,32 @@ exec tclsh "$0" ${1+"$@"}
 #	TKTERM=virterm make check
 # or
 #	DISPLAY= make check
+# The choice is remembered in tcl global $tkterm
 
 if { [info exists ::env(TKTERM)] && $::env(TKTERM) != "" } {
-    source $::env(TKTERM)
+    set tkterm $::env(TKTERM)
 } else {
     if { ! [info exists ::env(DISPLAY)] || $::env(DISPLAY) == "" } {
-	source virterm
+	set tkterm virterm
     } else {
-	source tkterm
+	set tkterm tkterm
     }
 }
+source $tkterm
 
-# Utility functions for xvi's tkterm test rig
-
-# Does the screen image start with the lines in the given list
-# and is the cursor at the expected position?
-#
-# If you are testing the first line of the screen against a literal string,
-# you can say:
-#	if [screen_is 1 0 "{Hello, world!}"] { ;# A list of one line
-# or
-#	term_expect 1 0 timeout { exit 100 } \
-#		 { screen_is "{Hello, world!}" }
-#
-# You can also check the first lines of the screen by passing a list of lines -
-# see the "hanoi" test for an example of this.
-# In the string between { and }, no further characters need escaping but
-# there is no way to include an unmatched { character.
-# If you use "list" to create the list, you can include the line strings in
-# double quotes, within which you need to escape literal $, [ and \ with a
-# preceding \ and can use sequences like \r mean newline and so on.
-
-# Most tests use timeouts but 1 second is appropriate than the default of 10.
+# Most tests use timeouts but 1 sec is more appropriate than the default of 10.
 set timeout 1
+
+#
+# Utility functions for xvi's tkterm test rig
+#
 
 # Start the vi editor from the shell command prompt
 #
 # To test other vi clones
 # use	VI=nvi make check
 # or	VI="vim -c redraw" make check
+
 proc start_vi {} {
     set vi ../src/xvi
     if { [info exists ::env(VI)] && $::env(VI) != "" } {
@@ -59,6 +50,38 @@ proc start_vi {} {
     }
     exp_send "exec $vi\r"
 }
+
+# screen_is row column lines
+#
+# Does the screen image start with the lines in the given list
+# and is the cursor at the expected position?
+# row is 1-24 or 25, column is 0-79 and lines is a list of strings or a
+# simple string not containing spaces.
+#
+# To test if the first three lines are "one", "two" and "three"
+# with the cursor top left, you can say:
+#	if [screen_is 1 0 [list "one" "two" "three"] ] { ...
+# or
+#	term_expect timeout { exit 100 } \
+#		 { screen_is 1 0 "abc" }
+#
+# To test if the first line is "abc" with the cursor top left, you can also say:
+#	if [screen_is 1 0 "abc"] { ...
+# or
+#	term_expect timeout { exit 100 } \
+#		 { screen_is 1 0 "abc" }
+# but if you need to test the first line of the screen against
+# a string that contains spaces, you need to use a list of one line,
+# for which the shortest syntax is:
+#	if [screen_is 1 0 "{Hello, world!}"] {
+# or
+#	term_expect timeout { exit 100 } \
+#		 { screen_is 1 0 "{Hello, world!}" }
+#
+# In double-quoted strings, backslash escapes, string substitution and
+# command execution with [ are available.
+# In strings between { and } instead, no further characters are special but
+# there is no way to include an unmatched { character.
 
 proc screen_is {crow ccol should} {
     global term
@@ -120,6 +143,14 @@ proc statusline_starts {str} {
     } else {
 	return FALSE
     }
+}
+
+# tksleep works around a presumed ug in tkterm, which forces us to wait
+# for a second between exp_sending characers (especially with a trailing Esc)
+# and calling term-expect.  virterm seems not to need this.
+proc tksleep {} {
+    global tkterm
+    if { $tkterm eq "tkterm" } { sleep 1 }
 }
 
 # Write the screen contents to a named file

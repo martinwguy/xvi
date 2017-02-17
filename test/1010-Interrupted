@@ -108,12 +108,15 @@ exp_send "ax"
 # POSIX says "If there is a currently executing command, it shall be aborted
 # and a message displayed".
 # and nvi shows "Interrupted: mapped keys discarded".
+
+# Give it time to fill the screen with a's
 sleep 1
+
+# Interrupt it
 exp_send "\x03"
 term_expect timeout { term_dump 113.dump; exit 113 } \
     { expr { $vim || [statusline_starts "Interrupted"] } }
 
-sleep 1
 # Now it should react to ":"
 exp_send ":"
 term_expect timeout { term_dump 114.dump; exit 114 } \

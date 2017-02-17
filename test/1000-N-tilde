@@ -15,7 +15,7 @@ exp_send "\x1B"
 	# FAILS because it thinks the cursor is in the wrong position.
 	# WORKS if you send \x03 instead of \x1B (^C instead of Esc)
 	# WORKS if you "sleep 1" between here and the term_expect
-sleep 1
+tksleep
 term_expect	timeout { exit 101 } \
 		{ screen_is 1 7 "abcdefgh" }
 
@@ -33,7 +33,7 @@ exp_send "0lll"
 	# FAILS because it thinks the cursor is in the wrong position.
 	# tkterm continues reporting the cursor at (1,0)
 	# WORKS if you "sleep 1" between here and term_expect
-sleep 1
+tksleep
 term_expect	timeout { exit 104 } \
     		{ screen_is 1 3 "abcdefgh" }
 # Set uppercase DEF

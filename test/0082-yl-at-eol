@@ -14,7 +14,7 @@ term_expect timeout { exit 100 } \
 	{ screen_is 1 0 [list "" "~"] }
 
 exp_send "aabcde\x1B"
-sleep 1
+tksleep
 term_expect timeout { exit 101 } \
     { expr { [screen_is 1 4 [list "abcde" "~"]] } }
 

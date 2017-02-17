@@ -16,8 +16,6 @@ exp_send ":so hanoi\r"
 # vim has trailing line,column info.
 # nvi leaves the status line blank if successful
 
-sleep 1
-
 set screen [list "" "~"]
 term_expect timeout { exit 100 } \
     { screen_is 1 0 $screen }

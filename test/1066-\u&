@@ -14,7 +14,7 @@ source term
 start_vi
 
 exp_send "aThe cat sat on the mat.\x1B"
-sleep 1
+tksleep
 term_expect	timeout { exit 101 } \
 		{ screen_is 1 22 "{The cat sat on the mat.}" }
 

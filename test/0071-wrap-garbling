@@ -15,7 +15,8 @@ exec tclsh "$0" ${1+"$@"}
 #
 # Note: after commit 83192720e, this bug has been papered over:
 # To see it again you need to remove the call to s_inschar() in edit.c
-# and perform the below test manually using xterm or similar.
+# (or git checkout 94d149b7) # and perform the below test manually
+# using xterm or similar.
 #
 # When this test fails, the Y is printed over the top of the X.
 #
