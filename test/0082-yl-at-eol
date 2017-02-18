@@ -16,35 +16,35 @@ term_expect timeout { fail 100 } \
 exp_send "aabcde\x1B"
 tksleep
 term_expect timeout { fail 101 } \
-    { expr { [screen_is 1 4 [list "abcde" "~"]] } }
+    { screen_is 1 4 [list "abcde" "~"] }
 
 # Try a one-character yank at end of line
 exp_send ylp
 term_expect timeout { fail 102 } \
-    { expr { [screen_is 1 5 [list "abcdee" "~"]] } }
+    { screen_is 1 5 [list "abcdee" "~"] }
 
 # Restore abcde and try exactly the last 2 characters
 exp_send {x$hd2l}
 term_expect timeout { fail 103 } \
-    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+    { screen_is 1 2 [list "abc" "~"] }
 # Check the prefix the other way round too
 exp_send {p$h2dl}
 term_expect timeout { fail 113 } \
-    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+    { screen_is 1 2 [list "abc" "~"] }
 
 # Restore and sitting on the d, try taking more than there are
 # (it should take 2)
 exp_send {p$hd3l}
 term_expect timeout { fail 104 } \
-    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+    { screen_is 1 2 [list "abc" "~"] }
 exp_send {p$h3dl}
 term_expect timeout { fail 114 } \
-    { expr { [screen_is 1 2 [list "abc" "~"]] } }
+    { screen_is 1 2 [list "abc" "~"] }
 
 # Check that a numeric prefix is OK in the middle of the line too.
 exp_send {p0l2dl}
 term_expect timeout { fail 105 } \
-    { expr { [screen_is 1 1 [list "ade" "~"]] } }
+    { screen_is 1 1 [list "ade" "~"] }
 
 exp_send ":q!\r"
 
