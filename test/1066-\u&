@@ -13,6 +13,10 @@ exec tclsh "$0" ${1+"$@"}
 source term
 start_vi
 
+# Check it started up OK
+term_expect timeout { fail 100 } \
+    { screen_is 1 0 [list "" "~"] }
+
 exp_send "aThe cat sat on the mat.\x1B"
 tksleep
 term_expect	timeout { fail 101 } \

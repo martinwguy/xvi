@@ -95,8 +95,8 @@ set blankline ""
 set env(LINES) $rows
 set env(COLUMNS) $cols
 
-set env(TERM) "tt"
 if {$termcap} {
+    set env(TERM) "tt"
     set env(TERMCAP) {tt:
 	:cm=\E[%d;%dH:
 	:up=\E[A:
