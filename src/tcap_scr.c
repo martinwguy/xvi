@@ -79,6 +79,7 @@ static	int		scroll P((VirtScr *, int, int, int));
 static	int		can_scroll P((VirtScr *, int, int, int));
 static	void		flushout P((VirtScr *));
 static	void		pbeep P((VirtScr *));
+static	void		do_auto_margin_motion P((void));
 
 VirtScr	tcap_scr = {
     NULL,		/* pv_sys_ptr       */
@@ -187,6 +188,7 @@ static	bool_t	can_backspace = FALSE;	/* true if can backspace (bs/bc) */
 static	bool_t	can_fwdspace = FALSE;	/* true if can forward space (nd) */
 static	bool_t	can_movedown = FALSE;	/* true if can move down (do) */
 static	bool_t	auto_margins;		/* true if AM is set */
+static	bool_t	eat_newline_glitch;	/* "xn" capability */
 
 /*
  * We use this table to perform mappings from cursor keys
@@ -714,6 +716,35 @@ VirtScr	*scr;
     oflush();
 }
 
+/*
+ * We have just output a character on the last column of the screen.
+ * This function figures out where that leaves the cursor.
+ *
+ * When this is called, real_col should == CO.
+ */
+static void
+do_auto_margin_motion()
+{
+    if (real_col != CO) abort();
+
+    if (auto_margins) {
+	if (!eat_newline_glitch) {
+	    /* Normal wrap */
+	    real_col = 0;
+	    real_row += 1;
+	} else {
+	    /*
+	     * The glitch would eat a following newline so force
+	     * the next motion to be done with a CM string.
+	     */
+	    optimise = FALSE;
+	}
+    } else {
+	/* !auto_margins means the cursor remains at end of line. */
+	real_col--;
+    }
+}
+
 /**************************************************************************************
  **************************************************************************************
  **************************************************************************************
@@ -730,15 +761,9 @@ register int	c;
     xyupdate();
     real_col++;
     virt_col++;
-    if (real_col >= CO) {
-	if (auto_margins) {
-	    virt_col = (real_col = 0);
-	    virt_row = (real_row += 1);
-	} else {
-	    optimise = FALSE;
-	}
-    }
     moutch(c);
+    if (real_col >= CO)
+	do_auto_margin_motion();
 }
 
 /*
@@ -761,14 +786,8 @@ register char	*s;
      * the calling code not to use outstr if the string is going to
      * wrap around.
      */
-    if (real_col >= CO) {
-	if (auto_margins) {
-	    virt_col = (real_col %= CO);
-	    virt_row = (real_row += 1);
-	} else {
-	    optimise = FALSE;
-	}
-    }
+    if (real_col >= CO)
+	do_auto_margin_motion();
 }
 
 /*
@@ -821,7 +840,8 @@ unsigned int	*pcolumns;
     /*
      * Booleans.
      */
-    auto_margins = (bool_t) (tgetflag("am") && !tgetflag("xn"));
+    auto_margins	= (bool_t) tgetflag("am");
+    eat_newline_glitch	= (bool_t) tgetflag("xn");
 
     /*
      * Integers.
