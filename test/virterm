@@ -98,7 +98,7 @@ set env(COLUMNS) $cols
 if {$termcap} {
     set env(TERM) "tt"
     set env(TERMCAP) {tt:
-	:cm=\E[%d;%dH:
+	:cm=\E[%i%d;%dH:
 	:up=\E[A:
 	:nd=\E[C:
 	:cl=\E[H\E[J:
@@ -119,7 +119,7 @@ if {$terminfo} {
     set file [open $ttsrc w]
 
     puts $file {virterm|terminal emulator derived from Don Libes' tkterm,
-	cup=\E[%p1%d;%p2%dH,
+	cup=\E[%i%p1%d;%p2%dH,
 	cuu1=\E[A,
 	cuf1=\E[C,
 	clear=\E[H\E[J,
@@ -326,8 +326,8 @@ expect_before {
 		term_cursor_changed
 	} -re "^\x1b\\\[(\[0-9]*);(\[0-9]*)H" {
 		# (cup,cm) Move to row y col x
-		set cur_row [expr $expect_out(1,string)+1]
-		set cur_col $expect_out(2,string)
+		set cur_row $expect_out(1,string)
+		set cur_col [expr $expect_out(2,string) - 1]
 		term_cursor_changed
 	} "^\x1b\\\[H\x1b\\\[J" {
 		# (clear,cl) Clear screen

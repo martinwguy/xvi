@@ -142,7 +142,7 @@ if {$termcap} {
     set env(TERMCAP) {tt:
 	:ks=\E[?1h\E:
 	:ke=\E[?1l\E>:
-	:cm=\E[%d;%dH:
+	:cm=\E[%i%d;%dH:
 	:up=\E[A:
 	:nd=\E[C:
 	:cl=\E[H\E[J:
@@ -174,7 +174,7 @@ if {$terminfo} {
     puts $file {tkterm|Don Libes' tk text widget terminal emulator,
 	smkx=\E[?1h\E,
 	rmkx=\E[?1l\E>,
-	cup=\E[%p1%d;%p2%dH,
+	cup=\E[%i%p1%d;%p2%dH,
 	cuu1=\E[A,
 	cuf1=\E[C,
 	clear=\E[H\E[J,
@@ -461,8 +461,8 @@ expect_background {
 	term_update_cursor
     } -re "^\x1b\\\[(\[0-9]*);(\[0-9]*)H" {
 	# (cup,cm) Move to row y col x
-	set cur_row [expr $expect_out(1,string)+1]
-	set cur_col $expect_out(2,string)
+	set cur_row $expect_out(1,string)
+	set cur_col [expr $expect_out(2,string) - 1]
 	term_update_cursor
     } "^\x1b\\\[H\x1b\\\[J" {
 	# (clear,cl) Clear screen
