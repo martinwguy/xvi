@@ -796,7 +796,7 @@ compiled into the parameter table.
 .NH 2
 Notes on Termcap Implementation
 .LP
-There exists a \fBtermcap\fP implementation of the terminal interface,
+The \fBtermcap\fP implementation of the terminal interface is
 currently only used for the
 .UX
 port.
