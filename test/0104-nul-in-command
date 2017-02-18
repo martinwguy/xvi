@@ -11,7 +11,7 @@ start_vi
 # Tests begin
 
 # Check it started up OK
-term_expect timeout { exit 100 } \
+term_expect timeout { fail 100 } \
     { screen_is 1 0 [list "" "~"] }
 
 # On the command line...
@@ -20,13 +20,13 @@ exp_send ":"
 # ... nul should be ignored
 exp_send "a\x00"
 exp_send "b"
-term_expect timeout { term_dump "101.dump"; exit 101 } \
+term_expect timeout { term_dump "101.dump"; fail 101 } \
     { statusline_is ":ab" }
 
 # ... as should Control-V nul
 exp_send "c\x16\x00"
 exp_send "d"
-term_expect timeout { exit 101 } \
+term_expect timeout { fail 102 } \
     { statusline_is ":abcd" }
 
 exp_send "\b\b\b\bq!\r"

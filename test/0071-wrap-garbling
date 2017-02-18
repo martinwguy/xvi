@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # -*- tcl -*-
 # The next line is executed by /bin/sh, but not tcl \
 exec tclsh "$0" ${1+"$@"}
@@ -28,12 +28,12 @@ start_vi
 
 # Check it started up OK
 set timeout 1
-term_expect timeout { exit 100 } \
+term_expect timeout { fail 100 } \
 	{ screen_is 1 0 [list "" "~"] }
 
 # The bug places the Y on top of the X.
 exp_send "79aa\x1BiXY"
-term_expect timeout { exit 101 } \
+term_expect timeout { fail 101 } \
 	{ screen_is 2 0 [list "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXY" "a" "~"] }
 
 

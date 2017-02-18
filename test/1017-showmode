@@ -52,13 +52,13 @@ proc getmode {} {
 # Tests begin
 
 # Check it started up OK
-term_expect timeout { exit 100 } \
+term_expect timeout { fail 100 } \
     { screen_is 1 0 [list "" "~"] }
 
 # Set the parameter. If it succeeds, the command should remain.
 # Nvi, instead, wipes the command but displays "Command" bottom right.
 exp_send ":se showmode\r"
-term_expect timeout { exit 101 } \
+term_expect timeout { fail 101 } \
     { expr { [cursor_at 1 0] && ( [statusline_starts ":se showmode"] ||
 				  [string trimleft [statusline]] eq "Command"
 	                        )
@@ -66,53 +66,53 @@ term_expect timeout { exit 101 } \
 
 # See if the flag appears in insert mode
 exp_send "i"
-term_expect timeout { puts "mode is [getmode]"; exit 102 } { expr { [getmode] eq "INSERT" } }
+term_expect timeout { puts "mode is [getmode]"; fail 102 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
-term_expect timeout { exit 103 } { expr { [getmode] eq "" } }
+term_expect timeout { fail 103 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in append mode
 exp_send "a"
-term_expect timeout { exit 104 } { expr { [getmode] eq "INSERT" } }
+term_expect timeout { fail 104 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
-term_expect timeout { exit 105 } { expr { [getmode] eq "" } }
+term_expect timeout { fail 105 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in change mode
 exp_send "C"
-term_expect timeout { exit 106 } { expr { [getmode] eq "INSERT" } }
+term_expect timeout { fail 106 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
-term_expect timeout { exit 107 } { expr { [getmode] eq "" } }
+term_expect timeout { fail 107 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in substitute mode
 exp_send "s"
-term_expect timeout { exit 108 } { expr { [getmode] eq "INSERT" } }
+term_expect timeout { fail 108 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "\x1B"
-term_expect timeout { exit 109 } { expr { [getmode] eq "" } }
+term_expect timeout { fail 109 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in single-character replace mode
 # FIrst, put a character there to replace
 exp_send "ia\x1B"
 tksleep
-term_expect timeout { exit 110 } { screen_is 1 0 [list "a" "~"] }
+term_expect timeout { fail 110 } { screen_is 1 0 [list "a" "~"] }
 exp_send "r"
 				   # vim doesn't show anything for 'r'
-term_expect timeout { exit 111 } { expr { $vim || [getmode] eq "REPLACE" } }
+term_expect timeout { fail 111 } { expr { $vim || [getmode] eq "REPLACE" } }
 # See if it disappears after replacing one character
 exp_send "a"
-term_expect timeout { term_dump 112.dump; exit 112 } { expr { [getmode] eq "" } }
+term_expect timeout { fail 112 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in multi-character replace mode
 exp_send "R"
-term_expect timeout { exit 113 } { expr { [getmode] eq "REPLACE" } }
+term_expect timeout { fail 113 } { expr { [getmode] eq "REPLACE" } }
 # See if it remains
 exp_send "aaa"
-term_expect timeout { exit 114 } { expr { [getmode] eq "REPLACE" } }
+term_expect timeout { fail 114 } { expr { [getmode] eq "REPLACE" } }
 # See if it disappears after pressing Escape
 exp_send "\x1B"
-term_expect timeout { exit 115 } { expr { [getmode] eq "" } }
+term_expect timeout { fail 115 } { expr { [getmode] eq "" } }
 
 exp_send ":q!\r"
 

@@ -145,12 +145,20 @@ proc statusline_starts {str} {
     }
 }
 
-# tksleep works around a presumed ug in tkterm, which forces us to wait
-# for a second between exp_sending characers (especially with a trailing Esc)
-# and calling term-expect.  virterm seems not to need this.
+# tksleep works around a presumed bug in tkterm which forces us to wait
+# for a second between exp_sending characters (especially with a trailing Esc)
+# and calling term_expect.  virterm seems not to need this.
 proc tksleep {} {
     global tkterm
     if { $tkterm eq "tkterm" } { sleep 1 }
+}
+
+# What to do when a test fails
+proc fail {status} {
+    if { [info exists ::env(DUMP)] && $::env(DUMP) != "" } {
+	term_dump $::env(DUMP)
+    }
+    exit $status
 }
 
 # Write the screen contents to a named file

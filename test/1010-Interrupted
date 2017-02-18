@@ -13,7 +13,7 @@ start_vi
 # Set the status line to anything other than "Interrupted"
 proc clear_statusline { } {
     exp_send "\x07"	;# Ctrl-G prints the current filename etc
-    term_expect timeout { exit 110 } \
+    term_expect timeout { fail 110 } \
 	{ statusline_isnt "Interrupted" }
 }
 	
@@ -22,7 +22,7 @@ proc clear_statusline { } {
 
 # Check it started up OK
 set timeout 1
-term_expect timeout { exit 100 } \
+term_expect timeout { fail 100 } \
 	{ screen_is 1 0 [list "" "~"] }
 
 
@@ -33,7 +33,7 @@ term_expect timeout { exit 100 } \
 set vim FALSE	; # Are we running the tests using vim?
 
 exp_send "\x03"
-term_expect timeout { term_dump "101.dump"; exit 101 } \
+term_expect timeout { fail 101 } \
     { expr { [screen_is 1 0 [list "" "~"]] && \
 	[statusline_is "Interrupted"] } } { } \
     { expr { [screen_is 1 0 [list "" "~"]] && \
@@ -49,7 +49,7 @@ term_expect timeout { term_dump "101.dump"; exit 101 } \
 
 clear_statusline
 exp_send "z\x03"
-term_expect timeout { exit 102 } \
+term_expect timeout { fail 102 } \
     { expr { [screen_is 1 0 [list "" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
@@ -58,10 +58,10 @@ term_expect timeout { exit 102 } \
 
 clear_statusline
 exp_send "ii"
-term_expect timeout { exit 103 } \
+term_expect timeout { fail 103 } \
     { screen_is 1 1 "i" }
 exp_send "\x03"
-term_expect timeout { exit 104 } \
+term_expect timeout { fail 104 } \
     { expr { [screen_is 1 0 [list "i" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
@@ -70,13 +70,13 @@ term_expect timeout { exit 104 } \
 
 clear_statusline
 exp_send "0Daabc\x1Bh"
-term_expect timeout { exit 105 } \
+term_expect timeout { fail 105 } \
     { screen_is 1 1 "abc" }
 exp_send "RX"
-term_expect timeout { exit 106 } \
+term_expect timeout { fail 106 } \
     { screen_is 1 2 "aXc" }
 exp_send "\x03"
-term_expect timeout { exit 107 } \
+term_expect timeout { fail 107 } \
     { expr { [screen_is 1 1 "aXc"] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
@@ -84,10 +84,10 @@ term_expect timeout { exit 107 } \
 
 clear_statusline
 exp_send "0D:"
-term_expect timeout { exit 108 } \
+term_expect timeout { fail 108 } \
     { expr { [statusline_is ":"] && [screen_is $rows 1 [list "" "~"]] } }
 exp_send "\x03"
-term_expect timeout { exit 109 } \
+term_expect timeout { fail 109 } \
     { expr { [screen_is 1 0 [list "" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
@@ -98,7 +98,7 @@ exp_send ":map x y\r"
 exp_send ":map y x\r"
 exp_send "x"
 exp_send "\x03"
-term_expect timeout { exit 111 } \
+term_expect timeout { fail 111 } \
     { expr { [screen_is 1 0 [list "" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
@@ -114,12 +114,12 @@ sleep 1
 
 # Interrupt it
 exp_send "\x03"
-term_expect timeout { term_dump 113.dump; exit 113 } \
+term_expect timeout { fail 113 } \
     { expr { $vim || [statusline_starts "Interrupted"] } }
 
 # Now it should react to ":"
 exp_send ":"
-term_expect timeout { term_dump 114.dump; exit 114 } \
+term_expect timeout { fail 114 } \
     { expr { [statusline_is ":"] && [cursor_at $rows 1] } }
 
 exp_send "q!\r"

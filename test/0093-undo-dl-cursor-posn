@@ -12,43 +12,43 @@ source term
 start_vi
 
 # Check it started up OK
-term_expect timeout { exit 100 } \
+term_expect timeout { fail 100 } \
 	{ screen_is 1 0 [list "" "~"] }
 
 exp_send "aabcde\x1B"
 tksleep
-term_expect timeout { exit 101 } \
+term_expect timeout { fail 101 } \
     { expr { [screen_is 1 4 [list "abcde" "~"]] } }
 
 # Try a one-character delete in middle of the line
 exp_send "0ll"
-term_expect timeout { exit 102 } \
+term_expect timeout { fail 102 } \
     { expr { [screen_is 1 2 [list "abcde" "~"]] } }
 exp_send "dl"
-term_expect timeout { exit 103 } \
+term_expect timeout { fail 103 } \
     { expr { [screen_is 1 2 [list "abde" "~"]] } }
 exp_send "u"
-term_expect timeout { exit 104 } \
+term_expect timeout { fail 104 } \
     { expr { [screen_is 1 2 [list "abcde" "~"]] } }
 
 # Try deleting 2 characters
 exp_send "2dl"
-term_expect timeout { exit 105 } \
+term_expect timeout { fail 105 } \
     { expr { [screen_is 1 2 [list "abe" "~"]] } }
 exp_send "u"
-term_expect timeout { exit 106 } \
+term_expect timeout { fail 106 } \
     { expr { [screen_is 1 2 [list "abcde" "~"]] } }
 
 # Try deleting the last 2 characters
 exp_send "l"
 tksleep
-term_expect timeout { exit 107 } \
+term_expect timeout { fail 107 } \
     { expr { [screen_is 1 3 [list "abcde" "~"]] } }
 exp_send "2dl"
-term_expect timeout { exit 108 } \
+term_expect timeout { fail 108 } \
     { expr { [screen_is 1 2 [list "abc" "~"]] } }
 exp_send "u"
-term_expect timeout { exit 109 } \
+term_expect timeout { fail 109 } \
     { expr { [screen_is 1 3 [list "abcde" "~"]] } }
 
 exp_send ":q!\r"

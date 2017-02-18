@@ -17,11 +17,11 @@ exp_send ":so hanoi\r"
 # nvi leaves the status line blank if successful
 
 set screen [list "" "~"]
-term_expect timeout { exit 100 } \
+term_expect timeout { fail 100 } \
     { screen_is 1 0 $screen }
 term_expect timeout {
 	puts "After :so hanoi, status line is \"[statusline]\"."
-	exit 101
+	fail 101
     } \
     { statusline_starts ":so hanoi" } { } \
     { statusline_is "" } { }
@@ -29,14 +29,14 @@ term_expect timeout {
 # Run the initialization code
 exp_send "I"
 set screen [list "" "01234567" "0" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
-term_expect timeout { exit 111 } \
+term_expect timeout { fail 111 } \
     { screen_is 9 0 $screen }
 
 # Run the main loop
 exp_send "L"
 set timeout 10
 set screen [list "" "0" "01234567" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
-term_expect timeout { exit 112 } \
+term_expect timeout { fail 112 } \
     { screen_is 2 0 $screen }
 
 exp_send ":q!\r"
