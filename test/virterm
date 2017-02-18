@@ -102,6 +102,7 @@ if {$termcap} {
 	:up=\E[A:
 	:nd=\E[C:
 	:cl=\E[H\E[J:
+	:ce=\E[K:
 	:do=\n:
 	:sf=\n:
 	:cr=\r:
@@ -123,6 +124,7 @@ if {$terminfo} {
 	cuu1=\E[A,
 	cuf1=\E[C,
 	clear=\E[H\E[J,
+	el=\E[K,
 	cud1=\n,
 	ind=\n,
 	cr=\r,
@@ -224,6 +226,14 @@ proc term_down {} {
 	} else {
                 scrollup
 	}
+}
+
+
+proc term_clr_eol {} {
+	global cur_col cur_row termdata
+	# Truncating the string representation of the line is enough
+	set termdata($cur_row) \
+	    [string range $termdata($cur_row) 0 [expr $cur_col - 1]]
 }
 
 
@@ -333,6 +343,9 @@ expect_before {
 		# (clear,cl) Clear screen
 		term_init
 		term_cursor_changed
+	} "^\x1b\\\[K" {
+		# (el,ce) Clear to end of line
+		term_clr_eol
 	} "^\x1b\\\[7m" { # unsupported
 		# (smso,so) Begin standout mode
 		# set term_standout 1
