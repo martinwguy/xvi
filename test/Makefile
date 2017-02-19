@@ -14,4 +14,4 @@ nox:
 	@-if grep -q FAILED errs; then exit 1; else rm errs; exit 0; fi
 
 clean:
-	rm -f \#unnamed.* *.dump errs
+	rm -f \#unnamed.* *.dump core errs typescript
