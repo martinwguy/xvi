@@ -58,7 +58,6 @@ static	void		render_line P((wininfo_t *wi));
 static	VirtScr		*xw_new P((VirtScr *));
 static	void		xw_close P((VirtScr *));
 static	void		xw_clear_all P((VirtScr *));
-static	void		xw_clear_rows P((VirtScr *, int, int));
 static	void		xw_clear_line P((VirtScr *, int, int));
 static	void		xw_goto P((VirtScr *, int, int));
 static	void		xw_advise P((VirtScr *, int, int, int, char *));
@@ -85,7 +84,6 @@ VirtScr	xwnscr = {
     xw_new,		/* v_open	    */
     xw_close,		/* v_close	    */
     xw_clear_all,	/* v_clear_all	    */
-    xw_clear_rows,	/* v_clear_rows	    */
     xw_clear_line,	/* v_clear_line	    */
     xw_goto,		/* v_goto	    */
     xw_advise,		/* v_advise	    */
@@ -138,29 +136,6 @@ int ypos, xpos;
 
     wi->xpos = xpos;
     wi->ypos = ypos;
-}
-
-/*  Erase all the rows from start to end inclusive.
- */
-static void
-xw_clear_rows(vs, start, end)
-VirtScr *vs;
-int	start;
-int	end;
-{
-    wininfo_t *wi;
-
-    wi = GETWI(vs);
-
-    if (have_line(wi))
-	render_line(wi);
-
-    wn_set_area(wi->wn,
-		0, start * wi->cheight,
-		vs->pv_cols * wi->cwidth, (end - start + 1) * wi->cheight,
-		WN_BG);
-
-    xw_flush(vs);
 }
 
 /*  Erase display (may optionally home cursor).

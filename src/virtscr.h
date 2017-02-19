@@ -71,7 +71,6 @@ typedef struct virtscr {
     void	(*v_close) P((struct virtscr *));
 
     void	(*v_clear_all) P((struct virtscr *));
-    void	(*v_clear_rows) P((struct virtscr *, int, int));
     void	(*v_clear_line) P((struct virtscr *, int, int));
 
     void	(*v_goto) P((struct virtscr *, int, int));
@@ -106,7 +105,6 @@ typedef struct virtscr {
 #define	VSclose(vs)			((*(vs->v_close))(vs))
 #define	VSresize(vs, top, bot, l, r)	((*(vs->v_resize))(vs, top, bot, l, r))
 #define	VSclear_all(vs)			((*(vs->v_clear_all))(vs))
-#define	VSclear_rows(vs, start, end)	((*(vs->v_clear_rows))(vs, start, end))
 #define	VSclear_line(vs, row, col)	((*(vs->v_clear_line))(vs, row, col))
 #define	VSgoto(vs, row, col)		((*(vs->v_goto))(vs, row, col))
 #define	VSadvise(vs, r, c, i, str)	((*(vs->v_advise))(vs, r, c, i, str))

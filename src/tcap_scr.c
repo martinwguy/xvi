@@ -66,7 +66,6 @@
 static	VirtScr		*newscr P((VirtScr *, genptr *));
 static	void		closescr P((VirtScr *));
 static	void		clear_all P((VirtScr *));
-static	void		clear_rows P((VirtScr *, int, int));
 static	void		clear_line P((VirtScr *, int, int));
 static	void		xygoto P((VirtScr *, int, int));
 static	void		xyadvise P((VirtScr *, int, int, int, char *));
@@ -93,7 +92,6 @@ VirtScr	tcap_scr = {
     newscr,		/* v_open	    */
     closescr,		/* v_close	    */
     clear_all,		/* v_clear_all	    */
-    clear_rows,		/* v_clear_rows	    */
     clear_line,		/* v_clear_line	    */
     xygoto,		/* v_goto	    */
     xyadvise,		/* v_advise	    */
@@ -389,24 +387,6 @@ clear_all(scr)
 VirtScr	*scr;
 {
     erase_display();
-}
-
-/*ARGSUSED*/
-static void
-clear_rows(scr, start, end)
-VirtScr	*scr;
-int	start;
-int	end;
-{
-    if (start == 0 && end == (scr->pv_rows - 1)) {
-	erase_display();
-    } else {
-	int	row;
-
-	for (row = start; row <= end; row++) {
-	    clear_line(scr, row, 0);
-	}
-    }
 }
 
 /*ARGSUSED*/

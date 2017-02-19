@@ -722,7 +722,6 @@ scr_init(void)
     vs->v_open = newscr;
     vs->v_close = closescr;
     vs->v_clear_all = clear_all;
-    vs->v_clear_rows = clear_rows;
     vs->v_clear_line = clear_line;
     vs->v_goto = xygoto;
     vs->v_advise = xyadvise;
