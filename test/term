@@ -28,7 +28,19 @@ if { [info exists ::env(TKTERM)] && $::env(TKTERM) != "" } {
 	set tkterm tkterm
     }
 }
+
+# Harness to run tests without the "clear to end of line" capability
+if { [info exists ::env(NOCE)] } {
+    # Drop the "ce" capability from our terminal descriptions
+    exec sed {/\\E\[K/d} < $tkterm > "$tkterm-noce"
+    set tkterm "$tkterm-noce"
+}
+
 source $tkterm
+
+if { [info exists ::env(NOCE)] } {
+    exec rm "$tkterm"
+}
 
 # Most tests use timeouts but 1 sec is more appropriate than the default of 10.
 set timeout 1
@@ -150,7 +162,7 @@ proc statusline_starts {str} {
 # and calling term_expect.  virterm seems not to need this.
 proc tksleep {} {
     global tkterm
-    if { $tkterm eq "tkterm" } { sleep 1 }
+    if { [regexp "^tkterm" $tkterm] } { sleep 1 }
 }
 
 # What to do when a test fails
