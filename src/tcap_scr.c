@@ -560,9 +560,6 @@ int	colour;
 	switch (colour) {
 	case 0:				/* no colour */
 	    if (ME != NULL) {
-#ifdef SG_TEST
-		outchar('-');
-#endif
 		tputs(ME, 1, foutch);
 	    }
 	    break;
@@ -570,9 +567,6 @@ int	colour;
 	case 4:				/* double intensity */
 	    if (MD != NULL) {
 		tputs(MD, 1, foutch);
-#ifdef SG_TEST
-		outchar('+');
-#endif
 		break;
 	    }
 	    /* else FALL THROUGH */
@@ -580,9 +574,6 @@ int	colour;
 	default:			/* reverse */
 	    if (MR != NULL) {
 		tputs(MR, 1, foutch);
-#ifdef SG_TEST
-		outchar('+');
-#endif
 	    }
 	}
     }
@@ -896,9 +887,6 @@ unsigned int	*pcolumns;
     if (SG < 0) {
 	SG = 0;
     }
-#ifdef SG_TEST
-    SG++;
-#endif
 
     /*
      * Single-char strings - some of these may be strings,
