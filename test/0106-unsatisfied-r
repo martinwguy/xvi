@@ -52,7 +52,7 @@ exp_send "\x1B"
 # If the 'r' is done, it will insert an A and append "bcde" after it.
 exp_send ":map X rAabcde\r"
 exp_send "0DX"
-term_expect timeout { term_dump 106.dump; fail 106 } \
+term_expect timeout { fail 106 } \
     { screen_is 1 0 [list "" "~"] }
 exp_send "\x1B"
 

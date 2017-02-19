@@ -20,7 +20,7 @@ exp_send ":"
 # ... nul should be ignored
 exp_send "a\x00"
 exp_send "b"
-term_expect timeout { term_dump "101.dump"; fail 101 } \
+term_expect timeout { fail 101 } \
     { statusline_is ":ab" }
 
 # ... as should Control-V nul
