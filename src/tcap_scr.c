@@ -187,6 +187,7 @@ static	char	down;			/* down one line */
 static	bool_t	can_backspace = FALSE;	/* true if can backspace (bs/bc) */
 static	bool_t	can_fwdspace = FALSE;	/* true if can forward space (nd) */
 static	bool_t	can_movedown = FALSE;	/* true if can move down (do) */
+static	bool_t	can_clr_to_eol;		/* true if can clr-to-eol (ce) */
 static	bool_t	auto_margins;		/* true if AM is set */
 static	bool_t	eat_newline_glitch;	/* "xn" capability */
 
@@ -403,8 +404,7 @@ int	end;
 	int	row;
 
 	for (row = start; row <= end; row++) {
-	    tty_goto(row, 0);
-	    erase_line();
+	    clear_line(scr, row, 0);
 	}
     }
 }
@@ -416,9 +416,49 @@ VirtScr	*scr;
 int	row;
 int	col;
 {
-    tty_goto(row, col);
     if (col < scr->pv_cols) {
-	erase_line();
+	if (can_clr_to_eol) {
+	    tty_goto(row, col);
+	    erase_line();
+	} else {
+	    /*
+	     * Output spaces to clear to end of line.
+	     *
+	     * It's tempting to zero the internal line image and call
+	     * xvUpdateLine() but that would be a call to a higher level
+	     * in an otherwise strictly downward calling hierarchy.
+	     */
+
+	    /* Points to the line on-screen */
+	    Sline *ext_line = &scr->pv_ext_lines[row];
+	    char *ext;		/* Points to screen character to clear */
+	    char *colour;	/* and its colour */
+
+	    if (ext_line->s_used <= col) {
+		/* That part of the line is unused */
+		return;
+	    }
+	    /* Point to the first screen character to clear */
+	    ext    = ext_line->s_line + col;
+	    colour = ext_line->s_colour + col;
+
+	    while (*ext) {
+		if (*ext != ' ' || *colour != 0) {
+		    tty_goto(row, col);
+		    xyupdate();
+		    moutch(' ');
+		    real_col++;
+		    if (real_col == CO)
+			do_auto_margin_motion();
+		    /* Update external line */
+		    *ext = ' ';
+		    *colour = 0;
+		}
+		ext++;
+		colour++;
+		col++;
+	    }
+	}
     }
 }
 
@@ -725,8 +765,6 @@ VirtScr	*scr;
 static void
 do_auto_margin_motion()
 {
-    if (real_col != CO) abort();
-
     if (auto_margins) {
 	if (!eat_newline_glitch) {
 	    /* Normal wrap */
@@ -1025,6 +1063,7 @@ unsigned int	*pcolumns;
      */
     can_del_line = (DL != NULL);
     can_ins_line = (AL != NULL);
+    can_clr_to_eol = (CE != NULL);
     can_inschar = (IC != NULL) || (IM != NULL);
     can_scroll_area = (
 	(CS != NULL)
@@ -1102,14 +1141,30 @@ tty_endv()
 }
 
 /*
- * Erase the entire current line.
+ * Erase from the cursor position to the end of the line
  */
 void
 erase_line()
 {
     xyupdate();
-    if (CE != NULL)
+    if (CE != NULL) {
 	tputs(CE, (int) LI, foutch);
+    } else {
+	/*
+	 * This happens when unix.c calls erase_line() in sys_endv() to clear
+	 * the status line on a terminal without "ce" capability.
+	 * We can't change erase_line() to clear_line() in sys_endv() because
+	 * sunview doesn't have clear_line().
+	 *
+	 * As we know we are clearing the status line, don't do the last
+	 * character of the line.
+	 */
+	while (real_col < CO-1) {
+	    moutch(' ');
+	    real_col++;
+	}
+	moutch('\r');
+    }
 }
 
 /*
