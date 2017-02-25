@@ -443,14 +443,14 @@ static void
 usage()
 {
     startup_error(Version);
-    startup_error("\n\nUsage: xvi { options } [ file ... ]\n");
-    startup_error("       xvi { options } -t tag\n");
-    startup_error("       xvi { options } +[num] file\n");
-    startup_error("       xvi { options } +/pat  file\n");
-    startup_error("\nOptions are:\n");
-    startup_error("       -c ex-command\n");
-    startup_error("       -R (set readonly mode)\n");
-    startup_error("       -s [no]boolean-parameter\n");
-    startup_error("       -s parameter=value\n");
-    startup_error("       -w nlines (ignored)\n");
+    startup_error("\nUsage: xvi { options } [ file ... ]");
+    startup_error("       xvi { options } -t tag");
+    startup_error("       xvi { options } +[num] file");
+    startup_error("       xvi { options } +/pat  file");
+    startup_error("\nOptions are:");
+    startup_error("       -c ex-command");
+    startup_error("       -R (set readonly mode)");
+    startup_error("       -s [no]boolean-parameter");
+    startup_error("       -s parameter=value");
+    startup_error("       -w nlines (ignored)");
 }
