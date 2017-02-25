@@ -792,6 +792,7 @@ int			newchar;
      */
     currow = window->w_row;
 
+    VSset_colour(vs, VSCcolour);
     VSinsert(vs, window->w_winpos + currow, curcol, newstr);
 
     /*
