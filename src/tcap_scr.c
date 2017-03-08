@@ -818,6 +818,15 @@ char	*str;
     exit(2);
 }
 
+/* Utility function used in tty_open() as a counting substitute for foutch() */
+static int
+inc_cost_goto(c)
+int c;
+{
+    cost_goto++;
+}
+
+
 /*
  * Look up term entry in termcap database, and set up all the strings.
  */
@@ -1022,9 +1031,12 @@ unsigned int	*pcolumns;
     }
 
     /*
-     * This may not be quite right, but it will be close.
+     * Find out how many character a cursor goto involves.
+     * Variable-length ones probably involve decimal numbers, which are
+     * two figures for most of the screen area, so use the max value of each.
      */
-    cost_goto = strlen(CM) - 1;
+    cost_goto = 0;
+    tputs(tgoto(CM, CO, LI), (int) LI, inc_cost_goto);
 
     /*
      * Set these variables as appropriate.
