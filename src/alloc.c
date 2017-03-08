@@ -209,10 +209,12 @@ strsave(string)
 const char *string;
 {
     char	*space;
+    size_t	size;
 
-    space = alloc(strlen(string) + 1);
+    size = strlen(string) + 1;
+    space = alloc(size);
     if (space != NULL) {
-	(void) strcpy(space, string);
+	(void) memcpy(space, string, size);
     }
     return(space);
 }
