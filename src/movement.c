@@ -305,8 +305,18 @@ Xviwin	*win;
 Line	*lp;
 int	index;
 {
+    Buffer *buffer = win->w_buffer;
     Posn *p;
 
+    /*
+     * If they move to a different line in a buffer, remember the
+     * initial state of the line for the line-Undo command.
+     */
+    if (lp != buffer->b_prevline) {
+	free(buffer->b_Undotext);
+	buffer->b_Undotext = strsave(lp->l_text);
+	buffer->b_prevline = lp;
+    }
     p = win->w_cursor;
     p->p_line = lp;
     p->p_index = index;

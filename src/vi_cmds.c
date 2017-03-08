@@ -162,6 +162,10 @@ Cmd	*cmd;
 	undo(curwin);
 	break;
 
+    case 'U':
+	undoline(curwin);
+	break;
+
     case CTRL('Z'):			/* suspend editor */
 	exSuspend(curwin);
 	break;

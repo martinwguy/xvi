@@ -117,7 +117,7 @@ VI_COMMAND	cmd_types[NUM_VI_CMDS] = {
  { /* S */	do_cmd,		COMMAND },
  { /* T */	do_csearch,	COMMAND | TARGET | TGT_CHAR | TGT_EXCLUSIVE
 					| TWO_CHAR | SET_CURSOR_COL },
- { /* U */	do_badcmd,	0 },
+ { /* U */	do_cmd,		COMMAND },
  { /* V */	do_badcmd,	0 },
  { /* W */	do_word,	COMMAND | TARGET | TGT_CHAR | TGT_EXCLUSIVE | SET_CURSOR_COL },
  { /* X */	do_x,		COMMAND },

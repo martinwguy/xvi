@@ -67,6 +67,9 @@ Buffer	*buffer;
 
     buffer->b_change = (genptr *) cdp;
 
+    buffer->b_prevline = NULL;
+    buffer->b_Undotext = NULL;
+
     /*
      * Set line numbers.
      */
@@ -791,6 +794,39 @@ Line		*newlines;
      */
     buffer->b_flags &= ~FL_MODIFIED;
     init_marks(buffer);
+}
+
+/*
+ * Undo all changes made to the line since we moved onto it by restoring
+ * it from the copy we made of its text when we moved onto it.
+ *
+ * POSIX: "Restore the current line to its state immediately before
+ * the most recent time that it became the current line.
+ * Current column: Set to the first column in the line in which any portion
+ * of the first character in the line is displayed."
+ *
+ * They don't say how a normal 'u'ndo should behave after line Undo, but
+ * classic vi undoes the line-Undo command (leaving the line messed up again),
+ * and if you repeatedly line-Undo and then 'u'ndo, you still get the messed up
+ * line back.
+ * In xvi at present, a double Undo leaves you with 'u'ndo making no change.
+ */
+void
+undoline(window)
+Xviwin	*window;
+{
+    Line   *line = window->w_cursor->p_line;
+    Buffer *buffer = window->w_buffer;
+
+    /* Set the undo history to a command that restores the line to
+     * the way it was before they did the line undo.
+     */
+    ((ChangeData *)(buffer->b_change))->cd_nlevels = 0;
+    init_change_data(window);
+    replchars(window, line, 0, strlen(line->l_text), buffer->b_Undotext);
+    move_cursor(window, line, 0);
+
+    xvUpdateAllBufferWindows(buffer);
 }
 
 /*

@@ -490,6 +490,16 @@ typedef struct buffer {
     Line		*b_lastline;	/* ptr to (n+1)th line of file */
 
     /*
+     * Stuff for line-Undo command
+     */
+    Line		*b_prevline;	/* The Line passed to the previous call
+					 * of move_cursor() for this buffer
+					 */
+    char		*b_Undotext;	/* What to restore the current line to
+					 * if they use the U command. It is an
+					 * allocated copy and should be freed.
+					 */
+    /*
      * All of these are allocated, and should be freed
      * before assigning any new value to them.
      */
@@ -1180,6 +1190,7 @@ extern	void	replchars P((Xviwin *, Line *, int, int, char *));
 extern	void	repllines P((Xviwin *, Line *, long, Line *));
 extern	void	replbuffer P((Xviwin *, Line *));
 extern	void	undo P((Xviwin *));
+extern	void	undoline P((Xviwin *));
 extern	bool_t	set_edit P((Xviwin *, Paramval, bool_t));
 
 /*
