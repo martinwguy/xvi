@@ -9,13 +9,13 @@ exec tclsh "$0" ${1+"$@"}
 #
 # This test fails with xterm but succeeds with tkterm or virterm :(
 # This may be due to them having a more limited set of terminal capabilities
-# (for example, that doesn't include "insert character" or "insert mode") or
-# It may be that they react differently to a cursor motion to column 81
+# that doesn't include "home", "insert character" or "insert mode" or
+# it may be that they react differently to a cursor motion to column 81
 # followed by backspaces.
 #
 # Note: after commit 83192720e, this bug has been papered over:
 # To see it again you need to remove the call to s_inschar() in edit.c
-# (or git checkout 94d149b7) # and perform the below test manually
+# (or git checkout 94d149b7) and perform the below test manually
 # using xterm or similar.
 #
 # When this test fails, the Y is printed over the top of the X.
@@ -37,7 +37,7 @@ term_expect timeout { fail 101 } \
 	{ screen_is 2 0 [list "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXY" "a" "~"] }
 
 
-exp_send "q!\r"
+exp_send "\x1B:q!\r"
 
 exit 0
 
