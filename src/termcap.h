@@ -29,13 +29,6 @@ extern	unsigned int	CO;
 #define Columns		CO
 
 /*
- * Standout glitch - see termcap.c.
- */
-extern	int		SG;
-
-#define SLINE_GLITCH	((unsigned int) SG)
-
-/*
  * There are no termcap capabilities for these:
  */
 #define invis_cursor()		/* invisible cursor (very optional) */

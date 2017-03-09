@@ -228,15 +228,6 @@ static struct {
 };
 
 /*
- * Standout glitch: number of spaces left when entering or leaving
- * standout mode.
- *
- * This abomination is still needed for some terminals (e.g.
- * Televideo).
- */
-int		SG;
-
-/*
  * Used by scroll region optimisation.
  */
 static int	s_top = 0, s_bottom = 0;
@@ -594,11 +585,7 @@ static int
 colour_cost(scr)
 VirtScr	*scr;
 {
-#ifdef	SLINE_GLITCH
-    return(SLINE_GLITCH);
-#else
     return(0);
-#endif
 }
 
 /*ARGSUSED*/
@@ -870,6 +857,13 @@ unsigned int	*pcolumns;
     auto_margins	= (bool_t) tgetflag("am");
     eat_newline_glitch	= (bool_t) tgetflag("xn");
     can_move_in_standout = (bool_t) tgetflag("ms");
+    /*
+     * Standout glitch: number of spaces left when entering or leaving
+     * standout mode. Xvi cannot function on such terminals.
+     */
+    if (tgetnum("sg") > 0) {
+	fail("xvi doesn't work on terminals with the standout glitch.");
+    }
 
     /*
      * Integers.
@@ -900,11 +894,6 @@ unsigned int	*pcolumns;
 	*prows = LI = (unsigned) iv;
     } else {
 	LI = *prows;
-    }
-
-    SG = tgetnum("sg");
-    if (SG < 0) {
-	SG = 0;
     }
 
     /*

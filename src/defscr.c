@@ -255,11 +255,7 @@ static int
 colour_cost(scr)
 VirtScr	*scr;
 {
-#ifdef	SLINE_GLITCH
-    return(SLINE_GLITCH);
-#else
     return(0);
-#endif
 }
 
 /*ARGSUSED*/
