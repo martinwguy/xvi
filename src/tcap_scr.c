@@ -139,7 +139,8 @@ extern	char	*tgoto();
 /*
  * Exported.
  */
-int		cost_goto = 0;		/* cost of doing a goto */
+int		cost_goto;		/* cost of doing a goto */
+static int	cost_home; 		/* cost of using the "ho" capability */
 bool_t		can_scroll_area = FALSE; /* true if we can set scroll region */
 bool_t		can_del_line;		/* true if we can delete lines */
 bool_t		can_ins_line;		/* true if we can insert lines */
@@ -818,14 +819,13 @@ char	*str;
     exit(2);
 }
 
-/* Utility function used in tty_open() as a counting substitute for foutch() */
+/* Utility functions used in tty_open() as counting substitutes for foutch() */
 static int
 inc_cost_goto(c)
 int c;
 {
     cost_goto++;
 }
-
 
 /*
  * Look up term entry in termcap database, and set up all the strings.
@@ -1037,6 +1037,11 @@ unsigned int	*pcolumns;
      */
     cost_goto = 0;
     tputs(tgoto(CM, CO, LI), (int) LI, inc_cost_goto);
+
+    /* Find out how many characters a "home" takes */
+    if (HO != NULL) {
+	cost_home = strlen(HO);
+    }
 
     /*
      * Set these variables as appropriate.
@@ -1471,10 +1476,6 @@ xyupdate()
 	    can_movedown		/* or we can if we want */
 	)
     ) {
-	/*
-	 * Cost of using the "ho" capability.
-	 */
-	static unsigned		cost_home;
 
 	/*
 	 * Possible total cost of getting to the desired
@@ -1482,8 +1483,6 @@ xyupdate()
 	 */
 	register unsigned	netcost;
 
-	if (cost_home == 0)
-	    cost_home = strlen(HO);
 	netcost = cost_home + virt_row + virt_col;
 
 	/*
