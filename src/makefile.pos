@@ -76,6 +76,9 @@ lint:
 tags:		$(GENSRC) $(MACHSRC)
 		ctags $(GENSRC) $(MACHSRC) $(GENINC) $(MACHINC)
 
+check:
+		@(cd ../test && make check)
+
 clean:
 		rm -f *.o *.obj xvi tags
 
