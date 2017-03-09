@@ -65,7 +65,6 @@ static	void		xw_putc P((VirtScr *, int, int, int));
 static	void		xw_write P((VirtScr *, int, int, char *));
 /* static void		xw_insert P((VirtScr *, int, int, char *)); */
 static	void		xw_set_colour P((VirtScr *, int));
-static	int		xw_colour_cost P((VirtScr *));
 static	int		xw_scroll P((VirtScr *, int, int, int));
 static	void		xw_flush P((VirtScr *));
 static	void		xw_beep P((VirtScr *));
@@ -90,7 +89,6 @@ VirtScr	xwnscr = {
     xw_write,		/* v_write	    */
     xw_putc,		/* v_putc	    */
     xw_set_colour,	/* v_set_colour	    */
-    xw_colour_cost,	/* v_colour_cost    */
     xv_decode_colour,	/* v_decode_colour  */
     xw_flush,		/* v_flush	    */
     xw_beep,		/* v_beep	    */
@@ -265,13 +263,6 @@ register char *s;
 
     wi->xpos = xpos;
     wi->ypos = ypos;
-}
-
-static int
-xw_colour_cost(vs)
-VirtScr *vs;
-{
-    return 0;
 }
 
 /*  Set the specified colour.  We just support inverse video for the

@@ -72,7 +72,6 @@ static	void		put_str P((VirtScr *, int, int, char *));
 static	void		put_char P((VirtScr *, int, int, int));
 static	void		ins_str P((VirtScr *, int, int, char *));
 static	void		pset_colour P((VirtScr *, int));
-static	int		colour_cost P((VirtScr *));
 static	int		scroll P((VirtScr *, int, int, int));
 static	int		can_scroll P((VirtScr *, int, int, int));
 static	void		flushout P((VirtScr *));
@@ -97,7 +96,6 @@ VirtScr	tcap_scr = {
     put_str,		/* v_write	    */
     put_char,		/* v_putc	    */
     pset_colour,	/* v_set_colour	    */
-    colour_cost,	/* v_colour_cost    */
     xv_decode_colour,	/* v_decode_colour  */
     flushout,		/* v_flush	    */
     pbeep,		/* v_beep	    */
@@ -578,14 +576,6 @@ do_set_colour(int colour)
     }
 
     old_colour = colour;
-}
-
-/*ARGSUSED*/
-static int
-colour_cost(scr)
-VirtScr	*scr;
-{
-    return(0);
 }
 
 /*ARGSUSED*/

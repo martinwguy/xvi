@@ -361,10 +361,8 @@ int pos;	/* Position of cursor within line */
      * Set the colour of the command line. The first character is the same
      * colour as the status line would be, the rest is the normal colour of
      * the screen text (this is better for screen-updating purposes).
-     * However, if colour_cost is non-zero, we don't change the colour at all.
      */
-    clp->s_colour[0] = (win->w_colour_cost != 0) ? VSCcolour :
-			is_readonly(win->w_buffer) ?
+    clp->s_colour[0] = is_readonly(win->w_buffer) ?
 					VSCroscolour : VSCstatuscolour;
     for (colindex = clp->s_used - 1; colindex >= 1; --colindex) {
 	clp->s_colour[colindex] = VSCcolour;

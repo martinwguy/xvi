@@ -592,16 +592,11 @@ typedef struct xviwin {
     /*
      * Status line glitch handling.
      *
-     * Some terminals leave a space when changing colour. The number of spaces
-     * left is returned by the VScolour_cost() method within the VirtScr, and
-     * stored in the w_colour_cost field of each Xviwin.
-     *
      * w_spare_cols is the number of columns which are not used at the
      * end of the status line; this is to prevent wrapping on this line,
      * as this can do strange things to some terminals.
      */
-    int			w_colour_cost;	/* ret val from VScolour_cost() */
-    int			w_spare_cols;	/* (w_colour_cost * 2) + 1 */
+    int			w_spare_cols;	/* 1 */
 
     Cmd			*w_cmd;		/* info about current command */
 

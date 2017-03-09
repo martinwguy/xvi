@@ -80,7 +80,6 @@ typedef struct virtscr {
     void	(*v_putc) P((struct virtscr *, int, int, int));
 
     void	(*v_set_colour) P((struct virtscr *, int));
-    int		(*v_colour_cost) P((struct virtscr *));
     int		(*v_decode_colour) P((struct virtscr *, int, char *));
 
     void	(*v_flush) P((struct virtscr *));
@@ -113,7 +112,6 @@ typedef struct virtscr {
 #define	VSset_colour(vs, colind)	((*((vs)->v_set_colour))(vs, \
 						(vs)->pv_colours[colind]))
 #define	VSdecode_colour(vs, ind, str)	((*(vs->v_decode_colour))(vs, ind, str))
-#define	VScolour_cost(vs)		((*(vs->v_colour_cost))(vs))
 #define	VSflush(vs)			((*(vs->v_flush))(vs))
 #define	VSbeep(vs)			((*(vs->v_beep))(vs))
 #define	VSinsert(vs, row, col, str)	((*(vs->v_insert))(vs, row, col, str))

@@ -65,7 +65,6 @@ static	void		xyadvise P((VirtScr *, int, int, int, char *));
 static	void		put_str P((VirtScr *, int, int, char *));
 static	void		put_char P((VirtScr *, int, int, int));
 static	void		set_colour P((VirtScr *, int));
-static	int		colour_cost P((VirtScr *));
 static	int		scroll P((VirtScr *, int, int, int));
 static	void		flushout P((VirtScr *));
 static	void		pbeep P((VirtScr *));
@@ -492,14 +491,6 @@ int	c;
     }
 }
 
-/*ARGSUSED*/
-static int
-colour_cost(scr)
-VirtScr	*scr;
-{
-    return(0);
-}
-
 /*
  * Scroll an area of the window by nlines.
  * If nlines > 0, scrolling is "up", otherwise "down".
@@ -728,7 +719,6 @@ scr_init(void)
     vs->v_write = put_str;
     vs->v_putc = put_char;
     vs->v_set_colour = set_colour;
-    vs->v_colour_cost = colour_cost;
     vs->v_decode_colour = xv_decode_colour;
     vs->v_flush = flushout;
     vs->v_beep = pbeep;

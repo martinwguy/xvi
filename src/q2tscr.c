@@ -53,7 +53,6 @@ static	void		xyadvise P((VirtScr *, int, int, int, char *));
 static	void		put_str P((VirtScr *, int, int, char *));
 static	void		put_char P((VirtScr *, int, int, int));
 static	void		pset_colour P((VirtScr *, int));
-static	int		colour_cost P((VirtScr *));
 static	int		co_scroll P((VirtScr *, int, int, int));
 static	int		vt_scroll P((VirtScr *, int, int, int));
 static	int		win_scroll P((VirtScr *, int, int, int));
@@ -81,7 +80,6 @@ VirtScr	qnxscr = {
     put_str,		/* v_write	    */
     put_char,		/* v_putc	    */
     pset_colour,	/* v_set_colour	    */
-    colour_cost,	/* v_colour_cost    */
     xv_decode_colour,	/* v_decode_colour  */
     flushout,		/* v_flush	    */
     pbeep,		/* v_beep	    */
@@ -462,14 +460,6 @@ int	colour;
 {
     screen_colour = (unsigned) colour;
     term_colour(screen_colour >> 8);
-}
-
-/*ARGSUSED*/
-static int
-colour_cost(scr)
-VirtScr	*scr;
-{
-    return(0);
 }
 
 /*
