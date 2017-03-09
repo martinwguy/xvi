@@ -44,7 +44,6 @@
 	cd	str	Clear to end of display
 
 	xs	bool	Standout not erased by writing over it (HP 264?)
-	ms	bool	Safe to move while in standout and underline mode
 
 * history:
     STEVIE - ST Editor for VI Enthusiasts, Version 3.10
@@ -186,6 +185,7 @@ static	char	down;			/* down one line */
 static	bool_t	can_backspace = FALSE;	/* true if can backspace (bs/bc) */
 static	bool_t	can_fwdspace = FALSE;	/* true if can forward space (nd) */
 static	bool_t	can_movedown = FALSE;	/* true if can move down (do) */
+static	bool_t	can_move_in_standout;	/* True if can move while SO is on */
 static	bool_t	can_clr_to_eol;		/* true if can clr-to-eol (ce) */
 static	bool_t	auto_margins;		/* true if AM is set */
 static	bool_t	eat_newline_glitch;	/* "xn" capability */
@@ -245,7 +245,8 @@ static int	s_top = 0, s_bottom = 0;
  * Used for colour-setting optimisation.
  */
 #define	NO_COLOUR	-1
-static	int		old_colour = NO_COLOUR;
+static	int	old_colour = NO_COLOUR;	/* Screen's current drawing colour */
+static	int	new_colour = NO_COLOUR;	/* The colour they asked for last */
 
 extern	volatile bool_t	win_size_changed;
 
@@ -316,6 +317,7 @@ char	*argv[];
 # endif
 #endif
 
+    flushout(vs);	/* Flush startup screen */
     event.ev_vs = vs;
     while (1) {
 	xvResponse	*resp;
@@ -527,11 +529,16 @@ pset_colour(scr, colour)
 VirtScr	*scr;
 int	colour;
 {
+    new_colour = colour;
+}
+
+/* Send the escape sequences to set the drawing colour */
+static void
+do_set_colour(int colour)
+{
     if (colour == old_colour) {
 	return;
     }
-
-    xyupdate();
 
     if (colour < ncolours) {
 	/*
@@ -769,6 +776,7 @@ outchar(c)
 register int	c;
 {
     xyupdate();
+    do_set_colour(new_colour);
     real_col++;
     virt_col++;
     moutch(c);
@@ -784,6 +792,7 @@ outstr(s)
 register char	*s;
 {
     xyupdate();
+    do_set_colour(new_colour);
     while (*s != '\0') {
 	real_col++;
 	virt_col++;
@@ -860,6 +869,7 @@ unsigned int	*pcolumns;
      */
     auto_margins	= (bool_t) tgetflag("am");
     eat_newline_glitch	= (bool_t) tgetflag("xn");
+    can_move_in_standout = (bool_t) tgetflag("ms");
 
     /*
      * Integers.
@@ -955,6 +965,7 @@ unsigned int	*pcolumns;
 	nd = *cp;
 	can_fwdspace = TRUE;
     }
+
 
 #ifndef AIX
     /* Needs to be set for termcap library's use. xvi doesn't use UP (yet) */
@@ -1095,7 +1106,7 @@ tty_startv()
 	    tputs(KS, (int) LI, foutch);
     }
     old_colour = NO_COLOUR;
-    VSset_colour(&tcap_scr, VSCcolour);
+    pset_colour(&tcap_scr, VSCcolour);
     optimise = FALSE;
     termmode = m_VI;
 }
@@ -1110,7 +1121,7 @@ void
 tty_endv()
 {
     if (termmode == m_VI) {
-	VSset_colour(&tcap_scr, VSCsyscolour);
+	do_set_colour(VSCcolour);
 	if (can_scroll_area) {
 	    set_scroll_region(0, (int) LI - 1);
 	}
@@ -1120,9 +1131,9 @@ tty_endv()
 	    tputs(VE, (int) LI, foutch);
 	if (TE != NULL)
 	    tputs(TE, (int) LI, foutch);
+	flushout(&tcap_scr);
 	termmode = m_SYS;
     }
-    oflush();
 }
 
 /*
@@ -1434,6 +1445,9 @@ xyupdate()
     hdisp = virt_col - real_col;
     vdisp = virt_row - real_row;
 
+    if (optimise && hdisp == 0 && vdisp == 0)
+	return;
+
     totaldisp = ((vdisp < 0) ? -vdisp : vdisp) +
 	    ((hdisp < 0) ? -hdisp : hdisp);
 
@@ -1444,6 +1458,14 @@ xyupdate()
     if (virt_row < s_top || virt_row > s_bottom) {
 	if (can_scroll_area)
 	    set_scroll_region(0, (int) LI - 1);
+    }
+
+    /*
+     * We are only allowed to move when set to colour 0
+     * or some terminals will write garbage all over the screen.
+     */
+    if (!can_move_in_standout && old_colour != VSCcolour) {
+	do_set_colour(VSCcolour);
     }
 
     /*

@@ -83,7 +83,6 @@ int			nlines;
 	    vs->pv_int_lines[row].s_flags &= ~S_DIRTY;
 	}
     }
-    VSflush(vs);
 }
 
 /*

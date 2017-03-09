@@ -376,7 +376,6 @@ int pos;	/* Position of cursor within line */
      */
     xvUpdateScr(win, win->w_vs, (int) win->w_cmdline, 1);
     VSgoto(win->w_vs, (int) win->w_cmdline, pos);
-    VSflush(win->w_vs);
 }
 
 /*
@@ -853,7 +852,6 @@ Xviwin	*win;
     if (echo & e_CHARUPDATE) {
 	vs = win->w_vs;
 	VSgoto(vs, (int) win->w_winpos + win->w_row, win->w_col);
-	VSflush(vs);
     }
 }
 
@@ -870,7 +868,6 @@ bool_t	clr;
 	VSclear_line(vs, (int) win->w_cmdline, 0);
     }
     VSgoto(vs, (int) win->w_cmdline, 0);
-    VSflush(vs);
 }
 
 /*
