@@ -140,6 +140,7 @@ set env(COLUMNS) $cols
 if {$termcap} {
     set env(TERM) "tt"
     set env(TERMCAP) {tt:
+	:am:xn:
 	:ks=\E[?1h\E:
 	:ke=\E[?1l\E>:
 	:cm=\E[%i%d;%dH:
@@ -172,6 +173,7 @@ if {$terminfo} {
     set file [open $ttsrc w]
 
     puts $file {tkterm|Don Libes' tk text widget terminal emulator,
+	am,xenl,
 	smkx=\E[?1h\E,
 	rmkx=\E[?1l\E>,
 	cup=\E[%i%p1%d;%p2%dH,

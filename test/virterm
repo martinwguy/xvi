@@ -98,6 +98,7 @@ set env(COLUMNS) $cols
 if {$termcap} {
     set env(TERM) "tt"
     set env(TERMCAP) {tt:
+	:am:xn:
 	:cm=\E[%i%d;%dH:
 	:up=\E[A:
 	:nd=\E[C:
@@ -120,6 +121,7 @@ if {$terminfo} {
     set file [open $ttsrc w]
 
     puts $file {virterm|terminal emulator derived from Don Libes' tkterm,
+	am,xenl,
 	cup=\E[%i%p1%d;%p2%dH,
 	cuu1=\E[A,
 	cuf1=\E[C,
