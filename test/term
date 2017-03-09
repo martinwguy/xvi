@@ -43,7 +43,7 @@ if { [info exists ::env(NOCE)] } {
 }
 
 # Most tests use timeouts but 1 sec is more appropriate than the default of 10.
-set timeout 1
+set timeout 2
 
 #
 # Utility functions for xvi's tkterm test rig
