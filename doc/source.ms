@@ -617,14 +617,11 @@ in order to allow screen output to take place:
     void	(*v_clear_line)(VirtScr *);
 
     void	(*v_goto)(VirtScr *, int row, int col);
-    void	(*v_advise)(VirtScr *, int row, int col,
-		int index, char *str);
 
     void	(*v_write)(VirtScr *, int row, int col, char *str);
     void	(*v_putc)(VirtScr *, int row, int col, int ch);
 
     void	(*v_set_colour)(VirtScr *, int colour);
-    int	(*v_colour_cost)(VirtScr *);
 
     void	(*v_flush)(VirtScr *);
 
@@ -662,21 +659,6 @@ Clear the specified line, from the given column to the right hand edge
 of the window, inclusive.
 .Ex "v_goto(vs, int row, int col)"
 Move the cursor to the specified row and column.
-.Ex "v_advise(vs, int row, int col, int index, char *str)"
-This function is called when the editor is about to produce some
-output on the same line as the last output, but separate from it
-by one or more characters.
-The destination position is the coordinate pair \fB(row, col + index)\fP,
-and \fBstr\fP contains the string of characters which are in the window
-starting at position \fB(row, col)\fP.
-Where there is a cost incurred
-by moving the cursor to a specific screen position,
-the terminal interface module may decide to write the intervening characters
-to the screen rather than using a specific \*Qmove cursor\*U sequence,
-in order to minimise the number of characters written to the terminal.
-.Ex
-Note that for many environments, the cost of re-positioning the cursor is
-nil, and under these circumstances this function need not do anything.
 .Ex "v_write(vs, int row, int col, char *str)"
 Write the specified string of characters into the window, starting at
 the specified row and column.

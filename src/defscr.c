@@ -28,7 +28,6 @@ static	void		closescr P((VirtScr *));
 static	void		clear_all P((VirtScr *));
 static	void		clear_line P((VirtScr *, int, int));
 static	void		xygoto P((VirtScr *, int, int));
-static	void		xyadvise P((VirtScr *, int, int, int, char *));
 static	void		put_str P((VirtScr *, int, int, char *));
 static	void		put_char P((VirtScr *, int, int, int));
 static	void		ins_str P((VirtScr *, int, int, char *));
@@ -53,7 +52,6 @@ VirtScr	defscr = {
     clear_all,		/* v_clear_all	    */
     clear_line,		/* v_clear_line	    */
     xygoto,		/* v_goto	    */
-    xyadvise,		/* v_advise	    */
     put_str,		/* v_write	    */
     put_char,		/* v_putc	    */
     pset_colour,	/* v_set_colour	    */
@@ -176,25 +174,6 @@ int	row;
 int	col;
 {
     tty_goto(row, col);
-}
-
-/*ARGSUSED*/
-static void
-xyadvise(scr, row, col, index, str)
-VirtScr	*scr;
-int	row;
-int	col;
-int	index;
-char	*str;
-{
-    if (index > cost_goto) {
-	tty_goto(row, col + index);
-    } else {
-	tty_goto(row, col);
-	while (index-- > 0) {
-	    outchar(*str++);
-	}
-    }
 }
 
 /*ARGSUSED*/

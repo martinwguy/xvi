@@ -107,7 +107,6 @@ int		row;
     int			columns;
     register int	col;		/* current column */
     register int	adv_col;	/* column after last to be updated */
-    bool_t		do_advise;	/* TRUE if VSadvise() is advisory */
     unsigned		last_colour;	/* colour of last char written out */
 
     columns = VScols(vs);
@@ -127,13 +126,9 @@ int		row;
      * Look at each character in the line, comparing the new version
      * with the one on the screen. If they differ, put the char out.
      *
-     * adv_col is the column following the last one to be updated;
-     * we use it for VSadvise().
-     *
      * Note that this loop needs to be as tight as possible,
      * since it is the core of screen updating.
      */
-    do_advise = TRUE;
     last_colour = VSCcolour;
     for (col = adv_col = 0; col < n_used && col < r_used; col++) {
 	register int	nc;
@@ -141,27 +136,13 @@ int		row;
 	nc = ntextp[col];
 	if (nc != rtextp[col] || ncolours[col] != rcolours[col]) {
 	    /*
-	     * They are different. Get to the right
-	     * place before putting out the char.
+	     * They are different.
 	     */
-	    if (col > adv_col && do_advise) {
-		VSadvise(vs, row, adv_col, col - adv_col,
-			 ntextp + adv_col);
-	    }
-
 	    VSset_colour(vs, ncolours[col]);
 	    VSputc(vs, row, col, nc);
 
 	    adv_col = col + 1;
-	    do_advise = TRUE;
 	    last_colour = ncolours[col];
-	} else if (ncolours[col] != last_colour) {
-	    /*
-	     * If the colour has changed since adv_col, we cannot
-	     * perform a VSadvise(), so reset do_advise here to
-	     * prevent it from happening.
-	     */
-	    do_advise = FALSE;
 	}
     }
 
@@ -179,9 +160,6 @@ int		row;
 	    col++;
 	}
 	if (col < columns) {
-	    if (do_advise && col > adv_col) {
-		VSadvise(vs, row, adv_col, col - adv_col, ntextp + adv_col);
-	    }
 	    xvWriteMultiString(vs, &ntextp[col], n_used - col,
 				    &ncolours[col], row, col);
 	}

@@ -60,7 +60,6 @@ static	void		xw_close P((VirtScr *));
 static	void		xw_clear_all P((VirtScr *));
 static	void		xw_clear_line P((VirtScr *, int, int));
 static	void		xw_goto P((VirtScr *, int, int));
-static	void		xw_advise P((VirtScr *, int, int, int, char *));
 static	void		xw_putc P((VirtScr *, int, int, int));
 static	void		xw_write P((VirtScr *, int, int, char *));
 /* static void		xw_insert P((VirtScr *, int, int, char *)); */
@@ -85,7 +84,6 @@ VirtScr	xwnscr = {
     xw_clear_all,	/* v_clear_all	    */
     xw_clear_line,	/* v_clear_line	    */
     xw_goto,		/* v_goto	    */
-    xw_advise,		/* v_advise	    */
     xw_write,		/* v_write	    */
     xw_putc,		/* v_putc	    */
     xw_set_colour,	/* v_set_colour	    */
@@ -172,16 +170,6 @@ int row, col;
 
     wi->ypos = row;
     wi->xpos = col;
-}
-
-/*  TODO: should maybe copy the text into the output line buffer here.
- */
-static void
-xw_advise(vs, row, col, index, str)
-VirtScr *vs;
-int row, col, index;
-char *str;
-{
 }
 
 /*  Put out a "normal" character, updating the cursor position.

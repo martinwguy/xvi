@@ -74,7 +74,6 @@ typedef struct virtscr {
     void	(*v_clear_line) P((struct virtscr *, int, int));
 
     void	(*v_goto) P((struct virtscr *, int, int));
-    void	(*v_advise) P((struct virtscr *, int, int, int, char *));
 
     void	(*v_write) P((struct virtscr *, int, int, char *));
     void	(*v_putc) P((struct virtscr *, int, int, int));
@@ -106,7 +105,6 @@ typedef struct virtscr {
 #define	VSclear_all(vs)			((*(vs->v_clear_all))(vs))
 #define	VSclear_line(vs, row, col)	((*(vs->v_clear_line))(vs, row, col))
 #define	VSgoto(vs, row, col)		((*(vs->v_goto))(vs, row, col))
-#define	VSadvise(vs, r, c, i, str)	((*(vs->v_advise))(vs, r, c, i, str))
 #define	VSwrite(vs, row, col, str)	((*(vs->v_write))(vs, row, col, str))
 #define	VSputc(vs, row, col, c)		((*(vs->v_putc))(vs, row, col, c))
 #define	VSset_colour(vs, colind)	((*((vs)->v_set_colour))(vs, \

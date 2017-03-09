@@ -61,7 +61,6 @@ static	void		clear_all P((VirtScr *));
 static	void		clear_rows P((VirtScr *, int, int));
 static	void		clear_line P((VirtScr *, int, int));
 static	void		xygoto P((VirtScr *, int, int));
-static	void		xyadvise P((VirtScr *, int, int, int, char *));
 static	void		put_str P((VirtScr *, int, int, char *));
 static	void		put_char P((VirtScr *, int, int, int));
 static	void		set_colour P((VirtScr *, int));
@@ -420,17 +419,6 @@ int	r, c;
 
 /*ARGSUSED*/
 static void
-xyadvise(scr, row, col, index, str)
-VirtScr	*scr;
-int	row;
-int	col;
-int	index;
-char	*str;
-{
-}
-
-/*ARGSUSED*/
-static void
 put_str(scr, row, col, text)
 VirtScr	*scr;
 int	row;
@@ -715,7 +703,6 @@ scr_init(void)
     vs->v_clear_all = clear_all;
     vs->v_clear_line = clear_line;
     vs->v_goto = xygoto;
-    vs->v_advise = xyadvise;
     vs->v_write = put_str;
     vs->v_putc = put_char;
     vs->v_set_colour = set_colour;
