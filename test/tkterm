@@ -140,10 +140,11 @@ set env(COLUMNS) $cols
 if {$termcap} {
     set env(TERM) "tt"
     set env(TERMCAP) {tt:
-	:am:xn:
+	:am:bs:xn:
 	:ks=\E[?1h\E:
 	:ke=\E[?1l\E>:
 	:cm=\E[%i%d;%dH:
+	:le=\b:
 	:up=\E[A:
 	:nd=\E[C:
 	:cl=\E[H\E[J:
@@ -177,6 +178,7 @@ if {$terminfo} {
 	smkx=\E[?1h\E,
 	rmkx=\E[?1l\E>,
 	cup=\E[%i%p1%d;%p2%dH,
+	cub1=\b,
 	cuu1=\E[A,
 	cuf1=\E[C,
 	clear=\E[H\E[J,
