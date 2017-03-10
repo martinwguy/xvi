@@ -161,6 +161,14 @@ set term_spawn_id $spawn_id
 proc term_replace {reprow repcol text} {
   global termdata
   set middle $termdata($reprow)
+
+  # If the line is shorter than repcol, add spaces to it
+  set spaces [expr $repcol - [string length $middle]]
+  while { $spaces > 0 } {
+    set middle "$middle "
+    incr spaces -1
+  }
+
   set termdata($reprow) \
      [string range $middle 0 [expr $repcol-1]]$text[string \
        range $middle [expr $repcol+[string length $text]] end]
