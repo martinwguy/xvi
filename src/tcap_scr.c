@@ -210,6 +210,7 @@ static struct {
   { "kP",	(char *) arrow_keys + 8		}, /* page up */
   { "kN",	(char *) arrow_keys + 10	}, /* page down */
   { "kh",	"H"				}, /* home */
+  { "@7",	"L"				}, /* end */
   { "k0",	"#0"				}, /* function key 0 */
   { "k1",	(char *) arrow_keys + 12	}, /* help */
   { "k2",	"#2"				}, /* function key 2 */
