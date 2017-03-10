@@ -366,9 +366,9 @@ bool_t	skip_white;
 /*ARGSUSED*/
 Posn *
 bck_word(p, type, skip_white)
-Posn	*p;
-int	type;
-bool_t	skip_white;
+Posn	*p;		/* whence */
+int	type;		/* 0 for lower case commands, 1 for upper */
+bool_t	skip_white;	/* TRUE for everything except "cw" */
 {
     static	Posn	pos;
     cclass		sclass;		/* starting class */
