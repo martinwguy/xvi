@@ -351,10 +351,10 @@ char	*right;
     char *lhs, *rhs;
 
     lhs = strsave(left);
-    if (lhs == NULL || (rhs = strsave(right)) == NULL) {
-	if (lhs != NULL) {
-	    free(lhs);
-	}
+    rhs = strsave(right);
+    if (lhs == NULL || rhs == NULL) {
+	free(lhs);
+	free(rhs);
 	return;
     }
     insert_map(&key_map, lhs, rhs);
