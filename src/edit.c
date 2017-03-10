@@ -105,8 +105,7 @@ int	c;
 	case CTRL('@'):
 	    /*
 	     * If ^@ is the first character inserted, insert the last
-	     * text we inserted and return to command mode. Otherwise
-	     * insert it literally.
+	     * text we inserted and return to command mode.
 	     */
 	    if (curpos->p_line == Insertloc.p_line &&
 		curpos->p_index == Insertloc.p_index) {
@@ -270,6 +269,69 @@ int	c;
 	     */
 	    updateline(curwin, curwin->w_col == 0);
 	    return(TRUE);
+
+	case CTRL('U'):
+	case CTRL('W'):
+	  {
+	    /* Number of screen lines occupied by current line */
+	    int plines_before, plines_after;
+
+	    /* Where to start cancelling from in the line */
+	    int from_index;
+
+	    if (c == CTRL('U')) {
+		/*
+		 * Cancel current line of inserted text.
+		 * If we are on the same line as we started inserting on,
+		 * cancel back to where the insertion started, otherwise
+		 * we have inserted more than one logical line so
+		 * cancel all text on the current line.
+		 */
+		if (curpos->p_line == Insertloc.p_line) {
+		    from_index = Insertloc.p_index;
+		} else {
+		    from_index = 0;
+		}
+	    } else {
+		/* CTRL('W'): Delete back one word in inserted text */
+		Posn *new = bck_word(curpos, 0, TRUE);
+		if (new == NULL) return(TRUE);
+		from_index = new->p_index;
+		/* Don't delete over the insert position */
+		if (curpos->p_line == Insertloc.p_line &&
+		    from_index < Insertloc.p_index) {
+			from_index = Insertloc.p_index;
+		}
+	    }
+
+	    /* Leave auto-inserted indent characters or those added with ^T. */
+	    if (from_index < indentchars && Pb(P_autoindent)) {
+		from_index = indentchars;
+	    }
+
+	    /* Nothing to cancel? */
+	    if (curpos->p_index <= from_index) {	/* == */
+		return(TRUE);
+	    }
+
+	    plines_before = plines(curwin, curpos->p_line);
+
+	    replchars(curwin, curpos->p_line, from_index,
+		      curpos->p_index - from_index, "");
+
+	    plines_after = plines(curwin, curpos->p_line);
+
+	    curpos->p_index = from_index;
+
+	    (void) flexaddch(&Insbuff, c);
+	    cursupdate(curwin);
+	    /*
+	     * Make sure cancelling over a physical line
+	     * break updates the screen correctly.
+	     */
+	    updateline(curwin, plines_before != plines_after);
+	    return(TRUE);
+	  }
 
 	case '\r':
 	case '\n':
