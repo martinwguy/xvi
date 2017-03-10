@@ -107,7 +107,6 @@ int		row;
     int			columns;
     register int	col;		/* current column */
     register int	adv_col;	/* column after last to be updated */
-    unsigned		last_colour;	/* colour of last char written out */
 
     columns = VScols(vs);
 
@@ -129,7 +128,6 @@ int		row;
      * Note that this loop needs to be as tight as possible,
      * since it is the core of screen updating.
      */
-    last_colour = VSCcolour;
     for (col = adv_col = 0; col < n_used && col < r_used; col++) {
 	register int	nc;
 
@@ -142,7 +140,6 @@ int		row;
 	    VSputc(vs, row, col, nc);
 
 	    adv_col = col + 1;
-	    last_colour = ncolours[col];
 	}
     }
 

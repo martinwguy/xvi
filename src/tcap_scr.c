@@ -402,8 +402,8 @@ int	col;
 
 	    /* Points to the line on-screen */
 	    Sline *ext_line = &scr->pv_ext_lines[row];
-	    char *ext;		/* Points to screen character to clear */
-	    char *colour;	/* and its colour */
+	    char *ext;		    /* Points to screen character to clear */
+	    unsigned char *colour;  /* and its colour */
 
 	    if (ext_line->s_used <= col) {
 		/* That part of the line is unused */
@@ -791,6 +791,7 @@ inc_cost_goto(c)
 int c;
 {
     cost_goto++;
+    return(c);
 }
 
 /*

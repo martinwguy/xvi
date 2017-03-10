@@ -633,10 +633,6 @@ static bool_t
 alloc_window(win)
 Xviwin	*win;
 {
-    VirtScr	*vs;
-
-    vs = win->w_vs;
-
     /*
      * Allocate space for the status line.
      */
