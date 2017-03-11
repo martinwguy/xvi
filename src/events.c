@@ -190,7 +190,6 @@ xvEvent	*ev;
 		move_window_to_cursor(curwin);
 		cursupdate(curwin);
 		wind_goto(curwin);
-		VSflush(ev->ev_vs);
 	    }
 	    break;
 
@@ -207,9 +206,10 @@ xvEvent	*ev;
     if (imessage) {
 	show_message(curwin, "Interrupted");
 	wind_goto(curwin);	/* put cursor back */
-	VSflush(ev->ev_vs);
 	imessage = FALSE;
     }
+
+    VSflush(ev->ev_vs);
 
     if (map_waiting()) {
 	resp.xvr_timeout = (long) Pn(P_timeout);
