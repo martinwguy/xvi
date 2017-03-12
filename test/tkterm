@@ -492,6 +492,8 @@ expect_background {
     }
 }
 
+# Bind Tk's X events to their equivalents
+
 bind $term <Any-Enter> {
 	focus %W
 }
