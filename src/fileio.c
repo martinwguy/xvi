@@ -514,6 +514,9 @@ nomem:
     return(nlines);
 }
 
+/* Code common to writeit() and appendit(). */
+static bool_t write_file P((Xviwin *, char *, Line *, Line *, bool_t));
+
 /*
  * appendit - append to file 'fname' lines 'start' through 'end'
  *
@@ -527,10 +530,6 @@ char	*fname;
 Line	*start, *end;
 bool_t	force;
 {
-    FILE		*fp;
-    unsigned long	nc;
-    unsigned long	nl;
-
     show_message(window,
 	    (P_ischanged(P_format) ? "\"%s\" [%s]" :  "\"%s\""),
 						fname, fmtname);
@@ -539,12 +538,27 @@ bool_t	force;
 	show_error(window, "\"%s\" No such file or directory", fname);
 	return(FALSE);
     }
+
+    return(write_file(window, fname, start, end, TRUE));
+}
+
+static bool_t
+write_file(window, fname, start, end, append)
+Xviwin	*window;
+char	*fname;
+Line	*start, *end;
+bool_t	append;
+{
+    FILE		*fp;
+    unsigned long	nc, nl;
+
     if (!Pb(P_writeany) && !can_write(fname)) {
 	show_error(window, "\"%s\" Permission denied", fname);
 	return(FALSE);
     }
 
-    fp = fopenab(fname);
+    if (append) fp = fopenab(fname);
+    else	fp = fopenwb(fname);
     if (fp == NULL) {
 	show_error(window, "Can't write \"%s\"", fname);
 	return(FALSE);
@@ -559,9 +573,9 @@ bool_t	force;
     } else {
 	show_message(window, "\"%s\" %ld/%ld", fname, nl, nc);
     }
-
     return(TRUE);
 }
+
 
 /*
  * writeit - write to file 'fname' lines 'start' through 'end'
@@ -579,9 +593,6 @@ char	*fname;
 Line	*start, *end;
 bool_t	force;
 {
-    FILE		*fp;
-    unsigned long	nc;
-    unsigned long	nl;
     Buffer		*buffer;
     bool_t		need_preserve = FALSE;
 
@@ -614,26 +625,7 @@ bool_t	force;
 	return(FALSE);
     }
 
-    if (!Pb(P_writeany) && !can_write(fname)) {
-	show_error(window, "\"%s\" Permission denied", fname);
-	return(FALSE);
-    }
-
-    fp = fopenwb(fname);
-    if (fp == NULL) {
-	show_error(window, "Can't write \"%s\"", fname);
-	return(FALSE);
-    }
-
-    if (put_file(window, fp, start, end, &nc, &nl) == FALSE) {
-	return(FALSE);
-    }
-
-    if (P_ischanged(P_format)) {
-	show_message(window, "\"%s\" [%s] %ld/%ld", fname, fmtname, nl, nc);
-    } else {
-	show_message(window, "\"%s\" %ld/%ld", fname, nl, nc);
-    }
+    if (!write_file(window, fname, start, end, FALSE)) return(FALSE);
 
     /*
      * Make sure any preserve file is removed if it isn't wanted.
