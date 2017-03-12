@@ -423,7 +423,9 @@ bool_t	vi_mode;
 
     yp_buf = yp_get_buffer(name);
     if (yp_buf == NULL) {
-	show_error(win, "Nothing in buffer %c", name);
+	char *vname;
+	(void) vischar(name, &vname, 0);
+	show_error(win, "Nothing in buffer %s", vname);
 	return;
     }
 
