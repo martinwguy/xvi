@@ -228,3 +228,34 @@ proc home   {} { return "[esc]OH" }
 proc end    {} { return "[esc]OF" }
 proc pgup   {} { return "[esc]\[5~" }
 proc pgdown {} { return "[esc]\[6~" }
+
+#
+# Two routines that are enough for the body of most tests,
+# sending a string, expecting a screenful (or command line full) and
+# cursor position and failing with some code if xvi's screen differs.
+#
+
+# Send a string to xvi and expect the screen to match the list of lines
+# (modulo trailing spaces) with the cursor at row (1-24), col (0-79).
+# If it doesn't show that within a second or two, fail and exit with
+# failure status code $testno (1-127).
+
+proc test { testno str row col lines } {
+    exp_send $str
+    # If the last character's an Escape, we need to circumvent a bug in tkterm.
+    if { [string range $str end end] == [esc] } { tksleep }
+    term_expect timeout { fail $testno } {
+	screen_is $row $col $lines
+    }
+}
+
+# The same thing, but matching against the command line/status line
+
+proc ctest { testno str col line } {
+    exp_send $str
+    # If the last character's an Escape, we need to circumvent a bug in tkterm.
+    if { [string range $str end end] == [esc] } { tksleep }
+    term_expect timeout { fail $testno } {
+	expr { [cursor_at $::rows $col] && [statusline_is $line] }
+    }
+}
