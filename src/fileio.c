@@ -323,7 +323,6 @@ char		*no_file_str;
     }
 
     while (state != at_eof) {
-
 	register int	c;
 
 	c = getc(fp);
@@ -351,21 +350,11 @@ char		*no_file_str;
 		/*
 		 * We're at the start of a line, & we've got at least one
 		 * character, so we have to allocate a new Line structure.
-		 *
-		 * If we can't do it, we throw away the lines we've
-		 * read in so far, & return gf_NOMEM.
 		 */
 		if ((lp = initline()) == NULL) {
-		    if (lptr != NULL) {
-			throw(lptr);
-		    }
-		    (void) fclose(fp);
-		    *headp = *tailp = NULL;
-		    nlines = gf_NOMEM;
 		    goto nomem;
-		} else {
-		    buff = lp->l_text;
 		}
+		buff = lp->l_text;
 	    }
 	    case in_line:
 		if (c == eolnchars[0]) {
@@ -415,11 +404,6 @@ char		*no_file_str;
 	     * then throw away the lines read in so far.
 	     */
 	    if (!lnresize(lp, (unsigned) col + 1)) {
-		if (lptr != NULL)
-		    throw(lptr);
-		(void) fclose(fp);
-		*headp = *tailp = NULL;
-		nlines = gf_NOMEM;
 		goto nomem;
 	    }
 
@@ -457,11 +441,6 @@ char		*no_file_str;
 
 	    if (col >= lp->l_size - 1) {
 		if (!lnresize(lp, col + 2)) {
-		    if (lptr != NULL)
-			throw(lptr);
-		    (void) fclose(fp);
-		    *headp = *tailp = NULL;
-		    nlines = gf_NOMEM;
 		    goto nomem;
 		}
 		buff = lp->l_text;
@@ -505,13 +484,16 @@ char		*no_file_str;
 
     *headp = lptr;
     *tailp = last;
-
-nomem:
-    if (nlines == gf_NOMEM) {
-	show_error(window, out_of_memory);
-    }
     echo = savecho;
     return(nlines);
+
+nomem:
+    throw(lptr);
+    (void) fclose(fp);
+    *headp = *tailp = NULL;
+    show_error(window, out_of_memory);
+    echo = savecho;
+    return(gf_NOMEM);
 }
 
 /* Code common to writeit() and appendit(). */
