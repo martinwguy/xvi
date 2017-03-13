@@ -637,6 +637,7 @@ extern volatile int	keystrokes;
 #define gf_CANTOPEN	((long)-2)	/* error opening file */
 #define gf_IOERR	((long)-3)	/* error reading from file */
 #define gf_NOMEM	((long)-4)	/* not enough memory */
+#define gf_INTERRUPTED	((long)-5)	/* Aborted with ^C */
 
 
 /***************************************************************

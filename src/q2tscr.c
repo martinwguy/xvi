@@ -109,12 +109,11 @@ char	*argv[];
      */
     tty_init();
 
-    ignore_signals();
+    catch_signals();
     if (xvi_startup(&qnxscr, argc, argv, getenv("XVINIT")) == NULL) {
 	sys_endv();
 	exit(1);
     }
-    catch_signals();
 
     /*
      * Set default colour to start with.

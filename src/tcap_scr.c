@@ -274,12 +274,11 @@ char	*argv[];
     vs->pv_rows = LI;
     vs->pv_cols = CO;
 
-    ignore_signals();
+    catch_signals();
     if (xvi_startup(vs, argc, argv, getenv("XVINIT")) == NULL) {
 	sys_endv();
 	exit(1);
     }
-    catch_signals();
 
 #ifdef	SV_INTERRUPT
     {

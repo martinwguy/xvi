@@ -279,6 +279,7 @@ char		*no_file_str;
     } else {
 	show_message(window, "\"%s\"%s", filename, extra_str);
     }
+    VSflush(window->w_vs);
 
     fp = fopenrb(filename);
     if (fp == NULL) {
@@ -324,6 +325,13 @@ char		*no_file_str;
 
     while (state != at_eof) {
 	register int	c;
+
+	if (kbdintr) {
+	    kbdintr = FALSE;
+	    imessage = TRUE;
+	    nlines = gf_INTERRUPTED;
+	    goto fail;
+	}
 
 	c = getc(fp);
 
@@ -488,12 +496,14 @@ char		*no_file_str;
     return(nlines);
 
 nomem:
+    nlines = gf_NOMEM;
+    show_error(window, out_of_memory);
+fail:
     throw(lptr);
     (void) fclose(fp);
     *headp = *tailp = NULL;
-    show_error(window, out_of_memory);
     echo = savecho;
-    return(gf_NOMEM);
+    return(nlines);
 }
 
 /* Code common to writeit() and appendit(). */

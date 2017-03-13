@@ -715,11 +715,10 @@ char **argv;
 
     subshells = FALSE;	/* make sure we don't attempt to shell out */
 
-    ignore_signals();
+    catch_signals();
     if (xvi_startup(vs, argc, argv, getenv("XVINIT")) == NULL) {
         exit(1);
     }
-    catch_signals();
 
 #ifdef SIGTSTP
     /*  No special treatment of SIGTSTP if we are running in a window.

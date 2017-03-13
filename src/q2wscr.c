@@ -115,9 +115,8 @@ char	*argv[];
     if (env == NULL) {
 	env = getenv("XVINIT");
     }
-    ignore_signals();
-    vs->pv_window = (genptr *) xvi_startup(vs, argc, argv, env);
     catch_signals();
+    vs->pv_window = (genptr *) xvi_startup(vs, argc, argv, env);
 
     while (1) {
 	process_event();
