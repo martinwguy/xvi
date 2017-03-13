@@ -724,6 +724,7 @@ extern	Xviwin		*curwin;	/* current window */
 extern	int		indentchars;	/* number of chars of auto-indentation
 					 * on current line */
 extern	int		next_indent;	/* auto-indent to apply to next line */
+extern	bool_t		literal_next;	/* Are we in the middle of a ^V ? */
 extern	char		*altfilename;	/* name of current alternate file */
 extern	char		Version[];	/* version string for :ve command */
 

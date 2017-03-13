@@ -21,7 +21,25 @@
 
 #include "xvi.h"
 
+/*
+ *	Global variables
+ */
+
+/*
+ * literal_next is TRUE when they've hit ^V but not hit the actual char yet.
+ * It is used in map.c to prevent literal chars from being put through "map!".
+ */
+bool_t	literal_next = FALSE;
+
+/*
+ *	Local function prototypes
+ */
+
 static	void	end_replace P((int));
+
+/*
+ *	Local variables
+ */
 
 /*
  * Position of start of insert. This is used
@@ -66,7 +84,6 @@ i_proc(c)
 int	c;
 {
     register Posn	*curpos;
-    static bool_t	literal_next = FALSE;
     static bool_t	wait_buffer = FALSE;
     bool_t		beginline;
     int			nlines;
@@ -95,8 +112,9 @@ int	c;
 	yp_stuff_input(curwin, c, TRUE);
 	wait_buffer = FALSE;
 	return(FALSE);
+    }
 
-    } else if (!literal_next) {
+    if (!literal_next) {
 	/*
 	 * This switch is for special characters; we skip over
 	 * it for normal characters, or for literal-next mode.
@@ -375,26 +393,24 @@ int	c;
 	case CTRL('V'):
 	    (void) flexaddch(&Insbuff, c);
 	    literal_next = TRUE;
-	    return(FALSE);
+	    c = '^';
+	    break;
 	}
+    } else {
+	/*
+	 * Insert a literal character
+	 */
+
+	/* Get rid of the ^ that we inserted to show the ^V */
+	replchars(curwin, curpos->p_line, curpos->p_index, 1, "");
+	flexrmchar(&Insbuff);
+
+        literal_next = FALSE;
     }
 
     /*
      * If we get here, we want to insert the character into the buffer.
      */
-
-    beginline = FALSE;
-
-    /*
-     * We may already have been in literal-next mode.
-     * Careful not to reset this until after we need it.
-     */
-    literal_next = FALSE;
-
-    /*
-     * Do the actual insertion of the new character.
-     */
-    replchars(curwin, curpos->p_line, curpos->p_index, 0, mkstr(c));
 
     /*
      * Put the character into the insert buffer.
@@ -402,9 +418,17 @@ int	c;
     (void) flexaddch(&Insbuff, c);
 
     /*
-     * Deal with wrapmargin.
+     * Do the actual insertion of the new character.
      */
-    if (Pn(P_wrapmargin) != 0 &&
+    replchars(curwin, curpos->p_line, curpos->p_index, 0, mkstr(c));
+
+    /*
+     * Deal with wrapmargin.
+     * If literal_next, we are inserting the ^ that acknowledges a ^V
+     * and wrapmargin will be done when they insert the actual char.
+     */
+    beginline = FALSE;
+    if (!literal_next && Pn(P_wrapmargin) != 0 &&
 		curwin->w_virtcol >= curwin->w_ncols - Pn(P_wrapmargin)) {
 	register int	wspos;
 	register int	nwspos;
@@ -512,7 +536,10 @@ int	c;
     if (beginline) {
 	begin_line(curwin, TRUE);
     } else {
-	(void) one_right(curwin, TRUE);
+	/* If we're showing the ^ for a ^V, leave the cursor on the ^ */
+	if (!literal_next) {
+	    (void) one_right(curwin, TRUE);
+	}
     }
 
     return(TRUE);
@@ -552,7 +579,6 @@ r_proc(c)
 int	c;
 {
     Posn		*curpos;
-    static bool_t	literal_next = FALSE;
     static bool_t	wait_buffer = FALSE;
 
     curpos = curwin->w_cursor;
@@ -574,8 +600,9 @@ int	c;
 	yp_stuff_input(curwin, c, TRUE);
 	wait_buffer = FALSE;
 	return(FALSE);
+    }
 
-    } else if (!literal_next) {
+    if (!literal_next) {
 	switch (c) {
 	case CTRL('C'):			/* an escape or ^C ends input mode */
 	case ESC:
@@ -626,7 +653,7 @@ int	c;
 	    }
 
 	case '\r':			/* new line */
-	case '\n':	
+	case '\n':
 	    if (curpos->p_line->l_next == curbuf->b_lastline &&
 					    repstate == overwrite) {
 		/*
@@ -688,11 +715,24 @@ int	c;
 	    break;
 
 	case CTRL('Q'):
-	case CTRL('V'):	
+	case CTRL('V'):
 	    (void) flexaddch(&Insbuff, c);
 	    literal_next = TRUE;
-	    return(TRUE);
+	    c = '^';
+	    break;
 	}
+    } else {
+	/*
+	 * Insert a literal character
+	 */
+
+	/* The ^ that we inserted to show the ^V-in-progress is replaced
+	 * by the literal character because we didn't call one_right for it. */
+	//replchars(curwin, curpos->p_line, curpos->p_index, 1, "");
+	/* Remove the phantom ^ from the insert buffer */
+	flexrmchar(&Insbuff);
+
+	literal_next = FALSE;
     }
 
     /*
@@ -700,26 +740,23 @@ int	c;
      */
 
     /*
-     * We may already have been in literal-next mode.
-     * Careful not to reset this until after we need it.
+     * Put the character into the insert buffer
+     * (but not if it's the phantom ^ of ^V).
      */
-    literal_next = FALSE;
-
-    /*
-     * Put the character into the insert buffer.
-     */
-    (void) flexaddch(&Insbuff, c);
+    if (!literal_next) (void) flexaddch(&Insbuff, c);
 
     if (repstate == overwrite || repstate == replace_one) {
 	replchars(curwin, curpos->p_line, curpos->p_index, 1, mkstr(c));
 	updateline(curwin, FALSE);
-	(void) one_right(curwin, TRUE);
+	if (!literal_next) {
+	    (void) one_right(curwin, TRUE);
+	}
     }
 
     /*
      * If command was an 'r', leave replace mode after one character.
      */
-    if (repstate == replace_one) {
+    if (!literal_next && repstate == replace_one) {
 	repstate = got_one;
 	end_replace(c);
     }

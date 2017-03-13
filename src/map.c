@@ -156,15 +156,27 @@ map_getc()
      * touch the raw input queue if there are no characters already
      * awaiting translation in the canonical queue.
      */
+
+    /* Do not put literal characters through the ins_map table */
     while (flexempty(npos.mp_dest)) {
-       /* Allow them to interrupt loops due to recursive remapping */
+        /* Allow them to interrupt loops due to recursive remapping */
 	if (kbdintr) {
-	    flexclear(&canon_queue);
+	    if (!literal_next) {
+		/* An interrupt drops any pending input */
+		flexclear(&canon_queue);
+		imessage = TRUE;
+	    } else {
+		/* After a ^V, ^C just inserts a ^C */
+	    }
 	    kbdintr = FALSE;
-	    imessage = TRUE;
 	    return(CTRL('C'));
 	}
+
 	if (!flexempty(npos.mp_src)) {
+	    if (literal_next) {
+		/* literal next characters are not ins_map'ped */
+		return(flexpopch(npos.mp_src));
+	    }
 	    mapthrough(&npos,
 			(State == NORMAL) ? cmd_map :
 			(State == INSERT ||
@@ -172,6 +184,7 @@ map_getc()
 			 State == CMDLINE) ? ins_map :
 			NULL);
 	} else if (!flexempty(kpos.mp_src)) {
+	    /* Transfer chars from raw to canon queue */
 	    mapthrough(&kpos, key_map);
 	} else {
 	    break;

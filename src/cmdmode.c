@@ -111,14 +111,13 @@ cmd_input(win, ch)
 Xviwin	*win;
 int	ch;
 {
-    static bool_t	literal_next = FALSE;
     unsigned		len;
     char *		stat; /* Pointer to status line text */
 
     if (kbdintr) {
-	    kbdintr = FALSE;
-	    imessage = TRUE;
-	    ch = CTRL('C');
+	kbdintr = FALSE;
+	if (!literal_next) imessage = TRUE;
+	ch = CTRL('C');
     }
 
     /* Nuls are disallowed whether literal or not */
@@ -132,7 +131,12 @@ int	ch;
 	case CTRL('Q'):
 	case CTRL('V'):
 	    literal_next = TRUE;
-	    return(cmd_INCOMPLETE);
+	    /*
+	     * Show a ^ (and we will leave the cursor on the ^).
+	     * We will remove the ^ before inserting the literal char.
+	     */
+	    ch = '^';
+	    break;
 
 	case '\n':		/* end of line */
 	case '\r':
@@ -268,9 +272,40 @@ int	ch;
 	default:
 	    break;
 	}
+    } else {
+	/*
+	 * Insert a literal character
+	 */
+	register int i;
+	register unsigned char *cp;
+
+	/*
+	 * Get rid of the ^ that we inserted, which is the char before inpos.
+	 */
+	inpos--; inend--;
+	memmove(inbuf+inpos, inbuf+inpos+1, inend-inpos);
+#if 0
+	memmove(colposn+inpos, colposn+inpos+1, (inend-inpos)+1);
+	for (i=inpos; i <= inend; i++) colposn[i]--;
+#else
+	/* The above two lines, performed in one loop */
+	for (i=inpos, cp=&colposn[i]; i <= inend; i++, cp++) {
+	    *cp = cp[1]-1;
+	}
+#endif
+	/* Move the rest of the status line down */
+	stat = &win->w_statusline.fxb_chars[win->w_statusline.fxb_rcnt];
+	memmove(stat+colposn[inpos], stat+colposn[inpos]+1,
+		colposn[inend]-colposn[inpos]);
+	/* and remove its last character */
+	(void) flexrmchar(&win->w_statusline);
+
+	literal_next = FALSE;
     }
 
-    literal_next = FALSE;
+    /*
+     * Insert the character.
+     */
 
     if (inend >= sizeof(inbuf) - 1) {
 	/*
@@ -307,7 +342,11 @@ int	ch;
 		    colposn[inend-1]-colposn[inpos-1]+1);
 	    memcpy(stat+colposn[inpos-1],p,w);
 
-	    update_cline(win, colposn[inpos]);
+	    /*
+	     * If we just displayed the ^ for a literal next character,
+	     * the cursor should be shown on the ^.
+	     */
+	    update_cline(win, colposn[inpos] - literal_next);
 	}
     }
 
