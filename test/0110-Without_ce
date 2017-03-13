@@ -20,7 +20,7 @@ term_expect timeout { fail 100 } \
 	{ screen_is 1 0 [list "" "~"] }
 
 exp_send "aabcde"
-exp_send "\x1B"
+exp_send "[esc]"
 tksleep
 term_expect timeout { fail 101 } \
 	{ screen_is 1 4 [list "abcde" "~"] }

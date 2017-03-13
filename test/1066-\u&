@@ -17,7 +17,7 @@ start_vi
 term_expect timeout { fail 100 } \
     { screen_is 1 0 [list "" "~"] }
 
-exp_send "aThe cat sat on the mat.\x1B"
+exp_send "aThe cat sat on the mat.[esc]"
 tksleep
 term_expect	timeout { fail 101 } \
 		{ screen_is 1 22 "{The cat sat on the mat.}" }

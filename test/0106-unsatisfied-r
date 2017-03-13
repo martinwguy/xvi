@@ -24,7 +24,7 @@ term_expect timeout { fail 101 } \
     { screen_is [expr $rows] 1 [list "" "~"] }
 
 # Try the same with a repeat count.
-exp_send "\x1Baabc\x1B0l"	;# sit on the b
+exp_send "[esc]aabc[esc]0l"	;# sit on the b
 term_expect timeout { fail 102 } \
     { screen_is 1 1 [list "abc" "~"] }
 
@@ -45,7 +45,7 @@ exp_send "3r"
 exp_send ":"
 term_expect timeout { fail 105 } \
     { screen_is [expr $rows] 1 [list "abc" "~"] }
-exp_send "\x1B"
+exp_send [esc]
 
 # Check that a failed 'r' cancels a map command.
 # If the 'r' fails as it should, the rest of the X macro should be ignored.
@@ -54,7 +54,7 @@ exp_send ":map X rAabcde\r"
 exp_send "0DX"
 term_expect timeout { fail 106 } \
     { screen_is 1 0 [list "" "~"] }
-exp_send "\x1B"
+exp_send "[esc]"
 
 exp_send ":q!\r"
 

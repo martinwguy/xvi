@@ -68,33 +68,33 @@ term_expect timeout { fail 101 } \
 exp_send "i"
 term_expect timeout { puts "mode is [getmode]"; fail 102 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
-exp_send "\x1B"
+exp_send "[esc]"
 term_expect timeout { fail 103 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in append mode
 exp_send "a"
 term_expect timeout { fail 104 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
-exp_send "\x1B"
+exp_send "[esc]"
 term_expect timeout { fail 105 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in change mode
 exp_send "C"
 term_expect timeout { fail 106 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
-exp_send "\x1B"
+exp_send "[esc]"
 term_expect timeout { fail 107 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in substitute mode
 exp_send "s"
 term_expect timeout { fail 108 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
-exp_send "\x1B"
+exp_send "[esc]"
 term_expect timeout { fail 109 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in single-character replace mode
 # FIrst, put a character there to replace
-exp_send "ia\x1B"
+exp_send "ia[esc]"
 tksleep
 term_expect timeout { fail 110 } { screen_is 1 0 [list "a" "~"] }
 exp_send "r"
@@ -111,7 +111,7 @@ term_expect timeout { fail 113 } { expr { [getmode] eq "REPLACE" } }
 exp_send "aaa"
 term_expect timeout { fail 114 } { expr { [getmode] eq "REPLACE" } }
 # See if it disappears after pressing Escape
-exp_send "\x1B"
+exp_send "[esc]"
 term_expect timeout { fail 115 } { expr { [getmode] eq "" } }
 
 exp_send ":q!\r"

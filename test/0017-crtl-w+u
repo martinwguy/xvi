@@ -13,10 +13,6 @@ exec tclsh "$0" ${1+"$@"}
 source term
 start_vi
 
-set ctrlt "\x14"
-set ctrlu "\x15"
-set ctrlw "\x17"
-
 # Tests begin
 
 # Check it started up OK
@@ -27,14 +23,14 @@ term_expect timeout { fail 100 } { screen_is 1 0 [list "" "~"] }
 exp_send "a"
 exp_send "abcde"
 term_expect timeout { fail 101 } { screen_is 1 5 [list "abcde" "~"] }
-exp_send $ctrlu
+exp_send [ctrl U]
 term_expect timeout { fail 102 } { screen_is 1 0 [list "" "~"] }
 
 # Ctrl-W
 
 exp_send "abcde"
 term_expect timeout { fail 103 } { screen_is 1 5 [list "abcde" "~"] }
-exp_send $ctrlw
+exp_send [ctrl W]
 term_expect timeout { fail 104 } { screen_is 1 0 [list "" "~"] }
 
 # Ctrl-W of one word should not take a space preceding what it gobbles
@@ -42,46 +38,46 @@ term_expect timeout { fail 104 } { screen_is 1 0 [list "" "~"] }
 
 exp_send "abc def"
 term_expect timeout { fail 105 } { screen_is 1 7 [list "abc def" "~"] }
-exp_send $ctrlw
+exp_send [ctrl W]
 term_expect timeout { fail 106 } { screen_is 1 4 [list "abc" "~"] }
-exp_send $ctrlw
+exp_send [ctrl W]
 term_expect timeout { fail 107 } { screen_is 1 0 [list "" "~"] }
 
 # Check they only delete back to the insert point
 
-exp_send "abc\x1Badef"
+exp_send "abc[esc]adef"
 term_expect timeout { fail 108 } { screen_is 1 6 [list "abcdef" "~"] }
-exp_send $ctrlu
+exp_send [ctrl U]
 term_expect timeout { fail 109 } { screen_is 1 3 [list "abc" "~"] }
 
-exp_send "\x1Badef"
+exp_send "[esc]adef"
 term_expect timeout { fail 110 } { screen_is 1 6 [list "abcdef" "~"] }
-exp_send $ctrlw
+exp_send [ctrl W]
 term_expect timeout { fail 111 } { screen_is 1 3 [list "abc" "~"] }
 
 # Check autoindent chars are kept
 
-exp_send "\x1B:se ai\r"
-exp_send "0Da  a\x1Bo"
+exp_send "[esc]:se ai\r"
+exp_send "0Da  a[esc]o"
 term_expect timeout { fail 112 } { screen_is 2 2 [list "  a" "" "~"] }
 exp_send "bb"
 term_expect timeout { fail 113 } { screen_is 2 4 [list "  a" "  bb" "~"] }
-exp_send $ctrlu
+exp_send [ctrl U]
 term_expect timeout { fail 114 } { screen_is 2 2 [list "  a" "" "~"] }
 
 # Check additional autoindents are kept (to next multiple of 8 chars here)
-exp_send $ctrlt
+exp_send [ctrl T]
 tksleep
 term_expect timeout { fail 115 } { screen_is 2 8 [list "  a" "" "~"] }
-exp_send $ctrlw
+exp_send [ctrl W]
 exp_send "b"	;# Test 116 fails in virterm without this, maybe because
 		;# we had two (three!) identical consecutive conditions?
 term_expect timeout { fail 116 } { screen_is 2 9 [list "  a" "        b" "~"] }
-exp_send $ctrlu
+exp_send [ctrl U]
 exp_send "c"
 term_expect timeout { fail 117 } { screen_is 2 9 [list "  a" "        c" "~"] }
 
-exp_send "\x1B:q!\r"
+exp_send "[esc]:q!\r"
 
 exit 0
 

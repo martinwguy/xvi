@@ -32,12 +32,12 @@ term_expect timeout { fail 100 } \
 	{ screen_is 1 0 [list "" "~"] }
 
 # The bug places the Y on top of the X.
-exp_send "79aa\x1BiXY"
+exp_send "79aa[esc]iXY"
 term_expect timeout { fail 101 } \
 	{ screen_is 2 0 [list "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXY" "a" "~"] }
 
 
-exp_send "\x1B:q!\r"
+exp_send "[esc]:q!\r"
 
 exit 0
 

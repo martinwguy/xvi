@@ -11,7 +11,7 @@ start_vi
 exp_send "aabcdefgh"
 term_expect	timeout { fail 100 } \
     		{ screen_is 1 8 "abcdefgh" }
-exp_send "\x1B"
+exp_send "[esc]"
 	# FAILS because it thinks the cursor is in the wrong position.
 	# WORKS if you send \x03 instead of \x1B (^C instead of Esc)
 	# WORKS if you "sleep 1" between here and the term_expect
