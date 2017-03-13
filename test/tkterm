@@ -154,15 +154,10 @@ if {$termcap} {
 	:cr=\r:
 	:so=\E[7m:
 	:se=\E[m:
-	:k1=\EOP:
-	:k2=\EOQ:
-	:k3=\EOR:
-	:k4=\EOS:
-	:k5=\EOT:
-	:k6=\EOU:
-	:k7=\EOV:
-	:k8=\EOW:
-	:k9=\EOX:
+	:ku=\EOA:kd=\EOB:kr=\EOC:kl=\EOD:
+	:kh=\EOH:@7=\EOF:kP=\E[5~:kN=\E[6~:
+	:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:k5=\EOT:
+	:k6=\EOU:k7=\EOV:k8=\EOW:k9=\EOX:
     }
 }
 
@@ -188,15 +183,10 @@ if {$terminfo} {
 	cr=\r,
 	smso=\E[7m,
 	rmso=\E[m,
-	kf1=\EOP,
-	kf2=\EOQ,
-	kf3=\EOR,
-	kf4=\EOS,
-	kf5=\EOT,
-	kf6=\EOU,
-	kf7=\EOV,
-	kf8=\EOW,
-	kf9=\EOX,
+	kcuu1=\EOA,kcud1=\EOB,kcuf1=\EOC,kcub1=\EOD,
+	khome=\EOH,kend=\EOF,kpp=\E[5~,knp=\E[6~,
+	kf1=\EOP,kf2=\EOQ,kf3=\EOR,kf4=\EOS,kf5=\EOT,
+	kf6=\EOU,kf7=\EOV,kf8=\EOW,kf9=\EOX,
     }
     close $file
 
@@ -521,6 +511,14 @@ bind $term <F6> {exp_send -i $term_spawn_id "\033OU"}
 bind $term <F7> {exp_send -i $term_spawn_id "\033OV"}
 bind $term <F8> {exp_send -i $term_spawn_id "\033OW"}
 bind $term <F9> {exp_send -i $term_spawn_id "\033OX"}
+bind $term <Up>    {exp_send -i $term_spawn_id "\033OA"}
+bind $term <Down>  {exp_send -i $term_spawn_id "\033OB"}
+bind $term <Right> {exp_send -i $term_spawn_id "\033OC"}
+bind $term <Left>  {exp_send -i $term_spawn_id "\033OD"}
+bind $term <Home>  {exp_send -i $term_spawn_id "\033OH"}
+bind $term <End>   {exp_send -i $term_spawn_id "\033OF"}
+bind $term <Prior> {exp_send -i $term_spawn_id "\033[5~"}
+bind $term <Next>  {exp_send -i $term_spawn_id "\033[6~"}
 
 set term_counter 0
 proc term_expect {args} {

@@ -110,7 +110,8 @@ if {$termcap} {
 	:cr=\r:
 	:so=\E[7m:
 	:se=\E[m:
-	:nd=\E[C:
+	:ku=\EOA:kd=\EOB:kr=\EOC:kl=\EOD:
+	:kh=\EOH:@7=\EOF:kP=\E[5~:kN=\E[6~:
     }
 }
 
@@ -134,6 +135,8 @@ if {$terminfo} {
 	cr=\r,
 	smso=\E[7m,
 	rmso=\E[m,
+	kcuu1=\EOA,kcud1=\EOB,kcuf1=\EOC,kcub1=\EOD,
+	khome=\EOH,kend=\EOF,kpp=\E[5~,knp=\E[6~,
     }
     close $file
 
