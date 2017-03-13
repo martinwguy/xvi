@@ -408,6 +408,7 @@ bool_t	interactive;			/* true if reading from tty */
 		 */
 		if (ecp->ec_flags & EC_INTEXP) {
 		    arg = expand_percents(arg);
+		    if (arg == NULL) return;
 		}
 		if (ecp->ec_flags & EC_FILEXP) {
 		    arg = fexpand(arg, FALSE);
@@ -1331,13 +1332,25 @@ char	*str;
     escaped = FALSE;
     for (from = str; *from != '\0'; from++) {
 	if (!escaped) {
-	    if (*from == '%' && curbuf->b_filename != NULL) {
+	    switch (*from) {
+	    case '%':
+		if (curbuf->b_filename == NULL) {
+		    show_error(curwin, "Current filename is not set");
+		    return(NULL);
+		}
 		(void) lformat(&newstr, "%s", curbuf->b_filename);
-	    } else if (*from == '#' && alt_file_name() != NULL) {
+		break;
+	    case '#':
+	        if (alt_file_name() == NULL) {
+		    show_error(curwin, "Alternate filename is not set");
+		    return(NULL);
+		}
 		(void) lformat(&newstr, "%s", alt_file_name());
-	    } else if (*from == '\\') {
+		break;
+	    case '\\':
 		escaped = TRUE;
-	    } else {
+		break;
+	    default:
 		(void) flexaddch(&newstr, *from);
 	    }
 	} else {
