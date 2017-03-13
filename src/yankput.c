@@ -426,6 +426,7 @@ bool_t	vi_mode;
 	char *vname;
 	(void) vischar(name, &vname, 0);
 	show_error(win, "Nothing in buffer %s", vname);
+	wind_goto(win);
 	return;
     }
 
@@ -439,6 +440,7 @@ bool_t	vi_mode;
 
     default:
 	show_error(win, "Nothing to put!");
+	wind_goto(win);
 	return;
     }
 
