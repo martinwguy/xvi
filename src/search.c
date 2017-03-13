@@ -1158,15 +1158,17 @@ char	*command;
     }
     last_lhs = rn_duplicate(lastprogp);
 
+    if (strcmp(sub, "%") == 0) sub = last_rhs;
+
     nsubs = substitute(window, lp, up, sub, cp);
 
     /*
      * Save the rhs.
      */
-    if (last_rhs != NULL) {
+    if (sub != last_rhs) {
 	free(last_rhs);
+        last_rhs = strsave(sub);
     }
-    last_rhs = strsave(sub);
 
     free(copy);
 
