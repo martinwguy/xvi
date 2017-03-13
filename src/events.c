@@ -91,15 +91,13 @@ xvEvent	*ev;
 
     case Ev_breakin:
 	/*
-	 * We don't have to handle this any better; any code
+	 * We don't have to handle this; any code
 	 * which is actually interruptible will check the
 	 * kbdintr variable itself at appropriate points.
-	 * So this code only gets executed when we get an
+	 * This code only gets executed when we get an
 	 * interrupt in a non-interruptible code path, or
 	 * when we aren't doing anything at all.
 	 */
-	map_char(CTRL('C'));
-	beep(curwin);
 	break;
 
     case Ev_suspend_request:
