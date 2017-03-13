@@ -14,6 +14,11 @@ status=0	# What to exit with; 0 means success.
 for testfile in [0-9][0-9][0-9][0-9]-*
 do
 	printf "%-32.32s" "$testfile"
+	if [ ! -x "$testfile" ]
+	then	echo "DISABLED"
+		continue
+	fi
+
 	if ./$testfile
 	then
 		echo "PASS"
