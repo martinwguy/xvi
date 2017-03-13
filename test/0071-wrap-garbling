@@ -27,15 +27,10 @@ start_vi
 # Tests begin
 
 # Check it started up OK
-set timeout 1
-term_expect timeout { fail 100 } \
-	{ screen_is 1 0 [list "" "~"] }
+test 100 ""		1 0 [list "" "~"]
 
 # The bug places the Y on top of the X.
-exp_send "79aa[esc]iXY"
-term_expect timeout { fail 101 } \
-	{ screen_is 2 0 [list "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXY" "a" "~"] }
-
+test 101 "79aa[esc]iXY" 2 0 [list "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXY" "a" "~"]
 
 exp_send "[esc]:q!\r"
 

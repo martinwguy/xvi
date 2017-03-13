@@ -14,30 +14,21 @@ source term
 start_vi
 
 # Check it started up OK
-term_expect timeout { fail 100 } \
-    { screen_is 1 0 [list "" "~"] }
+test 100 ""					1 0 [list "" "~"]
 
-exp_send "aThe cat sat on the mat.[esc]"
-tksleep
-term_expect	timeout { fail 101 } \
-		{ screen_is 1 22 "{The cat sat on the mat.}" }
+test 101 "aThe cat sat on the mat.[esc]"	1 22 "{The cat sat on the mat.}"
 
 # Run the POSIX tests
-# Remember to quote \, [ and $ inside "" strings
+# Remember to quote \, [ and $ to get ":s/\<.at\>/\u&/g"
+test 102 ":s/\\<.at\\>/\\u&/g\r"   1 0 "{The Cat Sat on the Mat.}"
 
-exp_send ":s/\\<.at\\>/\\u&/g\r"	;# :s/\<.at\>/\u&/g
-term_expect	timeout { fail 102 } \
-    		{ screen_is 1 0 "{The Cat Sat on the Mat.}" }
-
-exp_send ":s/S\\(.*\\)M/S\\U\\1\\eM/\r"	;# :s/S\(.*\)M/S\U\1\eM/
-term_expect	timeout { fail 103 } \
-    		{ screen_is 1 0 "{The Cat SAT ON THE Mat.}" }
+;# :s/S\(.*\)M/S\U\1\eM/
+test 103 ":s/S\\(.*\\)M/S\\U\\1\\eM/\r"		1 0 "{The Cat SAT ON THE Mat.}"
 
 # Check that \u or \l followed by an empty replacement string carries over
 # to the first char of the following text.
-exp_send ":s/ \\(x*\\)/ \\l\\1E/\r"		;# :s/ \(x*\)/\l\1E/
-term_expect	timeout { fail 104 } \
-    		{ screen_is 1 0 "{The eCat SAT ON THE Mat.}" }
+;# :s/ \(x*\)/\l\1E/
+test 104 ":s/ \\(x*\\)/ \\l\\1E/\r"		1 0 "{The eCat SAT ON THE Mat.}"
 
 exp_send ":q!\r"
 

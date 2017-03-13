@@ -8,50 +8,29 @@ exec tclsh "$0" ${1+"$@"}
 source term
 start_vi
 
-exp_send "aabcdefgh"
-term_expect	timeout { fail 100 } \
-    		{ screen_is 1 8 "abcdefgh" }
-exp_send "[esc]"
-	# FAILS because it thinks the cursor is in the wrong position.
-	# WORKS if you send \x03 instead of \x1B (^C instead of Esc)
-	# WORKS if you "sleep 1" between here and the term_expect
-tksleep
-term_expect	timeout { fail 101 } \
-		{ screen_is 1 7 "abcdefgh" }
+test 100 ""			1 0 [list "" "~" ]
+
+test 101 "aabcdefgh[esc]"	1 7 [list "abcdefgh" "~" ]
 
 # Twiddle the first character
-exp_send "0~"
-term_expect	timeout { fail 102 } \
-    		{ screen_is 1 1 "Abcdefgh" }
+test 102 "0~"			1 1 "Abcdefgh"
 # Undo it
-exp_send "u"
-term_expect	timeout { fail 103 } \
-    		{ screen_is 1 0 "abcdefgh" }
+test 103 "u"			1 0 "abcdefgh"
 
 # move onto the d
 exp_send "0lll"
-	# FAILS because it thinks the cursor is in the wrong position.
-	# tkterm continues reporting the cursor at (1,0)
-	# WORKS if you "sleep 1" between here and term_expect
 tksleep
-term_expect	timeout { fail 104 } \
-    		{ screen_is 1 3 "abcdefgh" }
+test 104 ""			1 3 "abcdefgh"
 # Set uppercase DEF
-exp_send "3~"
-term_expect	timeout { fail 105 } \
-    		{ screen_is 1 6 "abcDEFgh" }
+test 105 "3~"			1 6 "abcDEFgh"
 
 # Undo should undo all 3.
-exp_send "u"
-term_expect	timeout { fail 106 } \
-    		{ screen_is 1 3 "abcdefgh" }
+test 106 "u"			1 3 "abcdefgh"
 
 # Repeat count should stop when it gets to the end of the line,
 # and not flip the final character twice,
 # tested by moving onto the g and trying 3 ~'s
-exp_send "7|3~"
-term_expect	timeout { fail 107 } \
-    		{ screen_is 1 7 "abcdefGH" }
+test 107 "7|3~"			1 7 "abcdefGH"
 
 exp_send ":q!\r"
 

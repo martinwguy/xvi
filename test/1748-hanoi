@@ -16,9 +16,8 @@ exp_send ":so hanoi\r"
 # vim has trailing line,column info.
 # nvi leaves the status line blank if successful
 
-set screen [list "" "~"]
-term_expect timeout { fail 100 } \
-    { screen_is 1 0 $screen }
+test 100 ""		1 0 [list "" "~"]
+
 term_expect timeout {
 	puts "After :so hanoi, status line is \"[statusline]\"."
 	fail 101
@@ -27,17 +26,13 @@ term_expect timeout {
     { statusline_is "" } { }
 
 # Run the initialization code
-exp_send "I"
-set screen [list "" "01234567" "0" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
-term_expect timeout { fail 111 } \
-    { screen_is 9 0 $screen }
+test 111 "I" 9 0 \
+	[list "" "01234567" "0" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
 
 # Run the main loop
-exp_send "L"
 set timeout 10
-set screen [list "" "0" "01234567" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
-term_expect timeout { fail 112 } \
-    { screen_is 2 0 $screen }
+test 112 "L" 2 0 \
+	[list "" "0" "01234567" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
 
 exp_send ":q!\r"
 

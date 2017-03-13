@@ -10,41 +10,26 @@ source term
 start_vi
 
 # Check it started up OK
-term_expect timeout { fail 100 } \
-	{ screen_is 1 0 [list "" "~"] }
+test 100 ""		1 0 [list "" "~"]
 
-exp_send "aabcde[esc]"
-tksleep
-term_expect timeout { fail 101 } \
-    { screen_is 1 4 [list "abcde" "~"] }
+# Create a test pattern
+test 101 "aabcde[esc]"	1 4 [list "abcde" "~"]
 
 # Try a one-character yank at end of line
-exp_send ylp
-term_expect timeout { fail 102 } \
-    { screen_is 1 5 [list "abcdee" "~"] }
+test 102 ylp		1 5 [list "abcdee" "~"]
 
 # Restore abcde and try exactly the last 2 characters
-exp_send {x$hd2l}
-term_expect timeout { fail 103 } \
-    { screen_is 1 2 [list "abc" "~"] }
+test 103 {x$hd2l}	1 2 [list "abc" "~"]
 # Check the prefix the other way round too
-exp_send {p$h2dl}
-term_expect timeout { fail 113 } \
-    { screen_is 1 2 [list "abc" "~"] }
+test 113 {p$h2dl}	1 2 [list "abc" "~"]
 
 # Restore and sitting on the d, try taking more than there are
 # (it should take 2)
-exp_send {p$hd3l}
-term_expect timeout { fail 104 } \
-    { screen_is 1 2 [list "abc" "~"] }
-exp_send {p$h3dl}
-term_expect timeout { fail 114 } \
-    { screen_is 1 2 [list "abc" "~"] }
+test 104 {p$hd3l}	1 2 [list "abc" "~"]
+test 114 {p$h3dl} 	1 2 [list "abc" "~"]
 
 # Check that a numeric prefix is OK in the middle of the line too.
-exp_send {p0l2dl}
-term_expect timeout { fail 105 } \
-    { screen_is 1 1 [list "ade" "~"] }
+test 105 {p0l2dl}	1 1 [list "ade" "~"]
 
 exp_send ":q!\r"
 
