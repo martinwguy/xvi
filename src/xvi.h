@@ -1032,6 +1032,8 @@ extern	void	makeargv P((char *, int *, char ***, char *));
 extern	void	xvConvertWhiteSpace P((char *));
 extern	bool_t	xvJoinLine P((Xviwin *, Line *, bool_t));
 extern	bool_t	xvChangesNotSaved P((Xviwin *));
+extern	void	xvAutoWriteAll P((Xviwin *));
+extern	void	xvAutoWrite P((Xviwin *));
 
 /*
  * mouse.c

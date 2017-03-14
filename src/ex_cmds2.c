@@ -64,6 +64,7 @@ char	*command;
 
     sys_endv();
 
+    xvAutoWrite(window);
     WarnUnSaved(window);
     (void) fputs(command, stdout);
     (void) fputs("\r\n", stdout);
@@ -130,6 +131,7 @@ Xviwin	*window;
 
 	sys_endv();
 
+	xvAutoWriteAll(window);
 	WarnUnSaved(window);
 
 	(void) kill(getpid(), SIGSTOP);

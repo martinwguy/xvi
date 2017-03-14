@@ -195,6 +195,13 @@ bool_t	split;			/* true if want to split */
     }
 
     /*
+     * Classic vi (and POSIX) autowrite modified files even if the tag is
+     * in the same file. With our options to search in an existing buffer or
+     * to open a new window, we only autosave if the tag file replaces the
+     * current buffer.
+     */
+
+    /*
      * If we are already editing the file, just do the search.
      *
      * If "autosplit" is set, create a new buffer window and
@@ -212,14 +219,9 @@ bool_t	split;			/* true if want to split */
 				exNewBuffer(window, tp->t_file, 0)) {
 	edited = TRUE;
 
-    } else if (exEditFile(window, force, tp->t_file)) {
-	edited = TRUE;
-
     } else {
-	/*
-	 * If the re-edit failed, abort here.
-	 */
-	edited = FALSE;
+	xvAutoWrite(window);
+	edited = exEditFile(window, force, tp->t_file);
     }
 
     /*
@@ -286,7 +288,7 @@ bool_t	split;			/* true if want to split */
 	redraw_all(curwin, FALSE);
     }
 
-    return(TRUE);
+    return(edited);
 }
 
 static void

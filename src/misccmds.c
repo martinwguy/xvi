@@ -633,3 +633,44 @@ Xviwin	*window;
     } while ((wp = xvNextWindow(wp)) != window);
     return(FALSE);
 }
+
+/*
+ * Autowrite all modified-and-unsaved buffers, called before a Suspend
+ * or shell escape.
+ * exWriteToFile() clears each buffer's FL_MODIFIED bit if it succeeds,
+ * so a following check for modified but unsaved buffers (with
+ * xvChangesNotSaved() for example) should work fine.
+ */
+void
+xvAutoWriteAll(window)
+Xviwin	*window;
+{
+    Xviwin	*wp;
+
+    if (Pb(P_autowrite)) {
+	wp = window;
+	do {
+	    if (is_modified(wp->w_buffer)) {
+		(void) exWriteToFile(wp, (char *) NULL, (Line *) NULL,
+					     (Line *) NULL, 0);
+	    }
+	} while ((wp = xvNextWindow(wp)) != window);
+    }
+
+    return;
+}
+
+/*
+ * Save the current buffer if autowrite is set and it has been modified but
+ * not saved.  exWriteToFile() clears the buffer's FL_MODIFIED bit, so that
+ * will tell callers if it succeeded or not.
+ */
+void
+xvAutoWrite(window)
+Xviwin *window;
+{
+    if (is_modified(window->w_buffer) && Pb(P_autowrite)) {
+	(void) exWriteToFile(window, (char *) NULL, (Line *) NULL,
+				     (Line *) NULL, 0);
+    }
+}

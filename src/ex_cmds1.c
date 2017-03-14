@@ -586,6 +586,13 @@ bool_t	force;
 {
     unsigned	savecho;
 
+    xvAutoWrite(window);
+
+    if (!force && is_modified(window->w_buffer)) {
+	show_error(window, nowrtmsg);
+	return;
+    }
+
     savecho = echo;
     if (argc > 0) {
 	int	count;
@@ -596,10 +603,6 @@ bool_t	force;
 	/*
 	 * Arguments given - this means a new set of filenames.
 	 */
-	if (!force && is_modified(window->w_buffer)) {
-	    show_error(window, nowrtmsg);
-	    return;
-	}
 
 	/*
 	 * There were no files before, so start from square one.
@@ -728,10 +731,6 @@ bool_t	force;
 	 * modified and not written, or we will "lose"
 	 * files from the list.
 	 */
-	if (!force && is_modified(window->w_buffer)) {
-	    show_error(window, nowrtmsg);
-	    return;
-	}
 
 	/*
 	 * Just edit the next file.
@@ -758,6 +757,8 @@ bool_t	force;
 	return;
 
     curfile = 0;
+
+    xvAutoWrite(window);
 
     savecho = echo;
     echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
@@ -938,9 +939,13 @@ Xviwin	*window;
     savecho = echo;
     echo &= ~e_SCROLL;
 
-    result = xvCanSplit(window) ?
-		exNewBuffer(window, alt_file_name(), 0) :
-		exEditFile(window, FALSE, alt_file_name());
+    if (xvCanSplit(window)) {
+	result = exNewBuffer(window, alt_file_name(), 0);
+    } else {
+	xvAutoWrite(window);
+	result = exEditFile(window, FALSE, alt_file_name());
+    }
+
     if (result) {
 	move_window_to_cursor(curwin);
 	redraw_window(curwin, FALSE);
