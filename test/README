@@ -12,10 +12,9 @@ for issue XXX.
 
 The syntax of a test file is fairly horrible because the test mechanism is based
 on Don Libes' "tkterm",(*) which is written in the fairly horrible language TCL,
-with its bizarre string quoting rules, lame lists represented as strings.
+with its bizarre string quoting rules and lame lists represented as strings.
 Worse, "sleep 1" is sometimes needed between exp_send and term_expect
-for it to work. Check the bugs for labels "tkterm" and "virterm".
-It's probably best to look at some of the existing tests and copy them.
+for it to work - check for calls to "tksleep" in the files here.
 
 *) See his paper "Automation and Testing of Character-Graphic Programs"
    and his book "Exploring Expect", chapter 19, p.448 onwards.
