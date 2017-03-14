@@ -16,7 +16,9 @@ proc clear_statusline { } {
     term_expect timeout { fail 110 } \
 	{ statusline_isnt "Interrupted" }
 }
-	
+
+# Interrupt tests can take a little longer to happen
+set timeout 4
 
 # Tests begin
 
@@ -65,9 +67,9 @@ term_expect timeout { fail 104 } \
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 # Check that you can quote it with ^V
 clear_statusline
-test 120 a[ctrl V]	1 1 "i^"
+test 105 a[ctrl V]	1 1 "i^"
 exp_send [ctrl C]
-term_expect timeout { fail 121 } \
+term_expect timeout { fail 106 } \
     { expr { [screen_is 1 3 [list "i^C" "~"]] &&
 	     ( $vim || [statusline_isnt "Interrupted"] ) } }
 exp_send [esc]
@@ -77,24 +79,24 @@ exp_send [esc]
 
 clear_statusline
 exp_send "0Daabc[esc]h"
-term_expect timeout { fail 105 } \
+term_expect timeout { fail 107 } \
     { screen_is 1 1 "abc" }
 exp_send "RX"
-term_expect timeout { fail 106 } \
+term_expect timeout { fail 108 } \
     { screen_is 1 2 "aXc" }
 exp_send [ctrl C]
-term_expect timeout { fail 107 } \
+term_expect timeout { fail 109 } \
     { expr { [screen_is 1 1 "aXc"] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 # Check that you can quote it with ^V
 clear_statusline
-test 127 "0Cabc[esc]hr[ctrl V]"	1 1 "a^c"
-if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 127 }
-test 122 [ctrl C]	1 1 "a^Cc"
-if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 122 }
-exp_send "0Cabc[esc]hR[ctrl V]"
-test 123 "[ctrl C]"	1 3 "a^Cc"
-if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 123 }
+test 110 "0Cabc[esc]hr[ctrl V]"	1 1 "a^c"
+if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 111 }
+test 112 [ctrl C]		1 1 "a^Cc"
+if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 113 }
+test 114 "0Cabc[esc]hR[ctrl V]"	1 1 "a^c"
+test 115 "[ctrl C]"		1 3 "a^Cc"
+if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 116 }
 exp_send [esc]
 
 
@@ -102,17 +104,17 @@ exp_send [esc]
 
 clear_statusline
 exp_send "0D:"
-term_expect timeout { fail 108 } \
+term_expect timeout { fail 117 } \
     { expr { [statusline_is ":"] && [screen_is $rows 1 [list "" "~"]] } }
 exp_send [ctrl C]
-term_expect timeout { fail 109 } \
+term_expect timeout { fail 118 } \
     { expr { [screen_is 1 0 [list "" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 # Check that you can quote it with ^V
 clear_statusline
-exp_send ":a[ctrl V]"
-ctest 124 [ctrl C]	4 ":a^C"
-if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 124 }
+ctest 119 ":a[ctrl V]"	2 ":a^"
+ctest 120 [ctrl C]	4 ":a^C"
+if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 121 }
 
 
 # Interrupt it while doing infinite macro recursion
@@ -121,7 +123,7 @@ exp_send ":map x y\r"
 exp_send ":map y x\r"
 exp_send "x"
 exp_send [ctrl C]
-term_expect timeout { fail 111 } \
+term_expect timeout { fail 122 } \
     { expr { [screen_is 1 0 [list "" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
@@ -137,12 +139,12 @@ sleep 1
 
 # Interrupt it
 exp_send [ctrl C]
-term_expect timeout { fail 113 } \
+term_expect timeout { fail 123 } \
     { expr { $vim || [statusline_starts "Interrupted"] } }
 
 # Now it should react to ":"
 exp_send ":"
-term_expect timeout { fail 114 } \
+term_expect timeout { fail 124 } \
     { expr { [statusline_is ":"] && [cursor_at $rows 1] } }
 
 exp_send "q!\r"
