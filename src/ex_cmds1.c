@@ -796,6 +796,9 @@ bool_t	force;
  * from "line1" to "line2", forcing if necessary.
  *
  * If no filename given, use the buffer's filename.
+ * If l1 is NULL, write from the first line;
+ * If l2 is NULL, write to the last line;
+ * "force" is whether they added a ! at te end of the command.
  */
 bool_t
 exWriteToFile(window, filename, l1, l2, force)
@@ -811,8 +814,7 @@ bool_t	force;
     if (filename == NULL) {
 	filename = buffer->b_filename;
     } else if (filename[0] == '!') {
-	xvWriteToCommand(window, filename + 1, l1, l2);
-	return(TRUE);
+	return(xvWriteToCommand(window, filename + 1, l1, l2));
     }
 
     if (filename == NULL) {
@@ -821,7 +823,7 @@ bool_t	force;
     }
 
     /*
-     * If we are writing the while buffer out to a specified file,
+     * If we are writing the whole buffer out to a specified file,
      * and the buffer is currently unnamed, we should give it the
      * name of the file (on the grounds that we are effectively now
      * editing that file).

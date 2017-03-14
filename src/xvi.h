@@ -1092,7 +1092,7 @@ extern	int	xv_strtoi P((char **));
  */
 extern	void	specify_pipe_range P((Xviwin *, Line *, Line *));
 extern	void	do_pipe P((Xviwin *, char *));
-extern	void	xvWriteToCommand P((Xviwin *, char *, Line *, Line *));
+extern	bool_t	xvWriteToCommand P((Xviwin *, char *, Line *, Line *));
 extern	void	xvReadFromCommand P((Xviwin *, char *, Line *));
 
 /*

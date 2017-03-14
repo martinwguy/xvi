@@ -259,8 +259,10 @@ FILE	*fp;
  * Writing to the input of a command means it may well be interactive,
  * so we treat it in the same way as invoking a normal subshell. See
  * comments for exShellCommand() in ex_cmds2.c.
+ *
+ * Returns TRUE if everything seems to have succeeded.
  */
-void
+bool_t
 xvWriteToCommand(window, command, l1, l2)
 Xviwin	*window;
 char	*command;
@@ -271,7 +273,7 @@ Line	*l1, *l2;
 
     if (!subshells) {
 	show_error(window, "Can't shell escape from a window");
-	return;
+	return FALSE;
     }
 
     if (l1 == NULL) {
@@ -315,6 +317,8 @@ Line	*l1, *l2;
 
     redraw_all(window, TRUE);
     cursupdate(window);
+
+    return(success);
 }
 
 /*
