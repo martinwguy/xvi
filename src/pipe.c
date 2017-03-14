@@ -81,6 +81,7 @@ char	*command;
 	}
 	lastcmd = strsave(command);
     }
+    VSflush(window->w_vs);
 
     newlines = NULL;
     if (sys_pipe(command, p_write, p_read)) {
@@ -292,6 +293,7 @@ Line	*l1, *l2;
 	lastcmd = strsave(command);
     }
 
+    VSflush(window->w_vs);
     sys_endv();
 
     (void) fputs(command, stdout);
@@ -341,6 +343,8 @@ Line	*atline;
 	}
 	lastcmd = strsave(command);
     }
+
+    VSflush(window->w_vs);
 
     newlines = NULL;
     success = sys_pipe(command, NOFUNC, p_read);
