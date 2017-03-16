@@ -55,12 +55,12 @@ set timeout 2
 # use	VI=nvi make check
 # or	VI="vim -c redraw" make check
 
-proc start_vi {} {
+proc start_vi {args} {
     set vi ../src/xvi
     if { [info exists ::env(VI)] && $::env(VI) != "" } {
 	set vi $::env(VI)
     }
-    exp_send "exec $vi\r"
+    exp_send "exec $vi $args\r"
 }
 
 # screen_is row column lines
