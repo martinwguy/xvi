@@ -5,6 +5,12 @@ exec tclsh "$0" ${1+"$@"}
 
 # Test that nul characters on the command line are ignored.
 
+# This test works with tcl8.6 but fails with virterm and tcl8.5
+if { $tcl_version == 8.5 } {
+	puts "The nul test doesn't work with TCL8.5"
+	fail 1	;# Means test skipped
+}
+
 source term
 start_vi
 
