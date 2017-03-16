@@ -334,8 +334,7 @@ expect_before {
 		incr cur_col -1
 		term_cursor_changed
 	} "^\a" {
-		# Bell, pass back to user
-		send_user "\a"
+		# Bell with nowhere to ring it
 	} "^\t" {
 		# Tab, shouldn't happen
 		send_error "got a tab!?"

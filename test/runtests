@@ -5,6 +5,7 @@
 # Each test is an executable file whose name starts with four digits and
 # a hyphen, and exits 0 if it succeeds, 1 if the test cannot be run or
 # 100-127 if it fails.
+# A test may output a one-line message to say why (it failed or was skipped).
 #
 # This script exits with status 0 if all tests succeeded or were skipped,
 # 1 if any failed.
@@ -21,7 +22,7 @@ do
 		continue
 	fi
 
-	./$testfile
+	output=`./$testfile`
 
 	s=$?
 	case $s in
@@ -30,6 +31,7 @@ do
 	*)	echo "FAILED with status $s"
 		status=1 ;;
 	esac
+	test "$output" && echo ": $output"
 done
 
 rm -f \#unnamed.*
