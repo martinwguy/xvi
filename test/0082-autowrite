@@ -1,0 +1,37 @@
+#! /bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Test file for autowrite parameter.
+#
+# POSIX: "If autowrite is set, and the edit buffer has been modified since
+# it was last completely written to any file, the contents of the edit
+# buffer shall be written as if the ex write command had been specified
+# without arguments, before each command affected by the autowrite edit
+# option is executed.
+#
+# Appending the character '!' to the command name of any of the ex commands
+# except '!' shall prevent the write. If the write fails, it shall be an error
+# and the command shall not be executed."
+#
+# The commands "affected by the autowrite edit option" are:
+# ex commands :next :rewind :suspend :tag :!command  and
+# vi commands ^^ (edit alternate file) and ^] (tag symbol under cursor).
+#
+
+# Use: [file mtime filename]
+
+source term
+start_vi
+
+# Tests begin
+
+# Check it started up OK
+term_expect timeout { fail 100 } { screen_is 1 0 [list "" "~"] }
+
+exp_send ":q!\r"
+
+exit 0
+
