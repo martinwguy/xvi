@@ -2,12 +2,14 @@
 
 # Run all tests in the test suite.
 #
-# This script exits with status 0 if all tests succeeded,
+# Each test is an executable file whose name starts with four digits and
+# a hyphen, and exits 0 if it succeeds, 1 if the test cannot be run or
+# 100-127 if it fails.
+#
+# This script exits with status 0 if all tests succeeded or were skipped,
 # 1 if any failed.
 #
-# Unfortunately, this needs an X display at present because it uses tkterm.
-
-# Run the tests in numbered order. Test scripts are numbered, like in BASIC.
+#	Martin Guy <martinwguy@gmail.com>, March 2017.
 
 status=0	# What to exit with; 0 means success.
 
@@ -19,13 +21,15 @@ do
 		continue
 	fi
 
-	if ./$testfile
-	then
-		echo "PASS"
-	else
-		echo "FAILED with status $?"
-		status=1
-	fi
+	./$testfile
+
+	s=$?
+	case $s in
+	0)	echo "PASS" ;;
+	1)	echo "SKIPPED" ;;
+	*)	echo "FAILED with status $s"
+		status=1 ;;
+	esac
 done
 
 rm -f \#unnamed.*
