@@ -26,12 +26,13 @@ do
 
 	s=$?
 	case $s in
-	0)	echo "PASS" ;;
-	1)	echo "SKIPPED" ;;
-	*)	echo "FAILED with status $s"
+	0)	result="PASS" ;;
+	1)	result="SKIPPED" ;;
+	*)	result="FAILED with status $s"
 		status=1 ;;
 	esac
-	test "$output" && echo ": $output"
+	test "$output" && result="$result: $output"
+	echo "$result"
 done
 
 rm -f \#unnamed.*
