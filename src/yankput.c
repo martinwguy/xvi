@@ -150,7 +150,7 @@ int	name;
 	    ptmp.p_line = to->p_line;
 	    ptmp.p_index = 0;
 	    yp_buf->y_2nd_text = yanktext(&ptmp, to);
-	    if (yp_buf->y_1st_text == NULL) {
+	    if (yp_buf->y_2nd_text == NULL) {
 		free(yp_buf->y_1st_text);
 		return(FALSE);
 	    }
