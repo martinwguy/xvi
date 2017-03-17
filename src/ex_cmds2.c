@@ -373,8 +373,7 @@ Line	*destline;		/* destination line for copy/move */
     /*
      * Yank the text to be copied.
      */
-    if (do_yank(curbuf, &p1, &p2, FALSE, '@') == FALSE) {
-	show_error(curwin, out_of_memory);
+    if (!do_yank(curbuf, &p1, &p2, FALSE, '@')) {
 	return;
     }
 

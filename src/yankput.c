@@ -138,7 +138,7 @@ int	name;
 	}
 	yp_buf->y_1st_text = yanktext(from, &ptmp);
 	if (yp_buf->y_1st_text == NULL) {
-	    return(FALSE);
+	    goto oom;
 	}
 
 	/*
@@ -152,7 +152,7 @@ int	name;
 	    yp_buf->y_2nd_text = yanktext(&ptmp, to);
 	    if (yp_buf->y_2nd_text == NULL) {
 		free(yp_buf->y_1st_text);
-		return(FALSE);
+		goto oom;
 	    }
 	}
 
@@ -166,7 +166,7 @@ int	name;
 	    if (yp_buf->y_line_buf == NULL) {
 		free(yp_buf->y_1st_text);
 		free(yp_buf->y_2nd_text);
-		return(FALSE);
+		goto oom;
 	    }
 	}
 
@@ -178,11 +178,16 @@ int	name;
 	yp_buf->y_line_buf = copy_lines(from->p_line,
 			to->p_line->l_next);
 	if (yp_buf->y_line_buf == NULL) {
-	    return(FALSE);
+	    goto oom;
 	}
 	yp_buf->y_type = y_lines;
     }
     return(TRUE);
+
+oom:
+    /* "Out of memory" handler */
+    show_error(curwin, out_of_memory);
+    return(FALSE);
 }
 
 /*
@@ -314,8 +319,10 @@ int	name;
 
 	    end_of_1st_text = l + strlen(yp_buf->y_1st_text);
 	    newl = newline(strlen(yp_buf->y_1st_text) + 1);
-	    if (newl == NULL)
-		return;
+	    if (newl == NULL) {
+		end_command(win);
+		goto oom;
+	    }
 
 	    /*
 	     * Link the new line into the list.
@@ -333,9 +340,11 @@ int	name;
 
 	    lastpos.p_line = win->w_cursor->p_line->l_next;
 	    newlines = copy_lines(yp_buf->y_line_buf, (Line *) NULL);
-	    if (newlines != NULL) {
-		repllines(win, nextline, 0L, newlines);
+	    if (newlines == NULL) { 
+		end_command(win);
+		goto oom;
 	    }
+	    repllines(win, nextline, 0L, newlines);
 	    lastpos.p_line = lastpos.p_line->l_prev;
 	    lastpos.p_index = strlen(lastpos.p_line->l_text) - 1;
 	}
@@ -353,7 +362,7 @@ int	name;
 		new = newline(strlen(yp_buf->y_2nd_text) + 1);
 		if (new == NULL) {
 		    end_command(win);
-		    return;
+		    goto oom;
 		}
 		repllines(win, nextline, 0L, new);
 		nextline = new;
@@ -386,7 +395,7 @@ int	name;
 	 */
 	new = copy_lines(yp_buf->y_line_buf, (Line *) NULL);
 	if (new == NULL) {
-	    return;
+	    goto oom;
 	}
 
 	repllines(win, (direction == FORWARD) ? nextline : currline, 0L, new);
@@ -403,6 +412,12 @@ int	name;
     } else {
 	show_error(win, "Nothing to put!");
     }
+    return;
+
+oom:
+    /* "Out of memory" handler */
+    show_error(win, out_of_memory);
+    return;
 }
 
 /*
