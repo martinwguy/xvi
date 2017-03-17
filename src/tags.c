@@ -150,6 +150,13 @@ tagword()
 
 /*
  * exTag(window, tag, force, interactive, split) - goto tag
+ *
+ * POSIX: "If the tagstring is in a file with a different name than the current
+ * pathname, set the current pathname to the name of that file, and replace
+ * the contents of the edit buffer with the contents of that file. In this
+ * case, if no '!' is appended to the command name, and the edit buffer has
+ * been modified since the last complete write, it shall be an error, unless
+ * the file is successfully written as specified by the autowrite option."
  */
 bool_t
 exTag(window, tag, force, interactive, split)
@@ -220,7 +227,13 @@ bool_t	split;			/* true if want to split */
 	edited = TRUE;
 
     } else {
-	xvAutoWrite(window);
+	if (!force) {
+	    xvAutoWrite(window);
+	    if (is_modified(window->w_buffer)) {
+		show_error(window, nowrtmsg);
+		return(FALSE);
+	    }
+	}
 	edited = exEditFile(window, force, tp->t_file);
     }
 

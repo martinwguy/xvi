@@ -945,13 +945,14 @@ extern	void	exReadFile P((Xviwin *, char *, Line *));
 extern	void	exEditAlternateFile P((Xviwin *));
 extern	void	exShowFileStatus P((Xviwin *, char *));
 extern	void	exCompareWindows P((void));
+extern	char	nowrtmsg[];
 
 /*
  * ex_cmds2.c
  */
-extern	void	exInteractiveShell P((Xviwin *));
+extern	void	exInteractiveShell P((Xviwin *, bool_t));
 extern	void	exShellCommand P((Xviwin *, char *));
-extern	void	exSuspend P((Xviwin *));
+extern	void	exSuspend P((Xviwin *, bool_t));
 extern	void	exEquals P((Xviwin *, Line *));
 extern	void	exHelp P((Xviwin *));
 extern	bool_t	exSource P((bool_t, char *));

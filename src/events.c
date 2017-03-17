@@ -105,7 +105,7 @@ xvEvent	*ev;
 	 * We only allow editor suspension in top-level command state.
 	 */
 	if (State == NORMAL) {
-	    exSuspend(curwin);
+	    exSuspend(curwin, FALSE);
 	} else if (State == SUBNORMAL) {
 	    /*
 	     * Treat ^Z as 2nd char of a two-char command as being an ESCAPE.

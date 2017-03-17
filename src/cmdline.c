@@ -232,12 +232,12 @@ static	struct	ecmd	{
   { "rewind",	    EX_REWIND,	    0,	EC_EXCLAM,		ec_none },
 
   { "set",	    EX_SET,	    0,	0,			ec_strings },
-  { "shell",	    EX_SHELL,	    0,	0,			ec_none },
+  { "shell",	    EX_SHELL,	    0,	EC_EXCLAM,		ec_none },
   { "source",	    EX_SOURCE,	    0,	EC_EXPALL,		ec_1string },
   { "split",	    EX_SPLIT,	    0,	0,			ec_none },
-  { "stop",	    EX_SUSPEND,	    0,	0,			ec_none },
+  { "stop",	    EX_SUSPEND,	    0,	EC_EXCLAM,		ec_none },
   { "substitute",   EX_SUBSTITUTE,  1,	0,			ec_nonalnum },
-  { "suspend",	    EX_SUSPEND,	    0,	0,			ec_none },
+  { "suspend",	    EX_SUSPEND,	    0,	EC_EXCLAM,		ec_none },
 
   { "t",	    EX_COPY,	    1,	0,			ec_line },
   { "tag",	    EX_TAG,	    0,	EC_EXCLAM,		ec_1string },
@@ -665,7 +665,7 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_SHELL:
-	exInteractiveShell(curwin);
+	exInteractiveShell(curwin, exclam);
 	break;
 
     case EX_SOURCE:
@@ -717,7 +717,7 @@ bool_t	interactive;			/* true if reading from tty */
     }
 
     case EX_SUSPEND:
-	exSuspend(curwin);
+	exSuspend(curwin, exclam);
 	break;
 
     case EX_TAG:

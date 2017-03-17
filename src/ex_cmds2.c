@@ -64,7 +64,16 @@ char	*command;
 
     sys_endv();
 
-    xvAutoWrite(window);
+    xvAutoWriteAll(window);
+    /*
+     * POSIX: "If autowrite is set, and the edit buffer has been modified
+     * since it was last completely written to any file [and] the write
+     * fails, it shall be an error and the command shall not be executed.
+     */
+    if (Pb(P_autowrite) && xvChangesNotSaved(window)) {
+	show_error(window, nowrtmsg);
+	return;
+    }
     WarnUnSaved(window);
     (void) fputs(command, stdout);
     (void) fputs("\r\n", stdout);
@@ -80,8 +89,9 @@ char	*command;
 }
 
 void
-exInteractiveShell(window)
+exInteractiveShell(window, force)
 Xviwin	*window;
+bool_t	force;
 {
     char	*sh = NULL;
     int	sysret;
@@ -95,6 +105,14 @@ Xviwin	*window;
     if (sh == NULL) {
 	show_error(window, "SHELL variable not set");
 	return;
+    }
+
+    if (!force) {
+	xvAutoWriteAll(window);
+	if (Pb(P_autowrite) && xvChangesNotSaved(window)) {
+	    show_error(window, nowrtmsg);
+	    return;
+	}
     }
 
     sys_endv();
@@ -118,8 +136,9 @@ Xviwin	*window;
 
 /*ARGSUSED*/
 void
-exSuspend(window)
+exSuspend(window, force)
 Xviwin	*window;
+bool_t	force;
 {
     if (State == NORMAL) {
 #ifdef	SIGSTOP
@@ -129,9 +148,16 @@ Xviwin	*window;
 #   endif	/* not POSIX */
 	extern volatile bool_t win_size_changed;
 
+	if (!force) {
+	    xvAutoWriteAll(window);
+	    if (Pb(P_autowrite) && xvChangesNotSaved(window)) {
+		show_error(window, nowrtmsg);
+		return;
+	    }
+	}
+
 	sys_endv();
 
-	xvAutoWriteAll(window);
 	WarnUnSaved(window);
 
 	(void) kill(getpid(), SIGSTOP);
@@ -153,7 +179,7 @@ Xviwin	*window;
 	 * Can't suspend unless we're on a BSD UNIX system;
 	 * just pretend by invoking a shell instead.
 	 */
-	exInteractiveShell(window);
+	exInteractiveShell(window, force);
 
 #endif /* SIGSTOP */
     }

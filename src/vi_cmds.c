@@ -167,7 +167,7 @@ Cmd	*cmd;
 	break;
 
     case CTRL('Z'):			/* suspend editor */
-	exSuspend(curwin);
+	exSuspend(curwin, FALSE);
 	break;
 
     /*

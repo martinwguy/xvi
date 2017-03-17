@@ -30,7 +30,7 @@ static	char	**files;	/* list of input files */
 static	int	numfiles;	/* number of input files */
 static	int	curfile;	/* number of the current file */
 
-static	char	nowrtmsg[] = "No write since last change (use ! to override)";
+	char	nowrtmsg[] = "No write since last change (use ! to override)";
 static	char	nowrtbufs[] = "Some buffers not written (use ! to override)";
 
 static	bool_t	more_files P((void));
@@ -586,11 +586,12 @@ bool_t	force;
 {
     unsigned	savecho;
 
-    xvAutoWrite(window);
-
-    if (!force && is_modified(window->w_buffer)) {
-	show_error(window, nowrtmsg);
-	return;
+    if (!force) {
+	xvAutoWrite(window);
+	if (is_modified(window->w_buffer)) {
+	    show_error(window, nowrtmsg);
+	    return;
+	}
     }
 
     savecho = echo;
@@ -758,7 +759,13 @@ bool_t	force;
 
     curfile = 0;
 
-    xvAutoWrite(window);
+    if (!force) {
+	xvAutoWrite(window);
+        if (is_modified(window->w_buffer)) {
+	    show_error(window, nowrtmsg);
+	    return;
+	}
+    }
 
     savecho = echo;
     echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
@@ -800,6 +807,8 @@ bool_t	force;
  * If l1 is NULL, write from the first line;
  * If l2 is NULL, write to the last line;
  * "force" is whether they added a ! at te end of the command.
+ *
+ * The return value is TRUE is the write succeeded, FALSE otherwise.
  */
 bool_t
 exWriteToFile(window, filename, l1, l2, force)
@@ -943,7 +952,12 @@ Xviwin	*window;
 	result = exNewBuffer(window, alt_file_name(), 0);
     } else {
 	xvAutoWrite(window);
-	result = exEditFile(window, FALSE, alt_file_name());
+	if (is_modified(window->w_buffer)) {
+	    show_error(window, "No write since last change");
+	    result = FALSE;
+	} else {
+	    result = exEditFile(window, FALSE, alt_file_name());
+	}
     }
 
     if (result) {
