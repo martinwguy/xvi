@@ -211,7 +211,7 @@ proc myterm {command first second args} {
 
 
 proc scrollup {} {
-  global termdata blankline
+  global termdata blankline rows
   for {set i 1} {$i < $rows} {incr i} {
     set termdata($i) $termdata([expr $i+1])
   }
