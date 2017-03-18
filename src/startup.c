@@ -390,6 +390,7 @@ char	*envp;				/* init string from the environment */
 	     * to allow user to read tags error and then
 	     * display the "no file" message.
 	     */
+	    VSflush(curwin->w_vs);
 	    sleep(2);
 	    show_file_info(curwin);
 	}
