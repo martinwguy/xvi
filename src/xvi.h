@@ -471,7 +471,9 @@ typedef struct
 /*
  * Remove last character from a Flexbuf.
  */
-#define			flexrmchar(f)	(!flexempty(f) && --(f)->fxb_wcnt)
+#define			flexrmchar(f)	do { if (!flexempty(f)) \
+						--(f)->fxb_wcnt; \
+					   } while(0);
 /*
  * Return number of characters in a Flexbuf.
  */

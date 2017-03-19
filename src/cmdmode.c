@@ -188,7 +188,7 @@ int	ch;
 	    }
 	    len = colposn[inend];
 	    while (flexlen(&win->w_statusline) > len)
-		(void) flexrmchar(&win->w_statusline);
+		flexrmchar(&win->w_statusline);
 	    update_cline(win,colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
@@ -224,7 +224,7 @@ int	ch;
 		inend = inpos = to_expand - inbuf - 1;
 		len = colposn[inpos - 1] + 1;
 		while (flexlen(&win->w_statusline) > len)
-		    (void) flexrmchar(&win->w_statusline);
+		    flexrmchar(&win->w_statusline);
 		if (common_prefix(expansion) > 1)
 		    beep(win);
 		stuff(" %s", expansion);
@@ -298,7 +298,7 @@ int	ch;
 	memmove(stat+colposn[inpos], stat+colposn[inpos]+1,
 		colposn[inend]-colposn[inpos]);
 	/* and remove its last character */
-	(void) flexrmchar(&win->w_statusline);
+	flexrmchar(&win->w_statusline);
 
 	literal_next = FALSE;
     }
