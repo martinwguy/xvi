@@ -284,6 +284,7 @@ int	name;
     if (yp_buf->y_type == y_chars) {
 	int	l;
 	Posn	lastpos;
+	Posn	cursorpos;
 
 	if (!start_command(win)) {
 	    return;
@@ -300,6 +301,9 @@ int	name;
 	 * the inserted text if this was a multi-line yank.
 	 */
 	replchars(win, currline, l, 0, yp_buf->y_1st_text);
+	/* Cursor should end up on the first char of the newly-inserted text */
+	cursorpos.p_line = currline;
+	cursorpos.p_index = l;
 	updateline(win, TRUE);
 	lastpos.p_line = win->w_cursor->p_line;
 	lastpos.p_index = win->w_cursor->p_index + strlen(yp_buf->y_1st_text);
@@ -374,14 +378,7 @@ int	name;
 
 	end_command(win);
 
-	/*
-	 * Ensure cursor ends up within the line.
-	 */
-	if (lastpos.p_line->l_text[lastpos.p_index] == '\0') {
-	    lastpos.p_index--;
-	}
-	move_cursor(win, lastpos.p_line, lastpos.p_index);
-
+	move_cursor(win, cursorpos.p_line, cursorpos.p_index);
 	move_window_to_cursor(win);
 	cursupdate(win);
 	xvUpdateAllBufferWindows(buffer);
