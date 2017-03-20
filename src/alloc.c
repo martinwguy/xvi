@@ -265,6 +265,27 @@ int	nchars;
 }
 
 /*
+ * snewline(): allocate and initialize a new line object from a string
+ * whose contents were obtained from alloc().
+ */
+Line *
+snewline(str)
+char *str;
+{
+    register Line	*l;
+
+    if ((l = (Line *) ralloc()) == NULL) {
+	return NULL;
+    }
+    l->l_text = str;
+    l->l_size = strlen(str) + 1;
+    l->l_prev = NULL;
+    l->l_next = NULL;
+
+    return(l);
+}
+
+/*
  * bufempty() - return TRUE if the buffer is empty
  */
 bool_t

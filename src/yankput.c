@@ -37,6 +37,13 @@ typedef struct yankbuffer {
 	y_lines
     } y_type;
 
+    /* For char-based yanks, the values of (1st_text, 2nd_text, line_buf) can be:
+     * - Yank from a single line: (something, NULL, NULL)
+     * - Yank from a two consecutive lines: (something, something, NULL)
+     * - Yank from three or more lines: (something, something, something)
+     *
+     * For line-based yanks, 1st and 2nd are not used and y_line_buf is always set.
+     */
     char	*y_1st_text;
     char	*y_2nd_text;
     Line	*y_line_buf;
@@ -45,14 +52,24 @@ typedef struct yankbuffer {
 /*
  * For named buffers, we have an array of yankbuffer structures,
  * mapped by printable ascii characters. Only the alphabetic
- * characters, and '@', are directly settable by the user.
- * The uppercase versions mean "append" rather than "replace".
+ * characters, and '@', should be directly settable by the user.
+ * Uppercase buffer names mean "append" rather than "replace" when yanking.
+ *
+ * POSIX mandates buffers a-z (==A-Z), 1-9, and the unnamed buffer.
+ * xvi uses these as well as:
+ * /	The last forward search command line
+ * ?	The last backward search command lines
+ * :	The last ex command line
+ * !	The last shell command line
+ * @	The unnamed buffer
+ * but, contrary to the above comment, the 33 buffers named ' ' to '@'
+ * are all addressable by the user.
+ * Classic vi and nvi seem to let you use all of buffers 0 to 127!
  */
 #define	LOWEST_NAME	' '
 #define	HIGHEST_NAME	'Z'
 #define	NBUFS		(HIGHEST_NAME - LOWEST_NAME + 1)
-#define	bufno(c)	((c) - LOWEST_NAME)
-#define	validname(c)	((c) >= LOWEST_NAME && (c) < 'A')
+#define	bufno(c)	((is_lower(c) ? to_upper(c) : c) - LOWEST_NAME)
 
 static	Yankbuffer	yb[NBUFS];
 
@@ -61,6 +78,10 @@ static	Yankbuffer	*yp_get_buffer P((int));
 static	Line		*copy_lines P((Line *, Line *));
 static	char		*yanktext P((Posn *, Posn *));
 static	void		yp_free P((Yankbuffer *));
+static	bool_t		yp_chars_to_lines P((Yankbuffer *));
+static	void		yp_lines_to_chars P((Yankbuffer *));
+static	Line *		last_line_of P((Line *lp));
+static	bool_t		append_str_to_lines P((Line **, char *));
 
 void
 init_yankput()
@@ -68,9 +89,8 @@ init_yankput()
 }
 
 /*
- * Set the buffer name to be used for the next yank/put operation to
- * the given character. The character '@' is used as a synonym for the
- * default (unnamed) buffer.
+ * From a yank buffer's single-character name, return a pointer to the
+ * corresponding Yankbuffer structure.
  */
 static Yankbuffer *
 yp_get_buffer(name)
@@ -78,13 +98,11 @@ int	name;
 {
     int	i;
 
-    if (validname(name)) {
+    /* Upper case buffer names are appending alises for the lower case ones */
+    if (is_lower(name)) name = to_upper(name);
+
+    if (name >= LOWEST_NAME && name <= HIGHEST_NAME) {
 	i = bufno(name);
-    } else if (is_alpha(name)) {
-	if (is_upper(name)) {
-	    show_message(curwin, "Appending to named buffers not supported");
-	}
-	i = bufno(to_upper(name));
     } else {
 	show_error(curwin, "Illegal buffer name");
 	return(NULL);
@@ -113,17 +131,44 @@ int	name;
 {
     Yankbuffer	*yp_buf;
     long	nlines;
+    bool_t	append;
 
     yp_buf = yp_get_buffer(name);
     if (yp_buf == NULL) {
 	return(FALSE);
     }
-    yp_free(yp_buf);
 
     nlines = cntllines(from->p_line, to->p_line);
 
+    /*
+     * If they specified an alphabetic buffer name in upper-case,
+     * we should append to the yank buffer instead of replacing its contents.
+     * According to POSIX, if you append a char-based yank to a line-based
+     * buffer, the resulting yank buffer should be of the same type as the
+     * newly-yanked text.
+     * Appending to an empty buffer is the same as setting it.
+     */
+    append = is_upper(name) && (yp_buf->y_type != y_none);
+
+    if (!append) {
+	yp_free(yp_buf);
+    }
+
     if (charbased) {
 	Posn		ptmp;
+	Yankbuffer	new;
+
+	/*
+	 * To append, we yank into a private buffer and then construct the
+	 * final buffer from the parts of the old and new yank buffers.
+	 */
+	if (append) {
+	    /* y_1st_text is set below */
+	    new.y_2nd_text = NULL;
+	    new.y_line_buf = NULL;
+	    /* y_type is set below */
+	    yp_buf = &new;
+	}
 
 	/*
 	 * First yank either the whole of the text string
@@ -171,16 +216,118 @@ int	name;
 	}
 
 	yp_buf->y_type = y_chars;
+
+	if (append) {
+	    Line *l;	/* temporary */
+
+	    /* The yank has filled in "new"; get the original buffer back */
+	    yp_buf = yp_get_buffer(name);
+
+	    if (yp_buf->y_type == y_lines) {
+		yp_lines_to_chars(yp_buf);
+	    }
+
+	    /*
+	     * yp_buf now contains the old yank buffer before the append and
+	     * "new" contains the newly-yanked lines to add to it.
+	     * In each one, 1st_text will always be set, 2nd_text may be set
+	     * and if it is, y_line_buf may also be set.
+	     * A first hack at the result was:
+	     * (old_1st, old_lines, old_2nd) + (new_1st, new_lines, new_2nd) =>
+	     * (old_1st, old_lines + old_2nd + new_1st + new_lines, new_2nd)
+	     * but it's not quite that simple. All the combinations are:
+	     *	   NEW	1st		1st 2nd		1st lines 2nd
+	     *	OLD
+	     *	1st	1st=old1st	1st=old1st	1st=old1st
+	     *		lines=NULL	lines=new1st	lines=new1st
+	     *						      newlines
+	     *		2nd=new1st	2nd=new2nd	2nd=new2nd
+	     *
+	     *	1st	1st=old1st	1st=old1st	1st=old1st
+	     *	2nd	lines=old2nd	lines=old2nd	lines=old2nd
+	     *		2nd=new1st	      new1st	      new1st
+	     *				2nd=new2nd	      newlines
+	     *						2nd=new2nd
+	     *
+	     *	1st	1st=old1st	1st=old1st	1st=old1st
+	     *	lines	lines=oldlines	lines=oldlines	lines=oldlines
+	     *	2nd	      old2nd	      old2nd	      old2nd
+	     *		2nd=new1st	      new1st	      new1st
+	     *				2nd=new2nd	      newlines
+	     *						2nd=new2nd
+	     * for which the simple formula above is right for columns 2 and 3,
+	     * but if new2nd is not set, the resulting 2nd comes from new1st.
+	     */
+
+	    /* 1st_text remains the same as before */
+
+	    /*
+	     * The old 2nd_text is appended to the list of lines
+	     */
+	    if (yp_buf->y_2nd_text != NULL) {
+		if (!append_str_to_lines(&(yp_buf->y_line_buf),
+					 yp_buf->y_2nd_text)) {
+		    goto oom;
+		}
+	    }
+
+	    /*
+	     * The new 1st_text is appended to the list of lines unless the new
+	     * 2nd_text is NULL, in which case it becomes 2nd_text in the
+	     * result (see below).
+	     */
+	    if (new.y_2nd_text != NULL) {
+		if (!append_str_to_lines(&(yp_buf->y_line_buf),
+					 yp_buf->y_1st_text)) {
+		    goto oom;
+		}
+	    }
+
+	    /*
+	     * Append the new lines to the list.
+	     * If new.y_line_buf is set, that means new.y_2nd_text was also
+	     * have been set, so yp_buf is sure to have a line buffer and
+	     * "last" is pointing to the last line in it.
+	     */
+	    if (new.y_line_buf != NULL) {
+		l = last_line_of(yp_buf->y_line_buf);
+		l->l_next = new.y_line_buf;
+		new.y_line_buf->l_prev = l;
+	    }
+
+	    /* The result's 2nd_text is that of the new yank, unless it's NULL
+	     * in which case the new 1st_text goes there (see above). */
+	    yp_buf->y_2nd_text = new.y_2nd_text != NULL
+				 ? new.y_2nd_text : new.y_1st_text;
+	}
     } else {
+	Line *newlines;
+
 	/*
 	 * Yank lines starting at "from", ending at "to".
 	 */
-	yp_buf->y_line_buf = copy_lines(from->p_line,
-			to->p_line->l_next);
-	if (yp_buf->y_line_buf == NULL) {
+	newlines = copy_lines(from->p_line, to->p_line->l_next);
+	if (newlines == NULL) {
 	    goto oom;
 	}
-	yp_buf->y_type = y_lines;
+	if (!append) {
+	    yp_buf->y_line_buf = newlines;
+	    yp_buf->y_type = y_lines;
+	} else {
+	    Line *last;
+
+	    if (yp_buf->y_type == y_chars) {
+		if (!yp_chars_to_lines(yp_buf)) {
+		    return(FALSE);
+		}
+	    }
+	    /*
+	     * Find the last line in the yank buffer
+	     * and add the new lines after it
+	     */
+	    last = last_line_of(yp_buf->y_line_buf);
+	    last->l_next = newlines;
+	}
     }
     return(TRUE);
 
@@ -344,7 +491,7 @@ int	name;
 
 	    lastpos.p_line = win->w_cursor->p_line->l_next;
 	    newlines = copy_lines(yp_buf->y_line_buf, (Line *) NULL);
-	    if (newlines == NULL) { 
+	    if (newlines == NULL) {
 		end_command(win);
 		goto oom;
 	    }
@@ -562,7 +709,7 @@ Yankbuffer	*yp;
  * Push up buffers 1..8 by one, spilling 9 off the top.
  * Then move '@' into '1'.
  *
- * This routine assumes contiguity of characters '0' to '9',
+ * This routine assumes contiguity of characters '1' to '9',
  * i.e. probably ASCII, but what the hell.
  */
 void
@@ -581,4 +728,140 @@ yp_push_deleted()
     atp->y_line_buf = NULL;
     atp->y_1st_text = NULL;
     atp->y_2nd_text = NULL;
+}
+
+/*
+ * Convert a character-based buffer to a line-based one.
+ *
+ * A char buffer may be just 1st_text, just 1st_ and 2nd_text or all three;
+ * in all three cases, the 1st (and 2nd if present) text are converted to lines.
+ */
+static bool_t
+yp_chars_to_lines(yp)
+Yankbuffer	*yp;
+{
+    Line *y_1st_line;	/* 1st_text as a line */
+    Line *y_2nd_line;	/* 2nd_text as a Line */
+
+    /* Allocate all new space first so that we can do all or nothing */
+
+    /* Convert the first line */
+    y_1st_line = snewline(yp->y_1st_text);
+    if (y_1st_line == NULL) {
+	return(FALSE);
+    }
+    /*
+     * Allocate the second line's storage early so that if it fails
+     * we can fail without having changed anything.
+     */
+    if (yp->y_2nd_text != NULL) {
+	y_2nd_line = snewline(yp->y_2nd_text);
+	if (y_2nd_line == NULL) {
+	    /* It takes more code to free 1st_line than the space it occupies */
+	    return(FALSE);
+	}
+    }
+
+    /* Add the 1st line to the start of the line_buf */
+    if (yp->y_line_buf == NULL) {
+	yp->y_line_buf = y_1st_line;
+    } else {
+	y_1st_line->l_next = yp->y_line_buf;
+	yp->y_line_buf->l_prev = y_1st_line;
+	yp->y_line_buf = y_1st_line;
+    }
+
+    /* Convert a second line, if any, and add it to the end of line_buf */
+    if (yp->y_2nd_text != NULL) {
+        Line *last;
+
+	last = last_line_of(yp->y_line_buf);
+	y_2nd_line->l_prev = last;
+	last->l_next = y_2nd_line;
+    }
+
+    yp->y_1st_text = yp->y_2nd_text = NULL;
+    yp->y_type = y_lines;
+    return(TRUE);
+}
+
+/*
+ * Convert a line-based buffer to a character-based one.
+ *
+ * A char buffer may be just 1st_text, just 1st_ and 2nd_text or all three,
+ * so we need to split off the first and last lines of the line buffer into those.
+ */
+static void
+yp_lines_to_chars(yp)
+Yankbuffer	*yp;
+{
+    Line *lp = yp->y_line_buf;	/* First line */
+
+    /* Split of first line's text into y_1st_text */
+    yp->y_1st_text = lp->l_text;
+    yp->y_line_buf = lp->l_next;
+    /* Free just the Line object */
+    lp->l_text = NULL;
+    lp->l_next = NULL;
+    throw(lp);
+
+    /* If there were two or more lines, split off the last one into 2nd_text */
+    if (yp->y_line_buf != NULL) {
+	Line **lpp;	/* Points to the l_next cell of the penultimate line */
+
+	for (lpp=&(yp->y_line_buf); (*lpp)->l_next != NULL; lpp=&((*lpp)->l_next)) ;
+
+	/* Move the last line's text to 2nd_text */
+	yp->y_2nd_text = (*lpp)->l_text;
+	(*lpp)->l_text = NULL;
+
+	/* and drop the last Line from the list */
+	throw(*lpp);
+	*lpp = NULL;
+    }
+
+    yp->y_type = y_chars;
+}
+
+/*
+ * Return the last line of a Line buffer.
+ * The argument must be a valid pointer to a Line.
+ */
+static Line *
+last_line_of(lines)
+Line *lines;
+{
+    register Line *lp;
+
+    for (lp = lines; lp->l_next != NULL; lp = lp->l_next)
+	;
+    return(lp);
+}
+
+/*
+ * Take a string, make a Line out of it and append it to a line buffer.
+ * If the line buffer is NULL, it will be modified to point to the single
+ * new line.
+ */
+static bool_t
+append_str_to_lines(linesp, str)
+Line **linesp;
+char *str;
+{
+    Line *last;	/* last line in buffer */
+    Line *l;
+
+    l = snewline(str);
+    if (!l) return(FALSE);
+
+    if (*linesp == NULL) {
+	*linesp = l;
+    } else {
+	/* Put it after the last existing line */
+	last = last_line_of(*linesp);
+	last->l_next = l;
+	l->l_prev = last;
+    }
+
+    return(TRUE);
 }

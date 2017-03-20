@@ -844,6 +844,7 @@ extern	void	*re_alloc P((void *, size_t));
 extern	void	*clr_alloc P((size_t, size_t));
 extern	char	*strsave P((const char *));
 extern	Line	*newline P((int));
+extern	Line	*snewline P((char *));
 extern	bool_t	lnresize P((Line *, unsigned));
 extern	bool_t	bufempty P((Buffer *));
 extern	bool_t	buf1line P((Buffer *));
