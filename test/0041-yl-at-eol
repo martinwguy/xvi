@@ -31,6 +31,6 @@ test 114 {p$h3dl} 	1 2 [list "abc" "~"]
 # Check that a numeric prefix is OK in the middle of the line too.
 test 105 {p0l2dl}	1 1 [list "ade" "~"]
 
-exp_send ":q!\r"
+stop_vi
 
 exit 0

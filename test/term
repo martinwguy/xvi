@@ -63,6 +63,28 @@ proc start_vi {args} {
     exp_send "exec $vi $args\r"
 }
 
+# Stop the editor gracefully. It should be in mnormal mode.
+proc stop_vi {} {
+    # Check that it's still alive (it should be!)
+    global term_spawn_id
+    set xvipid [exp_pid -i $term_spawn_id]
+    set rc [catch { exec kill -0 $xvipid } msg ]
+    if { $rc != 0 } {
+	send_error "xvi seems to have died: $msg"
+	exit 99
+    }
+
+    exp_send ":q!\r"
+}
+
+# Send the xvi process a signal
+proc kill_vi {sig} {
+    global term_spawn_id
+    if { $sig == "" } { set sig 9 }
+    set xvipid [exp_pid -i $term_spawn_id]
+    exec kill -$sig $xvipid
+}
+
 # screen_is row column lines
 #
 # Does the screen image start with the lines in the given list
@@ -171,16 +193,9 @@ proc fail {status} {
 	term_dump $::env(DUMP)
     }
     # If a test failed, the xvi executable is probably still running
-    killxvi
-    exit $status
-}
-
-# Kill the xvi process and remove its preserve file, if any.
-proc killxvi {} {
-    global term_spawn_id
-    set xvipid [exp_pid -i $term_spawn_id]
-    exec kill -9 $xvipid
+    kill_vi 9
     exec rm -f #unnamed.???
+    exit $status
 }
 
 # Write the screen contents to a named file

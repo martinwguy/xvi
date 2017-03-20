@@ -114,6 +114,6 @@ term_expect timeout { fail 114 } { expr { [getmode] eq "REPLACE" } }
 exp_send "[esc]"
 term_expect timeout { fail 115 } { expr { [getmode] eq "" } }
 
-exp_send ":q!\r"
+stop_vi
 
 exit 0

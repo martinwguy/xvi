@@ -19,7 +19,7 @@ test 101 "aabcde[esc]"		1 4 [list "abcde" "~"]
 test 102 "ylp"			1 5 [list "abcdee" "~"]
 test 103 "x"			1 4 [list "abcde" "~"]
 
-exp_send "q!\r"
+stop_vi
 
 exit 0
 

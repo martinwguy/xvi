@@ -29,6 +29,8 @@ ctest 101 "a\x00b"	3 ":ab"
 # ... as should Control-V nul
 ctest 102 "c\x16\x00d"	5 ":abcd"
 
-exp_send "\b\b\b\bq!\r"
+exp_send "\b\b\b\b\b"
+
+stop_vi
 
 exit 0

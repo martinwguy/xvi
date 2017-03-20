@@ -147,6 +147,6 @@ exp_send ":"
 term_expect timeout { fail 124 } \
     { expr { [statusline_is ":"] && [cursor_at $rows 1] } }
 
-exp_send "q!\r"
+stop_vi
 
 exit 0

@@ -30,6 +30,6 @@ test 103 ":s/S\\(.*\\)M/S\\U\\1\\eM/\r"		1 0 "{The Cat SAT ON THE Mat.}"
 ;# :s/ \(x*\)/\l\1E/
 test 104 ":s/ \\(x*\\)/ \\l\\1E/\r"		1 0 "{The eCat SAT ON THE Mat.}"
 
-exp_send ":q!\r"
+stop_vi
 
 exit 0

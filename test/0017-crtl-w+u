@@ -57,7 +57,9 @@ test 115 ""	 		2 8 [list "  a" "" "~"]
 test 116 "[ctrl W]b"		2 9 [list "  a" "        b" "~"]
 test 117 "[ctrl U]c"		2 9 [list "  a" "        c" "~"]
 
-exp_send "[esc]:q!\r"
+exp_send "[esc]"
+
+stop_vi
 
 exit 0
 

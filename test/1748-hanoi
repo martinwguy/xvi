@@ -34,6 +34,6 @@ set timeout 10
 test 112 "L" 2 0 \
 	[list "" "0" "01234567" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
 
-exp_send ":q!\r"
+stop_vi
 
 exit 0

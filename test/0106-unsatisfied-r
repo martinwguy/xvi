@@ -41,6 +41,8 @@ exp_send [esc]
 exp_send ":map X rAabcde\r"
 test 106 "0DX"		1 0 [list "" "~"]
 
-exp_send "[esc]:q!\r"
+exp_send [esc]		;# In case it got left in insert mode
+
+stop_vi
 
 exit 0

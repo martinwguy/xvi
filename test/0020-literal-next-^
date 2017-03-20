@@ -78,11 +78,11 @@ test 124 "[esc]0Cabc[esc]0"	1 0 [list "abc"] ;# reset test pattern
 test 125 "rXlr[ctrl V]X"	1 1 [list "YXc"] ;# 1-char REPLACE mode
 test 126 "0Cabc[esc]0"		1 0 [list "abc"] ;# reset test pattern
 test 127 "RX[ctrl V]X"		1 2 [list "YXc"] ;# multi-char REPLACE mode
+exp_send "[esc]"
 
 # Need to check that inserting the same text again works (i.e. that
 # Flexbuf Insbuff is set correctly and regurgitates correctly).
 
-
-exp_send "[ctrl C]:q!\r"
+stop_vi
 
 exit 0
