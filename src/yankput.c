@@ -104,7 +104,7 @@ int	name;
     if (name >= LOWEST_NAME && name <= HIGHEST_NAME) {
 	i = bufno(name);
     } else {
-	show_error(curwin, "Illegal buffer name");
+	show_error(curwin, "Invalid buffer name");
 	return(NULL);
     }
     return(&yb[i]);
@@ -582,10 +582,6 @@ bool_t	vi_mode;
 
     yp_buf = yp_get_buffer(name);
     if (yp_buf == NULL) {
-	char *vname;
-	(void) vischar(name, &vname, 0);
-	show_error(win, "Nothing in buffer %s", vname);
-	wind_goto(win);
 	return;
     }
 
