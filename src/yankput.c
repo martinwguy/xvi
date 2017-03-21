@@ -62,19 +62,20 @@ typedef struct yankbuffer {
  * :	The last ex command line
  * !	The last shell command line
  * @	The unnamed buffer
- * but, contrary to the above comment, the 33 buffers named ' ' to '@'
- * are all addressable by the user.
- * Classic vi and nvi seem to let you use all of buffers 0 to 127!
+ * <	The last inserted text
+ *
+ * We exploit ASCII, using the range '1' to 'Z' and mapping the out-of-range
+ * characters ('!' and '/') to unused chars in the hole between '9' and '@'.
  */
-#define	LOWEST_NAME	' '
+#define	LOWEST_NAME	'1'
 #define	HIGHEST_NAME	'Z'
 #define	NBUFS		(HIGHEST_NAME - LOWEST_NAME + 1)
-#define	bufno(c)	((is_lower(c) ? to_upper(c) : c) - LOWEST_NAME)
 
 static	Yankbuffer	yb[NBUFS];
 
 static	void		put P((char *, bool_t, bool_t));
 static	Yankbuffer	*yp_get_buffer P((int));
+static	int		bufno P((int));
 static	Line		*copy_lines P((Line *, Line *));
 static	char		*yanktext P((Posn *, Posn *));
 static	void		yp_free P((Yankbuffer *));
@@ -98,16 +99,65 @@ int	name;
 {
     int	i;
 
-    /* Upper case buffer names are appending alises for the lower case ones */
-    if (is_lower(name)) name = to_upper(name);
+    i = bufno(name);
 
-    if (name >= LOWEST_NAME && name <= HIGHEST_NAME) {
-	i = bufno(name);
-    } else {
+    if (i < 0) {
 	show_error(curwin, "Invalid buffer name");
 	return(NULL);
     }
     return(&yb[i]);
+}
+
+/*
+ * bufno maps a yank buffer name into its index in yb[].
+ *
+ * Other than the call from yp_get_buffer(), it is only called with
+ * constant buffer names, so the function should be optimised out at
+ * compile time.
+ */
+static int
+bufno(name)
+int name;
+{
+    /* Map the two out-of-range chars into the space between 9 and @ */
+    switch (name) {
+    case '1': 	/* Valid names already in range */
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case ':':
+    case '?':
+    case '@':
+    case '<':
+		break;
+
+    case ';':	/* Invalid names that are in range */
+    case '=':
+    case '>': 	return -1;
+
+		/* Valid names that are out of range */
+    case '!':	name = ';';	break;
+    case '/':	name = '>';	break;
+
+    default:
+        /* Upper case buffer names are appending alises for the lower case ones */
+	if (is_lower(name)) {
+	    name = to_upper(name);
+	} else if (!is_upper(name)) {
+	    return(-1);
+        }
+    }
+
+    if (name < LOWEST_NAME || name > HIGHEST_NAME) {
+	return(-1);
+    } else {
+        return(name - LOWEST_NAME);
+    }
 }
 
 /*
@@ -211,7 +261,7 @@ oom:
  * Yank the requested range in character mode into the given Yankbuffer.
  *
  * Returns: yp_buf on success,
- *	    NULL on failure (due to memory exhaustion). 
+ *	    NULL on failure (due to memory exhaustion).
  * On failure, this routine prints the "Out of memory" message.
  */
 static bool_t
@@ -596,7 +646,7 @@ int	name;
       }
       break;
     default:
-      show_error(win, "Nothing in buffer %c!", name);
+      show_error(win, "Nothing to put!");
       break;
     }
     return;
@@ -747,19 +797,17 @@ Yankbuffer	*yp;
 /*
  * Push up buffers 1..8 by one, spilling 9 off the top.
  * Then move '@' into '1'.
- *
- * This routine assumes contiguity of characters '1' to '9',
- * i.e. probably ASCII, but what the hell.
  */
 void
 yp_push_deleted()
 {
     Yankbuffer	*atp;
+    Yankbuffer	*ybp;
     int		c;
 
     yp_free(&yb[bufno('9')]);
-    for (c = '9'; c > '1'; --c) {
-	yb[bufno(c)] = yb[bufno(c - 1)];
+    for (ybp = &yb[bufno('8')]; ybp >= &yb[bufno('1')]; ybp--) {
+	ybp[1] = ybp[0];
     }
     atp = &yb[bufno('@')];
     yb[bufno('1')] = *atp;
