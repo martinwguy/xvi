@@ -516,7 +516,7 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_COPY:
-	exLineOperation('c', l_line, u_line, a_line);
+	exLineOperation('t', l_line, u_line, a_line);
 	break;
 
     case EX_DELETE:

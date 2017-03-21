@@ -134,13 +134,13 @@ int name;
     case '?':
     case '@':
     case '<':
+    case '=': /* Secret buffer used by copy/move in exLineOperation() */
 		break;
 
     case ';':	/* Invalid names that are in range */
-    case '=':
     case '>': 	return -1;
 
-		/* Valid names that are out of range */
+		/* Valid names that are out of range, mapped to unused chars */
     case '!':	name = ';';	break;
     case '/':	name = '>';	break;
 
@@ -249,6 +249,7 @@ int	name;
 	    last->l_next = newlines;
 	}
     }
+
     return(TRUE);
 
 oom:
@@ -426,6 +427,8 @@ Yankbuffer *new;
  * Yank the given string.
  *
  * Third parameter indicates whether to do it as a line or a string.
+ *
+ * Used for buffers '!', ':', '/', '?' and '<'.
  *
  * Returns TRUE if successfully yanked.
  */

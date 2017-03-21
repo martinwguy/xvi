@@ -1,0 +1,31 @@
+#! /bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Test file for change and move operations not to overwrite the default
+# yank buffer.
+#
+# Classic vi fails these tests because it empties the default buffer
+# when you copy/move.
+#
+
+source term
+start_vi
+
+# Tests begin
+
+test 100 "aone\rtwo\rthree[esc]2G"	2 0 [list "one" "two" "three" "~"]
+
+# Yank "two" into the default buffer, move the first line to the end and
+# check that the contents of the default buffer are still "two".
+test 101 "yyk:m$\rp"			4 0 [list "two" "three" "one" "two" "~"]
+
+# The same test for "copy"
+test 102 "1GdGaone\rtwo\rthree[esc]2G"	2 0 [list "one" "two" "three" "~"]
+test 103 "yyk:t$\rp"			5 0 [list "one" "two" "three" "one" "two" "~"]
+
+stop_vi
+
+exit 0

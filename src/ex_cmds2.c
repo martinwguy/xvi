@@ -333,7 +333,7 @@ exChangeDirectory(dir)
 }
 
 /*
- * Perform a line-based operation, one of [cdmy].
+ * Perform a line-based operation, one of [dmty].
  */
 void
 exLineOperation(type, l1, l2, destline)
@@ -348,7 +348,7 @@ Line	*destline;		/* destination line for copy/move */
     p2.p_line = (l2 != NULL) ? l2 : p1.p_line;
     p1.p_index = p2.p_index = 0;
 
-    if (type == 'c' || type == 'm') {
+    if (type == 't' || type == 'm') {
 	if (destline == NULL) {
 	    show_error(curwin, "No destination specified");
 	    return;
@@ -371,9 +371,12 @@ Line	*destline;		/* destination line for copy/move */
     }
 
     /*
-     * Yank the text to be copied.
+     * Yank the text.
+     * For delete and yank, the removed text goes into the default buffer.
+     * For move and copy, we use the secret buffer '=' as a temporary.
      */
-    if (!do_yank(curbuf, &p1, &p2, FALSE, '@')) {
+    if (!do_yank(curbuf, &p1, &p2, FALSE,
+		 (type == 'd' || type == 'y') ? '@' : '=')) {
 	return;
     }
 
@@ -393,14 +396,14 @@ Line	*destline;		/* destination line for copy/move */
     }
 
     switch (type) {
-    case 'c':			/* copy */
+    case 't':			/* copy */
     case 'm':			/* move */
 	/*
 	 * And put it back at the destination point.
 	 */
 	destpos.p_line = destline;
 	destpos.p_index = 0;
-	do_put(curwin, &destpos, FORWARD, '@');
+	do_put(curwin, &destpos, FORWARD, '=');
 
 	xvUpdateAllBufferWindows(curbuf);
 	cursupdate(curwin);
