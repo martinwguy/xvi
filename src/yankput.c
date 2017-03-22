@@ -863,7 +863,6 @@ yp_push_deleted()
 {
     Yankbuffer	*atp;
     Yankbuffer	*ybp;
-    int		c;
 
     yp_free(&yb[bufno('9')]);
     for (ybp = &yb[bufno('8')]; ybp >= &yb[bufno('1')]; ybp--) {
