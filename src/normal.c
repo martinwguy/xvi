@@ -139,8 +139,9 @@ register int	c;
 	 * the same character again, we fake out the default
 	 * "apply to this line" rule by changing the input
 	 * character to a '_' which means "the current line."
+	 * cmd_ch1 will never == NOP.
 	 */
-	if (cmd->cmd_operator != NOP && cmd->cmd_operator == cmd->cmd_ch1) {
+	if (/*cmd->cmd_operator != NOP &&*/ cmd->cmd_operator == cmd->cmd_ch1) {
 	    cmd->cmd_ch1 = '_';
 	}
     }
@@ -252,7 +253,7 @@ Cmd	*cmd;
 	    return(FALSE);
 	}
 
-	(void) (*CFUNC(cmd->cmd_ch1))(cmd);
+	(*CFUNC(cmd->cmd_ch1))(cmd);
     }
 
     cmd->cmd_prenum = 0;
