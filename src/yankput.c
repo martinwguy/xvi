@@ -171,6 +171,9 @@ int name;
  *
  * Positions must be ordered properly, i.e. "from" <= "to".
  */
+
+/* Helper functions for do_yank() */
+static bool_t	copy_to_unnamed_yb P((Yankbuffer *));
 static bool_t	yank_chars_to_yp P((Yankbuffer *, Posn *, Posn *));
 static bool_t	append_chars_to_yp_buf P((Yankbuffer *, Yankbuffer *));
 
@@ -250,6 +253,17 @@ int	name;
 	}
     }
 
+    /*
+     * POSIX: "Commands that store text into buffers shall store the text
+     * into the unnamed buffer as well as any specified buffer."
+     * This only applies to the letter-named buffers, not the automatic ones.
+     */
+    if (is_alpha(name)) {
+	if (!copy_to_unnamed_yb(yp_buf)) {
+	    goto oom;
+	}
+    }
+
     return(TRUE);
 
 oom:
@@ -259,11 +273,52 @@ oom:
 }
 
 /*
+ * Copy a yank buffer to the unnamed/default buffer
+ */
+static bool_t
+copy_to_unnamed_yb(yp_buf)
+Yankbuffer	*yp_buf;
+{
+    Yankbuffer*	atp = &yb[bufno('@')];
+
+    yp_free(atp);
+
+    atp->y_type = yp_buf->y_type;
+
+    if (yp_buf->y_1st_text != NULL) {
+	if ((atp->y_1st_text = strsave(yp_buf->y_1st_text)) == NULL) {
+	    goto oom1;
+	}
+	if (yp_buf->y_2nd_text != NULL) {
+	    atp->y_2nd_text = strsave(yp_buf->y_2nd_text);
+	    if (atp->y_2nd_text == NULL) {
+		goto oom2;
+	    }
+	}
+    }
+    if (yp_buf->y_line_buf != NULL) {
+	atp->y_line_buf = copy_lines(yp_buf->y_line_buf, (Line *) NULL);
+	if (atp->y_line_buf == NULL) {
+	    goto oom3;
+	}
+    }
+    return(TRUE);
+
+    /* Out-of-memory handlers */
+oom3:
+    free(atp->y_2nd_text);
+    atp->y_2nd_text = NULL;
+oom2:
+    free(atp->y_1st_text);
+    atp->y_1st_text = NULL;
+oom1:
+    return(FALSE);
+}
+
+/*
  * Yank the requested range in character mode into the given Yankbuffer.
  *
- * Returns: yp_buf on success,
- *	    NULL on failure (due to memory exhaustion).
- * On failure, this routine prints the "Out of memory" message.
+ * Returns: TRUE if successful, NULL on failure (due to memory exhaustion).
  */
 static bool_t
 yank_chars_to_yp(yp_buf, from, to)
