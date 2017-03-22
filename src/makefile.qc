@@ -34,8 +34,8 @@ MACHOBJ=	defmain.obj defscr.obj \
 		ibmpc_c.obj msdos_c.obj ibmpc_a.obj msdos_a.obj
 MACHINC=	msdos.h ibmpc.h 8086mm.inc
 
-GENINC=		ascii.h change.h param.h ptrfunc.h regexp.h regmagic.h xvi.h \
-		virtscr.h
+GENINC=		ascii.h change.h cmd.h param.h ptrfunc.h regexp.h regmagic.h \
+		virtscr.h xvi.h
 
 GENSRC=		alloc.c altstack.c ascii.c buffers.c \
 		cmdline.c cmdmode.c cmdtab.c cursor.c dispmode.c \

@@ -32,8 +32,8 @@ MACHOBJ =	xwnscr.o tcap_scr.o unix.o
 MACHINC =	unix.h termcap.h
 MACHLIBS =	-ltermcap -lwn -lX11
 
-GENINC=		ascii.h change.h param.h ptrfunc.h regexp.h regmagic.h xvi.h \
-		virtscr.h
+GENINC=		ascii.h change.h cmd.h param.h ptrfunc.h regexp.h regmagic.h \
+		virtscr.h xvi.h
 
 GENSRC=		alloc.c altstack.c ascii.c buffers.c cmdline.c cmdmode.c \
 		cursor.c dispmode.c edit.c ex_cmds1.c ex_cmds2.c events.c \

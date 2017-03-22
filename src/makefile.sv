@@ -27,8 +27,8 @@ LINTFLAGS=	$(SYSDEFS) $(INCDIRS) -ah
 
 MACHINC=	unix.h sunview.h
 
-GENINC=		ascii.h change.h param.h ptrfunc.h regexp.h regmagic.h xvi.h \
-		virtscr.h
+GENINC=		ascii.h change.h cmd.h param.h ptrfunc.h regexp.h regmagic.h \
+		virtscr.h xvi.h
 
 GENOBJ=		alloc.o altstack.o ascii.o buffers.o \
 		cmdline.o cmdmode.o cmdtab.o cursor.o dispmode.o \
