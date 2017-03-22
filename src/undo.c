@@ -668,7 +668,8 @@ Line		*newlines;
 						lastp : lastp->l_prev;
 	    } else {
 		wp->w_cursor->p_line = firstp;
-		(void) xvMoveDown(wp->w_cursor, (long) wp->w_cursor->p_index);
+		(void) xvMoveDown(wp->w_cursor, (long) wp->w_cursor->p_index,
+				  FALSE);	/* Can't fail */
 	    }
 	    wp->w_cursor->p_index = 0;
 	    begin_line(wp, TRUE);

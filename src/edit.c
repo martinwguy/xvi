@@ -688,7 +688,7 @@ int	c;
 	    } else {
 		(void) flexaddch(&Insbuff, '\n');
 
-		if (xvMoveDown(curwin->w_cursor, 1L)) {
+		if (xvMoveDown(curwin->w_cursor, 1L, FALSE)) {
 		    info_update(curwin);
 
 		    /*

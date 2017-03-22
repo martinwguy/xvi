@@ -61,6 +61,11 @@ register Cmd	*cmd;
     long	nlines;
     int		n;
 
+    /* Don't do it if the motion was not valid */
+    if (cmd->cmd_startpos.p_line == NULL) {
+	return;
+    }
+
     nlines = cntllines(cmd->cmd_startpos.p_line, cmd->cmd_target.p_line);
 
     /*
@@ -239,6 +244,10 @@ xvOpYank(cmd)
 register Cmd	*cmd;
 {
     register long	nlines;
+
+    if (cmd->cmd_target.p_line == NULL) {
+	return;
+    }
 
     /*
      * Report on the number of lines yanked.

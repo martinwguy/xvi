@@ -1,0 +1,84 @@
+#! /bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Test file for yank/delete/change/</>/! with a preceding count that
+# asks for more lines than there are in the buffer.
+# The commands should fail instead of taking up to the last line of the buffer.
+#
+# The starting pattern for each test is:
+#	one
+#	two
+#	three
+# with the cursor on the t of "two".
+
+source term
+start_vi
+
+# Visual bells confuse virterm
+exp_send ":se noflash\r"
+exp_send ":se novbell\r"
+
+# Tests begin
+
+test 10 "aone\rtwo\rthree[esc]2G"	2 0 [list "one" "two" "three" "~"]
+
+# Taking one more line than there are should fail and do nothing.
+test 11 "3dd"				2 0 [list "one" "two" "three" "~"]
+# But the exact number should work
+test 12 "2dd"				1 0 [list "one" "~"]
+
+# The same test for "yank". It shouldn't do it, leaving "one" in the yank buffer
+# Reset test pattern
+test 20 "1GdGaone\rtwo\rthree[esc]2G"	2 0 [list "one" "two" "three" "~"]
+test 21 "1Gyy2G3yyp"			3 0 [list "one" "two" "one" "three" "~"]
+# Reset test pattern
+test 22 "dd2G"				2 0 [list "one" "two" "three" "~"]
+# It should work for the exact number of lines
+test 23 "2yyp"			3 0 [list "one" "two" "two" "three" "three" "~"]
+
+# The same test for "change". It should fail and the x should delete a char
+# Reset test pattern
+test 30 "2dd2G"				2 0 [list "one" "two" "three" "~"]
+test 31 "3ccx[esc]"			2 0 [list "one" "wo" "three"  "~"]
+# Reset test pattern
+test 32 "it[esc]2G"			2 0 [list "one" "two" "three" "~"]
+# Exact count should work.
+test 33 "2ccx[esc]"			2 0 [list "one" "x"  "~"]
+
+# The same test for ">" and "<"
+# Too many lines should fail and do nothing
+# Reset test pattern
+test 40 "1GdGaone\rtwo\rthree[esc]2G"	2 0 [list "one" "two" "three" "~"]
+test 41 "3>>"		2 0 [list "one" "two" "three"  "~"]
+test 42 "2>>"		2 8 [list "one" "        two" "        three"  "~"]
+test 43 "3<<"		2 8 [list "one" "        two" "        three"  "~"]
+test 44 "2<<"		2 0 [list "one" "two" "three"  "~"]
+
+# Test other ways of asking to go beyond the end of the file:
+test 50 ":2,2++d\r"	2 0 [list "one" "two" "three"  "~"]
+test 51 "d2+"		2 0 [list "one" "two" "three"  "~"]
+test 52 "jd+"		3 0 [list "one" "two" "three"  "~"]
+test 53 "kd2\r"	2 0 [list "one" "two" "three"  "~"]
+test 54 "d2\n"		2 0 [list "one" "two" "three"  "~"]
+test 55 "d2j"		2 0 [list "one" "two" "three"  "~"]
+test 56 "d2[darrow]"	2 0 [list "one" "two" "three"  "~"]
+test 57 "d2[ctrl n]"	2 0 [list "one" "two" "three"  "~"]
+test 58 "d3$"		2 0 [list "one" "two" "three"  "~"]
+
+# Test ways of deleting back past the start of the file:
+test 60 ":2--,2d\r"	2 0 [list "one" "two" "three"  "~"]
+test 61 "d2-"		2 0 [list "one" "two" "three"  "~"]
+test 62 "d2k"		2 0 [list "one" "two" "three"  "~"]
+test 63 "d2[uarrow]"	2 0 [list "one" "two" "three"  "~"]
+test 64 "d2[ctrl P]"	2 0 [list "one" "two" "three"  "~"]
+
+# Just quickly test that a bad motion halts a macro
+test 70 ":map g d2jaxx"	2 0 [list "one" "two" "three"  "~"]
+
+stop_vi
+
+exit 0
+

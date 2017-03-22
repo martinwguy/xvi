@@ -299,9 +299,9 @@ Cmd	*cmd;
     }
 
     if (n > 0) {
-	(void) xvMoveDown(curwin->w_cursor, n);
+	(void) xvMoveDown(curwin->w_cursor, n, TRUE);
     } else {
-	(void) xvMoveUp(curwin->w_cursor, -n);
+	(void) xvMoveUp(curwin->w_cursor, -n, TRUE);
     }
 
     /*
@@ -336,7 +336,7 @@ Cmd	*cmd;
     switch (cmd->cmd_ch1) {
     case CTRL('D'):
 	scrollup(curwin, scroll);
-	if (xvMoveDown(curwin->w_cursor, (long) scroll)) {
+	if (xvMoveDown(curwin->w_cursor, (long) scroll, TRUE)) {
 	    info_update(curwin);
 	    xvMoveToColumn(curwin->w_cursor, curwin->w_curswant);
 	}
@@ -344,7 +344,7 @@ Cmd	*cmd;
 
     case CTRL('U'):
 	scrolldown(curwin, scroll);
-	if (xvMoveUp(curwin->w_cursor, (long) scroll)) {
+	if (xvMoveUp(curwin->w_cursor, (long) scroll, TRUE)) {
 	    info_update(curwin);
 	    xvMoveToColumn(curwin->w_cursor, curwin->w_curswant);
 	}

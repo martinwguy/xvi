@@ -49,6 +49,10 @@ Cmd	*cmd;
 
     switch (cmd->cmd_ch1) {
     case 'G':
+	if (cmd->cmd_prenum > lineno(b_last_line_of(curbuf))) {
+	    cmd->cmd_target.p_line = NULL;	/* Make the command fail */
+	    return;
+	}
 	cmd->cmd_target.p_line = gotoline(curbuf,
 				(unsigned long) ((cmd->cmd_prenum > 0) ?
 					cmd->cmd_prenum : MAX_LINENO));
@@ -63,7 +67,7 @@ Cmd	*cmd;
     case 'k':
     case K_UARROW:
     case CTRL('P'):
-	if (xvMoveUp(&lastpos, LDEF1(cmd->cmd_prenum))) {
+	if (xvMoveUp(&lastpos, LDEF1(cmd->cmd_prenum), FALSE)) {
 	    xvMoveToColumn(&lastpos, curwin->w_curswant);
 	    cmd->cmd_target = lastpos;
 	}
@@ -77,7 +81,7 @@ Cmd	*cmd;
     case 'j':
     case K_DARROW:
     case CTRL('N'):
-	if (xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum))) {
+	if (xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum), FALSE)) {
 	    xvMoveToColumn(&lastpos, curwin->w_curswant);
 	    cmd->cmd_target = lastpos;
 	}
@@ -93,8 +97,9 @@ Cmd	*cmd;
      * "d3_" works to delete 3 lines.
      */
     case '_':
-	(void) xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum) - 1);
-	cmd->cmd_target = lastpos;
+	if (xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum) - 1, FALSE)) {
+	    cmd->cmd_target = lastpos;
+	}
 	break;
 
     case '|':
@@ -111,12 +116,13 @@ Cmd	*cmd;
 	break;
 
     case '$':
-	(void) xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum) - 1);
-	while (xvMoveRight(&lastpos, FALSE))
-	    ;
-	cmd->cmd_target = lastpos;
-	curwin->w_curswant = INT_MAX;
-	curwin->w_set_want_col = FALSE;
+	if (xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum) - 1, FALSE)) {
+	    while (xvMoveRight(&lastpos, FALSE))
+		;
+	    cmd->cmd_target = lastpos;
+	    curwin->w_curswant = INT_MAX;
+	    curwin->w_set_want_col = FALSE;
+	}
 	break;
 
     case '^':

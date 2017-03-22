@@ -1233,6 +1233,10 @@ get_line(cpp, startline, lpp)
 	if (lnum == 0) {
 	    pos = curbuf->b_line0;
 	} else {
+	    /* Going to a line number past the end of the buffer is an error */
+	    if (lnum > lineno(b_last_line_of(curbuf))) {
+		return FALSE;
+	    }
 	    pos = gotoline(curbuf, (unsigned long) lnum);
 	}
 	break;
@@ -1259,19 +1263,16 @@ get_line(cpp, startline, lpp)
 	}
 
 	if (dirchar == '-') {
-	    if (lnum > lineno(pos)) {
-		/*
-		 * Requested address is before start of buffer - go to line 0.
-		 */
-		target = 0;
-	    } else {
-		target = lineno(pos) - lnum;
-	    }
+	    target = lineno(pos) - lnum;
 	} else {
 	    target = lineno(pos) + lnum;
 	}
 
-	pos = gotoline(curbuf, target);
+	if (target < 1 || target > lineno(b_last_line_of(curbuf))) {
+	    return FALSE;
+	}
+
+	gotoline(curbuf, target);
     }
 
     *cpp = cp;

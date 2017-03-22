@@ -290,6 +290,7 @@ register Line	*pend;
  *
  * Returns the first line of the file if n is 0.
  * Returns the last line of the file if n is beyond the end of the file.
+ * n == MAX_LINENO is a fast way to get to the end of the file.
  */
 Line *
 gotoline(b, n)
@@ -298,6 +299,8 @@ register unsigned long	n;
 {
     if (n == 0) {
 	return(b->b_file);
+    } else if (n == MAX_LINENO) {
+	return(b_last_line_of(b));
     } else {
 	register Line	*lp;
 

@@ -119,14 +119,20 @@ unsigned	nlines;
  *
  * Move cursor one char {left,right} or one line {up,down}.
  *
+ * Parameter too_many_is_OK says, if they ask to move further than is possible,
+ * whether we should just move to start/end of file/line. If it's FALSE and
+ * they try to move too far, we return FALSE
+ *
  * Return TRUE when successful, FALSE when we hit a boundary
- * (of a line, or the file).
+ * (of a line, or the file) either because we were already at the boundary
+ * or because too_many_is_not_OK and they asked to move too far.
  */
 
 bool_t
-xvMoveUp(pp, nlines)
-Posn		*pp;
-long		nlines;
+xvMoveUp(pp, nlines, too_many_is_OK)
+Posn	*pp;
+long	nlines;
+bool_t	too_many_is_OK;
 {
     register Line	*l;
     register long	k;
@@ -138,7 +144,7 @@ long		nlines;
     /*
      * If we've at least backed up a little ...
      */
-    if (k > 0) {
+    if (too_many_is_OK ? k > 0 : k == nlines) {
 	pp->p_line = l;
 	pp->p_index = 0;
 	return(TRUE);
@@ -148,9 +154,10 @@ long		nlines;
 }
 
 bool_t
-xvMoveDown(pp, nlines)
+xvMoveDown(pp, nlines, too_many_is_OK)
 Posn	*pp;
 long	nlines;
+bool_t	too_many_is_OK;
 {
     register Line	*l;
     register long	k;
@@ -159,7 +166,7 @@ long	nlines;
 	l = l->l_next;
     }
 
-    if (k > 0) {
+    if (too_many_is_OK ? k > 0 : k == nlines) {
 	pp->p_line = l;
 	pp->p_index = 0;
 	return(TRUE);
