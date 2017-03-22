@@ -278,8 +278,6 @@ char	*envp;				/* init string from the environment */
 	    }
 
 	} else /* argv[count][0] == '+' */ {
-	    char	nc;
-
 	    /*
 	     * "+n file" or "+/pat file"
 	     */
@@ -288,16 +286,22 @@ char	*envp;				/* init string from the environment */
 		return(NULL);
 	    }
 
-	    nc = argv[count][1];
-	    if (nc == '/') {
+
+	    switch (argv[count][1]) {
+	    case '/':
 		pat = &(argv[count][2]);
-	    } else if (nc == '$') {
+		break;
+	    case '$':
 		line = 0; /* sends us to last line of file */
-	    } else if (is_digit(nc)) {
+		break;
+	    case '0': case '1': case '2': case '3': case '4':
+	    case '5': case '6': case '7': case '8': case '9':
 		line = atol(&(argv[count][1]));
-	    } else if (nc == '\0') {
+		break;
+	    case '\0':
 		line = 0;
-	    } else {
+		break;
+	    default:
 		usage();
 		return(NULL);
 	    }
