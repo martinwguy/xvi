@@ -169,9 +169,10 @@ Cmd	*cmd;
 	 * even though the move would fail. Workaround: do "[yd]$" instead.
 	 * Similarly, if we are on the penultimate character and they say
 	 * y2l, the move would fail, whereas it should yank 2 chars.
+	 * Although classic vi doesn't do this for the other operators [c<>!]
+	 * nvi and vim do.
 	 */
-	if ((cmd->cmd_operator == 'y' || cmd->cmd_operator == 'd')
-	    && cmd->cmd_ch1 == 'l') {
+	if (cmd->cmd_operator != NOP && cmd->cmd_ch1 == 'l') {
 	    if (endofline(&cmd->cmd_startpos)) {
 		cmd->cmd_ch1 = '$';
 	        cmd->cmd_flags |= TGT_INCLUSIVE;
