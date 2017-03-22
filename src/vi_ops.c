@@ -74,7 +74,7 @@ register Cmd	*cmd;
 	return;
     }
 
-    if (!IsCharBased(cmd)) {
+    if (IsLineBased(cmd)) {
 	/*
 	 * Put the cursor at the start of the section to be deleted
 	 * so that repllines will correctly update it and the screen
@@ -177,7 +177,7 @@ register Cmd	*cmd;
 	return;
     }
 
-    if (!IsCharBased(cmd)) {
+    if (IsLineBased(cmd)) {
 	long	nlines;
 	Line	*lp;
 
