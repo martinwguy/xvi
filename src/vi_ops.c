@@ -158,19 +158,7 @@ register Cmd	*cmd;
     Redo.r_mode = r_normal;
     format_redo('d', cmd);
 
-#if 0
-    /*
-     * It would be nice to do this, for efficiency, but because
-     * HandleOperator() calls move_cursor() without updating the
-     * cursor position, the screen gets messed up if we do.
-      */
-    if (IsCharBased(cmd) && nlines == 1) {
-	updateline(curwin);
-    } else
-#endif
-           {
-	xvUpdateAllBufferWindows(curbuf);
-    }
+    updateline(curwin, IsLineBased(cmd) || nlines > 1);
 }
 
 /*
