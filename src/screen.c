@@ -207,7 +207,7 @@ register Xviwin	*win;
     buffer = win->w_buffer;
     row = win->w_winpos;
     line = win->w_topline;
-    lnum = lineno(buffer, line);
+    lnum = lineno(line);
 
     while (row < win->w_cmdline && line != buffer->b_lastline) {
 	int nlines;
@@ -413,7 +413,7 @@ bool_t	flag;
 
 	    nlines = line_to_new(w, currline,
 				    (int) (curs_row + w->w_winpos),
-				    (long) lineno(w->w_buffer, currline));
+				    (long) lineno(currline));
 	    if (flag) {
 		nlines = w->w_nrows - curs_row - 1;
 		file_to_new(w);

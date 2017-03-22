@@ -231,7 +231,7 @@ bool_t	force;
 	 * Before we free the buffer, save its filename.
 	 */
 	push_alternate(buffer->b_filename,
-			lineno(buffer, win->w_cursor->p_line));
+			lineno(win->w_cursor->p_line));
 	free(buffer->b_filename);
 	buffer->b_filename = NULL;
 
@@ -383,7 +383,7 @@ char	*arg;
 	     */
 	    if (buffer->b_filename != NULL) {
 		push_alternate(buffer->b_filename,
-				    lineno(buffer, window->w_cursor->p_line));
+				    lineno(window->w_cursor->p_line));
 		free(buffer->b_filename);
 		buffer->b_filename = NULL;
 	    }

@@ -180,7 +180,7 @@ Xviwin	*window;
 
     change->c_type = C_POSITION;
     change->c_lineno =
-    change->c_pline = lineno(window->w_buffer, window->w_cursor->p_line);
+    change->c_pline = lineno(window->w_cursor->p_line);
     change->c_pindex = window->w_cursor->p_index;
 
     push_change(&(cdp->cd_undo), change);
@@ -336,7 +336,7 @@ char	*newstring;
 	(void) strncpy(change->c_chars, line->l_text + start, nchars);
 	change->c_chars[nchars] = '\0';
     }
-    change->c_lineno = lineno(buffer, line);
+    change->c_lineno = lineno(line);
     change->c_index = start;
     change->c_nchars = nlen;
 

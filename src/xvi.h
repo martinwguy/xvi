@@ -393,7 +393,7 @@ typedef	struct	line {
 /*
  * This macro gives the line number of line 'l' in buffer 'b'.
  */
-#define	lineno(b, l)	((l)->l_number)
+#define	lineno(l)	((l)->l_number)
 
 /*
  * Easy ways of finding out whether a given line is the first

@@ -795,7 +795,7 @@ bool_t		matchtype;
     switch (cmdchar) {
     case 'p':
     case 'l':
-	curnum = lineno(window->w_buffer, lp);
+	curnum = lineno(lp);
 	curline = lp;
 	lastline = up;
 	greptype = matchtype;
@@ -1291,7 +1291,7 @@ char	*flags;
 		    p++;
 		}
 
-		regsubst(prog, sub, &ns, lineno(window->w_buffer, lp));
+		regsubst(prog, sub, &ns, lineno(lp));
 
 		/*
 		 * Continue searching after the match.

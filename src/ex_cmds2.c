@@ -197,7 +197,7 @@ Line	*line;
 	line = window->w_cursor->p_line;
     }
 
-    show_message(window, "%ld", lineno(window->w_buffer, line));
+    show_message(window, "%ld", lineno(line));
 }
 
 void
@@ -362,9 +362,9 @@ Line	*destline;		/* destination line for copy/move */
     if (type == 'm') {
 	unsigned long	destlineno;
 
-	destlineno = lineno(curbuf, destline);
-	if (destlineno >= lineno(curbuf, p1.p_line) &&
-			    destlineno <= lineno(curbuf, p2.p_line)) {
+	destlineno = lineno(destline);
+	if (destlineno >= lineno(p1.p_line) &&
+			    destlineno <= lineno(p2.p_line)) {
 	    show_error(curwin, "Source conflicts with destination of move");
 	    return;
 	}

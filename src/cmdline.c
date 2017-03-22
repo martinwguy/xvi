@@ -1259,16 +1259,16 @@ get_line(cpp, startline, lpp)
 	}
 
 	if (dirchar == '-') {
-	    if (lnum > lineno(curbuf, pos)) {
+	    if (lnum > lineno(pos)) {
 		/*
 		 * Requested address is before start of buffer - go to line 0.
 		 */
 		target = 0;
 	    } else {
-		target = lineno(curbuf, pos) - lnum;
+		target = lineno(pos) - lnum;
 	    }
 	} else {
-	    target = lineno(curbuf, pos) + lnum;
+	    target = lineno(pos) + lnum;
 	}
 
 	pos = gotoline(curbuf, target);
@@ -1309,7 +1309,7 @@ show_line()
 	static Flexbuf	nu_line;
 
 	flexclear(&nu_line);
-	(void) lformat(&nu_line, NUM_FMT, lineno(curbuf, lp));
+	(void) lformat(&nu_line, NUM_FMT, lineno(lp));
 	(void) lformat(&nu_line, "%s", lp->l_text);
 	return flexgetstr(&nu_line);
     } else {
