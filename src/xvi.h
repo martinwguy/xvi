@@ -420,18 +420,18 @@ typedef	struct	position {
  * which is being applied).
  */
 typedef	struct cmd {
-    Posn		cmd_startpos;
-    Posn		cmd_target;
-    unsigned char	cmd_flags;
-    bool_t		cmd_two_char;
-    int			cmd_operator;
-    int			cmd_ch1;
-    int			cmd_ch2;
-    long		cmd_prenum;
-    long		cmd_opnum;
-    bool_t		cmd_got_yp_name;
-    int			cmd_yp_name;
-    int			cmd_buffer_name;
+    Posn	cmd_startpos;	/* From */
+    Posn	cmd_target;	/* To */
+    unsigned char cmd_flags;	/* Flags from its entry in cmd_types[] */
+    bool_t	cmd_two_char;	/* Have we had the 1st char of a 2-char cmd? */
+    int		cmd_operator;	/* An operator if we have one: NOP or !<>cdy */
+    int		cmd_ch1;	/* First char of a two-char command */
+    int		cmd_ch2;	/* Second char of a two-char command */
+    long	cmd_prenum;	/* Repeat count for command */
+    long	cmd_opnum;	/* Repeat count for operator */
+    bool_t	cmd_got_yp_name;/* Command preceded by a buffer name? */
+    int		cmd_yp_name;	/* Yank text into this buffer */
+    int		cmd_buffer_name;/* if got_yp_name, they named this buffer */
 } Cmd;
 
 /*
