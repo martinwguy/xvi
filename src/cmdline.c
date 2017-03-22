@@ -1097,7 +1097,7 @@ register char	**cpp;
 	 * "%" is the same as "1,$".
 	 */
 	l_line = curbuf->b_file;
-	u_line = curbuf->b_lastline->l_prev;
+	u_line = b_last_line_of(curbuf);
 	++*cpp;
 	return TRUE;
     }
@@ -1200,7 +1200,7 @@ get_line(cpp, startline, lpp)
 	break;
 
     case '$':
-	pos = curbuf->b_lastline->l_prev;
+	pos = b_last_line_of(curbuf);
 	break;
 
 	/*

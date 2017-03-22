@@ -537,6 +537,11 @@ typedef struct buffer {
 #define	not_editable(b)	((b)->b_flags & FL_NOEDIT)
 
 /*
+ * Utility functions that work on Buffers
+ */
+#define b_last_line_of(b)	((b)->b_lastline->l_prev)
+
+/*
  * Structure used to hold information about a "window" -
  * this is intimately associated with the Buffer structure.
  */

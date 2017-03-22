@@ -114,7 +114,7 @@ Xviwin	*window;
 	    long	percentage;
 
 	    position = lineno(buffer, window->w_cursor->p_line);
-	    total = lineno(buffer, buffer->b_lastline->l_prev);
+	    total = lineno(buffer, b_last_line_of(buffer));
 	    percentage = (total > 0) ? (position * 100) / total : 0;
 
 	    (void) lformat(slp, " line %ld of %ld --%ld%%--",

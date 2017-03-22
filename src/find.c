@@ -690,7 +690,7 @@ int	opchar1, opchar2;
 	    break;
 
 	case FORWARD:
-	    store_pos.p_line = win->w_buffer->b_lastline->l_prev;
+	    store_pos.p_line = b_last_line_of(win->w_buffer);
 	    store_pos.p_index = 0;
 	    while (inc(&store_pos) != mv_EOL) {
 		;

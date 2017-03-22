@@ -264,7 +264,7 @@ Cmd	*cmd;
      * the cursor from being outside the buffer's bounds.
      */
     if (curwin->w_cursor->p_line == curbuf->b_lastline) {
-	move_cursor(curwin, curbuf->b_lastline->l_prev, 0);
+	move_cursor(curwin, b_last_line_of(curbuf), 0);
     }
 
     /*

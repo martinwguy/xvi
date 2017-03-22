@@ -637,7 +637,7 @@ bool_t	force;
      */
     if (need_preserve &&
 		    (start == NULL || start == buffer->b_file) &&
-		    (end == NULL || end == buffer->b_lastline->l_prev)) {
+		    (end == NULL || end == b_last_line_of(buffer))) {
 	buffer->b_flags &= ~FL_MODIFIED;
     }
 
