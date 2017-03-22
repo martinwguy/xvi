@@ -22,15 +22,31 @@ do
 		continue
 	fi
 
+	rm -f core
 	output=`./$testfile`
-
 	s=$?
-	case $s in
-	0)	result="PASS" ;;
-	1)	result="SKIPPED" ;;
-	*)	result="FAILED with status $s"
-		status=1 ;;
-	esac
+	if [ -f core ]
+	then
+	    result="CORE DUMP"
+	    status=1
+	else
+	    case $s in
+	    0)	result="PASS"
+		;;
+	    1)	result="SKIPPED"
+		;;
+	    98)	result="CORE DUMP"
+		status=1
+		;;
+	    99)	result="VI DIED"
+		status=1
+		;;
+	    *)	result="FAILED with status $s"
+		status=1
+		;;
+	    esac
+	fi
+
 	test "$output" && result="$result: $output"
 	echo "$result"
 done

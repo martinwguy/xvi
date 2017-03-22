@@ -60,18 +60,28 @@ proc start_vi {args} {
     if { [info exists ::env(VI)] && $::env(VI) != "" } {
 	set vi $::env(VI)
     }
+    exp_send "rm -f core\r"	;# To detect core dumps
     exp_send "exec $vi $args\r"
 }
 
-# Stop the editor gracefully. It should be in mnormal mode.
+# Stop the editor gracefully. It should already be in normal mode.
 proc stop_vi {} {
     # Check that it's still alive (it should be!)
     global term_spawn_id
+
     set xvipid [exp_pid -i $term_spawn_id]
     set rc [catch { exec kill -0 $xvipid } msg ]
     if { $rc != 0 } {
 	send_error "xvi seems to have died: $msg"
 	exit 99
+    }
+
+    # If xvi dumps core, term_expect seems to quit too,
+    # indicating success with exit status 0!
+    # If it does call stop_vi, though, check for core dumps.
+    if { [file exists core] } {
+	send_error "xvi seems to have dumped core."
+	exit 98
     }
 
     exp_send ":q!\r"
