@@ -677,10 +677,10 @@ bool_t	force;
 	move_window_to_cursor(curwin);
 
 	/*
-	 * If equalise is set, we have to work out how many files we
-	 * can edit, and the size of the new windows to be created.
+	 * Work out how many files we can edit and
+	 * the size of the new windows to be created.
 	 */
-	if (Pb(P_equalsize)) {
+	{
 	    Xviwin	*wp;
 	    int		oldnw;
 	    int		totalrows;
@@ -711,8 +711,8 @@ bool_t	force;
 	    bool_t	success;
 
 	    success = exNewBuffer(curwin, files[++curfile],
-			    Pb(P_equalsize) ? (winsize + sparelines) : 0);
-	    if (Pb(P_equalsize) && sparelines > 0) {
+				  winsize + sparelines);
+	    if (sparelines > 0) {
 		sparelines = 0;
 	    }
 

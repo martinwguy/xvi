@@ -115,7 +115,7 @@ static	matchinfo_t	*findparam P((Xviwin *, char *));
 /*
  * These are the available parameters. The following are non-standard:
  *
- *	autodetect autonoedit autosplit colour edit equalsize
+ *	autodetect autonoedit autosplit colour edit
  *	format helpfile jumpscroll preserve preservetime
  *	regextype roscolour statuscolour systemcolour tabindent vbell
  *
@@ -139,7 +139,6 @@ Param	params[] = {
 {   "directory",    "di",           P_STRING,   0,              not_imp,   },
 {   "edcompatible", "edc",          P_BOOL,     0,              not_imp,   },
 {   "edit",         "edi",          P_BOOL,     TRUE,           set_edit,  },
-{   "equalsize",    "eq",           P_BOOL,     TRUE,           nofunc,    },
 {   "errorbells",   "eb",           P_BOOL,     TRUE,           nofunc,    },
 {   "flash",        "flash",        P_BOOL,     FALSE,          xvpSetVBell, },
 {   "format",       "fmt",          P_ENUM,     0,              set_format,},

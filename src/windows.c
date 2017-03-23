@@ -236,9 +236,6 @@ int	wincount;
     int		winsize;
     int		spare;
 
-    if (!Pb(P_equalsize)) {
-	return;
-    }
     if (curwin == NULL) {
 	return;
     }
