@@ -319,6 +319,7 @@ bool_t	interactive;			/* true if reading from tty */
      * Parse a range, if present (and update the cmdline pointer).
      */
     if (!get_range(&cmdline)) {
+	badcmd(interactive, "Bad address range");
 	return;
     }
 
@@ -1292,6 +1293,8 @@ char	*str;
     if (interactive) {
 	show_error(curwin, str);
     }
+    /* Abandon and macros being executed */
+    unstuff();
 }
 
 static char *
