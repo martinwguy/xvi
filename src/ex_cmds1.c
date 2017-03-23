@@ -704,7 +704,6 @@ bool_t	force;
 		winsize = (totalrows / newnw);
 		sparelines = totalrows - (newnw * winsize);
 	    }
-	    xvEqualiseWindows(newnw);
 	}
 
 	while ((curfile + 1) < numfiles && xvCanSplit(curwin)) {
@@ -726,7 +725,6 @@ bool_t	force;
 		--curfile;
 		break;
 	    }
-	    xvEqualiseWindows(newnw);
 	}
 	xvEqualiseWindows(0);
 	redraw_window(curwin, FALSE);
