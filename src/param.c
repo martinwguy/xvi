@@ -138,7 +138,6 @@ Param	params[] = {
 {   "colour",       "co",           P_STRING,   0,              xvpSetColour,},
 {   "directory",    "di",           P_STRING,   0,              not_imp,   },
 {   "edcompatible", "edc",          P_BOOL,     0,              not_imp,   },
-{   "edit",         "edi",          P_BOOL,     TRUE,           set_edit,  },
 {   "errorbells",   "eb",           P_BOOL,     TRUE,           nofunc,    },
 {   "flash",        "flash",        P_BOOL,     FALSE,          xvpSetVBell, },
 {   "format",       "fmt",          P_ENUM,     0,              set_format,},

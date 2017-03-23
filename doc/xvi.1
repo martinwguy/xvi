@@ -203,8 +203,8 @@ several extra buffers named
 and
 .B <
 contain the last command lines entered for each of the four command types
-and for the last inserted text.
-So for instance,
+and for the last thing inserted.
+So, for instance,
 .B @:
 will re-execute the last colon command, or you can insert
 it into your buffer, edit it and then re-execute it (e.g. with
@@ -563,24 +563,6 @@ The command
 .B :wn
 (write file and edit next) is provided, as in \fBPC-vi\fP.
 .LP
-The new
-.B edit
-parameter controls whether a buffer can be modified.
-This may be used to implement a nicer version of
-.BR view (1)
-than the
-standard
-.B vi
-version, since it won't fool you into thinking that editing
-the buffer is in any way safe.
-Be warned:
-once having set
-.BR noedit ,
-it is not possible to do a
-.B ":set edit"
-any more.
-It's a one-way street.
-.LP
 In insert and replace modes,
 .B ^A
 has the same meaning as
@@ -594,13 +576,6 @@ where
 .I x
 is the name of a conjugate buffer, inserts the contents of that
 buffer into the input stream at that point.
-The buffer named 
-.B <
-always contains the last thing inserted,
-so that
-.B ^B<
-is the same as
-.BR ^A .
 .\"---------------------------------------------------------------------------
 .SH LIMITATIONS
 .SS "Ex mode"

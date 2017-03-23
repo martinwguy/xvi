@@ -982,38 +982,3 @@ Xviwin	*window;
 	}
     }
 }
-
-bool_t
-set_edit(window, new_value, interactive)
-Xviwin		*window;
-Paramval	new_value;
-bool_t		interactive;
-{
-    Xviwin	*wp;
-
-    /*
-     * Disallow setting of "edit" parameter to TRUE if it is FALSE.
-     * Hence, this parameter can only ever be set to FALSE.
-     */
-    if (new_value.pv_b == TRUE && !Pb(P_edit)) {
-	if (interactive) {
-	    show_error(window, "Can't set edit once it has been unset");
-	}
-	return(FALSE);
-    } else {
-	/*
-	 * Set the "noedit" flag on all current buffers,
-	 * but only if we are in interactive mode
-	 * (otherwise the window pointer is unreliable).
-	 * This may set the flag several times on split
-	 * buffers, but it's no great problem so why not.
-	 */
-	if (interactive) {
-	    wp = window;
-	    do {
-		wp->w_buffer->b_flags |= FL_NOEDIT;
-	    } while ((wp = xvNextWindow(wp)) != window);
-	}
-	return(TRUE);
-    }
-}

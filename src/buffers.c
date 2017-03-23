@@ -140,13 +140,9 @@ Buffer	*b;
     init_undo(b);
 
     /*
-     * Clear all flags, and then pay special attention to the
-     * "noedit" flag which must be set if the parameter is FALSE.
+     * Clear all flags
      */
     b->b_flags = 0;
-    if (!Pb(P_edit)) {
-	b->b_flags |= FL_NOEDIT;
-    }
 
     return(TRUE);
 }

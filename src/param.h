@@ -127,7 +127,6 @@ enum {
     P_colour,
     P_directory,
     P_edcompatible,
-    P_edit,
     P_errorbells,
     P_flash,
     P_format,
