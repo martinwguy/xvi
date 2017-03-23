@@ -62,15 +62,17 @@ Line	*l2;
  * Pipe the given sequence of lines through the command,
  * replacing the old set with its output.
  */
-void
+bool_t
 do_pipe(window, command)
 Xviwin	*window;
 char	*command;
 {
+    int	success;
+
     if (line1 == NULL || line2 == NULL || specwin != window) {
 	show_error(window,
 	    "Internal error: pipe through badly-specified range.");
-	return;
+	return(FALSE);
     }
     if (command[0] == '!' && command[1] == '\0' && lastcmd != NULL) {
 	command = lastcmd;
@@ -84,7 +86,8 @@ char	*command;
     VSflush(window->w_vs);
 
     newlines = NULL;
-    if (sys_pipe(command, p_write, p_read)) {
+    success = sys_pipe(command, p_write, p_read);
+    if (success) {
 	if (newlines != NULL) {
 	    repllines(window, line1, cntllines(line1, line2) - 1, newlines);
 	    xvUpdateAllBufferWindows(window->w_buffer);
@@ -99,8 +102,11 @@ char	*command;
     } else {
 	show_error(window, "Failed to execute \"%s\"", command);
 	redraw_all(window, TRUE);
+	success = FALSE;
     }
     cursupdate(window);
+
+    return(success);
 }
 
 static int
@@ -331,7 +337,7 @@ Line	*l1, *l2;
  * All this assumes that the command is non-interactive, and if this
  * assumption is misplaced we may be in some serious shit. Ho hum.
  */
-void
+bool_t
 xvReadFromCommand(window, command, atline)
 Xviwin	*window;
 char	*command;
@@ -369,4 +375,6 @@ Line	*atline;
     }
     redraw_all(window, TRUE);
     cursupdate(window);
+
+    return(success);
 }

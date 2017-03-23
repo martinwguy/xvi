@@ -617,8 +617,7 @@ int	name;
 	    end_of_1st_text = l + strlen(yp_buf->y_1st_text);
 	    newl = newline(strlen(yp_buf->y_1st_text) + 1);
 	    if (newl == NULL) {
-		end_command(win);
-		goto oom;
+		goto eoom;
 	    }
 
 	    /*
@@ -638,8 +637,7 @@ int	name;
 	    lastpos.p_line = win->w_cursor->p_line->l_next;
 	    newlines = copy_lines(yp_buf->y_line_buf, (Line *) NULL);
 	    if (newlines == NULL) {
-		end_command(win);
-		goto oom;
+		goto eoom;
 	    }
 	    repllines(win, nextline, 0L, newlines);
 	    lastpos.p_line = lastpos.p_line->l_prev;
@@ -658,8 +656,7 @@ int	name;
 		 */
 		new = newline(strlen(yp_buf->y_2nd_text) + 1);
 		if (new == NULL) {
-		    end_command(win);
-		    goto oom;
+		    goto eoom;
 		}
 		repllines(win, nextline, 0L, new);
 		nextline = new;
@@ -709,6 +706,9 @@ int	name;
     }
     return;
 
+eoom:
+    /* Out of memory needing end_command() */
+    end_command(win);
 oom:
     /* "Out of memory" handler */
     show_error(win, out_of_memory);
@@ -847,6 +847,8 @@ Yankbuffer	*yp;
     case y_lines:
 	throw(yp->y_line_buf);
 	yp->y_line_buf = NULL;
+    case y_none:
+	;
     }
     yp->y_type = y_none;
 }

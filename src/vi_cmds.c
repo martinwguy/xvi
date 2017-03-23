@@ -219,7 +219,9 @@ Cmd	*cmd;
 	/*
 	 * Make like a ":x" command.
 	 */
-	exXit(curwin);
+	if (!exXit(curwin)) {
+	    unstuff();
+	}
 	break;
 
     case '.':

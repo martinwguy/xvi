@@ -720,7 +720,7 @@ bool_t		wrapscan;
  *
  * The "matchtype" parameter says whether we are doing 'g' or 'v'.
  */
-void
+bool_t
 exGlobal(window, lp, up, cmd, matchtype)
 Xviwin		*window;
 Line		*lp, *up;
@@ -741,7 +741,7 @@ bool_t		matchtype;
 	regerror(matchtype ?
 		"Usage: :g/search pattern/command" :
 		"Usage: :v/search pattern/command");
-	return;
+	return(FALSE);
     }
     /*
      * Check we can do the command before starting.
@@ -760,12 +760,12 @@ bool_t		matchtype;
 	 /* fall through ... */
     case 'd':
 	if (!start_command(window)) {
-	    return;
+	    return(FALSE);
 	}
 	break;
     default:
 	regerror("Invalid command character");
-	return;
+	return(FALSE);
     }
 
     ndone = 0;
@@ -800,7 +800,7 @@ bool_t		matchtype;
 	lastline = up;
 	greptype = matchtype;
 	disp_init(window, grep_line, (int) window->w_ncols, (cmdchar == 'l'));
-	return;
+	return(TRUE);
     }
 
     /*
@@ -923,7 +923,10 @@ bool_t		matchtype;
 
     if (ndone == 0 && (echo & e_NOMATCH)) {
 	regerror("No match");
+	return(FALSE);
     }
+
+   return(TRUE);
 }
 
 static char *
@@ -1108,6 +1111,9 @@ register int		ulmode;
  * The trailing 'g' is optional and, if present, indicates that multiple
  * substitutions should be performed on each line, if applicable.
  * The usual escapes are supported as described in the regexp docs.
+ *
+ * The return value is the number of lines on which substitutions occurred,
+ * 0 if there were no matches or an error.
  */
 long
 exSubstitute(window, lp, up, command)

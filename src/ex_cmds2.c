@@ -50,16 +50,17 @@ static	void	WarnUnSaved P((Xviwin *));
  * use printf()).
  */
 /*ARGSUSED*/
-void
+bool_t
 exShellCommand(window, command)
 Xviwin	*window;
 char	*command;
 {
     int	c;
+    int	status;
 
     if (!subshells) {
 	show_error(window, "Can't shell escape from a window");
-	return;
+	return(FALSE);
     }
 
     sys_endv();
@@ -72,13 +73,13 @@ char	*command;
      */
     if (Pb(P_autowrite) && xvChangesNotSaved(window)) {
 	show_error(window, nowrtmsg);
-	return;
+	return(FALSE);
     }
     WarnUnSaved(window);
     (void) fputs(command, stdout);
     (void) fputs("\r\n", stdout);
     (void) fflush(stdout);
-    (void) call_system(command);
+    status = call_system(command);
     (void) fputs("[Hit return to continue] ", stdout);
     (void) fflush(stdout);
     while ((c = getc(stdin)) != '\n' && c != '\r' && c != EOF)
@@ -86,6 +87,8 @@ char	*command;
 
     sys_startv();
     redraw_all(window, TRUE);
+
+    return(status == 0);
 }
 
 void
@@ -335,7 +338,7 @@ exChangeDirectory(dir)
 /*
  * Perform a line-based operation, one of [dmty].
  */
-void
+bool_t
 exLineOperation(type, l1, l2, destline)
 int	type;			/* one of [cdmy] */
 Line	*l1, *l2;		/* start and end (inclusive) of range */
@@ -351,7 +354,7 @@ Line	*destline;		/* destination line for copy/move */
     if (type == 't' || type == 'm') {
 	if (destline == NULL) {
 	    show_error(curwin, "No destination specified");
-	    return;
+	    return(FALSE);
 	}
     }
 
@@ -366,7 +369,7 @@ Line	*destline;		/* destination line for copy/move */
 	if (destlineno >= lineno(p1.p_line) &&
 			    destlineno <= lineno(p2.p_line)) {
 	    show_error(curwin, "Source conflicts with destination of move");
-	    return;
+	    return(FALSE);
 	}
     }
 
@@ -377,11 +380,11 @@ Line	*destline;		/* destination line for copy/move */
      */
     if (!do_yank(curbuf, &p1, &p2, FALSE,
 		 (type == 'd' || type == 'y') ? '@' : '=')) {
-	return;
+	return(FALSE);
     }
 
     if (!start_command(curwin)) {
-	return;
+	return(FALSE);
     }
 
     switch (type) {
@@ -410,19 +413,22 @@ Line	*destline;		/* destination line for copy/move */
     }
 
     end_command(curwin);
+
+    return(TRUE);
 }
 
 /*
  * Apply the "join" operation to all lines between l1 and l2
  * inclusive, or (by default) to the current line in window.
  */
-void
+bool_t
 exJoin(window, l1, l2, exclam)
 Xviwin	*window;
 Line	*l1, *l2;
 bool_t	exclam;
 {
     Line	*l3;		/* hack hack hack */
+    bool_t	success;
 
     if (l1 == NULL) {
 	l1 = curwin->w_cursor->p_line;
@@ -435,19 +441,21 @@ bool_t	exclam;
 
     if (is_lastline(l1)) {
 	beep(window);
-	return;
+	return(FALSE);
     }
 
     if (!start_command(window)) {
-	return;
+	return(FALSE);
     }
 
+    success = TRUE;
     for ( ; l1 != l2 && l1 != l3; l1 = l1->l_next) {
 	if (is_lastline(l1->l_next)) {
 	    break;
 	}
 	if (!xvJoinLine(window, l1, exclam)) {
 	    beep(window);
+	    success = FALSE;
 	    break;
 	}
 	/* Leave the cursor at the start of the joined line.
@@ -459,6 +467,8 @@ bool_t	exclam;
     xvUpdateAllBufferWindows(window->w_buffer);
 
     end_command(window);
+
+    return(success);
 }
 
 static void

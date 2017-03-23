@@ -940,16 +940,16 @@ extern	xvResponse	*xvi_handle_event P((xvEvent *));
 extern	void	exQuit P((Xviwin *, bool_t));
 extern	void	exSplitWindow P((Xviwin *));
 extern	bool_t	exNewBuffer P((Xviwin *, char *, int));
-extern	void	exCloseWindow P((Xviwin *, bool_t));
-extern	void	exXit P((Xviwin *));
+extern	bool_t	exCloseWindow P((Xviwin *, bool_t));
+extern	bool_t	exXit P((Xviwin *));
 extern	bool_t	exEditFile P((Xviwin *, bool_t, char *));
-extern	void	exArgs P((Xviwin *));
-extern	void	exNext P((Xviwin *, int, char **, bool_t));
-extern	void	exRewind P((Xviwin *, bool_t));
+extern	bool_t	exArgs P((Xviwin *));
+extern	bool_t	exNext P((Xviwin *, int, char **, bool_t));
+extern	bool_t	exRewind P((Xviwin *, bool_t));
 extern	bool_t	exAppendToFile P((Xviwin *, char *, Line *, Line *, bool_t));
 extern	bool_t	exWriteToFile P((Xviwin *, char *, Line *, Line *, bool_t));
 extern	void	exWQ P((Xviwin *, char *, bool_t));
-extern	void	exReadFile P((Xviwin *, char *, Line *));
+extern	bool_t	exReadFile P((Xviwin *, char *, Line *));
 extern	void	exEditAlternateFile P((Xviwin *));
 extern	void	exShowFileStatus P((Xviwin *, char *));
 extern	void	exCompareWindows P((void));
@@ -959,14 +959,14 @@ extern	char	nowrtmsg[];
  * ex_cmds2.c
  */
 extern	void	exInteractiveShell P((Xviwin *, bool_t));
-extern	void	exShellCommand P((Xviwin *, char *));
+extern	bool_t	exShellCommand P((Xviwin *, char *));
 extern	void	exSuspend P((Xviwin *, bool_t));
 extern	void	exEquals P((Xviwin *, Line *));
 extern	void	exHelp P((Xviwin *));
 extern	bool_t	exSource P((bool_t, char *));
 extern	char	*exChangeDirectory P((char *));
-extern	void	exLineOperation P((int, Line *, Line *, Line *));
-extern	void	exJoin P((Xviwin *, Line *, Line *, bool_t));
+extern	bool_t	exLineOperation P((int, Line *, Line *, Line *));
+extern	bool_t	exJoin P((Xviwin *, Line *, Line *, bool_t));
 
 /*
  * fileio.c
@@ -1012,9 +1012,9 @@ extern	void	map_char P((int));
 extern	void	map_timeout P((void));
 extern	bool_t	map_waiting P((void));
 extern	int	mapped_char P((int));
-extern	void	xvi_map P((char *, bool_t, bool_t));
+extern	bool_t	xvi_map P((char *, bool_t, bool_t));
 extern	void	xvi_keymap P((char *, char *));
-extern	void	xvi_unmap P((int, char **, bool_t, bool_t));
+extern	bool_t	xvi_unmap P((int, char **, bool_t, bool_t));
 
 /*
  * mark.c
@@ -1102,9 +1102,9 @@ extern	int	xv_strtoi P((char **));
  * pipe.c
  */
 extern	void	specify_pipe_range P((Xviwin *, Line *, Line *));
-extern	void	do_pipe P((Xviwin *, char *));
+extern	bool_t	do_pipe P((Xviwin *, char *));
 extern	bool_t	xvWriteToCommand P((Xviwin *, char *, Line *, Line *));
-extern	void	xvReadFromCommand P((Xviwin *, char *, Line *));
+extern	bool_t	xvReadFromCommand P((Xviwin *, char *, Line *));
 
 /*
  * preserve.c
@@ -1143,7 +1143,7 @@ extern	void	beep P((Xviwin *));
 extern	Posn	*search P((Xviwin *, Line *, int, int, char **));
 extern	Posn	*xvFindPattern P((Xviwin *, Posn *, char *, int, bool_t));
 extern	Line	*linesearch P((Xviwin *, Line *, int, char **));
-extern	void	exGlobal P((Xviwin *, Line *, Line *, char *, bool_t));
+extern	bool_t	exGlobal P((Xviwin *, Line *, Line *, char *, bool_t));
 extern	long	exSubstitute P((Xviwin *, Line *, Line *, char *));
 extern	long	exAmpersand P((Xviwin *, Line *, Line *, char *));
 extern	long	exTilde P((Xviwin *, Line *, Line *, char *));

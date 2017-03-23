@@ -194,7 +194,7 @@ int	sizehint;
 /*
  * "close" (the current window).
  */
-void
+bool_t
 exCloseWindow(win, force)
 Xviwin	*win;
 bool_t	force;
@@ -209,20 +209,21 @@ bool_t	force;
      */
     if (is_modified(buffer) && !force && buffer->b_nwindows < 2) {
 	show_error(win, nowrtmsg);
-	return;
+	return(FALSE);
     }
 
     if (win == xvNextWindow(win)) {
+	/* There's only one window open */
 	if (more_files()) {
 	    /*
 	     * If there are more files to be edited, and no other
 	     * windows are open, we should disallow the close.
 	     */
-	    return;
+	    return(FALSE);
 	} else {
 	    (void) xvCloseWindow(win);
 	    State = EXITING;
-	    return;
+	    return(TRUE);
 	}
     }
 
@@ -253,7 +254,7 @@ bool_t	force;
 	 * open, we should have spotted it above. Still, cope with it...
 	 */
 	State = EXITING;
-	return;
+	return(TRUE);
     }
 
     curbuf = curwin->w_buffer;
@@ -279,6 +280,8 @@ bool_t	force;
     }
     redraw_window(curwin, FALSE);
     show_file_info(curwin);
+
+    return(TRUE);
 }
 
 /*
@@ -288,7 +291,7 @@ bool_t	force;
  *
  * If the buffer has been modified, we must write it out before closing it.
  */
-void
+bool_t
 exXit(window)
 Xviwin	*window;
 {
@@ -300,15 +303,15 @@ Xviwin	*window;
 	if (buffer->b_filename != NULL) {
 	    if (!writeit(window, buffer->b_filename,
 				(Line *) NULL, (Line *) NULL, FALSE)) {
-		return;
+		return(FALSE);
 	    }
 	} else {
 	    show_error(window, "No output file");
-	    return;
+	    return(FALSE);
 	}
     }
 
-    exCloseWindow(window, FALSE);
+    return(exCloseWindow(window, FALSE));
 }
 
 /*
@@ -524,7 +527,7 @@ show_arg()
     return flexgetstr(&fb);
 }
 
-void
+bool_t
 exArgs(window)
 Xviwin	*window;
 {
@@ -535,7 +538,7 @@ Xviwin	*window;
 
     if (numfiles == 0) {
 	show_message(window, "No files");
-	return;
+	return(FALSE);
     }
 
     colwidth = 0;
@@ -570,6 +573,7 @@ Xviwin	*window;
 	disp_init(window, show_arg, colwidth, FALSE);
     }
     flexdelete(&fb);
+    return(TRUE);
 }
 
 /*
@@ -577,7 +581,7 @@ Xviwin	*window;
  * file in the current file list, or edit the next file in the list if
  * no argument is given.
  */
-void
+bool_t
 exNext(window, argc, argv, force)
 Xviwin	*window;
 int	argc;
@@ -585,12 +589,13 @@ char	*argv[];
 bool_t	force;
 {
     unsigned	savecho;
+    bool_t	success = TRUE;
 
     if (!force) {
 	xvAutoWrite(window);
 	if (is_modified(window->w_buffer)) {
 	    show_error(window, nowrtmsg);
-	    return;
+	    return(FALSE);
 	}
     }
 
@@ -611,7 +616,7 @@ bool_t	force;
 	if (numfiles == 0) {
 	    files = alloc((unsigned) argc * sizeof(char *));
 	    if (files == NULL) {
-		return;
+		return(FALSE);
 	    }
 	} else {
 	    /*
@@ -626,7 +631,7 @@ bool_t	force;
 		files = re_alloc(files, (unsigned) argc * sizeof(char *));
 		if (files == NULL) {
 		    numfiles = 0;
-		    return;
+		    return(FALSE);
 		}
 	    }
 	}
@@ -646,7 +651,7 @@ bool_t	force;
 		free(files);
 		files = NULL;
 		numfiles = 0;
-		return;
+		return(FALSE);
 	    }
 	}
 	numfiles = argc;
@@ -661,7 +666,9 @@ bool_t	force;
 	 */
 	echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
 
-	(void) exEditFile(curwin, force, files[0]);
+	if (!exEditFile(curwin, force, files[0])) {
+	    success = FALSE;
+	}
 
 	/*
 	 * Update the current window before
@@ -737,25 +744,31 @@ bool_t	force;
 	 * Just edit the next file.
 	 */
 	echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-	(void) exEditFile(window, force, files[++curfile]);
+	if (!exEditFile(window, force, files[++curfile])) {
+	    success = FALSE;
+	}
 	move_window_to_cursor(window);
 	xvUpdateAllBufferWindows(window->w_buffer);
     } else {
 	show_message(window, "No more files");
+	success = FALSE;
     }
     echo = savecho;
+
+    return(success);
 }
 
 /*ARGSUSED*/
-void
+bool_t
 exRewind(window, force)
 Xviwin	*window;
 bool_t	force;
 {
     unsigned	savecho;
+    bool_t	success;
 
     if (numfiles <= 1)		/* nothing to rewind */
-	return;
+	return(TRUE);
 
     curfile = 0;
 
@@ -763,16 +776,17 @@ bool_t	force;
 	xvAutoWrite(window);
         if (is_modified(window->w_buffer)) {
 	    show_error(window, nowrtmsg);
-	    return;
+	    return(FALSE);
 	}
     }
 
     savecho = echo;
     echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-    (void) exEditFile(window, force, files[0]);
+    success = exEditFile(window, force, files[0]);
     move_window_to_cursor(window);
     xvUpdateAllBufferWindows(window->w_buffer);
     echo = savecho;
+    return(success);
 }
 
 /*
@@ -874,7 +888,7 @@ bool_t	force;
  * The line may not be NULL, but should be a line in the buffer
  * referenced by the passed window parameter.
  */
-void
+bool_t
 exReadFile(window, filename, atline)
 Xviwin	*window;
 char	*filename;
@@ -895,10 +909,10 @@ Line	*atline;
     if (filename[0] == '!') {
 	if (filename[1] == '\0') {
 	    show_error(window, "No shell command specified!");
+	    return(FALSE);
 	} else {
-	    xvReadFromCommand(window, filename + 1, atline);
+	    return (xvReadFromCommand(window, filename + 1, atline));
 	}
-	return;
     }
 
     nlines = get_file(window, filename, &head, &tail, "", " No such file");
@@ -927,6 +941,8 @@ Line	*atline;
 	move_cursor(window, atline->l_next, 0);
 	begin_line(window, TRUE);
     }
+
+    return(nlines >= 0);
 }
 
 /*

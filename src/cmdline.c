@@ -306,6 +306,7 @@ bool_t	interactive;			/* true if reading from tty */
     int		command;		/* which command it is */
     struct ecmd	*ecp;			/* ptr to command entry */
     unsigned	savecho;		/* previous value of echo */
+    int		error;		/* Should we cancel pending macros? */
 
     /*
      * Skip leading colons and blanks
@@ -336,7 +337,7 @@ bool_t	interactive;			/* true if reading from tty */
 	 */
 	if (!(ecp->ec_flags & EC_RANGE0)) {
 	    if (l_line == curbuf->b_line0 || u_line == curbuf->b_line0) {
-		show_error(curwin, "Specification of line 0 not allowed");
+		badcmd(interactive, "Specification of line 0 not allowed");
 		return;
 	    }
 	}
@@ -459,6 +460,14 @@ bool_t	interactive;			/* true if reading from tty */
     /*
      * Now do the command.
      */
+
+    /*
+     * If non-zero, some command failed so we need to abandon any
+     * macros currently being executed.
+     * Failed commands that call badcmd() don't need to set this.
+     */
+    error = 0;
+
     switch (command) {
     case EX_SHCMD:
 	/*
@@ -467,20 +476,28 @@ bool_t	interactive;			/* true if reading from tty */
 	 */
 	if (l_line != NULL) {
 	    specify_pipe_range(curwin, l_line, u_line);
-	    do_pipe(curwin, arg);
+	    if (!do_pipe(curwin, arg)) {
+		error++;
+	    }
 	} else {
-	    exShellCommand(curwin, arg);
+	    if (!exShellCommand(curwin, arg)) {
+		error++;
+	    }
 	}
 	break;
 
     case EX_ARGS:
-	exArgs(curwin);
+	if (!exArgs(curwin)) {
+	    error++;
+	}
 	break;
 
     case EX_BUFFER:
 	if (arg != NULL)
 	    echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-	(void) exNewBuffer(curwin, arg, 0);
+	if (!exNewBuffer(curwin, arg, 0)) {
+	    error++;
+	}
 	move_window_to_cursor(curwin);
 	redraw_window(curwin, FALSE);
 	break;
@@ -506,7 +523,9 @@ bool_t	interactive;			/* true if reading from tty */
     }
 
     case EX_CLOSE:
-	exCloseWindow(curwin, exclam);
+	if (!exCloseWindow(curwin, exclam)) {
+	    error++;
+	}
 	break;
 
     case EX_COMMENT:		/* This one is easy ... */
@@ -517,11 +536,15 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_COPY:
-	exLineOperation('t', l_line, u_line, a_line);
+	if (!exLineOperation('t', l_line, u_line, a_line)) {
+	    error++;
+	}
 	break;
 
     case EX_DELETE:
-	exLineOperation('d', l_line, u_line, (Line *) NULL);
+	if (!exLineOperation('d', l_line, u_line, (Line *) NULL)) {
+	    error++;
+	}
 	break;
 
     case EX_ECHO:			/* echo arguments on command line */
@@ -542,7 +565,9 @@ bool_t	interactive;			/* true if reading from tty */
     case EX_EDIT:
     case EX_VISUAL:			/* treat :vi as :edit */
 	echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-	(void) exEditFile(curwin, exclam, arg);
+	if (!exEditFile(curwin, exclam, arg)) {
+	    error++;
+	}
 	move_window_to_cursor(curwin);
 	xvUpdateAllBufferWindows(curbuf);
 #if 0
@@ -559,7 +584,9 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_GLOBAL:
-	exGlobal(curwin, l_line, u_line, arg, !exclam);
+	if (!exGlobal(curwin, l_line, u_line, arg, !exclam)) {
+	    error++;
+	}
 	break;
 
     case EX_HELP:
@@ -567,15 +594,21 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_JOIN:
-	exJoin(curwin, l_line, u_line, exclam);
+	if (!exJoin(curwin, l_line, u_line, exclam)) {
+	    error++;
+	}
 	break;
 
     case EX_MAP:
-	xvi_map(arg, exclam, interactive);
+	if (!xvi_map(arg, exclam, interactive)) {
+	    error++;
+	}
 	break;
 
     case EX_UNMAP:
-	xvi_unmap(argc, argv, exclam, interactive);
+	if (!xvi_unmap(argc, argv, exclam, interactive)) {
+	    error++;
+	}
 	break;
 
     case EX_MARK:
@@ -589,12 +622,16 @@ bool_t	interactive;			/* true if reading from tty */
 	} else {
 	    pos.p_line = l_line;
 	}
-	(void) setmark(arg[0], curbuf, &pos);
+	if (!setmark(arg[0], curbuf, &pos)) {
+	    error++;
+	}
 	break;
     }
 
     case EX_MOVE:
-	exLineOperation('m', l_line, u_line, a_line);
+	if (!exLineOperation('m', l_line, u_line, a_line)) {
+	    error++;
+	}
 	break;
 
     case EX_NEXT:
@@ -604,14 +641,14 @@ bool_t	interactive;			/* true if reading from tty */
 	 * xvUpdateAllBufferWindows() as required, so we don't
 	 * have to do any of that here.
 	 */
-	exNext(curwin, argc, argv, exclam);
+	if (!exNext(curwin, argc, argv, exclam)) {
+	    error++;
+	}
 	break;
 
     case EX_PRESERVE:
-	if (exPreserveAllBuffers()) {
-#if 0
-	    show_file_info(curwin);
-#endif
+	if (!exPreserveAllBuffers()) {
+	    error++;
 	}
 	break;
 
@@ -653,12 +690,16 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_REWIND:
-	exRewind(curwin, exclam);
+	if (!exRewind(curwin, exclam)) {
+	    error++;
+	}
 	break;
 
     case EX_READ:
-	exReadFile(curwin, arg, (l_line != NULL) ?
-				l_line : curwin->w_cursor->p_line);
+	if (!exReadFile(curwin, arg, (l_line != NULL) ?
+				l_line : curwin->w_cursor->p_line)) {
+	    error++;
+	}
 	break;
 
     case EX_SET:
@@ -677,6 +718,8 @@ bool_t	interactive;			/* true if reading from tty */
 	    show_file_info(curwin);
 #endif
 	    ;
+	} else {
+	    error++;
 	}
 	break;
 
@@ -706,6 +749,9 @@ bool_t	interactive;			/* true if reading from tty */
 	}
 
 	nsubs = (*func)(curwin, l_line, u_line, arg);
+	if (nsubs == 0) {
+	    error++;
+	}
 	xvUpdateAllBufferWindows(curbuf);
 	cursupdate(curwin);
 	begin_line(curwin, TRUE);
@@ -722,7 +768,9 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_TAG:
-	(void) exTag(curwin, arg, exclam, TRUE, TRUE);
+	if (!exTag(curwin, arg, exclam, TRUE, TRUE)) {
+	    error++;
+	}
 	break;
 
     case EX_UNDO:
@@ -730,7 +778,9 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_V:
-	exGlobal(curwin, l_line, u_line, arg, FALSE);
+	if (!exGlobal(curwin, l_line, u_line, arg, FALSE)) {
+	    error++;;
+	}
 	break;
 
     case EX_VERSION:
@@ -747,12 +797,17 @@ bool_t	interactive;			/* true if reading from tty */
 	    /*
 	     * See comment for EX_NEXT (above).
 	     */
-	    exNext(curwin, 0, argv, exclam);
+	    if (!exNext(curwin, 0, argv, exclam)) {
+		error++;
+	    }
+	} else {
+	    error++;
 	}
 	break;
 
     case EX_WQ:
 	exWQ(curwin, arg, exclam);
+	if (State != EXITING) error++;
 	break;
 
     case EX_WRITE:
@@ -765,20 +820,29 @@ bool_t	interactive;			/* true if reading from tty */
 		}
 	    } else {
 		show_error(curwin, "Write forms are 'w' and 'w>>'");
+		error++;
 		break;
 	    }
-	    (void) exAppendToFile(curwin, arg, l_line, u_line, exclam);
+	    if (!exAppendToFile(curwin, arg, l_line, u_line, exclam)) {
+		error++;
+	    }
 	} else {
-	    (void) exWriteToFile(curwin, arg, l_line, u_line, exclam);
+	    if (!exWriteToFile(curwin, arg, l_line, u_line, exclam)) {
+		error++;
+	    }
 	}
 	break;
 
     case EX_XIT:
-	exXit(curwin);
+	if (!exXit(curwin)) {
+	    error++;
+	}
 	break;
 
     case EX_YANK:
-	exLineOperation('y', l_line, u_line, (Line *) NULL);
+	if (!exLineOperation('y', l_line, u_line, (Line *) NULL)) {
+	    error++;
+	}
 	break;
 
     case EX_EXBUFFER:
@@ -817,18 +881,22 @@ bool_t	interactive;			/* true if reading from tty */
 
     case EX_ENOTFOUND:
 	badcmd(interactive, "Unrecognized command");
+	error++;
 	break;
 
     case EX_EAMBIGUOUS:
 	badcmd(interactive, "Ambiguous command");
+	error++;
 	break;
 
     case EX_ECANTFORCE:
 	badcmd(interactive, "Inappropriate use of !");
+	error++;
 	break;
 
     case EX_EBADARGS:
 	badcmd(interactive, "Inappropriate arguments given");
+	error++;
 	break;
 
     default:
@@ -836,6 +904,7 @@ bool_t	interactive;			/* true if reading from tty */
 	 * Decoded successfully, but unknown to us. Whoops!
 	 */
 	badcmd(interactive, "Internal error - unimplemented command.");
+	error++;
 	break;
 
     case EX_ABBREVIATE:
@@ -849,7 +918,13 @@ bool_t	interactive;			/* true if reading from tty */
     case EX_UNABBREV:
     case EX_Z:
 	badcmd(interactive, "Unimplemented command.");
+	error++;
 	break;
+    }
+
+    if (error) {
+	/* Halt any macros being executed */
+	unstuff();
     }
 
     echo = savecho;
@@ -1293,7 +1368,7 @@ char	*str;
     if (interactive) {
 	show_error(curwin, str);
     }
-    /* Abandon and macros being executed */
+    /* Halt any macros being executed */
     unstuff();
 }
 

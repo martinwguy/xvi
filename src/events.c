@@ -265,15 +265,20 @@ int	c;
 	switch (cmdline[0]) {
 	case '/':
 	case '?':
-	    (void) xvProcessSearch(cmdline[0], cmdline + 1);
+	    if (!xvProcessSearch(cmdline[0], cmdline + 1)) {
+		unstuff();
+	    }
 	    break;
 
 	case '!':
-	    do_pipe(curwin, cmdline + 1);
+	    if (!do_pipe(curwin, cmdline + 1)) {
+		unstuff();
+	    }
 	    break;
 
 	case ':':
 	    exCommand(cmdline + 1, TRUE);
+	    /* exCommand() calls badcmd(), which calls unstuff() */
 	}
 	if (savedline != NULL) {
 	    (void) yank_str(savedline[0], savedline, TRUE);

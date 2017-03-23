@@ -39,7 +39,6 @@ normal(c)
 register int	c;
 {
     register Cmd	*cmd;
-    int ret = FALSE;
 
     cmd = curwin->w_cmd;
 
@@ -55,7 +54,7 @@ register int	c;
 	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;
 	    cmd->cmd_two_char = FALSE;
-	    return(ret);
+	    return(FALSE);
 	default:
 	    break;
     }

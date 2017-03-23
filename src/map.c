@@ -474,7 +474,7 @@ mapescape(lhsp, rhsp)
 /*
  * Insert the entry "lhs" as mapping into "rhs".
  */
-void
+bool_t
 xvi_map(arg, exclam, inter)
     register char      *arg;
     bool_t		exclam;
@@ -499,17 +499,18 @@ xvi_map(arg, exclam, inter)
 	    if (inter) {
 		show_message(curwin, out_of_memory);
 	    }
-	    return;
+	    return(FALSE);
 	}
 	if (rhs == NULL) {
 	    if (inter) {
 		show_message(curwin, "Usage: :map lhs rhs");
 	    }
 	    free(lhs);
-	    return;
+	    return(FALSE);
 	}
 	insert_map(exclam ? &ins_map : &cmd_map, lhs, rhs);
     }
+    return(TRUE);
 }
 
 static void
@@ -589,7 +590,7 @@ char		*rhs;
     }
 }
 
-void
+bool_t
 xvi_unmap(argc, argv, exclam, inter)
 int	argc;
 char	*argv[];
@@ -602,7 +603,7 @@ bool_t	inter;
 	if (inter) {
 	    show_message(curwin, "But what do you want me to unmap?");
 	}
-	return;
+	return(FALSE);
     }
 
     for (count = 0; count < argc; count++) {
@@ -616,6 +617,7 @@ bool_t	inter;
 	    free(lhs);
 	}
     }
+    return(TRUE);
 }
 
 static void

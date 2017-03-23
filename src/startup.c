@@ -374,7 +374,7 @@ usage:		usage();
 	    echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
 	}
 
-	exNext(curwin, numfiles, files, FALSE);
+	(void) exNext(curwin, numfiles, files, FALSE);
 
 	/* If there are more than one window, move to the first */
 	if (curwin->w_last != NULL) {

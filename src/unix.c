@@ -364,7 +364,7 @@ char	**args;
     default:		/* this is the parent */
 	while (wait(&status) != pid)
 	    ;
-	return(0);
+	return(status);
     }
 }
 
