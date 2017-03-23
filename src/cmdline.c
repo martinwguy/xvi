@@ -1272,7 +1272,7 @@ get_line(cpp, startline, lpp)
 	    return FALSE;
 	}
 
-	gotoline(curbuf, target);
+	pos = gotoline(curbuf, target);
     }
 
     *cpp = cp;
