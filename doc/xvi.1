@@ -126,6 +126,11 @@ available for operating on buffers and windows:
 .IP \fB:buffer\fP
 create a new buffer in a new window;
 can be followed by a filename, which will be edited in the new buffer.
+.IP \fB:close\fP
+close the current window;
+will also close the buffer if this is the last window on to it.
+.IP \fB:equalise\fP
+make all windows as nearly the same size as possible.
 .IP \fB:split\fP
 create a new window on to the current buffer by
 splitting the current window in half.
@@ -133,9 +138,6 @@ The two resulting windows are similar to
 .I viewports
 on to a single editing buffer,
 in that changes made in one window are reflected in the other one.
-.IP \fB:close\fP
-close the current window;
-will also close the buffer if this is the last window on to it.
 .IP "\fB:x\fP\ /\ \fBZZ\fP"
 close only the current window.
 If the window is the only one on to the buffer,
