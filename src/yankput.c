@@ -828,7 +828,7 @@ Posn	*from, *to;
 	return(NULL);
     }
 
-    (void) strncpy(cp, from->p_line->l_text + from->p_index, nchars);
+    (void) memcpy(cp, from->p_line->l_text + from->p_index, nchars + 1);
     cp[nchars] = '\0';
 
     return(cp);
