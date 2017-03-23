@@ -70,7 +70,11 @@ char	*envp;				/* init string from the environment */
 {
     char	*tag = NULL;		/* tag from command line */
     char	*pat = NULL;		/* pattern from command line */
-    long	line = -1;		/* line number from command line */
+    long	line = 0;		/* line number from command line.
+					 * 0 means unset or +0, first line
+					 * MAX_LINENO means last line
+					 * positive values are line N
+					 * negative values are line $-N */
     char	**files;
     int		numfiles = 0;
     int		count;
@@ -278,6 +282,8 @@ char	*envp;				/* init string from the environment */
 	    }
 
 	} else /* argv[count][0] == '+' */ {
+	    bool_t minus_line;	/* 1 normally or -1 for negative line nos */
+
 	    /*
 	     * "+n file" or "+/pat file"
 	     */
@@ -286,23 +292,33 @@ char	*envp;				/* init string from the environment */
 		return(NULL);
 	    }
 
+	    minus_line = 1;
 
 	    switch (argv[count][1]) {
 	    case '/':
 		pat = &(argv[count][2]);
 		break;
 	    case '$':
-		line = 0; /* sends us to last line of file */
+		line = MAX_LINENO; /* sends us to last line of file */
 		break;
+	    case '-':
+		if (argv[count][2] == '\0') {
+		    line = -1;
+		    break;
+		} else if (!is_digit(argv[count][2])) {
+		    goto usage;
+		} else {
+		    minus_line = -1;
+		    /* make argv[count][1] ahead point at the digit */
+		    argv[count]++;
+		    /*...and fall through... */
+		}
 	    case '0': case '1': case '2': case '3': case '4':
 	    case '5': case '6': case '7': case '8': case '9':
-		line = atol(&(argv[count][1]));
-		break;
-	    case '\0':
-		line = 0;
+		line = atol(&(argv[count][1])) * minus_line;
 		break;
 	    default:
-		usage();
+usage:		usage();
 		return(NULL);
 	    }
 	    count += 1;
@@ -354,7 +370,7 @@ char	*envp;				/* init string from the environment */
     xvClear(curwin->w_vs);
 
     if (numfiles != 0) {
-	if (line < 0 && pat == NULL) {
+	if (line == 0 && pat == NULL) {
 	    echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
 	}
 
@@ -381,9 +397,12 @@ char	*envp;				/* init string from the environment */
 		move_cursor(curwin, p->p_line, p->p_index);
 		curwin->w_set_want_col = TRUE;
 	    }
-	} else if (line >= 0) {
+	} else if (line != 0) {
 	    echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
-	    xvMoveToLineNumber((line > 0) ? line : MAX_LINENO);
+	    if (line < 0) {
+		line = lineno(b_last_line_of(curwin->w_buffer)) + line;
+	    }
+	    xvMoveToLineNumber(line);
 	}
 
     } else if (tag != NULL) {

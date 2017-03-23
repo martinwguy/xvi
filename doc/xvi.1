@@ -78,8 +78,12 @@ to turn a Boolean parameter off
 Edit the file containing the definition specified as \fItag\fP,
 at the start of the definition (as per \fBvi\fP).
 .TP
-\fB+\fP\fInumber\fP
+.BI + number
 Go to the specified line number of the file being edited.
+.B +$
+goes to the last line,
+.BI +- number
+goes to the \fIn\fPth line before the last line.
 .TP
 \fB+\fP/\fIpattern\fP
 Go to the first occurrence of the specified \fIpattern\fP within
