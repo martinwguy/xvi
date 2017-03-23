@@ -85,6 +85,21 @@ char	*command;
     }
     VSflush(window->w_vs);
 
+    /*
+     * POSIX: "The specified lines shall be copied into the unnamed buffer
+     *	       before they are replaced, and the unnamed buffer shall become
+     *	       a line-mode buffer."
+     */
+    {
+	Posn posn1, posn2;
+
+	posn1.p_line = line1;
+	posn1.p_index = 0;
+	posn2.p_line = line2->l_prev;
+	posn2.p_index = 0;
+	do_yank(window->w_buffer, &posn1, &posn2, FALSE, '@');
+    }
+
     newlines = NULL;
     success = sys_pipe(command, p_write, p_read);
     if (success) {
