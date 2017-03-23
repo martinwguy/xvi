@@ -54,14 +54,18 @@ set timeout 2
 # To test other vi clones
 # use	VI=nvi make check
 # or	VI="vim -c redraw" make check
+# The basename of the command, "xvi", "vi", "nvi", "vim" etc is in the
+# global variable $vi, in case tests need to allow for differences.
 
 proc start_vi {args} {
+    global vi
     set vi ../src/xvi
     if { [info exists ::env(VI)] && $::env(VI) != "" } {
 	set vi $::env(VI)
     }
     exp_send "rm -f core\r"	;# To detect core dumps
     exp_send "exec $vi $args\r"
+    set $vi [file tail $vi]
 }
 
 # Stop the editor gracefully. It should already be in normal mode.
