@@ -838,17 +838,14 @@ static void
 yp_free(yp)
 Yankbuffer	*yp;
 {
-    if (yp->y_type == y_lines) {
-	throw(yp->y_line_buf);
-	yp->y_line_buf = NULL;
-    } else if (yp->y_type == y_chars) {
+    switch (yp->y_type) {
+    case y_chars:
 	free(yp->y_1st_text);
 	yp->y_1st_text = NULL;
-	if (yp->y_2nd_text != NULL)
-	    free(yp->y_2nd_text);
+	free(yp->y_2nd_text);
 	yp->y_2nd_text = NULL;
-	if (yp->y_line_buf != NULL)
-	    throw(yp->y_line_buf);
+    case y_lines:
+	throw(yp->y_line_buf);
 	yp->y_line_buf = NULL;
     }
     yp->y_type = y_none;
