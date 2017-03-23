@@ -1008,46 +1008,6 @@ char	*newfile;
     show_file_info(window);
 }
 
-void
-exCompareWindows()
-{
-    Xviwin		*w;
-    enum mvtype	incres;
-    Posn		pos1, pos2;
-
-    w = xvNextDisplayedWindow(curwin);
-    if (w == curwin) {
-	show_error(curwin, "No other buffers to compare");
-    } else {
-	pos1 = *(curwin->w_cursor);
-	pos2 = *(w->w_cursor);
-	while ((incres = inc(&pos1)) == inc(&pos2)) {
-	    if (incres == mv_EOL) {
-		continue;
-	    } else if (incres == mv_NOMOVE) {
-		(void) dec(&pos1);
-		(void) dec(&pos2);
-		break;
-	    } else {
-		if (gchar(&pos1) != gchar(&pos2)) {
-		    break;
-		}
-	    }
-	}
-	if (gchar(&pos1) == '\0' && pos1.p_index > 0) {
-	    (void) dec(&pos1);
-	}
-	if (gchar(&pos2) == '\0' && pos2.p_index > 0) {
-	    (void) dec(&pos2);
-	}
-	move_cursor(curwin, pos1.p_line, pos1.p_index);
-	move_cursor(w, pos2.p_line, pos2.p_index);
-	move_window_to_cursor(w);
-	cursupdate(w);
-	wind_goto(w);
-    }
-}
-
 static bool_t
 more_files()
 {

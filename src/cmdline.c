@@ -188,7 +188,6 @@ static	struct	ecmd	{
   { "change",	    EX_CHANGE,	    2,	0,			ec_none },
   { "chdir",	    EX_CHDIR,	    1,	EC_EXPALL,		ec_1string },
   { "close",	    EX_CLOSE,	    1,	EC_EXCLAM,		ec_none },
-  { "compare",	    EX_COMPARE,	    0,	0,			ec_none },
   { "copy",	    EX_COPY,	    1,	0,			ec_line },
 
   { "delete",	    EX_DELETE,	    0,	0,			ec_none },
@@ -529,10 +528,6 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_COMMENT:		/* This one is easy ... */
-	break;
-
-    case EX_COMPARE:
-	exCompareWindows();
 	break;
 
     case EX_COPY:

@@ -952,7 +952,6 @@ extern	void	exWQ P((Xviwin *, char *, bool_t));
 extern	bool_t	exReadFile P((Xviwin *, char *, Line *));
 extern	void	exEditAlternateFile P((Xviwin *));
 extern	void	exShowFileStatus P((Xviwin *, char *));
-extern	void	exCompareWindows P((void));
 extern	char	nowrtmsg[];
 
 /*
