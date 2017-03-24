@@ -262,13 +262,14 @@ register Mpos	*pos;
 		     */
 		    flexnew(&flextmp);
 		    while ((tmpch = flexpopch(pos->mp_src)) != 0) {
-			flexaddch(&flextmp, tmpch);
+			(void) flexaddch(&flextmp, tmpch);
 		    }
 		    /*
 		     * Input queue is now the new rhs followed by the
 		     * characters that were there before (if any)
 		     */
-		    (void) lformat(pos->mp_src, "%s%s", tmp->m_rhs+offset, flexgetstr(&flextmp));
+		    (void) lformat(pos->mp_src, "%s%s", tmp->m_rhs+offset,
+				   flexgetstr(&flextmp));
 		    flexdelete(&flextmp);
 		} else {
 		    (void) lformat(pos->mp_dest, "%s", tmp->m_rhs);
@@ -327,7 +328,7 @@ map_waiting()
 /*
  * This routine is called when a map has failed. We transfer the first
  * input character into the destination flexbuf, and all the others into
- * the src flexbuf. This gives us a change to retry maps which fail on
+ * the src flexbuf. This gives us a chance to retry maps which fail on
  * the first input character at the next input character.
  */
 static void

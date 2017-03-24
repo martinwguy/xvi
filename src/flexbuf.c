@@ -91,9 +91,12 @@ Flexbuf		*f;
 	Flexbuf	n;
 
 	flexnew(&n);
-	(void) lformat(&n, "%s", flexgetstr(f));
+	if (!lformat(&n, "%s", flexgetstr(f))) {
+	    p = NULL;
+	} else {
+	    p = flexdetach(&n);
+	}
 	flexdelete(f);
-	p = flexdetach(&n);
     } else if (!flexaddch(f, '\0')) {
 	flexdelete(f);
 	p = NULL;
@@ -156,6 +159,8 @@ static	bool_t	    ljust;
  * characters as specified by the width, prec & ljust variables.
  *
  * The precision specifier gives the maximum field width.
+ *
+ * Returns TRUE if it succeeds, FALSE if it fails.
  */
 static bool_t
 strformat(f, p)
@@ -201,6 +206,8 @@ register char *p;
  * append it to the end of a Flexbuf.
  *
  * The precision specifier gives the minimum number of decimal digits.
+ *
+ * Returns TRUE if it succeeds, FALSE if it fails.
  */
 static bool_t
 numformat(f, n, uflag)
@@ -261,6 +268,8 @@ bool_t	uflag;
 
 /*
  * Main formatting routine.
+ *
+ * Returns TRUE if it succeeds, FALSE if it fails.
  */
 bool_t
 vformat

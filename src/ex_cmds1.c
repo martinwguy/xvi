@@ -554,14 +554,14 @@ Xviwin	*window;
 	    }
 	    if (flexlen(&fb) <= maxcols) {
 		if (count > 0) {
-		    (void) flexaddch(&fb, ' ');
+		    if (!flexaddch(&fb, ' ')) return(FALSE);
 		}
 		if (count == curfile) {
-		    (void) flexaddch(&fb, '[');
+		    if (!flexaddch(&fb, '[')) return(FALSE);
 		}
-		(void) lformat(&fb, "%s", fn);
+		if (!lformat(&fb, "%s", fn)) return(FALSE);
 		if (count == curfile) {
-		    (void) flexaddch(&fb, ']');
+		    if (!flexaddch(&fb, ']')) return(FALSE);
 		}
 	    }
 	}

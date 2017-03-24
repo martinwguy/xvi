@@ -106,7 +106,7 @@ Cmd	*cmd;
     case 'r':
 	Redo.r_mode = (cmd->cmd_ch1 == 'r') ? r_replace1 : r_insert;
 	flexclear(&Redo.r_fb);
-	(void) flexaddch(&Redo.r_fb, cmd->cmd_ch1);
+	if (!flexaddch(&Redo.r_fb, cmd->cmd_ch1)) break;
 	startreplace(cmd->cmd_ch1, IDEF1(cmd->cmd_prenum) - 1);
 	break;
 
@@ -483,7 +483,7 @@ Cmd	*cmd;
 
     Redo.r_mode = r_normal;
     flexclear(&Redo.r_fb);
-    (void) flexaddch(&Redo.r_fb, cmd->cmd_ch1);
+    if (!flexaddch(&Redo.r_fb, cmd->cmd_ch1)) return;
     cp = curwin->w_cursor;
     tp = cp->p_line->l_text;
     if (tp[0] == '\0') {
@@ -543,7 +543,7 @@ Cmd	*cmd;
 
     Redo.r_mode = r_insert;
     flexclear(&Redo.r_fb);
-    (void) flexaddch(&Redo.r_fb, cmd->cmd_ch1);
+    if (!flexaddch(&Redo.r_fb, cmd->cmd_ch1)) goto oom;
 
     switch (cmd->cmd_ch1) {
     case 'o':
@@ -556,7 +556,7 @@ Cmd	*cmd;
 		    openbwd()
 	    ) == FALSE
 	) {
-	    beep(curwin);
+oom:	    beep(curwin);
 	    end_command(curwin);
 	    return;
 	}

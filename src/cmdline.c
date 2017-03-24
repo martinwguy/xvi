@@ -1425,13 +1425,13 @@ char	*str;
 		escaped = TRUE;
 		break;
 	    default:
-		(void) flexaddch(&newstr, *from);
+		if (!flexaddch(&newstr, *from)) return(NULL);
 	    }
 	} else {
 	    if (*from != '%' && *from != '#') {
-		(void) flexaddch(&newstr, '\\');
+		if (!flexaddch(&newstr, '\\')) return(NULL);
 	    }
-	    (void) flexaddch(&newstr, *from);
+	    if (!flexaddch(&newstr, *from)) return(NULL);
 	    escaped = FALSE;
 	}
     }
