@@ -79,7 +79,12 @@ char	*envp;				/* init string from the environment */
     int		numfiles = 0;
     int		count;
     char	*env;
-    char	*command = NULL;	/* Argument to -c flag */
+    char	**commands = NULL;	/* Arguments to -c flags */
+    int		ncommands = 0;		/* Arguments to -c flags */
+
+#define add_command(c) { \
+	commands = realloc(commands, sizeof(*commands) * ++ncommands); \
+	commands[ncommands-1] = c; }
 
     /*
      * The critical path this code has to follow is quite tricky.
@@ -218,7 +223,7 @@ char	*envp;				/* init string from the environment */
 	    switch (argv[count][1]) {
 	    case 'c':
 		if (count < argc-1) {
-		    command = argv[++count];
+		    add_command(argv[++count]);
 		} else {
 		    usage();
 		    return(NULL);
@@ -423,8 +428,12 @@ usage:		usage();
     }
 
     /* Run any commands given with -c flag */
-    if (command != NULL) {
-	exCommand(command, FALSE);
+    if (commands != NULL) {
+	int i;
+	for (i=0; i < ncommands; i++) {
+	    exCommand(commands[i], FALSE);
+	}
+	free(commands);
     }
 
     setpcmark(curwin);
