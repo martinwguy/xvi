@@ -880,7 +880,7 @@ extern	int	nbuffers;
 /*
  * cmdline.c
  */
-extern	void	exCommand P((char *, bool_t));
+extern	bool_t	exCommand P((char *, bool_t));
 extern	void	wait_return P((void));
 
 /*

@@ -277,8 +277,10 @@ int	c;
 	    break;
 
 	case ':':
-	    exCommand(cmdline + 1, TRUE);
-	    /* exCommand() calls badcmd(), which calls unstuff() */
+	    if (!exCommand(cmdline + 1, TRUE)) {
+		unstuff();
+	    }
+	    break;
 	}
 	if (savedline != NULL) {
 	    (void) yank_str(savedline[0], savedline, TRUE);

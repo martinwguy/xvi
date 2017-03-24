@@ -234,6 +234,7 @@ char	*file;
     FILE		*fp;
     register int	c;
     bool_t		literal;
+    bool_t		success = TRUE;
 
     fp = fopen(file, "r");
     if (fp == NULL) {
@@ -249,6 +250,7 @@ char	*file;
 	if (kbdintr) {
 	    kbdintr = FALSE;
 	    imessage = TRUE;
+	    success = FALSE;
 	    break;
 	}
 	if (!literal && (c == CTRL('V') || c == '\n')) {
@@ -259,20 +261,26 @@ char	*file;
 
 	    case '\n':
 		if (!flexempty(&cmd)) {
-		    exCommand(flexgetstr(&cmd), interactive);
+		    if (!exCommand(flexgetstr(&cmd), interactive)) {
+			success = FALSE;
+			goto out;	/* Alas, poor "break"! */
+		    }
 		    flexclear(&cmd);
 		}
 		break;
 	    }
 	} else {
 	    literal = FALSE;
-	    if (!flexaddch(&cmd, c))
-		return(FALSE);
+	    if (!flexaddch(&cmd, c)) {
+		success = FALSE;
+		goto out;
+	    }
 	}
     }
+out:
     flexdelete(&cmd);
     (void) fclose(fp);
-    return(TRUE);
+    return(success);
 }
 
 /*

@@ -195,7 +195,7 @@ char	*envp;				/* init string from the environment */
 			;
 		} else {
 		    ep[-1] = '\0';
-		    exCommand(env, FALSE);
+		    (void) exCommand(env, FALSE);
 		    env = ep;
 		}
 		/* fall through ... */
@@ -204,7 +204,7 @@ char	*envp;				/* init string from the environment */
 	    }
 	}
 	if (ep > env) {
-	    exCommand(env, FALSE);
+	    (void) exCommand(env, FALSE);
 	}
     }
 
@@ -431,7 +431,7 @@ usage:		usage();
     if (commands != NULL) {
 	int i;
 	for (i=0; i < ncommands; i++) {
-	    exCommand(commands[i], FALSE);
+	    (void) exCommand(commands[i], FALSE);
 	}
 	free(commands);
     }

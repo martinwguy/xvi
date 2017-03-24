@@ -293,7 +293,7 @@ static	bool_t	do_line_numbers;
  * The cmdline argument points to a complete command line to be processed
  * (this does not include the ':' itself).
  */
-void
+bool_t
 exCommand(cmdline, interactive)
 char	*cmdline;			/* optional command string */
 bool_t	interactive;			/* true if reading from tty */
@@ -305,7 +305,7 @@ bool_t	interactive;			/* true if reading from tty */
     int		command;		/* which command it is */
     struct ecmd	*ecp;			/* ptr to command entry */
     unsigned	savecho;		/* previous value of echo */
-    int		error;		/* Should we cancel pending macros? */
+    int		error;			/* Did the command fail? */
 
     /*
      * Skip leading colons and blanks
@@ -320,7 +320,7 @@ bool_t	interactive;			/* true if reading from tty */
      */
     if (!get_range(&cmdline)) {
 	badcmd(interactive, "Bad address range");
-	return;
+	return(FALSE);
     }
 
     /*
@@ -337,7 +337,7 @@ bool_t	interactive;			/* true if reading from tty */
 	if (!(ecp->ec_flags & EC_RANGE0)) {
 	    if (l_line == curbuf->b_line0 || u_line == curbuf->b_line0) {
 		badcmd(interactive, "Specification of line 0 not allowed");
-		return;
+		return(FALSE);
 	    }
 	}
 
@@ -409,7 +409,7 @@ bool_t	interactive;			/* true if reading from tty */
 		 */
 		if (ecp->ec_flags & EC_INTEXP) {
 		    arg = expand_percents(arg);
-		    if (arg == NULL) return;
+		    if (arg == NULL) return(FALSE);
 		}
 		if (ecp->ec_flags & EC_FILEXP) {
 		    arg = fexpand(arg, FALSE);
@@ -503,10 +503,11 @@ bool_t	interactive;			/* true if reading from tty */
 
     case EX_CHDIR:
     {
-	char	*error;
+	char	*errmsg;
 
-	if ((error = exChangeDirectory(arg)) != NULL) {
-	    badcmd(interactive, error);
+	if ((errmsg = exChangeDirectory(arg)) != NULL) {
+	    badcmd(interactive, errmsg);
+	    error++;
 	} else if (interactive) {
 	    char	*dirp;
 
@@ -876,22 +877,18 @@ bool_t	interactive;			/* true if reading from tty */
 
     case EX_ENOTFOUND:
 	badcmd(interactive, "Unrecognized command");
-	error++;
 	break;
 
     case EX_EAMBIGUOUS:
 	badcmd(interactive, "Ambiguous command");
-	error++;
 	break;
 
     case EX_ECANTFORCE:
 	badcmd(interactive, "Inappropriate use of !");
-	error++;
 	break;
 
     case EX_EBADARGS:
 	badcmd(interactive, "Inappropriate arguments given");
-	error++;
 	break;
 
     default:
@@ -927,6 +924,8 @@ bool_t	interactive;			/* true if reading from tty */
     if (argc > 0 && argv != NULL) {
 	free(argv);
     }
+
+    return(!(error || command < 0));
 }
 
 /*
