@@ -521,6 +521,7 @@ int	c;
 	    move_cursor(curwin, lpos->p_line, lpos->p_index);
 	    cursupdate(curwin);
 	    wind_goto(curwin);
+	    VSflush(curwin->w_vs);
 
 	    Wait200ms();
 
