@@ -790,6 +790,8 @@ Line	*from, *to;
     Line	head;
     Line	*dest = &head;
 
+    head.l_next = NULL;
+
     for (src = from; src != to; src = src->l_next) {
 	Line	*tmp;
 	size_t	size;
