@@ -732,6 +732,9 @@ bool_t		matchtype;
     long		ndone;		/* number of matches */
     register char	cmdchar = '\0';	/* what to do with matching lines */
 
+    /* Skip blanks between the g and the delimiter */
+    while (*cmd != '\0' && is_space(*cmd)) cmd++;
+
     /*
      * compile() compiles the pattern up to the first unescaped
      * delimiter: we place the character after the delimiter in
@@ -1126,6 +1129,14 @@ char	*command;
     char	*cp;
     char	delimiter;
     long	nsubs;
+
+    /* Skip blanks between the s and the delimiter */
+    while (*command != '\0' && is_space(*command)) command++;
+
+    /* ":s" means repeat the last substitution */
+    if (*command == '\0') {
+	return(exAmpersand(window, lp, up, command));
+    }
 
     copy = alloc((unsigned) strlen(command) + 1);
     if (copy == NULL) {
