@@ -796,8 +796,7 @@ Line	*from, *to;
 	Line	*tmp;
 	size_t	size;
 
-	size = strlen(src->l_text) + 1;
-	tmp = newline(size);
+	tmp = newline(strlen(src->l_text) + 1);
 	if (tmp == NULL) {
 	    throw(head.l_next);
 	    return(NULL);
@@ -807,7 +806,7 @@ Line	*from, *to;
 	 * Copy the line's text over, and advance
 	 * "dest" to point to the new line structure.
 	 */
-	(void) memcpy(tmp->l_text, src->l_text, size);
+	(void) strcpy(tmp->l_text, src->l_text);
 	tmp->l_next = NULL;
 	tmp->l_prev = dest;
 	dest->l_next = tmp;
