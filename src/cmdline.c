@@ -867,6 +867,9 @@ bool_t	interactive;			/* true if reading from tty */
 	 * If we got a line, but no command, then go to the line.
 	 */
 	if (l_line != NULL) {
+	    /* If they gave two addresses, go to the second one. */
+	    if (u_line != NULL) l_line = u_line;
+
 	    if (l_line == curbuf->b_line0) {
 		l_line = l_line->l_next;
 	    }
