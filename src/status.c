@@ -48,7 +48,7 @@ show_message
     va_list	argp;
 
     VA_START(argp, format);
-    (void) flexclear(&window->w_statusline);
+    flexclear(&window->w_statusline);
     (void) vformat(&window->w_statusline, format, argp);
     va_end(argp);
 
@@ -74,7 +74,7 @@ show_error
 	beep(window);
     }
     VA_START(argp, format);
-    (void) flexclear(&window->w_statusline);
+    flexclear(&window->w_statusline);
     (void) vformat(&window->w_statusline, format, argp);
     va_end(argp);
 
