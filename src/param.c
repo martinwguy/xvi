@@ -690,9 +690,7 @@ bool_t			inter;		/* TRUE if called interactively */
 	 * don't accept it.
 	 */
 	if (value < 0 || *cp != '\0') {
-	    if (window) {
-		show_error(window, "Invalid numeric parameter");
-	    }
+	    if (inter) show_error(window, "Invalid numeric parameter");
 	    return(FALSE);
 	}
 	val.pv_i = value;
@@ -701,16 +699,34 @@ bool_t			inter;		/* TRUE if called interactively */
     case P_ENUM:
     {
 	char	     **	ep;
+	char	     ** partial_match = NULL;	/* Set to ep on partial match */
 
 	for (ep = pp->p_elist; *ep != NULL; ep++) {
-	    if (strcmp(*ep, cp) == 0)
+	    switch (matchname(*ep, &cp, '\0')) {
+	    case m_FULL:
+		goto got_enum;
+	    case m_PARTIAL:
+		if (partial_match != NULL) {
+		    /* It partially matches more than one option */
+		    if (inter) enum_usage(window, pp);
+		    return(FALSE);
+		} else {
+		    partial_match = ep;
+		}
 		break;
+	    case m_FAIL:
+		break;
+	    }
 	}
+	if (partial_match != NULL) {
+	    ep = partial_match;
+	    /* Show the full value on the status line */
+	    if (inter) show_message(window, "%s=%s", pp->p_fullname, *ep);
+	}
+got_enum:
 
 	if (*ep == NULL) {
-	    if (window != NULL && inter) {
-		enum_usage(window, pp);
-	    }
+	    if (inter) enum_usage(window, pp);
 	    return(FALSE);
 	}
 
@@ -733,7 +749,7 @@ bool_t			inter;		/* TRUE if called interactively */
      */
     val.pv_index = pp - &params[0];
     if (pp->p_func != nofunc &&
-	(*pp->p_func)(window, val, (window != NULL)) == FALSE) {
+	(*pp->p_func)(window, val, inter)) {
 	return(FALSE);
     }
 

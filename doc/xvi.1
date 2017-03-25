@@ -114,12 +114,17 @@ as well as \fBvi\fP's
 it also has
 \fIenumerated\fP and
 \fIlist\fP types.
-The former is used for e.g. \fBformat\fP and \fBregextype\fP,
+The former is used for \fBformat\fP, \fBinfoupdate\fP, \fBjumpscroll\fP,
+\fBpreserve\fP and \fBregextype\fP,
 while the latter is currently only used for \fBtags\fP.
+.LP
 The advantage of the \fIenumerated\fP type is that if you try
 to set an illegal value, the set of correct values will be displayed,
 which is very useful if you have forgotten what the values may be.
 (Try \fB:set preserve\fP to see an example of this.)
+.LP
+Like the \fB:\fP commands and parameter names, an enumerated value can also be
+set by giving enough of its initial characters to uniquely identify it.
 .\"---------------------------------------------------------------------------
 .SS Multiple buffers and windows
 .LP
