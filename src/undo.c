@@ -348,7 +348,7 @@ char	*newstring;
 	 * First make some room in the line.
 	 */
 	if (grow_line(line, offset) == FALSE) {
-	    free(change->c_chars);
+	    if (nchars != 0) free(change->c_chars);
 	    chfree(change);
 	    State = NORMAL;
 	    return(NULL);
