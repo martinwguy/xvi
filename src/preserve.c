@@ -69,6 +69,12 @@ Xviwin	*window;
     if (fp == NULL) {
 	show_error(window, "Can't open preserve file %s",
 					     buffer->b_tempfname);
+	/*
+	 * This can happen asynchronously, so put
+	 * the cursor back in the right place.
+	 */
+	wind_goto(curwin);
+	VSflush(window->w_vs);
     }
     return(fp);
 }
