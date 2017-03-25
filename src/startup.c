@@ -292,40 +292,25 @@ char	*envp;				/* init string from the environment */
 	    /*
 	     * "+n file" or "+/pat file"
 	     */
-	    if (count >= (argc - 1)) {
+	    if (count >= argc - 1 || !strchr("/$-0123456789", argv[count][1])) {
 		usage();
 		return(NULL);
 	    }
 
-	    minus_line = 1;
-
-	    switch (argv[count][1]) {
-	    case '/':
-		pat = &(argv[count][2]);
-		break;
-	    case '$':
-		line = MAX_LINENO; /* sends us to last line of file */
-		break;
-	    case '-':
-		if (argv[count][2] == '\0') {
-		    line = -1;
-		    break;
-		} else if (!is_digit(argv[count][2])) {
-		    goto usage;
-		} else {
-		    minus_line = -1;
-		    /* make argv[count][1] ahead point at the digit */
-		    argv[count]++;
-		    /*...and fall through... */
+	    /*
+	     * Do +/ +$ +N as -c commands.  +- and +-N become $- and $-N
+	     */
+	    if (argv[count][1] == '-') {
+		char *newarg = alloc(strlen(argv[count])+2);
+		if (newarg) {
+		    newarg[0] = '$';
+		    strcpy(&newarg[1], &argv[count][1]);
+		    add_command(newarg);
 		}
-	    case '0': case '1': case '2': case '3': case '4':
-	    case '5': case '6': case '7': case '8': case '9':
-		line = atol(&(argv[count][1])) * minus_line;
-		break;
-	    default:
-usage:		usage();
-		return(NULL);
+	    } else {
+		add_command(&argv[count][1]);
 	    }
+
 	    count += 1;
 	    files = &argv[count];
 	    numfiles = 1;
