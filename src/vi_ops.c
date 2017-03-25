@@ -88,6 +88,7 @@ register Cmd	*cmd;
 	move_cursor(curwin, cmd->cmd_startpos.p_line, 0);
 	repllines(curwin, cmd->cmd_startpos.p_line, nlines, (Line *) NULL);
 	begin_line(curwin, TRUE);
+	info_update(curwin);	/* bcos the current line might have changed */
     } else {
 	if (cmd->cmd_startpos.p_line == cmd->cmd_target.p_line) {
 	    /*
