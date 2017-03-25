@@ -157,6 +157,8 @@ tagword()
  * case, if no '!' is appended to the command name, and the edit buffer has
  * been modified since the last complete write, it shall be an error, unless
  * the file is successfully written as specified by the autowrite option."
+ *
+ * Returns TRUE if it succeeds, FALSE if it fails.
  */
 bool_t
 exTag(window, tag, force, interactive, split)
@@ -167,7 +169,7 @@ bool_t	interactive;		/* true if reading from tty */
 bool_t	split;			/* true if want to split */
 {
     static char	last_tag[32];	/* record of last tag we were given */
-    bool_t	edited;		/* TRUE if we have edited the file */
+    bool_t	edited = FALSE;	/* TRUE if we have edited the file */
     Xviwin	*tagwindow;	/* tmp window pointer */
     TAG		*tp;
     int		l1, l2;
@@ -178,7 +180,7 @@ bool_t	split;			/* true if want to split */
     if (tag == NULL || tag[0] == '\0') {
 	tag = last_tag;
     } else {
-	(void) strncpy(last_tag, tag, sizeof(last_tag));
+	(void) strncpy(last_tag, tag, sizeof(last_tag)-1);
     }
 
     if (tag == NULL || tag[0] == '\0') {
@@ -234,7 +236,14 @@ bool_t	split;			/* true if want to split */
 		return(FALSE);
 	    }
 	}
-	edited = exEditFile(window, force, tp->t_file);
+	if (!exists(tp->t_file)) {
+	    show_error(window, "File not found");
+	    return(FALSE);
+	}
+	if (!exEditFile(window, force, tp->t_file)) {
+	    return(FALSE);
+	}
+	edited = TRUE;
     }
 
     /*
@@ -262,7 +271,7 @@ bool_t	split;			/* true if want to split */
 	case '?':
 	    pattern = strsave(tp->t_locator + 1);
 	    if (pattern == NULL) {
-		break;			/* What else can we do? */
+		return(FALSE);
 	    }
 
 	    /*
