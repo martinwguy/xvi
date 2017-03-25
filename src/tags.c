@@ -254,6 +254,7 @@ bool_t	split;			/* true if want to split */
      */
     if (edited) {
 	int	old_rxtype;
+	bool_t	old_wrapscan;
 	Posn	*p;
 	char	*pattern;
 	char	*cp;
@@ -289,6 +290,12 @@ bool_t	split;			/* true if want to split */
 	     */
 	    old_rxtype = Pn(P_regextype);
 	    set_param(P_regextype, rt_TAGS, (char **) NULL);
+	    /*
+	     * If we are searching in the same file and are at a position
+	     * after the target, the search would fail is wrapscan were off.
+	     */
+	    old_wrapscan = Pb(P_wrapscan);
+	    set_param(P_wrapscan, TRUE);
 
 	    p = xvDoSearch(curwin, pattern, '/');
 	    free(pattern);
@@ -301,6 +308,7 @@ bool_t	split;			/* true if want to split */
 		beep(curwin);
 	    }
 	    set_param(P_regextype, old_rxtype, (char **) NULL);
+	    set_param(P_wrapscan, old_wrapscan);
 	    break;
 
 	default:
