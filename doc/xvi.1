@@ -74,6 +74,9 @@ to turn a Boolean parameter on
 \fBno\fP\fIname\fP
 to turn a Boolean parameter off
 .RE
+Parameters set with
+.B \-s
+take their new values before opening input files or going to a tag.
 .TP
 \fB\-t\fP \fItag\fP
 Edit the file containing the definition specified as \fItag\fP,
@@ -81,12 +84,17 @@ at the start of the definition (as per \fBvi\fP).
 .TP
 .BI + number
 Go to the specified line number of the file being edited.
+.RS
+.TP
 .B +$
 goes to the last line,
+.TP
 .BI +- number
 goes to the \fIn\fPth line before the last line and
+.TP
 .B +-
 goes to the penultimate line.
+.RE
 .TP
 \fB+\fP/\fIpattern\fP
 Go to the first occurrence of the specified \fIpattern\fP within
