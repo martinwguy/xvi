@@ -82,11 +82,10 @@ show_error
 }
 
 void
-show_file_info(window)
+show_file_info(window, show_numbers)
 Xviwin	*window;
+bool_t	show_numbers;
 {
-    bool_t show_numbers = TRUE;
-
     if (echo & e_SHOWINFO) {
 	Buffer	*buffer;
 	Flexbuf	*slp;
@@ -130,5 +129,5 @@ void
 info_update(win)
     Xviwin *win;
 {
-    show_file_info(win);
+    show_file_info(win, Pen(P_infoupdate) == iu_CONTINUOUS);
 }

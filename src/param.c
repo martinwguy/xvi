@@ -116,7 +116,7 @@ static	matchinfo_t	*findparam P((Xviwin *, char *));
  * These are the available parameters. The following are non-standard:
  *
  *	autodetect autonoedit autosplit colour edit
- *	format helpfile jumpscroll preserve preservetime
+ *	format helpfile infoupdate jumpscroll preserve preservetime
  *	regextype roscolour statuscolour systemcolour tabindent vbell
  *
  * The string/list value field of Param[] is left uninitialized and gets NULL.
@@ -144,6 +144,7 @@ Param	params[] = {
 {   "hardtabs",     "ht",           P_NUM,      0,              not_imp,   },
 {   "helpfile",     "hf",           P_STRING,   0,              nofunc,    },
 {   "ignorecase",   "ic",           P_BOOL,     0,              nofunc,    },
+{   "infoupdate",   "iu",           P_ENUM,     0,              nofunc,    },
 {   "jumpscroll",   "js",           P_ENUM,     0,              nofunc,    },
 {   "lisp",         "lisp",         P_BOOL,     0,              not_imp,   },
 {   "list",         "ls",           P_BOOL,     0,              nofunc,    },
@@ -231,12 +232,26 @@ static char *js_strings[] =
     NULL
 };
 
+/*
+ * Names of values for the P_infoupdate enumerated parameter.
+ *
+ * It is essential that these are in the same order as the iu_...
+ * symbolic constants defined in xvi.h.
+ */
+static char *iu_strings[] =
+{
+    "terse",		/* iu_TERSE */
+    "continuous",	/* iu_CONTINUOUS */
+    NULL
+};
+
 static struct {
     int		index;
     int		value;
     char	**elist;
 } init_enum[] = {	/* enumerations */
     { P_format,		DEF_TFF,	fmt_strings	},
+    { P_infoupdate,	iu_TERSE,	iu_strings	},
     { P_jumpscroll,	js_AUTO,	js_strings	},
     { P_preserve,	psv_STANDARD,	psv_strings	},
     { P_regextype,	rt_GREP,	rt_strings	}

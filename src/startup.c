@@ -405,11 +405,11 @@ char	*envp;				/* init string from the environment */
 	     */
 	    VSflush(curwin->w_vs);
 	    sleep(2);
-	    show_file_info(curwin);
+	    show_file_info(curwin, TRUE);
 	}
     } else {
 	echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
-	show_file_info(curwin);
+	show_file_info(curwin, TRUE);
     }
 
     /* Run any commands given with -c flag */

@@ -38,7 +38,7 @@ Cmd	*cmd;
 	break;
 
     case CTRL('G'):
-	show_file_info(curwin);
+	show_file_info(curwin, TRUE);
 	break;
 
     case CTRL(']'):		/* :ta to current identifier */
@@ -326,7 +326,7 @@ Cmd	*cmd;
     /*
      * Finally, show where we are in the file.
      */
-    show_file_info(curwin);
+    show_file_info(curwin, TRUE);
 }
 
 void

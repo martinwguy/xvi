@@ -412,7 +412,7 @@ int	nlines;		/*
 	    nextwin->w_nrows += amount;
 	    (void) shiftdown(nextwin, (unsigned) amount);
 	    if (wp->w_nrows > 0) {
-		show_file_info(wp);
+		show_file_info(wp, TRUE);
 	    }
 	}
 	nlines = -amount;	/* return value */
@@ -438,7 +438,7 @@ int	nlines;		/*
 	    nextwin->w_nrows -= nlines;
 	    (void) shiftup(nextwin, (unsigned) nlines);
 	    if (wp->w_nrows > 0) {
-		show_file_info(wp);
+		show_file_info(wp, TRUE);
 	    }
 	}
     }

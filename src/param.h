@@ -133,6 +133,7 @@ enum {
     P_hardtabs,
     P_helpfile,
     P_ignorecase,
+    P_infoupdate,
     P_jumpscroll,
     P_lisp,
     P_list,

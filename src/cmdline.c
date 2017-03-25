@@ -572,7 +572,7 @@ bool_t	interactive;			/* true if reading from tty */
 	move_window_to_cursor(curwin);
 	xvUpdateAllBufferWindows(curbuf);
 #if 0
-	show_file_info(curwin);
+	show_file_info(curwin, TRUE);
 #endif
 	break;
 
@@ -716,7 +716,7 @@ bool_t	interactive;			/* true if reading from tty */
 	    badcmd(interactive, "Missing filename");
 	} else if (exSource(interactive, arg) && interactive) {
 #if 0
-	    show_file_info(curwin);
+	    show_file_info(curwin, TRUE);
 #endif
 	    ;
 	} else {

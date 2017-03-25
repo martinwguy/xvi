@@ -93,7 +93,7 @@ Xviwin	*window;
      * Also update the window - this will almost certainly
      * have no effect on the screen, but is necessary.
      */
-    show_file_info(window);
+    show_file_info(window, TRUE);
     redraw_window(window, FALSE);
 
     /*
@@ -118,7 +118,7 @@ Xviwin	*window;
     cursupdate(newwin);
 
     redraw_window(newwin, FALSE);
-    show_file_info(newwin);
+    show_file_info(newwin, TRUE);
 
     /*
      * Update the global window variable.
@@ -169,14 +169,14 @@ int	sizehint;
      * Note that we don't need to call move_window_to_cursor() for
      * the old window until it becomes the current window again.
      */
-    show_file_info(window);
+    show_file_info(window, TRUE);
     init_sline(newwin);
 
     if (filename != NULL) {
 	(void) exEditFile(newwin, FALSE, filename);
     } else {
 	new->b_filename = new->b_tempfname = NULL;
-	show_file_info(newwin);
+	show_file_info(newwin, TRUE);
     }
 
     redraw_window(window, FALSE);
@@ -279,7 +279,7 @@ bool_t	force;
 
     }
     redraw_window(curwin, FALSE);
-    show_file_info(curwin);
+    show_file_info(curwin, TRUE);
 
     return(TRUE);
 }
@@ -1003,7 +1003,7 @@ char	*newfile;
 	unpreserve(buffer);
 	(void) preservebuf(window);
     }
-    show_file_info(window);
+    show_file_info(window, TRUE);
 }
 
 static bool_t
