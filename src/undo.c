@@ -455,6 +455,7 @@ Line		*newlines;
 					    new_end = new_end->l_next) {
 	    nnlines++;
 	    nplines += plines(window, new_end);
+	    restoremarks(new_end, buffer);
 	}
 	nplines += plines(window, new_end);
     } else {

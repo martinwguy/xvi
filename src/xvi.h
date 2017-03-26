@@ -450,6 +450,7 @@ typedef	struct cmd {
 
 typedef	struct	mark {
     Line		*m_line;
+    bool_t		m_deleted;
 } Mark;
 
 /*
@@ -1029,6 +1030,7 @@ extern	bool_t	setmark P((int, Buffer *, Line *));
 extern	void	setpcmark P((Xviwin *));
 extern	Line	*getmark P((int, Buffer *));
 extern	void	clrmark P((Line *, Buffer *));
+extern	void	restoremarks P((Line *, Buffer *));
 
 /*
  * misccmds.c

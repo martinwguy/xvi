@@ -38,6 +38,7 @@ Buffer	*buffer;
     /* Set all m_line to NULL */
     memset(mlist, sizeof(*mlist) * NMARKS, 0);
     buffer->b_pcmark.m_line = NULL;
+    buffer->b_pcmark.m_deleted = FALSE;
 }
 
 /*
@@ -56,7 +57,9 @@ Line	*line;
 	return(TRUE);
     }
     if (is_lower(c)) {
-	buffer->b_mlist[c - 'a'].m_line = line;
+	Mark *m = &(buffer->b_mlist[c - 'a']);
+	m->m_line = line;
+	m->m_deleted = FALSE;
 	return(TRUE);
     }
     return(FALSE);
@@ -82,13 +85,17 @@ getmark(c, buffer)
 int	c;
 Buffer	*buffer;
 {
+    Mark *m;
+
     if (c == '\'' || c == '`') {
-	return(buffer->b_pcmark.m_line);
+	m = &(buffer->b_pcmark);
+    } else if (is_lower(c)) {
+	m = &(buffer->b_mlist[c - 'a']);
+	if (m->m_deleted) return(NULL);
+    } else {
+	return(NULL);
     }
-    if (is_lower(c)) {
-	return(buffer->b_mlist[c - 'a'].m_line);
-    }
-    return(NULL);
+    return(m->m_line);
 }
 
 /*
@@ -102,14 +109,33 @@ Line	*line;
 Buffer	*buffer;
 {
     Mark	*mlist = buffer->b_mlist;
-    int	i;
+    int		 i;
 
     for (i = 0; i < NMARKS; i++) {
 	if (mlist[i].m_line == line) {
-	    mlist[i].m_line = NULL;
+	    mlist[i].m_deleted = TRUE;
 	}
     }
     if (buffer->b_pcmark.m_line == line) {
 	buffer->b_pcmark.m_line = NULL;
+    }
+}
+
+/*
+ * A line has just been undeleted. See if any marks referred to it
+ * and restore them if so.
+ */
+void
+restoremarks(line, buffer)
+Line *line;
+Buffer *buffer;
+{
+    Mark	*mlist = buffer->b_mlist;
+    int		 i;
+
+    for (i = 0; i < NMARKS; i++) {
+	if (mlist[i].m_line == line) {
+	    mlist[i].m_deleted = FALSE;
+	}
     }
 }
