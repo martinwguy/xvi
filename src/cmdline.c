@@ -623,7 +623,7 @@ bool_t	interactive;			/* true if reading from tty */
 	} else {
 	    pos.p_line = l_line;
 	}
-	if (!setmark(arg[0], curbuf, &pos)) {
+	if (!setmark(arg[0], curbuf, pos.p_line)) {
 	    error++;
 	}
 	break;

@@ -41,22 +41,22 @@ Buffer	*buffer;
 }
 
 /*
- * setmark(c) - set mark 'c' at current cursor position in given buffer.
+ * setmark(c) - set mark 'c' at the specified line.
  *
  * Returns TRUE on success, FALSE if no room for mark or bad name given.
  */
 bool_t
-setmark(c, buffer, pos)
+setmark(c, buffer, line)
 int	c;
 Buffer	*buffer;
-Posn	*pos;
+Line	*line;
 {
     if (c == '\'' || c == '`') {
-	buffer->b_pcmark.m_line = pos->p_line;
+	buffer->b_pcmark.m_line = line;
 	return(TRUE);
     }
     if (is_lower(c)) {
-	buffer->b_mlist[c - 'a'].m_line = pos->p_line;
+	buffer->b_mlist[c - 'a'].m_line = line;
 	return(TRUE);
     }
     return(FALSE);

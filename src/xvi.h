@@ -1025,7 +1025,7 @@ extern	bool_t	xvi_unmap P((int, char **, bool_t, bool_t));
  * mark.c
  */
 extern	void	init_marks P((Buffer *));
-extern	bool_t	setmark P((int, Buffer *, Posn *));
+extern	bool_t	setmark P((int, Buffer *, Line *));
 extern	void	setpcmark P((Xviwin *));
 extern	Line	*getmark P((int, Buffer *));
 extern	void	clrmark P((Line *, Buffer *));
