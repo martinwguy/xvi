@@ -40,9 +40,8 @@
 ***/
 
 #include "xvi.h"
-#include "change.h"
 
-static	void	save_position P((Xviwin *));
+static	bool_t	save_position P((Xviwin *, Change **));
 static	bool_t	init_change_data P((Xviwin *));
 static	void	free_changes P((Change *));
 static	Change	*_replchars P((Xviwin *, Line *, int, int, char *));
@@ -65,7 +64,7 @@ Buffer	*buffer;
     cdp->cd_nlevels = 0;
     cdp->cd_undo = NULL;
 
-    buffer->b_change = (genptr *) cdp;
+    buffer->b_change = cdp;
 
     buffer->b_prevline = NULL;
     buffer->b_Undotext = NULL;
@@ -87,7 +86,7 @@ Buffer	*buffer;
 {
     ChangeData	*cdp;
 
-    cdp = (ChangeData *) buffer->b_change;
+    cdp = buffer->b_change;
 
     /*
      * Remove all recorded changes for this buffer.
@@ -126,7 +125,7 @@ bool_t
 start_command(window)
 Xviwin	*window;
 {
-    ChangeData	*cdp = (ChangeData *) window->w_buffer->b_change;
+    ChangeData	*cdp = window->w_buffer->b_change;
 
     if (!init_change_data(window)) {
 	return(FALSE);
@@ -141,7 +140,7 @@ static bool_t
 init_change_data(window)
 Xviwin	*window;
 {
-    ChangeData	*cdp = (ChangeData *) window->w_buffer->b_change;
+    ChangeData	*cdp = window->w_buffer->b_change;
 
     if (cdp->cd_nlevels == 0) {
 	if (not_editable(window->w_buffer)) {
@@ -153,7 +152,9 @@ Xviwin	*window;
 	cdp->cd_undo = NULL;
 	cdp->cd_total_lines = 0;
 	cdp->cd_nlevels = 0;
-	save_position(window);
+	if (!save_position(window, &(window->w_buffer->b_change->cd_undo))) {
+	    return(FALSE);
+	}
     }
     return(TRUE);
 }
@@ -164,18 +165,16 @@ Xviwin	*window;
  * This is called at the start of each change, so that
  * the cursor will return to the right place after an undo.
  */
-static void
-save_position(window)
+static bool_t
+save_position(window, csp)
 Xviwin	*window;
+Change **csp;		/* Stack where to save the change */
 {
     register Change	*change;
-    register ChangeData	*cdp;
-
-    cdp = (ChangeData *) window->w_buffer->b_change;
 
     change = challoc();
     if (change == NULL) {
-	return;
+	return(FALSE);
     }
 
     change->c_type = C_POSITION;
@@ -183,14 +182,16 @@ Xviwin	*window;
     change->c_pline = lineno(window->w_cursor->p_line);
     change->c_pindex = window->w_cursor->p_index;
 
-    push_change(&(cdp->cd_undo), change);
+    push_change(csp, change);
+
+    return(TRUE);
 }
 
 void
 end_command(window)
 Xviwin	*window;
 {
-    register ChangeData	*cdp = (ChangeData *) window->w_buffer->b_change;
+    register ChangeData	*cdp = window->w_buffer->b_change;
 
     if (cdp->cd_nlevels > 0) {
 	cdp->cd_nlevels -= 1;
@@ -217,7 +218,7 @@ int	start;
 int	nchars;
 char	*newstring;
 {
-    ChangeData	*cdp = (ChangeData *) window->w_buffer->b_change;
+    ChangeData	*cdp = window->w_buffer->b_change;
     Change	*change;
 
     if (!init_change_data(window)) {
@@ -249,7 +250,7 @@ Line		*line;
 long		nolines;
 Line		*newlines;
 {
-    ChangeData	*cdp = (ChangeData *) window->w_buffer->b_change;
+    ChangeData	*cdp = window->w_buffer->b_change;
     Change	*change;
 
     if (!init_change_data(window)) {
@@ -426,7 +427,7 @@ Line		*newlines;
     register ChangeData	*cdp;
 
     buffer = window->w_buffer;
-    cdp = (ChangeData *) buffer->b_change;
+    cdp = buffer->b_change;
 
     /*
      * First thing we have to do is to obtain a change
@@ -725,7 +726,7 @@ Line		*newlines;
     Xviwin		*wp;
     ChangeData		*cdp;
 
-    cdp = (ChangeData *) window->w_buffer->b_change;
+    cdp = window->w_buffer->b_change;
     buffer = window->w_buffer;
 
     if (newlines == NULL) {
@@ -823,7 +824,7 @@ Xviwin	*window;
     /* Set the undo history to a command that restores the line to
      * the way it was before they did the line undo.
      */
-    ((ChangeData *)(buffer->b_change))->cd_nlevels = 0;
+    buffer->b_change->cd_nlevels = 0;
     init_change_data(window);
     replchars(window, line, 0, strlen(line->l_text), buffer->b_Undotext);
     move_cursor(window, line, 0);
@@ -844,7 +845,7 @@ Xviwin	*window;
     Change		*change;
     Change		*redo;
 
-    cdp = (ChangeData *) window->w_buffer->b_change;
+    cdp = window->w_buffer->b_change;
     buffer = window->w_buffer;
 
     if (cdp->cd_nlevels != 0) {
@@ -853,7 +854,7 @@ Xviwin	*window;
     }
 
     /*
-     * chp point to the list of changes to make to undi the last change.
+     * chp points to the list of changes to make to undo the last change.
      */
     chp = cdp->cd_undo;
     if (chp == NULL) {
@@ -864,9 +865,13 @@ Xviwin	*window;
     /*
      * "redo" is the stack where we will be constructing the opposite
      * of the changes we are making, i.e. we push anti-changes
-     * onto the redo stack.
+     * onto the redo stack.  First, record the cursor position.
      */
     redo = NULL;
+    if (!save_position(window, &redo)) {
+	return;
+    }
+
     cdp->cd_total_lines = 0;
     cdp->cd_nlevels = 0;
 
@@ -973,7 +978,7 @@ Xviwin	*window;
 {
     register ChangeData	*cdp;
 
-    cdp = (ChangeData *) window->w_buffer->b_change;
+    cdp = window->w_buffer->b_change;
 
     if (echo & e_REPORT) {
 	if (cdp->cd_total_lines > Pn(P_report)) {

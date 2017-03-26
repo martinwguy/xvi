@@ -453,6 +453,8 @@ typedef	struct	mark {
     bool_t		m_deleted;
 } Mark;
 
+#include "change.h"
+
 /*
  * Variable-length FIFO queue of characters.
  */
@@ -529,7 +531,7 @@ typedef struct buffer {
     /*
      * The following only used in undo.c.
      */
-    genptr		*b_change;
+    ChangeData		*b_change;
 
 } Buffer;
 

@@ -21,7 +21,6 @@
 ***/
 
 #include "xvi.h"
-#include "change.h"
 
 /* #define DPRINT(args)	fprintf args */
 #define DPRINT(args)	
