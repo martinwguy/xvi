@@ -55,7 +55,7 @@ int	firstch;
     colposn[0] = 0;
     inpos = 1; inend = 1;
     colposn[1] = 1;
-    update_cline(win,colposn[1]);
+    update_cline(win, colposn[1]);
 }
 
 /*
@@ -306,20 +306,15 @@ int	ch;
     /*
      * Insert the character.
      */
-
-    if (inend >= sizeof(inbuf) - 1) {
-	/*
-	 * Must not overflow buffer.
-	 */
-	beep(win);
-    } else {
+    {
 	unsigned	endposn;
 	unsigned	w;
 	char		*p;
 
-	endposn = colposn[inend - 1];
+	endposn = colposn[inend];
 	w = vischar(ch, &p, -1);
-	if (endposn + w >= win->w_ncols - 1) {
+	if (inend >= sizeof(inbuf) - 1
+	    || endposn + w > win->w_ncols - 1) {
 	    beep(win);
 	} else {
 	    int i;
