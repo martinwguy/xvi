@@ -446,11 +446,10 @@ typedef	struct cmd {
  * This is stuff to do with marks - it should be privately defined
  * in mark.c, but it needs to be related to each individual buffer.
  */
-#define	NMARKS	10		/* max. # of marks that can be saved */
+#define	NMARKS	26		/* max. # of marks that can be saved */
 
 typedef	struct	mark {
-    char		m_name;
-    Posn		m_pos;
+    Line		*m_line;
 } Mark;
 
 /*
@@ -525,7 +524,6 @@ typedef struct buffer {
      */
     Mark		b_mlist[NMARKS];	/* current marks */
     Mark		b_pcmark;		/* previous context mark */
-    bool_t		b_pcvalid;		/* true if pcmark is valid */
 
     /*
      * The following only used in undo.c.
@@ -1029,7 +1027,7 @@ extern	bool_t	xvi_unmap P((int, char **, bool_t, bool_t));
 extern	void	init_marks P((Buffer *));
 extern	bool_t	setmark P((int, Buffer *, Posn *));
 extern	void	setpcmark P((Xviwin *));
-extern	Posn	*getmark P((int, Buffer *));
+extern	Line	*getmark P((int, Buffer *));
 extern	void	clrmark P((Line *, Buffer *));
 
 /*

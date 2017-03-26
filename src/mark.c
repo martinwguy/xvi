@@ -35,12 +35,9 @@ Buffer	*buffer;
     Mark	*mlist = buffer->b_mlist;
     int	i;
 
-    for (i = 0; i < NMARKS; i++) {
-	mlist[i].m_name = '\0';
-	mlist[i].m_pos.p_line = NULL;
-    }
-
-    buffer->b_pcvalid = FALSE;
+    /* Set all m_line to NULL */
+    memset(mlist, sizeof(*mlist) * NMARKS, 0);
+    buffer->b_pcmark.m_line = NULL;
 }
 
 /*
@@ -54,32 +51,13 @@ int	c;
 Buffer	*buffer;
 Posn	*pos;
 {
-    Mark	*mlist = buffer->b_mlist;
-    int	i;
-
-    if (!is_alpha((unsigned char) c))
-	return(FALSE);
-
-    /*
-     * If there is already a mark of this name, then just use the
-     * existing mark entry.
-     */
-    for (i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_name == (unsigned char) c) {
-	    mlist[i].m_pos = *pos;
-	    return(TRUE);
-	}
+    if (c == '\'' || c == '`') {
+	buffer->b_pcmark.m_line = pos->p_line;
+	return(TRUE);
     }
-
-    /*
-     * There wasn't a mark of the given name, so find a free slot
-     */
-    for (i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_name == '\0') {	/* got a free one */
-	    mlist[i].m_name = c;
-	    mlist[i].m_pos = *pos;
-	    return(TRUE);
-	}
+    if (is_lower(c)) {
+	buffer->b_mlist[c - 'a'].m_line = pos->p_line;
+	return(TRUE);
     }
     return(FALSE);
 }
@@ -91,47 +69,32 @@ void
 setpcmark(window)
 Xviwin	*window;
 {
-    window->w_buffer->b_pcmark.m_pos = *(window->w_cursor);
-    window->w_buffer->b_pcvalid = TRUE;
+    window->w_buffer->b_pcmark.m_line = window->w_cursor->p_line;
 }
 
 /*
  * getmark(c) - find mark for char 'c' in given buffer
  *
- * Return pointer to Position or NULL if no such mark.
- * Note that we return a pointer to an internal static structure.
+ * Return pointer to Line or NULL if no such mark.
  */
-Posn *
+Line *
 getmark(c, buffer)
 int	c;
 Buffer	*buffer;
 {
-    static Posn	retpos;
-    Mark	*mlist;
-    int		i;
-
-    retpos.p_line = NULL;
-
-    /*
-     * Previous context mark.
-     */
     if (c == '\'' || c == '`') {
-	if (buffer->b_pcvalid) retpos = buffer->b_pcmark.m_pos;
-    } else for (mlist = buffer->b_mlist, i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_name == (unsigned char) c) {
-	    retpos = mlist[i].m_pos;
-	    break;
-	}
+	return(buffer->b_pcmark.m_line);
     }
-
-    return((retpos.p_line != NULL) ? &retpos : NULL);
+    if (is_lower(c)) {
+	return(buffer->b_mlist[c - 'a'].m_line);
+    }
+    return(NULL);
 }
 
 /*
  * clrmark(line) - clear any marks for 'line'
  *
- * Used any time a line is deleted so we don't have marks pointing to
- * non-existent lines.
+ * Used any time a line is deleted.
  */
 void
 clrmark(line, buffer)
@@ -142,11 +105,11 @@ Buffer	*buffer;
     int	i;
 
     for (i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_name && mlist[i].m_pos.p_line == line) {
-	    mlist[i].m_name = '\0';
+	if (mlist[i].m_line == line) {
+	    mlist[i].m_line = NULL;
 	}
     }
-    if (buffer->b_pcvalid && (buffer->b_pcmark.m_pos.p_line == line)) {
-	buffer->b_pcvalid = FALSE;
+    if (buffer->b_pcmark.m_line == line) {
+	buffer->b_pcmark.m_line = NULL;
     }
 }

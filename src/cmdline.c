@@ -1292,15 +1292,14 @@ get_line(cpp, startline, lpp)
 	pos = startline;
 	break;
 
-    case '\'': {
-	Posn		*lp;
-
-	lp = getmark(*cp++, curbuf);
-	if (lp == NULL) {
+    case '\'':
+    case '`':
+    {
+	pos = getmark(*cp++, curbuf);
+	if (pos == NULL) {
 	    show_error(curwin, "Unknown mark");
 	    return FALSE;
 	}
-	pos = lp->p_line;
 	break;
     }
     case '0': case '1': case '2': case '3': case '4':

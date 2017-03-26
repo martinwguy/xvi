@@ -166,16 +166,22 @@ Cmd	*cmd;
 
     case '\'':
     case '`':
-	pp = getmark(cmd->cmd_ch2, curbuf);
-	if (pp != NULL) {
+    {
+	Line		*lp;
+
+	lp = getmark(cmd->cmd_ch2, curbuf);
+	if (lp == NULL) {
+	    show_error(curwin, "Unknown mark");
+/* should fail and unstuff executing macros */
+	} else {
 	    if (cmd->cmd_ch1 == '\'') {
 		skip_spaces = TRUE;
-		pp->p_index = 0;
 	    }
-	    cmd->cmd_target = *pp;
+	    cmd->cmd_target.p_line = lp;
+	    cmd->cmd_target.p_index = 0;
 	}
 	break;
-
+    }
     case '/':
     case '?':
 	/*
