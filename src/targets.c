@@ -47,11 +47,13 @@ Cmd	*cmd;
     skip_spaces = FALSE;
     lastpos = *(curwin->w_cursor);
 
+    /* Make the command fail unless it sets a position */
+    cmd->cmd_target.p_line = NULL;
+
     switch (cmd->cmd_ch1) {
     case 'G':
 	if (cmd->cmd_prenum > lineno(b_last_line_of(curbuf))) {
-	    cmd->cmd_target.p_line = NULL;	/* Make the command fail */
-	    return;
+	    break;
 	}
 	cmd->cmd_target.p_line = gotoline(curbuf,
 				(unsigned long) ((cmd->cmd_prenum > 0) ?
@@ -152,8 +154,6 @@ Cmd	*cmd;
 	    pp = xvLocateTextObject(curwin, &lastpos, cmd->cmd_ch1, cmd->cmd_ch2);
 	    if (pp != NULL) {
 		lastpos = *pp;
-	    } else {
-		break;
 	    }
 	}
 
@@ -170,10 +170,7 @@ Cmd	*cmd;
 	Line		*lp;
 
 	lp = getmark(cmd->cmd_ch2, curbuf);
-	if (lp == NULL) {
-	    show_error(curwin, "Unknown mark");
-/* should fail and unstuff executing macros */
-	} else {
+	if (lp != NULL) {
 	    if (cmd->cmd_ch1 == '\'') {
 		skip_spaces = TRUE;
 	    }
@@ -192,6 +189,11 @@ Cmd	*cmd;
 
     if (cmd->cmd_target.p_line != NULL && skip_spaces) {
 	xvSetPosnToStartOfLine(&(cmd->cmd_target), TRUE);
+    }
+
+    if (cmd->cmd_target.p_line == NULL) {
+	/* It failed so halt any macros being executed */
+	unstuff();
     }
 }
 
