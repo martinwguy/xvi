@@ -215,12 +215,12 @@ int	name;
 	 * final buffer from the parts of the old and new yank buffers.
 	 */
 	if (!yank_chars_to_yp(append ? &new : yp_buf, from, to)) {
-	    goto oom;
+	    return(FALSE);
 	}
 
 	if (append) {
 	    if (!append_chars_to_yp_buf(yp_buf, &new)) {
-		goto oom;
+		return(FALSE);
 	    }
 	}
     } else {
@@ -231,7 +231,7 @@ int	name;
 	 */
 	newlines = copy_lines(from->p_line, to->p_line->l_next);
 	if (newlines == NULL) {
-	    goto oom;
+	    return(FALSE);
 	}
 	if (!append) {
 	    yp_buf->y_line_buf = newlines;
@@ -241,7 +241,7 @@ int	name;
 
 	    if (yp_buf->y_type == y_chars) {
 		if (!yp_chars_to_lines(yp_buf)) {
-		    goto oom;
+		    return(FALSE);
 		}
 	    }
 	    /*
@@ -260,16 +260,11 @@ int	name;
      */
     if (is_alpha(name)) {
 	if (!copy_to_unnamed_yb(yp_buf)) {
-	    goto oom;
+	    return(FALSE);
 	}
     }
 
     return(TRUE);
-
-oom:
-    /* "Out of memory" handler */
-    show_error(curwin, out_of_memory);
-    return(FALSE);
 }
 
 /*
@@ -711,7 +706,6 @@ eoom:
     end_command(win);
 oom:
     /* "Out of memory" handler */
-    show_error(win, out_of_memory);
     return;
 }
 
