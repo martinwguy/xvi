@@ -749,7 +749,7 @@ got_enum:
      */
     val.pv_index = pp - &params[0];
     if (pp->p_func != nofunc &&
-	(*pp->p_func)(window, val, inter)) {
+	(*pp->p_func)(window, val, inter) == FALSE) {
 	return(FALSE);
     }
 
