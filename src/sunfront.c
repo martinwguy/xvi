@@ -117,33 +117,15 @@ Notify_event_type	type;
 	    nchars = 2;
 	    done = TRUE;
 	    switch (evtcode) {
-	    case PREFIXCHAR:
-		seqbuf[1] = PREFIXCHAR;
-		break;
-	    case KEY_RIGHT(7):
-		seqbuf[1] = 'H';
-		break;
-	    case KEY_RIGHT(8):
-		seqbuf[1] = 'k';
-		break;
-	    case KEY_RIGHT(9):
-		seqbuf[1] = CTRL('B');
-		break;
-	    case KEY_RIGHT(10):
-		seqbuf[1] = '\b';
-		break;
-	    case KEY_RIGHT(12):
-		seqbuf[1] = ' ';
-		break;
-	    case KEY_RIGHT(13):
-		seqbuf[1] = 'L';
-		break;
-	    case KEY_RIGHT(14):
-		seqbuf[1] = 'j';
-		break;
-	    case KEY_RIGHT(15):
-		seqbuf[1] = CTRL('F');
-		break;
+	    case PREFIXCHAR:	seqbuf[1] = PREFIXCHAR;	break;
+	    case KEY_RIGHT(7):	seqbuf[1] = K_HOME;	break;
+	    case KEY_RIGHT(8):	seqbuf[1] = K_UARROW;	break;
+	    case KEY_RIGHT(9):	seqbuf[1] = K_PGUP;	break;
+	    case KEY_RIGHT(10):	seqbuf[1] = K_LARROW;	break;
+	    case KEY_RIGHT(12):	seqbuf[1] = K_RARROW;	break;
+	    case KEY_RIGHT(13):	seqbuf[1] = K_END;	break;
+	    case KEY_RIGHT(14):	seqbuf[1] = K_DARROW;	break;
+	    case KEY_RIGHT(15):	seqbuf[1] = K_PGDOWN;	break;
 	    default:
 		nchars = 0;
 		done = FALSE;

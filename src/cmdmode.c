@@ -148,12 +148,19 @@ int	ch;
 
 	case '\b':		/* backspace or delete */
 	case DEL:
+	case K_DELETE:		/* delete character key */
 	case CTRL('W'):		/* delete last word */
 	    { int oldinpos = inpos; int i;
 	      switch (ch) {
 		case DEL:
 		case '\b':
 		    --inpos;
+		    break;
+		case K_DELETE:
+		    /* Delete the character under the cursor */
+		    if (inpos < inend) {
+			oldinpos++;
+		    }
 		    break;
 		case CTRL('W'):
 		{
@@ -267,6 +274,28 @@ int	ch;
 	        update_cline(win, colposn[inpos]);
 	    }
 	    else beep(win);
+	    return(cmd_INCOMPLETE);
+
+	case K_HOME:
+	    inpos = 1;
+	    update_cline(win, colposn[inpos]);
+	    return(cmd_INCOMPLETE);
+
+	case K_END:
+	    inpos = inend;
+	    update_cline(win, colposn[inpos]);
+	    return(cmd_INCOMPLETE);
+
+	/* Ignore other special keys in command-line mode */
+	case K_HELP:
+	case K_UNDO:
+	case K_INSERT:
+	case K_UARROW:
+	case K_DARROW:
+	case K_CGRAVE:
+	case K_PGDOWN:
+	case K_PGUP:
+	    beep(win);
 	    return(cmd_INCOMPLETE);
 
 	default:

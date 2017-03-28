@@ -395,6 +395,25 @@ int	c;
 	    literal_next = TRUE;
 	    c = '^';
 	    break;
+
+	/*
+	 * Ignore arrow keys etc. in insert mode
+	 * to avoid inserting our internal codes.
+	 */
+	case K_HELP:
+	case K_UNDO:
+	case K_INSERT:
+	case K_HOME:
+	case K_UARROW:
+	case K_DARROW:
+	case K_LARROW:
+	case K_RARROW:
+	case K_CGRAVE:
+	case K_PGDOWN:
+	case K_PGUP:
+	case K_END:
+	case K_DELETE:
+	    return(FALSE);
 	}
     } else {
 	/*
@@ -721,6 +740,22 @@ int	c;
 	    literal_next = TRUE;
 	    c = '^';
 	    break;
+
+	/*
+	 * Ignore other special keys to avoid inserting our internal codes.
+	 */
+	case K_HELP:
+	case K_UNDO:
+	case K_INSERT:
+	case K_HOME:
+	case K_UARROW:
+	case K_DARROW:
+	case K_CGRAVE:
+	case K_PGDOWN:
+	case K_PGUP:
+	case K_END:
+	case K_DELETE:
+	    return(FALSE);
 	}
     } else {
 	/*

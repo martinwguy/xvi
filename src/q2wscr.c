@@ -740,16 +740,16 @@ int	c;
 	c = K_FUNC(c + 1 - KEY_F1);
 	break;
     case KEY_HOME:
-	c = 'H';
+	c = K_HOME;
 	break;
     case KEY_END:
-	c = 'L';
+	c = K_END;
 	break;
     case KEY_PAGE_UP:
-	c = CTRL('B');
+	c = K_PGUP;
 	break;
     case KEY_PAGE_DOWN:
-	c = CTRL('F');
+	c = K_PGDOWN;
 	break;
     case KEY_UP:
 	c = K_UARROW;
@@ -770,10 +770,10 @@ int	c;
 	c = 'w';
 	break;
     case KEY_INSERT:
-	c = 'i';
+	c = K_INSERT;
 	break;
     case KEY_DELETE:
-	c = 'x';
+	c = K_DELETE;
 	break;
     case KEY_RUBOUT:
 	c = '\b';

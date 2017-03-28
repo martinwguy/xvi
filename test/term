@@ -257,6 +257,8 @@ proc home   {} { return "[esc]OH" }
 proc end    {} { return "[esc]OF" }
 proc pgup   {} { return "[esc]\[5~" }
 proc pgdown {} { return "[esc]\[6~" }
+proc insert {} { return "[esc]\[2~" }
+proc delete {} { return "[esc]\[3~" }
 
 #
 # Two routines that are enough for the body of most tests,

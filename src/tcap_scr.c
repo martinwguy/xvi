@@ -191,28 +191,38 @@ static	bool_t	eat_newline_glitch;	/* "xn" capability */
  * into appropriate xvi input keys (in command mode).
  */
 static unsigned char arrow_keys[] = {
+    K_HELP,	'\0',
+    K_UNDO,	'\0',
+    K_INSERT,	'\0',
+    K_HOME,	'\0',
     K_UARROW,	'\0',
     K_DARROW,	'\0',
-    K_RARROW,	'\0',
     K_LARROW,	'\0',
-    CTRL('B'),	'\0',
-    CTRL('F'),	'\0',
-    K_HELP,	'\0',
+    K_RARROW,	'\0',
+    K_CGRAVE,	'\0',
+    K_PGDOWN,	'\0',
+    K_PGUP,	'\0',
+    K_END,	'\0',
+    K_DELETE,	'\0',
 };
 static struct {
     char	*key_tcname;
     char	*key_rhs;
 } keys[] = {
-  { "ku",	(char *) arrow_keys + 0		}, /* up */
-  { "kd",	(char *) arrow_keys + 2		}, /* down */
-  { "kr",	(char *) arrow_keys + 4		}, /* right */
-  { "kl",	(char *) arrow_keys + 6		}, /* left */
-  { "kP",	(char *) arrow_keys + 8		}, /* page up */
-  { "kN",	(char *) arrow_keys + 10	}, /* page down */
-  { "kh",	"H"				}, /* home */
-  { "@7",	"L"				}, /* end */
+  { "k1",	(char *) arrow_keys + 0		}, /* help */
+  { "&8",	(char *) arrow_keys + 2		}, /* undo */
+  { "kI",	(char *) arrow_keys + 4		}, /* insert character */
+  { "kh",	(char *) arrow_keys + 6		}, /* home */
+  { "ku",	(char *) arrow_keys + 8		}, /* up */
+  { "kd",	(char *) arrow_keys + 10	}, /* down */
+  { "kl",	(char *) arrow_keys + 12	}, /* left */
+  { "kr",	(char *) arrow_keys + 14	}, /* right */
+						   /* cgrave ??? */
+  { "kN",	(char *) arrow_keys + 18	}, /* page down */
+  { "kP",	(char *) arrow_keys + 20	}, /* page up */
+  { "@7",	(char *) arrow_keys + 22	}, /* end */
+  { "kD",	(char *) arrow_keys + 24	}, /* delete character */
   { "k0",	"#0"				}, /* function key 0 */
-  { "k1",	(char *) arrow_keys + 12	}, /* help */
   { "k2",	"#2"				}, /* function key 2 */
   { "k3",	"#3"				}, /* function key 3 */
   { "k4",	"#4"				}, /* function key 4 */

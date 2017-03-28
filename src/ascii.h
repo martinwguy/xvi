@@ -86,6 +86,7 @@
 #define K_PGDOWN	0x89
 #define K_PGUP		0x8a
 #define K_END		0x8b
+#define K_DELETE	0x8c
 
 /*
  * Function keys.

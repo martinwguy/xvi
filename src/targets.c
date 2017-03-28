@@ -118,6 +118,7 @@ Cmd	*cmd;
 	break;
 
     case '$':
+    case K_END:
 	if (xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum) - 1, FALSE)) {
 	    while (xvMoveRight(&lastpos, FALSE))
 		;
@@ -129,7 +130,8 @@ Cmd	*cmd;
 
     case '^':
     case '0':
-	xvSetPosnToStartOfLine(&lastpos, cmd->cmd_ch1 == '^');
+    case K_HOME:  /* For kH, nvi and elvis do ^ and vim does 0. We do ^. */
+	xvSetPosnToStartOfLine(&lastpos, cmd->cmd_ch1 != '0');
 	cmd->cmd_target = lastpos;
 	break;
 
@@ -372,10 +374,6 @@ Cmd	*cmd;
     register Line	*top;
     register Line	*bottom;
     Posn		pos;
-
-    if (cmd->cmd_ch1 == K_HOME) {
-	cmd->cmd_ch1 = 'H';
-    }
 
     /*
      * Silly to specify a number before 'H' or 'L'

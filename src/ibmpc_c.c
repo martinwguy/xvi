@@ -227,16 +227,16 @@ inchar(long mstimeout)
 	    /* else (State == NORMAL) ... */
 	    switch (kbget()) {
 	    case 0x3b: return(K_HELP);		/* F1 key */
-	    case 0x47: return('H');		/* home key */
-	    case 0x48: return('k');		/* up arrow key */
-	    case 0x49: return (CTRL('B'));	/* page up key */
-	    case 0x4b: return('\b');		/* left arrow key */
-	    case 0x4d: return(' ');		/* right arrow key */
-	    case 0x4f: return('L');		/* end key */
-	    case 0x50: return('j');		/* down arrow key */
-	    case 0x51: return (CTRL('F'));	/* page down key */
-	    case 0x52: return('i');		/* insert key */
-	    case 0x53: return('x');		/* delete key */
+	    case 0x47: return(K_HOME);		/* home key */
+	    case 0x48: return(K_UARROW);	/* up arrow key */
+	    case 0x49: return(K_PGUP);		/* page up key */
+	    case 0x4b: return(K_LARROW);		/* left arrow key */
+	    case 0x4d: return(K_RARROW);	/* right arrow key */
+	    case 0x4f: return(K_END);		/* end key */
+	    case 0x50: return(K_DARROW');	/* down arrow key */
+	    case 0x51: return(K_PGDN);		/* page down key */
+	    case 0x52: return(K_INSERT);	/* insert key */
+	    case 0x53: return(K_DELETE);	/* delete key */
 	    /*
 	     * default:
 	     *	fall through and ignore both characters ...
