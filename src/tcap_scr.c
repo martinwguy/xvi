@@ -231,6 +231,7 @@ static struct {
   { "k7",	"#7"				}, /* function key 7 */
   { "k8",	"#8"				}, /* function key 8 */
   { "k9",	"#9"				}, /* function key 9 */
+  { "k;",	"#0"				}, /* function key 10 */
   { NULL,	NULL				}
 };
 
