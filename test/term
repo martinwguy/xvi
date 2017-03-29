@@ -259,6 +259,16 @@ proc pgup   {} { return "[esc]\[5~" }
 proc pgdown {} { return "[esc]\[6~" }
 proc insert {} { return "[esc]\[2~" }
 proc delete {} { return "[esc]\[3~" }
+proc f1     {} { return "[esc]OP" }
+proc f2     {} { return "[esc]OQ" }
+proc f3     {} { return "[esc]OR" }
+proc f4     {} { return "[esc]OS" }
+proc f5     {} { return "[esc]OT" }
+proc f6     {} { return "[esc]OU" }
+proc f7     {} { return "[esc]OV" }
+proc f8     {} { return "[esc]OW" }
+proc f9     {} { return "[esc]OX" }
+proc f10    {} { return "[esc]OY" }
 
 #
 # Two routines that are enough for the body of most tests,

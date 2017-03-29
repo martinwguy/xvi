@@ -158,7 +158,7 @@ if {$termcap} {
 	:kh=\EOH:@7=\EOF:kP=\E[5~:kN=\E[6~:
 	:kI=\E[2~:kD=\E[3~:
 	:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:k5=\EOT:
-	:k6=\EOU:k7=\EOV:k8=\EOW:k9=\EOX:
+	:k6=\EOU:k7=\EOV:k8=\EOW:k9=\EOX:k;=\EOY:
     }
 }
 
@@ -188,7 +188,7 @@ if {$terminfo} {
 	khome=\EOH,kend=\EOF,kpp=\E[5~,knp=\E[6~,
 	kich1=\E[2~,kdch1=\E[3~,
 	kf1=\EOP,kf2=\EOQ,kf3=\EOR,kf4=\EOS,kf5=\EOT,
-	kf6=\EOU,kf7=\EOV,kf8=\EOW,kf9=\EOX,
+	kf6=\EOU,kf7=\EOV,kf8=\EOW,kf9=\EOX,kf10=\EOY,
     }
     close $file
 
