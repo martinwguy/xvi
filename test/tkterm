@@ -254,6 +254,10 @@ proc term_clear {} {
 # pine is the only program I know that requires clear_to_eol, sigh
 proc term_clear_to_eol {} {
 	global cols cur_col cur_row
+	global term_standout
+
+	set save_standout $term_standout
+	set term_standout FALSE
 	
 	# save current col/row
 	set col $cur_col
@@ -265,6 +269,7 @@ proc term_clear_to_eol {} {
 	# restore current col/row
 	set cur_col $col
 	set cur_row $row
+	set term_standout $save_standout
 }
 
 proc term_init {} {
