@@ -1,0 +1,105 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Check that special keys work.
+#
+# The special keys that xvi recognises are listed in ascii.h:
+#	K_UNDO K_UARROW K_DARROW K_LARROW K_RARROW
+#	K_CGRAVE K_PGDOWN K_PGUP K_HOME K_END K_INSERT K_DELETE
+# F1 is used to give help (K_HELP), F2 to F9 give #2 to #9 and
+# F0 and F10 give #0.
+#
+# Check that they do something reasonable in each input mode:
+#	normal, insert, replace, cmdline, display
+#
+
+source term
+start_vi
+
+# Tests begin
+
+# Test pattern: a 5x5 grid that we sit in the middle of
+# to be able to distinguish one-char motions from
+# those that go to the start and end of line/screen.
+
+set pattern [list "abcde" "fghij" "klmno" "pqrst" "uvwxy" "~" ]
+
+test 100 "aabcde\rfghij\rklmno\rpqrst\ruvwxy[esc]kkhh" 3 2 $pattern
+
+# Normal mode
+
+test 10 "[larrow]" 3 1 $pattern
+test 11 "[rarrow]" 3 2 $pattern
+test 12 "[uarrow]" 2 2 $pattern
+test 13 "[darrow]" 3 2 $pattern
+test 14 "[home]"   3 0 $pattern
+test 15 "[end]"    3 4 $pattern
+test 16 "hh[esc]"       3 2 $pattern		;# Reset test pattern
+test 17 "[insert]X" 3 3 [list "abcde" "fghij" "klXmno" "pqrst" "uvwxy" "~" ]
+test 18 "[esc]x"   3 2 $pattern	;# Reset test pattern
+
+# In insert mode, special keys and F1 (Help) should do nothing.
+test 20 "i[larrow]" 3 2 $pattern
+test 21 "[rarrow][uarrow][darrow][pgdown][pgup][home][end][insert][delete][f1]"\
+	3 2 $pattern
+
+# F2 to F10 insert #2 to #0
+test 31 "[esc]1GdGaabc[esc]hi" 1 1 "abc"
+test 39 "[f2][f3][f4][f5][f6][f7][f8][f9][f10][esc]" 1 18 "a#2#3#4#5#6#7#8#9#0bc"
+
+test 100 "1GdGaabcde\rfghij\rklmno\rpqrst\ruvwxy[esc]kkhh" 3 2 $pattern
+
+# In replace mode, special keys and F1(Help) should do nothing.
+test 40 "r[larrow][esc]" 3 2 $pattern
+#test 41 "r[rarrow][esc]\
+r[uarrow][esc]\
+r[darrow][esc]\
+r[pgdown][esc]\
+r[pgup][esc]\
+r[home][esc]\
+r[end][esc]\
+r[insert][esc]\
+r[delete][esc]\
+r[f1][esc]"	3 2 $pattern
+test 41 "r[rarrow][esc]r[uarrow][esc]r[darrow][esc]r[pgdown][esc]r[pgup][esc]r[home][esc]r[end][esc]r[insert][esc]r[delete][esc]r[f1][esc]" \
+	3 2 $pattern
+#test 42 "r[f2][esc]\
+r[f3][esc]\
+r[f4][esc]\
+r[f5][esc]\
+r[f6][esc]\
+r[f7][esc]\
+r[f8][esc]\
+r[f9][esc]\
+r[f10][esc]" 	 3 2 $pattern
+
+# In cmdline mode, left and right arrow do simple line editing
+# delete cancels the character under the cursor if not at end of line,
+# home and end go to the start and the end of the line,
+# the other keys should be ignored.
+ctest 60 ":abc"		4 ":abc"
+ctest 61 "[larrow]"	3 ":abc"	;# line editing motions
+ctest 61 "[rarrow]"	4 ":abc"
+ctest 62 "[uarrow]"	4 ":abc"	;# Does nothing
+ctest 63 "[darrow]"	4 ":abc"	;# Does nothing
+ctest 66 "[home]"	1 ":abc"
+ctest 67 "[end]"	4 ":abc"
+ctest 64 "[pgdown][pgup][insert][f1]"	4 ":abc"	;# These do nothing
+# Delete at end of line does nothing
+ctest 69 "[delete]"	4 ":abc"
+# Delete on the last char cancels it
+ctest 70 "[larrow][delete]" 3 ":ab"
+# Delete on the penultimate char leaves the last one
+ctest 71 "[larrow][larrow][delete]" 1 ":b"
+
+# Restore test pattern and sit on the b
+ctest 79 "[larrow]a[rarrow]c[larrow][larrow]" 	 2 ":abc"
+ctest 80 "[f2][f3][f4][f5][f6][f7][f8][f9][f10]" 20 ":a#2#3#4#5#6#7#8#9#0bc"
+
+stop_vi
+
+exit 0
+
