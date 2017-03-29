@@ -458,11 +458,8 @@ char	*arg;
 	 */
 	if (readonly) {
 	    buffer->b_flags |= FL_READONLY;
-	    if (Pb(P_autonoedit)) {
-		buffer->b_flags |= FL_NOEDIT;
-	    }
 	} else {
-	    buffer->b_flags &= ~(FL_READONLY | FL_NOEDIT);
+	    buffer->b_flags &= ~FL_READONLY;
 	}
 
 	if (nlines == 0) {	/* empty file */

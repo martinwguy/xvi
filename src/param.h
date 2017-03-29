@@ -118,7 +118,6 @@ enum {
     P_adapath,
     P_autodetect,
     P_autoindent,
-    P_autonoedit,
     P_autoprint,
     P_autosplit,
     P_autowrite,

@@ -104,8 +104,6 @@ bool_t	show_numbers;
 	}
 	if (is_readonly(buffer))
 	    (void) lformat(slp, " [Read only]");
-	if (not_editable(buffer))
-	    (void) lformat(slp, " [Not editable]");
 	if (is_modified(buffer))
 	    (void) lformat(slp, " [Modified]");
 	if (show_numbers) {

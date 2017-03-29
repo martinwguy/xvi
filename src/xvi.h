@@ -540,10 +540,8 @@ typedef struct buffer {
  */
 #define	FL_MODIFIED	0x1
 #define	FL_READONLY	0x2
-#define	FL_NOEDIT	0x4
 #define	is_modified(b)	((b)->b_flags & FL_MODIFIED)
 #define	is_readonly(b)	(Pb(P_readonly) || ((b)->b_flags & FL_READONLY))
-#define	not_editable(b)	((b)->b_flags & FL_NOEDIT)
 
 /*
  * Utility functions that work on Buffers

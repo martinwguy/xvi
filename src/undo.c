@@ -143,11 +143,6 @@ Xviwin	*window;
     ChangeData	*cdp = window->w_buffer->b_change;
 
     if (cdp->cd_nlevels == 0) {
-	if (not_editable(window->w_buffer)) {
-	    show_error(window, "Edit not allowed!");
-	    return(FALSE);
-	}
-
 	free_changes(cdp->cd_undo);
 	cdp->cd_undo = NULL;
 	cdp->cd_total_lines = 0;

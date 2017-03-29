@@ -217,7 +217,7 @@ Xviwin	*window;
 	 * We use "curbuf" here because the new buffer will
 	 * have been made the current one by do_buffer().
 	 */
-	curbuf->b_flags |= FL_READONLY | FL_NOEDIT;
+	curbuf->b_flags |= FL_READONLY;
 	move_window_to_cursor(curwin);
 	show_file_info(curwin, TRUE);
 	redraw_window(curwin, FALSE);
