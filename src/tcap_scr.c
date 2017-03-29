@@ -209,7 +209,8 @@ static struct {
     char	*key_tcname;
     char	*key_rhs;
 } keys[] = {
-  { "k1",	(char *) arrow_keys + 0		}, /* help */
+  { "%1",	(char *) arrow_keys + 0		}, /* help */
+  { "k1",	(char *) arrow_keys + 0		}, /* F1 == help */
   { "&8",	(char *) arrow_keys + 2		}, /* undo */
   { "kI",	(char *) arrow_keys + 4		}, /* insert character */
   { "kh",	(char *) arrow_keys + 6		}, /* home */
