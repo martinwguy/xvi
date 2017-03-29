@@ -283,8 +283,8 @@ proc f10    {} { return "[esc]OY" }
 
 proc test { testno str row col lines } {
     exp_send $str
-    # If the last character's an Escape, we need to circumvent a bug in tkterm.
-    if { [string range $str end end] == [esc] } { tksleep }
+    # If there's an Escape in it, we need to circumvent a bug in tkterm
+    if { [string first [esc] $str] >= 0 } { tksleep }
     term_expect timeout { fail $testno } {
 	screen_is $row $col $lines
     }
@@ -294,8 +294,8 @@ proc test { testno str row col lines } {
 
 proc ctest { testno str col line } {
     exp_send $str
-    # If the last character's an Escape, we need to circumvent a bug in tkterm.
-    if { [string range $str end end] == [esc] } { tksleep }
+    # If there's an Escape in it, we need to circumvent a bug in tkterm
+    if { [string first [esc] $str] >= 0 } { tksleep }
     term_expect timeout { fail $testno } {
 	expr { [cursor_at $::rows $col] && [statusline_is $line] }
     }

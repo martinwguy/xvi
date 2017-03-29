@@ -95,7 +95,6 @@ term_expect timeout { fail 109 } { expr { [getmode] eq "" } }
 # See if the flag appears in single-character replace mode
 # FIrst, put a character there to replace
 exp_send "ia[esc]"
-tksleep
 term_expect timeout { fail 110 } { screen_is 1 0 [list "a" "~"] }
 exp_send "r"
 				   # vim doesn't show anything for 'r'
