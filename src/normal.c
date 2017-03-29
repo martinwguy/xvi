@@ -33,6 +33,8 @@ struct redo	Redo;
 
 /*
  * Execute a command in "normal" (i.e. command) mode.
+ *
+ * Return TRUE if the screen needs repainting, FALSE if it doesn't.
  */
 bool_t
 normal(c)

@@ -43,16 +43,16 @@ test 18 "[esc]x"   3 2 $pattern	;# Reset test pattern
 
 # In insert mode, special keys and F1 (Help) should do nothing.
 test 20 "i[larrow]" 3 2 $pattern
-test 21 "[rarrow][uarrow][darrow][pgdown][pgup][home][end][insert][delete][f1]"\
+test 21 "[rarrow][uarrow][darrow][pgdown][pgup][home][end][insert][delete]"\
 	3 2 $pattern
 
 # F2 to F10 insert #2 to #0
 test 31 "[esc]1GdGaabc[esc]hi" 1 1 "abc"
-test 39 "[f2][f3][f4][f5][f6][f7][f8][f9][f10][esc]" 1 18 "a#2#3#4#5#6#7#8#9#0bc"
+test 39 "[f1][f2][f3][f4][f5][f6][f7][f8][f9][f10][esc]" 1 20 "a#1#2#3#4#5#6#7#8#9#0bc"
 
 test 100 "1GdGaabcde\rfghij\rklmno\rpqrst\ruvwxy[esc]kkhh" 3 2 $pattern
 
-# In replace mode, special keys and F1(Help) should do nothing.
+# In replace mode, special keys should do nothing.
 test 40 "r[larrow][esc]" 3 2 $pattern
 #test 41 "r[rarrow][esc]\
 r[uarrow][esc]\
@@ -62,24 +62,16 @@ r[pgup][esc]\
 r[home][esc]\
 r[end][esc]\
 r[insert][esc]\
-r[delete][esc]\
-r[f1][esc]"	3 2 $pattern
-test 41 "r[rarrow][esc]r[uarrow][esc]r[darrow][esc]r[pgdown][esc]r[pgup][esc]r[home][esc]r[end][esc]r[insert][esc]r[delete][esc]r[f1][esc]" \
+r[delete][esc]	3 2 $pattern
+test 41 "r[rarrow][esc]r[uarrow][esc]r[darrow][esc]r[pgdown][esc]r[pgup][esc]r[home][esc]r[end][esc]r[insert][esc]r[delete][esc]" \
 	3 2 $pattern
-#test 42 "r[f2][esc]\
-r[f3][esc]\
-r[f4][esc]\
-r[f5][esc]\
-r[f6][esc]\
-r[f7][esc]\
-r[f8][esc]\
-r[f9][esc]\
-r[f10][esc]" 	 3 2 $pattern
+# Function keys in single-char replace mode say "#5", replace with # and poke a
+# 5 into the input stream. Tough.
 
 # In cmdline mode, left and right arrow do simple line editing
 # delete cancels the character under the cursor if not at end of line,
 # home and end go to the start and the end of the line,
-# the other keys should be ignored.
+# other special keys should be ignored except for the function keys giving #N.
 ctest 60 ":abc"		4 ":abc"
 ctest 61 "[larrow]"	3 ":abc"	;# line editing motions
 ctest 61 "[rarrow]"	4 ":abc"
@@ -87,7 +79,7 @@ ctest 62 "[uarrow]"	4 ":abc"	;# Does nothing
 ctest 63 "[darrow]"	4 ":abc"	;# Does nothing
 ctest 66 "[home]"	1 ":abc"
 ctest 67 "[end]"	4 ":abc"
-ctest 64 "[pgdown][pgup][insert][f1]"	4 ":abc"	;# These do nothing
+ctest 64 "[pgdown][pgup][insert]"	4 ":abc"	;# These do nothing
 # Delete at end of line does nothing
 ctest 69 "[delete]"	4 ":abc"
 # Delete on the last char cancels it
@@ -97,7 +89,7 @@ ctest 71 "[larrow][larrow][delete]" 1 ":b"
 
 # Restore test pattern and sit on the b
 ctest 79 "[larrow]a[rarrow]c[larrow][larrow]" 	 2 ":abc"
-ctest 80 "[f2][f3][f4][f5][f6][f7][f8][f9][f10]" 20 ":a#2#3#4#5#6#7#8#9#0bc"
+ctest 80 "[f1][f2][f3][f4][f5][f6][f7][f8][f9][f10]" 22 ":a#1#2#3#4#5#6#7#8#9#0bc"
 
 stop_vi
 

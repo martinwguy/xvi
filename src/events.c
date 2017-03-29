@@ -221,7 +221,9 @@ xvEvent	*ev;
 }
 
 /*
- * Process the given character in command mode.
+ * Process the given character in normal (command) mode.
+ *
+ * Return TRUE if screen wants updating, FALSE otherwise.
  */
 static bool_t
 n_proc(c)
@@ -237,6 +239,8 @@ int	c;
 }
 
 /*
+ * Process the given character in command-line mode.
+ *
  * Returns TRUE if screen wants updating, FALSE otherwise.
  */
 static bool_t
@@ -290,6 +294,11 @@ int	c;
     return(retval);
 }
 
+/*
+ * Process a keypress in display mode (printing lines or showing parameters)
+ *
+ * Return TRUE if screen wants updating, FALSE otherwise.
+ */
 /*ARGSUSED*/
 static bool_t
 d_proc(c)

@@ -286,8 +286,15 @@ int	ch;
 	    update_cline(win, colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
-	/* Ignore other special keys in command-line mode */
+	/*
+	 * Function key F1 isn't used to give help on the cmdline
+	 * so map it to "#1".
+	 */
 	case K_HELP:
+	    stuff_to_map("#1");
+	    return(cmd_INCOMPLETE);
+
+	/* Ignore other special keys in command-line mode */
 	case K_UNDO:
 	case K_INSERT:
 	case K_UARROW:

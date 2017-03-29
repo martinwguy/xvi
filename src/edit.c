@@ -78,6 +78,8 @@ static	int	start_column;	/* virtual col corresponding to start_index */
 
 /*
  * Process the given character, in insert mode.
+ *
+ * Return TRUE if the screen needs repainting, FALSE if it doesn't.
  */
 bool_t
 i_proc(c)
@@ -397,10 +399,16 @@ int	c;
 	    break;
 
 	/*
+	 * F1 doesn't pop up help in edit mode (maybe it should!)
+	 * so map it to #1.
+	 */
+	case K_HELP:
+	    stuff_to_map("#1");
+	    return(FALSE);
+	/*
 	 * Ignore arrow keys etc. in insert mode
 	 * to avoid inserting our internal codes.
 	 */
-	case K_HELP:
 	case K_UNDO:
 	case K_INSERT:
 	case K_HOME:
@@ -593,6 +601,8 @@ int	repeat;		/* number of times to repeat the insertion */
 
 /*
  * Process the given character, in replace mode.
+ *
+ * Return TRUE if the screen needs repainting, FALSE if it doesn't.
  */
 bool_t
 r_proc(c)
@@ -741,10 +751,12 @@ int	c;
 	    c = '^';
 	    break;
 
+	case K_HELP:
+	    stuff_to_map("#1");
+	    return(FALSE);
 	/*
 	 * Ignore other special keys to avoid inserting our internal codes.
 	 */
-	case K_HELP:
 	case K_UNDO:
 	case K_INSERT:
 	case K_HOME:

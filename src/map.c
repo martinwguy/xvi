@@ -119,6 +119,20 @@ stuff
     va_end(argp);
 }
 
+/*
+ * stuff() puts characters into the mapped queue.
+ * stuff_to_map() puts them before the map and map! are applied.
+ *
+ * Only needed for a string at present; if you need vargargs,
+ * copy the above.
+ */
+void
+stuff_to_map(s)
+char *s;
+{
+    lformat(&canon_queue, s);
+}
+
 /* Undo all previous "stuff"'s, leaving the input buffer empty.
  * This is needed when a "redo" command has been stuffed into the
  * input but its execution fails half way through or when some command
