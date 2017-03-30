@@ -1249,6 +1249,9 @@ register char	**cpp;
  * which line specifiers should be relative; and the lpp argument is a
  * reference to a pointer which is updated to the value of the line which
  * was specified, if we find a valid specifier.
+ *
+ * Returns TRUE if a line specifier was found, updating *cpp to point to
+ * the character after the line specifier, FALSE otherwise.
  */
 static bool_t
 get_line(cpp, startline, lpp)

@@ -347,13 +347,18 @@ bool_t	delim_only;
     return(pat);
 }
 
+/*
+ * Search from the specified position in the specified direction.
+ *
+ * If the pattern is found, return a pointer to its Posn, otherwise NULL.
+ */
 Posn *
 search(window, startline, startindex, dir, strp)
 Xviwin		*window;
-Line		*startline;
-int		startindex;
+Line		*startline;	/* Where to start searching from */
+int		startindex;	/* Where to start searching from */
 int		dir;		/* FORWARD or BACKWARD */
-char		**strp;
+char		**strp;		/* Pointer to pattern without initial / or ? */
 {
     Posn	*pos;
     Posn	*(*sfunc) P((Xviwin *, Line *, int, bool_t));
@@ -447,9 +452,9 @@ bool_t		match_curpos;
 Line *
 linesearch(window, startline, dir, strp)
 Xviwin	*window;
-Line	*startline;
-int	dir;
-char	**strp;
+Line	*startline;	/* Where to start searching from */
+int	dir;		/* FORWARDS or BACKWARDS */
+char	**strp;		/* The search pattern without the initial / or ? */
 {
     Posn	pos;
     Posn	*newpos;
@@ -487,6 +492,9 @@ char	*s;
     echo &= ~(e_REGERR | e_NOMATCH);
 }
 
+/* Static data for the return value of match() and rmatch() */
+static Posn	matchposn;
+
 /*
  * Find a match at or after "ind" on the given "line"; return
  * pointer to Posn of match, or NULL if no match was found.
@@ -496,7 +504,6 @@ match(line, ind)
 Line	*line;
 int	ind;
 {
-    static Posn	matchposn;
     char	*s;
     regexp	*prog;
 
@@ -554,11 +561,9 @@ int		maxindex;
     }
 
     if (lastindex >= 0) {
-	static Posn	lastmatch;
-
-	lastmatch.p_index = lastindex;
-	lastmatch.p_line = line;
-	return &lastmatch;
+	matchposn.p_index = lastindex;
+	matchposn.p_line = line;
+	return &matchposn;
     } else {
 	return NULL;
     }
@@ -604,9 +609,9 @@ bool_t		wrapscan;
 	    if (wrapscan) {
 		lp = window->w_buffer->b_line0;
 		continue;
-	    }
-	     /* else */
+	    } else {
 		return(NULL);
+	    }
 	}
 
 	pos = match(lp, 0);
@@ -633,6 +638,8 @@ bool_t		wrapscan;
 /*
  * Search backwards through the buffer for a match of the last
  * pattern compiled.
+ *
+ * If the pattern is found, return a pointer to its Posn, otherwise NULL.
  *
  * Because we're searching backwards, we have to return the
  * last match on a line if there is more than one, so we call
