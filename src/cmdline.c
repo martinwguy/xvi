@@ -285,7 +285,34 @@ static	bool_t	do_line_numbers;
 /*
  * Macro to skip over whitespace during command line interpretation.
  */
-#define skipblanks(p)	{ while (*(p) != '\0' && is_space(*(p))) (p)++; }
+#define skipblanks(p)	{ while (is_space(*(p))) (p)++; }
+
+/*
+ * Should the parameter to a partial command be expanded if they press Tab?
+ *
+ * This repeats the initial code in exCommand() to parse a command line.
+ *
+ * Note: this says FALSE for file commands with bad address arguments
+ * (e.g. a line number greater than the number of lines in the file,
+ * a search pattern that is not found, etc) but doing better
+ * needs more code that I'm willing to add for this.
+ */
+bool_t
+should_fexpand(cmdline)
+char *cmdline;
+{
+    bool_t	exclam;			/* true if ! was given */
+    int		command;		/* which command it is */
+    struct ecmd	*ecp;			/* ptr to command entry */
+
+    while (*cmdline == ':') cmdline++;
+    if (!get_range(&cmdline)) {
+	 return(FALSE);
+    }
+    skipblanks(cmdline);
+    command = decode_command(&cmdline, &exclam, &ecp);
+    return (command > 0 && (ecp->ec_flags & EC_FILEXP) != 0);
+}
 
 /*
  * exCommand() - process a ':' command.

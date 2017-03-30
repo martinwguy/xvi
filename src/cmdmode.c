@@ -204,6 +204,12 @@ int	ch;
 	    char	*to_expand;
 	    char	*expansion;
 
+	    /* Only do filename completion for commands that want it. */
+	    inbuf[inend] = '\0';
+	    if (!should_fexpand(inbuf)) {
+		break;
+	    }
+
 	    /*
 	     * Find the word to be expanded.
 	     */
