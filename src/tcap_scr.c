@@ -148,7 +148,8 @@ unsigned int	LI = 0;
  */
 #ifndef AIX
 extern	char	PC;				/* pad character */
-extern	char *	BC;				/* backspace char if not ^H */
+extern	char *	BC;				/* backspace char if not ^H.
+						 * Don't use this. Use bc. */
 extern	char *	UP;				/* move up one line */
 #endif
 
@@ -173,10 +174,9 @@ static	char	*VB;			/* visual bell */
 static	char	*colours[10];		/* colour caps c0 .. c9 */
 static	int	ncolours;		/* number of colour caps we have */
 
-/* Single-char versions of BC, ND, DO */
-static	char	bc;			/* backspace char */
-static	char	nd;			/* non-destructive forward space */
-static	char	down;			/* down one line */
+static	char	*bc;			/* backspace char */
+static	char	*nd;			/* non-destructive forward space */
+static	char	*down;			/* down one line */
 
 static	bool_t	can_backspace = FALSE;	/* true if can backspace (bs/bc) */
 static	bool_t	can_fwdspace = FALSE;	/* true if can forward space (nd) */
@@ -903,18 +903,18 @@ unsigned int	*pcolumns;
      * which seem wrong.  We follow the manual page and ignore "bc=" if "bs".
      */
     if (tgetflag("bs")) {
-	bc = '\b';
+	bc = "\b";
 	can_backspace = TRUE;
     } else {
 #ifndef AIX
-	if ((BC = tgetstr("bc", &strp)) != NULL && BC[1] == '\0') {
-	    bc = BC[0];
+	if ((BC = tgetstr("bc", &strp)) != NULL) {
+	    bc = BC;
 	    can_backspace = TRUE;
 	}
 #else
 	/* AIX's curses.h has no extern char *BC */
-	if ((cp = tgetstr("bc", &strp)) != NULL && cp[1] == '\0') {
-	    bc = cp[0];
+	if ((cp = tgetstr("bc", &strp)) != NULL) {
+	    bc = cp;
 	    can_backspace = TRUE;
 	}
 #endif
@@ -925,15 +925,15 @@ unsigned int	*pcolumns;
      * do define "le=", often as "^H" (!)
      */
     if (!can_backspace) {
-	if ((cp = tgetstr("le", &strp)) != NULL && cp[1] == '\0') {
-	    bc = cp[0];
+	if ((cp = tgetstr("le", &strp)) != NULL) {
+	    bc = cp;
 	    can_backspace = TRUE;
 	}
     }
 
     cp = tgetstr("nd", &strp);	/* non-destructive forward space */
-    if (cp != NULL && cp[1] == '\0') {
-	nd = *cp;
+    if (cp != NULL) {
+	nd = cp;
 	can_fwdspace = TRUE;
     }
 
@@ -953,8 +953,8 @@ unsigned int	*pcolumns;
      */
 
     cp = tgetstr("do", &strp);	/* down a line */
-    if (cp != NULL && cp[1] == '\0') {
-	down = *cp;
+    if (cp != NULL) {
+	down = cp;
 	can_movedown = TRUE;
     }
 #endif
@@ -1264,7 +1264,7 @@ int	start_row, end_row, nlines;
 	int	i;
 
 	for (i = 0; i < nlines; i++) {
-	    moutch(down);
+	    tputs(down, 1, foutch);
 	}
     }
 
@@ -1540,7 +1540,7 @@ xyupdate()
 		 * Move down to the right line.
 		 */
 		for (n = vdisp; n > 0; n--) {
-		    moutch(down);
+		    tputs(down, 1, foutch);
 		}
 
 		if (hdisp < 0) {
@@ -1548,12 +1548,12 @@ xyupdate()
 			moutch('\r');
 		    } else {
 			for (n = hdisp; n < 0; n++) {
-			    moutch(bc);
+			    tputs(bc, 1, foutch);
 			}
 		    }
 		} else if (hdisp > 0) {
 		    for (n = hdisp; n > 0; n--) {
-			moutch(nd);
+			tputs(nd, 1, foutch);
 		    }
 		}
 
@@ -1576,7 +1576,7 @@ xyupdate()
 		     * Forward a bit.
 		     */
 		    for (n = hdisp; n > 0; n--) {
-			moutch(nd);
+			tputs(nd, 1, foutch);
 		    }
 
 		} else if (can_backspace && hdisp < 0 &&
@@ -1587,7 +1587,7 @@ xyupdate()
 		     * Back a bit.
 		     */
 		    for (n = hdisp; n < 0; n++) {
-			moutch(bc);
+			tputs(bc, 1, foutch);
 		    }
 
 		} else {
