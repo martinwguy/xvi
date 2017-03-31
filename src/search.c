@@ -989,10 +989,9 @@ register char	*src;
 Flexbuf		*dest;
 unsigned long	lnum;
 {
-    register char	*cp;
     register int	c;
     register char	ul;
-    register int	rxtype;		/* can be rt_TAGS, rt_GREP or rt_EGREP */
+    register int	rxtype;     /* can be rt_TAGS, rt_GREP or rt_EGREP */
 
     if (prog == NULL || src == NULL || dest == NULL) {
 	regerror("NULL parameter to regsubst");
@@ -1008,12 +1007,12 @@ unsigned long	lnum;
      * This controls whether we are converting the case of letters
      * to upper or lower case. It only has any effect if set to [UuLl].
      */
-    ul = ' ';
+    ul = '\0';
 
     rxtype = Pn(P_regextype);
 
     while ((c = *src++) != '\0') {
-	register int	no;
+	register int	no = -1;
 
 	/*
 	 * First check for metacharacters. Note that if regextype is "tags", we
@@ -1038,10 +1037,8 @@ unsigned long	lnum;
 		ul = *src++;
 		continue;
 	    default:
-		no = -1;
+		break;
 	    }
-	} else {
-	    no = -1;
 	}
 
 	if (no < 0) {
@@ -1055,10 +1052,11 @@ unsigned long	lnum;
 	    add_char_to_rhs(dest, c, ul);
 
 	    if (ul == 'u' || ul == 'l') {
-		ul = ' ';
+		ul = '\0';
 	    }
 
 	} else if (prog->startp[no] != NULL && prog->endp[no] != NULL) {
+	    register char	*cp;
 
 	    /*
 	     * It isn't an ordinary character, but a reference
@@ -1079,7 +1077,7 @@ unsigned long	lnum;
 		     * empty, they change the first character of what follows.
 		     */
 		    if (ul == 'u' || ul == 'l') {
-			ul = ' ';
+			ul = '\0';
 		    }
 		}
 	    }
@@ -1145,11 +1143,10 @@ char	*command;
 	return(exAmpersand(window, lp, up, command));
     }
 
-    copy = alloc((unsigned) strlen(command) + 1);
+    copy = strsave(command);
     if (copy == NULL) {
 	return(0);
     }
-    (void) strcpy(copy, command);
 
     delimiter = *copy;
     if (delimiter == '\0' ||
@@ -1182,7 +1179,44 @@ char	*command;
     }
     last_lhs = rn_duplicate(lastprogp);
 
-    if (strcmp(sub, "%") == 0) sub = last_rhs;
+    if ((sub[0] == '%' || sub[0]  == '~') && sub[1] == '\0') {
+	/* "%" or "~" */
+	sub = last_rhs;
+    } else if (strchr(sub, '~') != NULL) {
+	/* If sub contains ~ characters, we need to expand them here
+	 * so that a successive use of ~ expands to the previous RHS
+	 * with the tildes already expanded. For example,
+	 * a one one one
+	 * :s/one/two/
+	 * :s/one/~~/
+	 * :s/one/~~/	gives
+	 * two twotwo twotwotwotwo
+	 */
+	Flexbuf newsub;
+	flexnew(&newsub);
+	/* Replace all unescaped tildes with the last substitution text */
+	for (cp = sub; *cp != '\0'; cp++) {
+	    switch (*cp) {
+	    case '\\':
+		flexaddch(&newsub, '\\');
+		if (*++cp == '\0') {
+		    break;
+		} else {
+		    flexaddch(&newsub, *cp);
+		}
+		break;
+	    case '~':
+		lformat(&newsub, "%s", last_rhs);
+		break;
+	    default:
+		flexaddch(&newsub, *cp);
+		break;
+	    }
+	}
+	free(copy);
+	sub = flexdetach(&newsub);
+	copy = sub;	/* What to free instead */
+    }
 
     nsubs = substitute(window, lp, up, sub, cp);
 

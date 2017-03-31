@@ -1,0 +1,51 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Check that ~ in the replacement text of a substitution
+# expands to the last replacement text used.
+#
+# Note that a preceding \L or \u is applied to the ~-ed text in the RHS.
+# Note that \1, \2 etc refer to substrings matched in the current LHS.
+#
+# The special keys that xvi recognises are listed in ascii.h:
+#	K_UNDO K_UARROW K_DARROW K_LARROW K_RARROW
+#	K_CGRAVE K_PGDOWN K_PGUP K_HOME K_END K_INSERT K_DELETE
+# F1 is used to give help (K_HELP), F2 to F9 give #2 to #9 and
+# F0 and F10 give #0.
+#
+# Check that they do something reasonable in each input mode:
+#	normal, insert, replace, cmdline, display
+#
+
+source term
+start_vi
+
+# Tests begin
+
+# See if a bare ~ on the RHS works
+test 10	"aone one one[esc]"		1 10 [list "one one one"]
+test 11 ":s/one/two/\r:s/one/~/\r"	1 0 [list "two two one"]
+
+# Check that repeated use of ~ works
+test 12 "0Cone one one[esc]:s/one/two/\r:s/one/~~/\r:s/one/~~/\r" \
+		1 0 [list "two twotwo twotwotwotwo"]
+
+# Check that \1 etc in ~ refer to matches in the current search
+test 13 "0Cone two[esc]:s/o\\(n\\)e/O\\1E/\r:s/t\\(w\\)o/X~Y/\r" \
+		1 0 [list "OnE XOwEY"]
+
+# Check that backslash-escaped tilde is inserted as-is
+test 14 "0Cone one[esc]:s/one/two/\r:s/one/\\~/\r" \
+		1 0 [list "two ~"]
+
+# Check that it's disabled by nomagic
+test 15 ":se nomagic\r0Cone one[esc]:s/one/two/\r:s/one/~/\r" \
+		1 0 [list "two ~"]
+
+stop_vi
+
+exit 0
+
