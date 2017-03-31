@@ -29,7 +29,9 @@ set pattern [list "abcde" "fghij" "klmno" "pqrst" "uvwxy" "~" ]
 
 test 100 "aabcde\rfghij\rklmno\rpqrst\ruvwxy[esc]kkhh" 3 2 $pattern
 
+#
 # Normal mode
+#
 
 test 10 "[larrow]" 3 1 $pattern
 test 11 "[rarrow]" 3 2 $pattern
@@ -41,16 +43,30 @@ test 16 "hh[esc]"  3 2 $pattern		;# Reset test pattern
 test 17 "[insert]X" 3 3 [list "abcde" "fghij" "klXmno" "pqrst" "uvwxy" "~" ]
 test 18 "[esc]x"   3 2 $pattern	;# Reset test pattern
 
-# In insert mode, special keys and F1 (Help) should do nothing.
-test 20 "i[larrow]" 3 2 $pattern
-test 21 "[rarrow][uarrow][darrow][pgdown][pgup][home][end][insert][delete]"\
-	3 2 $pattern
+exp_send ":set timeout=500\r"
 
-# F2 to F10 insert #2 to #0
-test 31 "[esc]1GdGaabc[esc]hi" 1 1 "abc"
+#
+# Insert mode
+#
+
+# In insert node, special keys should do nothing.
+
+# 19 Fails in virterm without the x, though term_dump says the output is right
+test 19 "ix[larrow]" 3 3 [list "abcde" "fghij" "klxmno" "pqrst" "uvwxy" "~" ]
+# 20 without the \b makes virterm exit saying success (!)
+test 20 "\b[larrow][uarrow][pgup][home][insert]" 3 2 $pattern
+test 21 "x[rarrow][darrow][pgdown][end][delete]"\
+	3 3 [list "abcde" "fghij" "klxmno" "pqrst" "uvwxy" "~" ]
+
+# F1 to F10 insert #1 to #0
+test 31 "\b[esc]1GdGaabc[esc]hi" 1 1 "abc"
 test 39 "[f1][f2][f3][f4][f5][f6][f7][f8][f9][f10][esc]" 1 20 "a#1#2#3#4#5#6#7#8#9#0bc"
 
 test 100 "1GdGaabcde\rfghij\rklmno\rpqrst\ruvwxy[esc]kkhh" 3 2 $pattern
+
+#
+# Replace mode
+#
 
 # In replace mode, special keys should do nothing.
 test 40 "r[larrow][esc]" 3 2 $pattern
@@ -67,6 +83,10 @@ test 41 "r[rarrow][esc]r[uarrow][esc]r[darrow][esc]r[pgdown][esc]r[pgup][esc]r[h
 	3 2 $pattern
 # Function keys in single-char replace mode say "#5", replace with # and poke a
 # 5 into the input stream. Tough.
+
+#
+# Command line mode
+#
 
 # In cmdline mode, left and right arrow do simple line editing
 # delete cancels the character under the cursor if not at end of line,
@@ -89,6 +109,7 @@ ctest 71 "[larrow][larrow][delete]" 1 ":b"
 
 # Restore test pattern and sit on the b
 ctest 79 "[larrow]a[rarrow]c[larrow][larrow]" 	 2 ":abc"
+# Check that function keys insert their magic strings
 ctest 80 "[f1][f2][f3][f4][f5][f6][f7][f8][f9][f10]" 22 ":a#1#2#3#4#5#6#7#8#9#0bc"
 
 stop_vi
