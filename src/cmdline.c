@@ -372,8 +372,13 @@ bool_t	interactive;			/* true if reading from tty */
 
 	switch (ecp->ec_arg_type) {
 	case ec_none:
-	    if (*cmdline != '\0' &&
-		    (*cmdline != '!' || !(ecp->ec_flags & EC_EXCLAM))) {
+	    /* Can be followed by ! if E_EXCLAM otherwise just spaces */
+	    if (*cmdline == '!' && (ecp->ec_flags & EC_EXCLAM)) {
+		cmdline++;
+	    }
+	    /* Only trailing spaces are allowed */
+	    skipblanks(cmdline);
+	    if (*cmdline != '\0') {
 		command = EX_EBADARGS;
 	    }
 	    break;
