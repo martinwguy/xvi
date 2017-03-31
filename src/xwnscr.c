@@ -93,7 +93,6 @@ VirtScr	xwnscr = {
 
     NOFUNC,		/* v_insert	    */
     xw_scroll,		/* v_scroll	    */
-    NOFUNC,		/* v_flash	    */
     NOFUNC,		/* v_can_scroll	    */
 };
 

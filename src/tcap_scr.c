@@ -100,7 +100,6 @@ VirtScr	tcap_scr = {
 
     ins_str,		/* v_insert	    */
     scroll,		/* v_scroll	    */
-    NOFUNC,		/* v_flash	    */
     can_scroll,		/* v_can_scroll     */
 };
 

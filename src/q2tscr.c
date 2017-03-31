@@ -84,7 +84,6 @@ VirtScr	qnxscr = {
 
     NOFUNC,		/* v_insert	    */
     NOFUNC,		/* v_scroll	    */
-    NOFUNC,		/* v_flash	    */
     NOFUNC,		/* v_can_scroll     */
 };
 

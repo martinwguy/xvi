@@ -710,7 +710,6 @@ scr_init(void)
     vs->v_beep = pbeep;
     vs->v_insert = NULL;
     vs->v_scroll = scroll;
-    vs->v_flash = NULL;
     vs->v_can_scroll = NULL;
 
     return(vs);

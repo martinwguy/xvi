@@ -90,8 +90,6 @@ typedef struct virtscr {
 
     int		(*v_scroll) P((struct virtscr *, int, int, int));
 
-    void	(*v_flash) P((struct virtscr *));
-
     int		(*v_can_scroll) P((struct virtscr *, int, int, int));
 
 } VirtScr;
