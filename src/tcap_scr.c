@@ -147,10 +147,9 @@ unsigned int	LI = 0;
  * Needed by termcap library.
  */
 #ifndef AIX
-extern	char	PC;				/* pad character */
-extern	char *	BC;				/* backspace char if not ^H.
-						 * Don't use this. Use bc. */
-extern	char *	UP;				/* move up one line */
+extern	char	PC;	/* pad character, not used by xvi. */
+extern	char *	BC;	/* backspace if not ^H. Don't use this. Use bc. */
+extern	char *	UP;	/* move up one line. Don't use this. Use up. */
 #endif
 
 /*
@@ -175,12 +174,13 @@ static	char	*colours[10];		/* colour caps c0 .. c9 */
 static	int	ncolours;		/* number of colour caps we have */
 
 static	char	*bc;			/* backspace char */
+static	char	*up;			/* up one line */
 static	char	*nd;			/* non-destructive forward space */
 static	char	*down;			/* down one line */
 
-static	bool_t	can_backspace = FALSE;	/* true if can backspace (bs/bc) */
-static	bool_t	can_fwdspace = FALSE;	/* true if can forward space (nd) */
-static	bool_t	can_movedown = FALSE;	/* true if can move down (do) */
+#define	can_backspace (bc != NULL)
+#define	can_fwdspace (nd != NULL)	/* true if can forward space (nd) */
+#define	can_movedown (down !=  NULL)	/* true if can move down (do) */
 static	bool_t	can_move_in_standout;	/* True if can move while SO is on */
 static	bool_t	can_clr_to_eol;		/* true if can clr-to-eol (ce) */
 static	bool_t	auto_margins;		/* true if AM is set */
@@ -879,20 +879,21 @@ unsigned int	*pcolumns;
     }
 
     /*
-     * Single-char strings - some of these may be strings,
-     * but we only want them if they are single characters.
-     * This is because the optimisation calculations get
-     * extremely complicated if we have to work out the
-     * number of characters used to do a cursor move in
-     * every possible way; we basically assume that we
-     * don't have infinite amounts of time or space.
+     * The optimisation calculations assume that "bc" and "up" are
+     * one character long, dating from when xvi only used them if
+     * they were one character long because it seemed "extremely
+     * complicated to have to work out the number of characters used
+     * to do a cursor move in every possible way".
+     * Instead we use them anyway, maybe getting the calcs slightly wrong,
+     * which seems better than not using them at all.
      */
+
+    /* AIX's curses.h has no extern char PC, *BC or *UP */
 #ifndef AIX
     cp = tgetstr("pc", &strp);	/* pad character */
     if (cp != NULL)
 	PC = *cp;
 #endif
-
     /*
      * Find the backspace character.
      *
@@ -904,21 +905,26 @@ unsigned int	*pcolumns;
      */
     if (tgetflag("bs")) {
 	bc = "\b";
-	can_backspace = TRUE;
     } else {
 #ifndef AIX
 	if ((BC = tgetstr("bc", &strp)) != NULL) {
 	    bc = BC;
-	    can_backspace = TRUE;
 	}
 #else
-	/* AIX's curses.h has no extern char *BC */
 	if ((cp = tgetstr("bc", &strp)) != NULL) {
 	    bc = cp;
-	    can_backspace = TRUE;
 	}
 #endif
     }
+#ifndef AIX
+    if ((UP = tgetstr("up", &strp)) != NULL) {
+	up = UP;
+    }
+#else
+    if ((cp = tgetstr("up", &strp)) != NULL) {
+	up = cp;
+    }
+#endif
     /*
      * Lastly, there is the "le" capability to move the cursor left one place.
      * 172 terminal descriptions in NetBSD's termcap have no bs and no bc but
@@ -927,21 +933,14 @@ unsigned int	*pcolumns;
     if (!can_backspace) {
 	if ((cp = tgetstr("le", &strp)) != NULL) {
 	    bc = cp;
-	    can_backspace = TRUE;
 	}
     }
 
     cp = tgetstr("nd", &strp);	/* non-destructive forward space */
     if (cp != NULL) {
 	nd = cp;
-	can_fwdspace = TRUE;
     }
 
-
-#ifndef AIX
-    /* Needs to be set for termcap library's use. xvi doesn't use UP (yet) */
-    UP = tgetstr("up", &strp);
-#endif
 
 #ifndef	AIX
     /*
@@ -955,7 +954,6 @@ unsigned int	*pcolumns;
     cp = tgetstr("do", &strp);	/* down a line */
     if (cp != NULL) {
 	down = cp;
-	can_movedown = TRUE;
     }
 #endif
 
