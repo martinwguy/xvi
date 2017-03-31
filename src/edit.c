@@ -433,6 +433,15 @@ int	c;
 	flexrmchar(&Insbuff);
 
         literal_next = FALSE;
+
+	/* One exception: F1, the Help key, is received as an internal code
+	 * but we don't want them inserting internal codes as literal
+	 * characters.
+	 */
+	if (c == K_HELP) {
+	    stuff_to_map("#1");
+	    return(FALSE);
+	}
     }
 
     /*
