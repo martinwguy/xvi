@@ -137,9 +137,6 @@ extern	char	*tgoto();
 int		cost_goto;		/* cost of doing a goto */
 static int	cost_home; 		/* cost of using the "ho" capability */
 bool_t		can_scroll_area = FALSE; /* true if we can set scroll region */
-bool_t		can_del_line;		/* true if we can delete lines */
-bool_t		can_ins_line;		/* true if we can insert lines */
-bool_t		can_inschar;		/* true if we can insert characters */
 unsigned int	CO = 0;			/* screen dimensions; 0 at start */
 unsigned int	LI = 0;
 
@@ -176,15 +173,19 @@ static	int	ncolours;		/* number of colour caps we have */
 static	char	*bc;			/* backspace char */
 static	char	*up;			/* up one line */
 static	char	*nd;			/* non-destructive forward space */
-static	char	*down;			/* down one line */
+static	char	*down;			/* down one line. "do" is reserved */
 
-#define	can_backspace (bc != NULL)
-#define	can_fwdspace (nd != NULL)	/* true if can forward space (nd) */
-#define	can_movedown (down !=  NULL)	/* true if can move down (do) */
 static	bool_t	can_move_in_standout;	/* True if can move while SO is on */
-static	bool_t	can_clr_to_eol;		/* true if can clr-to-eol (ce) */
 static	bool_t	auto_margins;		/* true if AM is set */
 static	bool_t	eat_newline_glitch;	/* "xn" capability */
+
+#define	can_backspace	(bc != NULL)
+#define	can_fwdspace	(nd != NULL)	/* true if can forward space (nd) */
+#define	can_movedown	(down != NULL)	/* true if can move down (do) */
+#define can_inschar	(IC != NULL || IM != NULL)
+#define can_del_line	(DL != NULL)	/* true if we can delete lines */
+#define can_ins_line	(AL != NULL)	/* true if we can insert lines */
+#define can_clr_to_eol	(CE != NULL)	/* true if can clr-to-eol */
 
 /*
  * We use this table to perform mappings from cursor keys
@@ -569,6 +570,17 @@ do_set_colour(int colour)
     old_colour = colour;
 }
 
+/*
+ * Scroll the screen up by nlines lines from start_row to end_row inclusive.
+ *
+ * Negative nlines means scroll reverse - i.e. move the text downwards
+ * with respect to the terminal.
+ *
+ * Return 1 if the scrolling was done or is possible, 0 otherwise.
+ *
+ * If "doit" is FALSE, don't move the screen and just return whether it's
+ * possible or not.
+ */
 /*ARGSUSED*/
 static int
 tcscroll(scr, start_row, end_row, nlines, doit)
@@ -583,10 +595,6 @@ bool_t	doit;
     vs_rows = scr->pv_rows;
 
     if (nlines < 0) {
-	/*
-	 * nlines negative means scroll reverse - i.e. move
-	 * the text downwards with respect to the terminal.
-	 */
 	nlines = -nlines;
 
 	if (can_scroll_area) {
@@ -650,6 +658,9 @@ bool_t	doit;
     return(1);
 }
 
+/*
+ * Virtual functions for Virtscr, returning 1 if successful, 0 if not.
+ */
 static int
 scroll(scr, start_row, end_row, nlines)
 VirtScr	*scr;
@@ -796,7 +807,7 @@ char	*str;
     exit(2);
 }
 
-/* Utility functions used in tty_open() as counting substitutes for foutch() */
+/* Utility function used in tty_open() as counting substitute for foutch() */
 static int
 inc_cost_goto(c)
 int c;
@@ -1018,7 +1029,9 @@ unsigned int	*pcolumns;
     cost_goto = 0;
     tputs(tgoto(CM, CO, LI), (int) LI, inc_cost_goto);
 
-    /* Find out how many characters a "home" takes */
+    /* Find out how many characters a "home" takes.
+     * "ho" is always a fixed string (checked in NetBSD termcap file).
+     */
     if (HO != NULL) {
 	cost_home = strlen(HO);
     }
@@ -1026,10 +1039,6 @@ unsigned int	*pcolumns;
     /*
      * Set these variables as appropriate.
      */
-    can_del_line = (DL != NULL);
-    can_ins_line = (AL != NULL);
-    can_clr_to_eol = (CE != NULL);
-    can_inschar = (IC != NULL) || (IM != NULL);
     can_scroll_area = (
 	(CS != NULL)
 	&&
