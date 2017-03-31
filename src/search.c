@@ -1134,6 +1134,7 @@ char	*command;
     char	*cp;
     char	delimiter;
     long	nsubs;
+    bool_t	magic;		/* Is the "magic" parameter set? */
 
     /* Skip blanks between the s and the delimiter */
     while (*command != '\0' && is_space(*command)) command++;
@@ -1179,14 +1180,22 @@ char	*command;
     }
     last_lhs = rn_duplicate(lastprogp);
 
-    if ((sub[0] == '%' || sub[0]  == '~') && sub[1] == '\0') {
-	/* "%" or "~" */
+    magic = (Pn(P_regextype) != rt_TAGS);
+
+    /*
+     * Check for "%" or "~", which both mean "the last substituted text"
+     * In nomagic mode, \~ is expanded but \% is not.
+     */
+    if ((magic && strcmp(sub, "%") == 0) ||
+        strcmp(sub, magic ? "~" : "\\~") == 0) {
 	sub = last_rhs;
     } else if (strchr(sub, '~') != NULL) {
+	bool_t escaped_next;
+
 	/* If sub contains ~ characters, we need to expand them here
-	 * so that a successive use of ~ expands to the previous RHS
-	 * with the tildes already expanded. For example,
-	 * a one one one
+	 * so that another successive use of ~ expands to the previous RHS
+	 * including the expanded version of any ~s used then, so on a line
+	 * "one one one",
 	 * :s/one/two/
 	 * :s/one/~~/
 	 * :s/one/~~/	gives
@@ -1194,22 +1203,41 @@ char	*command;
 	 */
 	Flexbuf newsub;
 	flexnew(&newsub);
-	/* Replace all unescaped tildes with the last substitution text */
+
+	escaped_next = FALSE;
 	for (cp = sub; *cp != '\0'; cp++) {
 	    switch (*cp) {
 	    case '\\':
-		flexaddch(&newsub, '\\');
-		if (*++cp == '\0') {
-		    break;
-		} else {
+		if (escaped_next) {		/* \\ */
 		    flexaddch(&newsub, *cp);
+		    flexaddch(&newsub, *cp);
+		    escaped_next = FALSE;
+		} else {
+		    if (cp[1] == '\0') {	/* \ at end of line */
+			flexaddch(&newsub, *cp);
+		    } else {
+			escaped_next = TRUE;
+		    }
 		}
 		break;
+
 	    case '~':
-		lformat(&newsub, "%s", last_rhs);
+		/*
+		 * In magic mode, unescaped tildes are replaced with last RHS;
+		 * In nomagic mode, escaped tildes are replaced with last RHS.
+		 */
+		if (magic ^ escaped_next) {
+		    lformat(&newsub, "%s", last_rhs);
+		} else {
+		    if (escaped_next) flexaddch(&newsub, '\\');
+		    flexaddch(&newsub, *cp);
+		}
+		escaped_next = FALSE;
 		break;
+
 	    default:
 		flexaddch(&newsub, *cp);
+		escaped_next = FALSE;
 		break;
 	    }
 	}

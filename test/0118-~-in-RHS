@@ -44,6 +44,9 @@ test 14 "0Cone one[esc]:s/one/two/\r:s/one/\\~/\r" \
 # Check that it's disabled by nomagic
 test 15 ":se nomagic\r0Cone one[esc]:s/one/two/\r:s/one/~/\r" \
 		1 0 [list "two ~"]
+# but available as \~.  Check that \\ is preserved too.
+test 16 "0Cone one[esc]:s/one/two/\r:s/one/\\\\\\~/\r" \
+		1 0 [list "two \\two"]
 
 stop_vi
 
