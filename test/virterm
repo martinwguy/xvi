@@ -99,6 +99,8 @@ if {$termcap} {
     set env(TERM) "tt"
     set env(TERMCAP) {tt:
 	:am:bs:xn:
+	:ks=\E[?1h\E:
+	:ke=\E[?1l\E>:
 	:cm=\E[%i%d;%dH:
 	:le=\b:
 	:up=\E[A:
@@ -125,6 +127,8 @@ if {$terminfo} {
 
     puts $file {virterm|terminal emulator derived from Don Libes' tkterm,
 	am,xenl,
+	smkx=\E[?1h\E,
+	rmkx=\E[?1l\E>,
 	cup=\E[%i%p1%d;%p2%dH,
 	cub1=\b,
 	cuu1=\E[A,
@@ -368,6 +372,16 @@ expect_before {
 	} "^\x1b\\\[m" {  # unsupported
 		# (rmso,se) End standout mode
 		# set term_standout 0
+	# These do nothing, but having them in termcap/terminfo make it
+	# compatible with xterm, which sends \E[D for left instead of \EOD
+	# otherwise.
+	} "^\x1b\\\[?1h\x1b" {
+	    # (smkx,ks) start keyboard-transmit mode
+	    # terminfo invokes these when going in/out of graphics mode
+	    #graphicsSet 1
+	} "^\x1b\\\[?1l\x1b>" {
+	    # (rmkx,ke) end keyboard-transmit mode
+	    #graphicsSet 0
 	}
 }
 
