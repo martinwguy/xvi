@@ -170,10 +170,11 @@ static	char	*VB;			/* visual bell */
 static	char	*colours[10];		/* colour caps c0 .. c9 */
 static	int	ncolours;		/* number of colour caps we have */
 
-static	char	*bc;			/* backspace char */
-static	char	*up;			/* up one line */
+static	char	*bc;			/* backspace */
 static	char	*nd;			/* non-destructive forward space */
-static	char	*down;			/* down one line. "do" is reserved */
+static	char	*up;			/* up one line */
+static	char	*down;			/* down one line ("do" is reserved) */
+static	char	*cr;			/* carriage return */
 
 static	bool_t	can_move_in_standout;	/* True if can move while SO is on */
 static	bool_t	auto_margins;		/* true if AM is set */
@@ -638,7 +639,7 @@ bool_t	doit;
 		    tty_goto(end_row, 0);
 		    xyupdate();
 		    for (line = 0; line < nlines; line++) {
-			moutch('\n');
+			tputs(down, 1, foutch);
 		    }
 		}
 	    } else if (can_del_line) {
@@ -968,6 +969,8 @@ unsigned int	*pcolumns;
     }
 #endif
 
+    cr = tgetstr("cr", &strp);	/* carriage return */
+
     /*
      * Strings.
      */
@@ -1124,6 +1127,7 @@ erase_line()
     if (CE != NULL) {
 	tputs(CE, (int) LI, foutch);
     } else {
+	int old_col = real_col;
 	/*
 	 * This happens when unix.c calls erase_line() in sys_endv() to clear
 	 * the status line on a terminal without "ce" capability.
@@ -1137,7 +1141,6 @@ erase_line()
 	    moutch(' ');
 	    real_col++;
 	}
-	moutch('\r');
     }
 }
 
@@ -1552,7 +1555,7 @@ xyupdate()
 
 		if (hdisp < 0) {
 		    if (virt_col == 0) {
-			moutch('\r');
+			tputs(cr, 1, foutch);
 		    } else {
 			for (n = hdisp; n < 0; n++) {
 			    tputs(bc, 1, foutch);
@@ -1573,7 +1576,7 @@ xyupdate()
 		    /*
 		     * Start of line - easy.
 		     */
-		    moutch('\r');
+		    tputs(cr, 1, foutch);
 
 		} else if (can_fwdspace && hdisp > 0 &&
 			    hdisp < cost_goto) {
@@ -1617,9 +1620,9 @@ xyupdate()
 		    int	n;
 
 		    if (real_col != 0)
-			moutch('\r');
+			tputs(cr, 1, foutch);
 		    for (n = vdisp; n > 0; n--) {
-			moutch('\n');
+			tputs(down, 1, foutch);
 		    }
 		} else {
 		    /*
