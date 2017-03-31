@@ -37,7 +37,7 @@ test 12 "[uarrow]" 2 2 $pattern
 test 13 "[darrow]" 3 2 $pattern
 test 14 "[home]"   3 0 $pattern
 test 15 "[end]"    3 4 $pattern
-test 16 "hh[esc]"       3 2 $pattern		;# Reset test pattern
+test 16 "hh[esc]"  3 2 $pattern		;# Reset test pattern
 test 17 "[insert]X" 3 3 [list "abcde" "fghij" "klXmno" "pqrst" "uvwxy" "~" ]
 test 18 "[esc]x"   3 2 $pattern	;# Reset test pattern
 
