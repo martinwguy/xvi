@@ -58,7 +58,10 @@ void
 xvOpDelete(cmd)
 register Cmd	*cmd;
 {
-    long	nlines;
+    long	nlines;	    /* Number of logical lines the deletion affects */
+    long	nplines;    /* If nlines == 1, nplines is the number of
+			     * screen lines it occupied before the deletion.
+			     */
     int		n;
 
     /* Don't do it if the motion was not valid */
@@ -67,6 +70,9 @@ register Cmd	*cmd;
     }
 
     nlines = cntllines(cmd->cmd_startpos.p_line, cmd->cmd_target.p_line);
+    if (nlines == 1) {
+        nplines = plines(curwin, cmd->cmd_startpos.p_line);
+    }
 
     /*
      * Do a yank of whatever we're about to delete. If there's too much
@@ -164,7 +170,11 @@ register Cmd	*cmd;
     Redo.r_mode = r_normal;
     format_redo('d', cmd);
 
-    updateline(curwin, IsLineBased(cmd) || nlines > 1);
+    /*
+     * If the deletion only affected a single screen line,
+     * don't bother updating the screen lines below it.
+     */
+    updateline(curwin, !(IsCharBased(cmd) && nlines == 1 && nplines == 1));
 }
 
 /*
