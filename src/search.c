@@ -117,20 +117,48 @@ int	delim;		/* delimiter character */
 		}
 		break;
 
+	    case '^':
+	    {
+		/* Previous char in the output */
+#define		prevc ((ns.fxb_wcnt <= ns.fxb_rcnt) ? '\0' : \
+			ns.fxb_chars[ns.fxb_wcnt-1])
+
+		/* The char before that in the output */
+#define		pprevc ((ns.fxb_wcnt <= ns.fxb_rcnt+1) ? '\0' : \
+			      ns.fxb_chars[ns.fxb_wcnt-2])
+
+		/*
+		 * A '^' should only have special meaning if it comes
+		 * at the start of the pattern (or subpattern, if we're
+		 * doing egrep-style matching).
+		 */
+		if (prevc != '\0' &&
+		    (rxtype != rt_EGREP ||
+			(prevc != '|' && prevc != '(' /*)*/ )
+			 || pprevc == '\\')) {
+		    (void) flexaddch(&ns, '\\');
+		}
+		(void) flexaddch(&ns, '^');
+#undef prevc
+#undef pprevc
+
+		break;
+	    }
+
 	    case '$':
 	    {
-		int nextc = s[1];
-
+		int	nextc = s[1];
 		/*
 		 * A '$' should only have special meaning if it comes
 		 * at the end of the pattern (or subpattern, if we're
 		 * doing egrep-style matching).
 		 */
-		(void) lformat(&ns,
-			    (nextc != '\0' && nextc != delim &&
-				(rxtype != rt_EGREP ||
-				    (nextc != '|' && /* ( */ nextc !=  ')')))
-			    ? "\\$" : "$");
+		if (nextc != '\0' && nextc != delim &&
+			(rxtype != rt_EGREP ||
+			    (nextc != '|' && /*(*/ nextc != ')'))) {
+		    (void) flexaddch(&ns, '\\');
+		}
+		(void) flexaddch(&ns, '$');
 		break;
 	    }
 
