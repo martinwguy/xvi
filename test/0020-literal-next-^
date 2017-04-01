@@ -54,7 +54,9 @@ test 110 "RX[ctrl V]"		1 3 [list "abX^efg" "~"]
 test 111 "Y"			1 4 [list "abXYefg" "~"]
 test 112 "[ctrl V]"		1 4 [list "abXY^fg" "~"]
 test 113 "\xFF"			1 8 [list "abXY\\377fg" "~"]
-test 114 "Z[esc]"		1 8 [list "abXY\\377Zg" "~"]
+#test 114 "Z[esc]"		1 8 [list "abXY\\377Zg" "~"]
+test 114 "Z"		1 9 [list "abXY\\377Zg" "~"]
+exp_send [esc]
 
 # 3. On the command line
 ctest 115 ":[ctrl V]"		1 ":^"
@@ -64,6 +66,7 @@ ctest 118 "A"			4 ":^VA"
 ctest 119 "[ctrl V]"		4 ":^VA^"
 ctest 120 "\xFF"		8 ":^VA\\377"
 # Need to send left arrow and check that it works in the middle of the line.
+# Fails with virterm
 ctest 121 "\b\b\b"		1 ":"
 ctest 121 "abcd[larrow][larrow][ctrl V]" 3 ":ab^cd"
 ctest 122 "[ctrl V]"		5 ":ab^Vcd"

@@ -46,7 +46,8 @@ test 31 "3ccx[esc]"			2 0 [list "one" "wo" "three"  "~"]
 # Reset test pattern
 test 32 "it[esc]2G"			2 0 [list "one" "two" "three" "~"]
 # Exact count should work.
-test 33 "2ccx[esc]"			2 0 [list "one" "x"  "~"]
+test 33 "2ccx"			2 1 [list "one" "x"  "~"]
+exp_send [esc]
 
 # The same test for ">" and "<"
 # Too many lines should fail and do nothing
@@ -61,7 +62,7 @@ test 44 "2<<"		2 0 [list "one" "two" "three"  "~"]
 test 50 ":2,2++d\r"	2 0 [list "one" "two" "three"  "~"]
 test 51 "d2+"		2 0 [list "one" "two" "three"  "~"]
 test 52 "jd+"		3 0 [list "one" "two" "three"  "~"]
-test 53 "kd2\r"		2 0 [list "one" "two" "three"  "~"]
+test 53 "kd2\rS"	2 0 [list "one" "two" "three"  "~"]
 test 54 "d2\n"		2 0 [list "one" "two" "three"  "~"]
 test 55 "d2j"		2 0 [list "one" "two" "three"  "~"]
 test 56 "d2[darrow]"	2 0 [list "one" "two" "three"  "~"]

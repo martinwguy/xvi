@@ -33,12 +33,12 @@ test 100 "aabcde\rfghij\rklmno\rpqrst\ruvwxy[esc]kkhh" 3 2 $pattern
 # Normal mode
 #
 
-test 10 "[larrow]" 3 1 $pattern
-test 11 "[rarrow]" 3 2 $pattern
-test 12 "[uarrow]" 2 2 $pattern
-test 13 "[darrow]" 3 2 $pattern
-test 14 "[home]"   3 0 $pattern
-test 15 "[end]"    3 4 $pattern
+test 10 "[larrow]S" 3 1 $pattern
+test 11 "[rarrow]S" 3 2 $pattern
+test 12 "[uarrow]S" 2 2 $pattern
+test 13 "[darrow]S" 3 2 $pattern
+test 14 "[home]S"   3 0 $pattern
+test 15 "[end]S"    3 4 $pattern
 test 16 "hh[esc]"  3 2 $pattern		;# Reset test pattern
 test 17 "[insert]X" 3 3 [list "abcde" "fghij" "klXmno" "pqrst" "uvwxy" "~" ]
 test 18 "[esc]x"   3 2 $pattern	;# Reset test pattern
@@ -93,19 +93,20 @@ test 41 "r[rarrow][esc]r[uarrow][esc]r[darrow][esc]r[pgdown][esc]r[pgup][esc]r[h
 # home and end go to the start and the end of the line,
 # other special keys should be ignored except for the function keys giving #N.
 ctest 60 ":abc"		4 ":abc"
-ctest 61 "[larrow]"	3 ":abc"	;# line editing motions
-ctest 61 "[rarrow]"	4 ":abc"
-ctest 62 "[uarrow]"	4 ":abc"	;# Does nothing
-ctest 63 "[darrow]"	4 ":abc"	;# Does nothing
-ctest 66 "[home]"	1 ":abc"
-ctest 67 "[end]"	4 ":abc"
-ctest 64 "[pgdown][pgup][insert]"	4 ":abc"	;# These do nothing
+ctest 61 "[larrow]S"	3 ":abc"	;# line editing motions
+ctest 61 "[rarrow]S"	4 ":abc"
+ctest 62 "[uarrow]S"	4 ":abc"	;# Does nothing
+ctest 63 "[darrow]S"	4 ":abc"	;# Does nothing
+ctest 64 "[home]S"	1 ":abc"
+ctest 65 "[end]S"	4 ":abc"
+ctest 66 "[pgdown][pgup][insert]"	4 ":abc"	;# These do nothing
+
 # Delete at end of line does nothing
-ctest 69 "[delete]"	4 ":abc"
+ctest 70 "[delete]"	4 ":abc"
 # Delete on the last char cancels it
-ctest 70 "[larrow][delete]" 3 ":ab"
+ctest 71 "[larrow][delete]" 3 ":ab"
 # Delete on the penultimate char leaves the last one
-ctest 71 "[larrow][larrow][delete]" 1 ":b"
+ctest 72 "[larrow][larrow][delete]" 1 ":b"
 
 # Restore test pattern and sit on the b
 ctest 79 "[larrow]a[rarrow]c[larrow][larrow]" 	 2 ":abc"

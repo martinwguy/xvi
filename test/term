@@ -201,17 +201,6 @@ proc tksleep {} {
     if { [regexp "^tkterm" $tkterm] } { sleep 1 }
 }
 
-# What to do when a test fails
-proc fail {status} {
-    if { [info exists ::env(DUMP)] && $::env(DUMP) != "" } {
-	term_dump $::env(DUMP)
-    }
-    # If a test failed, the xvi executable is probably still running
-    kill_vi 9
-    exec rm -f #unnamed.???
-    exit $status
-}
-
 # Write the screen contents to a named file
 proc term_dump {file} {
 	global term rows cols cur_row cur_col
@@ -237,6 +226,17 @@ proc term_dump {file} {
 	    puts "Cannot close $file"
 	    exit 1
 	}
+}
+
+# What to do when a test fails
+proc fail {status} {
+    if { [info exists ::env(DUMP)] && $::env(DUMP) != "" } {
+	term_dump $::env(DUMP)
+    }
+    # If a test failed, the xvi executable is probably still running
+    kill_vi 9
+    exec rm -f #unnamed.???
+    exit $status
 }
 
 #
@@ -282,12 +282,23 @@ proc f10    {} { return "[esc]OY" }
 # failure status code $testno (1-127).
 
 proc test { testno str row col lines } {
-    exp_send $str
-    # If there's an Escape in it, we need to circumvent a bug in tkterm
-    if { [string first [esc] $str] >= 0 ||
-         [string range $str end end] == "\r" } {
-	tksleep
+    set sleep FALSE
+
+    # If the last char if the string is an S, we need to sleep 1 between
+    # sending the string (without the S) and calling term_expect.
+    if { [string range $str end end] == "S" } {
+	set str [string range $str 0 end-1]
+	set sleep TRUE
     }
+    # If there's an Escape at the end of it, circumvent a bug in tkterm
+    if { [string range $str end end] == [esc] } {
+	set sleep TRUE
+    }
+
+    exp_send $str
+
+    if { $sleep } tksleep
+
     term_expect timeout { fail $testno } {
 	screen_is $row $col $lines
     }
@@ -296,12 +307,23 @@ proc test { testno str row col lines } {
 # The same thing, but matching against the command line/status line
 
 proc ctest { testno str col line } {
-    exp_send $str
-    # If there's an Escape in it, we need to circumvent a bug in tkterm
-    if { [string first [esc] $str] >= 0 ||
-         [string range $str end end] == "\r" } {
-	tksleep
+    set sleep FALSE
+
+    # If the last char if the string is an S, we need to sleep 1 between
+    # sending the string (without the S) and calling term_expect.
+    if { [string range $str end end] == "S" } {
+	set str [string range $str 0 end-1]
+	set sleep TRUE
     }
+    # If there's an Escape at the end of it, circumvent a bug in tkterm
+    if { [string range $str end end] == [esc] } {
+	set sleep TRUE
+    }
+
+    exp_send $str
+
+    if { $sleep } tksleep
+
     term_expect timeout { fail $testno } {
 	expr { [cursor_at $::rows $col] && [statusline_is $line] }
     }

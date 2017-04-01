@@ -13,27 +13,36 @@ for issue XXX.
 The syntax of a test file is fairly horrible because the test mechanism is based
 on Don Libes' "tkterm",(*) which is written in the fairly horrible language TCL,
 with its bizarre string quoting rules and lame lists represented as strings.
-Worse, "sleep 1" is sometimes needed between exp_send and term_expect
-for it to work - check for calls to "tksleep" in the files here.
 
 *) See his paper "Automation and Testing of Character-Graphic Programs"
    and his book "Exploring Expect", chapter 19, p.448 onwards.
 
+The terminal emulation has two alternative implementations:
+- if X is running it uses tkterm, which uses the Tk text widget.
+- if not, is uses virterm, a parallel implementation using an array, not tK
+When using tkterm, "sleep 1" is sometimes needed between exp_send and
+term_expect for it to work. This seems to be needed if the last character
+of the strng to send is an [esc], rarely if it's a "\r" (See 0122 test 53),
+or if it's one of the special keys [larrow], [rarrow], [uarrow], [darrow],
+[Home] or [End].
+Currently, it detects [esc] at end of string and sleeps automatically.
+You can make it sleep after other strings by appending an S to them.
+
 On Debian systems, you need to
     apt-get install expect tclsh
 
-It normally runs on an X display because tkterm uses the TK text widget.
-You can run it (only as root) without an X display by going:
+To run it using virterm instead of tkterm, you can go:
+	DISPLAY= make check
+or
+	TKTERM=virterm make check
+
+You can run it using tkterm without an X display (only as root) by going:
 	sudo apt-get install xserver-xorg-video-dummy
 	sudo make nox
-
-Another way to avoid needing X or root is to say
-	TKTERM=virterm make check
-but it doesn't work properly yet.
 
 To run other vi clones against this test suite, you can use
 	VI=nvi make check
 or
 	VI="vim -c redraw" make check
 
-	Martin Guy <martinwguy@gmail.com>, December 2016 - February 2017.
+	Martin Guy <martinwguy@gmail.com>, December 2016 - March 2017.

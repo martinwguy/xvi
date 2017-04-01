@@ -17,12 +17,8 @@ test 102 "0~"			1 1 "Abcdefgh"
 # Undo it
 test 103 "u"			1 0 "abcdefgh"
 
-# move onto the d
-exp_send "0lll"
-tksleep
-test 104 ""			1 3 "abcdefgh"
-# Set uppercase DEF
-test 105 "3~"			1 6 "abcDEFgh"
+# move onto the d and set uppercase DEF
+test 104 "0lll3~"		1 6 "abcDEFgh"
 
 # Undo should undo all 3.
 test 106 "u"			1 3 "abcdefgh"

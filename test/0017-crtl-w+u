@@ -69,9 +69,7 @@ if {$vi == "nvi"} { set r114	    [list "  a" "  bb" "~"] }
 test 114 [ctrl U]		2 2 $r114
 
 # Check additional autoindents are kept. NVI fails both of these.
-exp_send [ctrl T]
-tksleep
-test 115 ""	 		2 8 [list "  a" "" "~"]
+test 115 "[ctrl T]x" 		2 9 [list "  a" "        x" "~"]
 test 116 "[ctrl W]b"		2 9 [list "  a" "        b" "~"]
 test 117 "[ctrl U]c"		2 9 [list "  a" "        c" "~"]
 
