@@ -195,7 +195,6 @@ Cmd	*cmd;
 	curbuf = curwin->w_buffer;
 	move_cursor_to_window(curwin);
 	cursupdate(curwin);
-	wind_goto(curwin);
 	break;
 
     case '@':

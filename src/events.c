@@ -187,8 +187,8 @@ xvEvent	*ev;
 	    if (do_update) {
 		move_window_to_cursor(curwin);
 		cursupdate(curwin);
-		wind_goto(curwin);
 	    }
+	    wind_goto(curwin);
 	    break;
 
 	case EXITING:

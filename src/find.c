@@ -561,8 +561,6 @@ int		cmd_char;
 	retpos = p;
     }
 
-    wind_goto(curwin);  /* put cursor back */
-
     echo = savecho;
     return(retpos);
 }

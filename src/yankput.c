@@ -740,7 +740,6 @@ bool_t	vi_mode;
 
     default:
 	show_error(win, "Nothing to put!");
-	wind_goto(win);
 	return;
     }
 
