@@ -23,7 +23,7 @@ exec tclsh "$0" ${1+"$@"}
 source term
 start_vi
 
-# Tests begin
+# Tests for ~ on RHS
 
 # See if a bare ~ on the RHS works
 test 10	"aone one one[esc]"		1 10 [list "one one one"]
@@ -47,6 +47,18 @@ test 15 ":se nomagic\r0Cone one[esc]:s/one/two/\r:s/one/~/\r" \
 # but available as \~.  Check that \\ is preserved too.
 test 16 "0Cone one[esc]:s/one/two/\r:s/one/\\\\\\~/\r" \
 		1 0 [list "two \\two"]
+
+
+# Tests for ~ on LHS
+
+exp_send ":se magic\r"
+test 20 "1GdGaone one one ~[esc]0"	1 0 [list "one one one ~" "~"]
+test 21 ":s/one/two/\r:s/~/three/\r"	1 0 [list "three one one ~"]
+test 22 ":s/one/two/\r:s/\\~/four/\r"	1 0 [list "three two one four"]
+exp_send ":se nomagic\r"
+test 30 "1GdGaone one one ~[esc]0"	1 0 [list "one one one ~" "~"]
+test 31 ":s/one/two/\r:s/\\~/three/\r"	1 0 [list "three one one ~"]
+test 32 ":s/one/two/\r:s/~/four/\r"	1 0 [list "three two one four"]
 
 stop_vi
 

@@ -53,6 +53,11 @@ static	Line	*lastline;
 static	long	curnum;
 static	bool_t	greptype;
 
+/*
+ * Last rhs for a substitution.
+ */
+static	char	*last_rhs = NULL;
+
 static	Posn	*match P((Line *, int));
 static	Posn	*bcksearch P((Xviwin *, Line *, int, bool_t));
 static	Posn	*fwdsearch P((Xviwin *, Line *, int, bool_t));
@@ -97,6 +102,19 @@ int	delim;		/* delimiter character */
 	    switch (c) {
 	    case '\\':
 		state = m_escape;
+		break;
+
+	    case '~':
+		/* ~, the last replacement text, is funny as it doesn't have
+		 * an egrep equivelent. We expand it here.
+		 * It is special unadorned if magic, special if \~ when nomagic.
+		 */
+		if (rxtype != rt_TAGS) {
+		    /* Replace the ~ with the last replacement text */
+		    lformat(&ns, "%s", last_rhs); /* If NULL, inserts nothing */
+		} else {
+		    (void) flexaddch(&ns, c);
+		}
 		break;
 
 	    case '$':
@@ -159,6 +177,15 @@ int	delim;		/* delimiter character */
 		(void) flexaddch(&ns, c);
 		break;
 
+	    case '~':
+		if (rxtype == rt_TAGS) {
+		    /* Replace the ~ with the last replacement text */
+		    lformat(&ns, "%s", last_rhs); /* If NULL, inserts nothing */
+		    break;
+		} else {
+		    /* Drop through... */
+		}
+
 	    case '.':		/* egrep metacharacters */
 	    case '\\':
 	    case '[':
@@ -218,11 +245,6 @@ static Rnode	*lastprogp = NULL;
 static	Rnode	*last_lhs = NULL;
 
 /*
- * Last rhs for a substitution.
- */
-static	char	*last_rhs = NULL;
-
-/*
  * rn_new(), rn_delete() & rn_duplicate() perform operations on Rnodes
  * which are respectively analogous to open(), close() & dup() for
  * Unix file descriptors.
@@ -268,22 +290,6 @@ Rnode	*rp;
 	free(rp);
     }
 }
-
-#if 0
-/*
- * Increment the reference count for the current prog,
- * and return it to the caller.
- */
-static Rnode *
-inccount()
-{
-    if (lastprogp != NULL) {
-	lastprogp->rn_count++;
-    }
-    return(lastprogp);
-}
-
-#endif
 
 #define	cur_prog()	(lastprogp->rn_ptr)
 
