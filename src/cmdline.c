@@ -372,12 +372,14 @@ bool_t	interactive;			/* true if reading from tty */
 
 	switch (ecp->ec_arg_type) {
 	case ec_none:
-	    /* Can be followed by ! if E_EXCLAM otherwise just spaces */
 	    if (*cmdline == '!' && (ecp->ec_flags & EC_EXCLAM)) {
 		cmdline++;
 	    }
-	    /* Only trailing spaces are allowed */
-	    skipblanks(cmdline);
+	    { /* Only trailing whitespace is allowed; remove it. */
+		char *cp = cmdline;
+		skipblanks(cp);
+		if (*cp == '\0') *cmdline = '\0';
+	    }
 	    if (*cmdline != '\0') {
 		command = EX_EBADARGS;
 	    }
@@ -410,17 +412,6 @@ bool_t	interactive;			/* true if reading from tty */
 	case ec_1string:
 	case ec_filecmd:
 	    arg = cmdline;
-
-	    /*
-	     * Null-terminate the command and skip whitespace
-	     * to arg or end of line. Only do this for forced
-	     * commands, it is not necessary (or desirable) for
-	     * all commands as it would not allow recognition
-	     * of e.g. ":write>>".
-	     */
-	    if (exclam && *arg == '!') {
-		*arg++ = '\0';
-	    }
 
 	    switch (ecp->ec_arg_type) {
 	    case ec_strings:
