@@ -325,7 +325,7 @@ proc term_insert {s} {
 
 term_init
 
-expect_before {
+expect_background {
 	-i $term_spawn_id
 	-re "^\[^\x01-\x1f]+" {
 		# Text
@@ -390,27 +390,28 @@ expect_before {
 }
 
 proc term_expect {args} {
-        global cur_row cur_col  # used by expect_background actions
+	upvar timeout localTimeout
+	upvar #0 timeout globalTimeout
+	set timeout 10
+	catch {set timeout $globalTimeout}
+	catch {set timeout $localTimeout}
 
-	set desired_timeout [
-	    uplevel {
-		if {[info exists timeout]} {
-			set timeout
-		} else {
-			uplevel #0 {
-				if {[info exists timeout]} {
-					set timeout
-				} else {
-					expr 10
-				}
-			}
-		}
-	    }
-	]
+	global term_counter
+	incr term_counter
+	global [set strobe _data_[set term_counter]]
+	global [set tstrobe _timer_[set term_counter]]
 
-        set timeout $desired_timeout
+	proc term_chars_changed {} "uplevel #0 set $strobe 1"
+	proc term_cursor_changed {} "uplevel #0 set $strobe 1"
 
-        set timeout_act {}
+	set $strobe 1
+	set $tstrobe 0
+
+	if {$timeout >= 0} {
+		set mstimeout [expr 1000*$timeout]
+		after $mstimeout "set $strobe 1; set $tstrobe 1"
+		set timeout_act {}
+	}
 
 	set argc [llength $args]
 	if {$argc%2 == 1} {
@@ -428,26 +429,32 @@ proc term_expect {args} {
 		}
 	}
 
-        set got_timeout 0
-
-        set start_time [timestamp]
-
 	while {![info exists act]} {
-                expect timeout {set got_timeout 1}
-                set timeout [expr $desired_timeout - [timestamp] + $start_time]
-                if {! $got_timeout} \
-                {
+		if {![set $strobe]} {
+			#tkwait var $strobe
+			vwait $strobe
+		}
+		set $strobe 0
+
+		if {[set $tstrobe]} {
+			set act $timeout_act
+		} else {
 			for {set i 0} {$i<$argc} {incr i 2} {
 				if {[uplevel [lindex $args $i]]} {
 					set act [lindex $args [incr i]]
 					break
 				}
 			}
-		} else { set act $timeout_act }
+		}
+	}
 
-                if {![info exists act]} {
+	proc term_chars_changed {} {}
+	proc term_cursor_changed {} {}
 
-                }
+	if {$timeout >= 0} {
+		after $mstimeout unset $strobe $tstrobe
+	} else {
+		unset $strobe $tstrobe
 	}
 
 	set code [catch {uplevel $act} string]

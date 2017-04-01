@@ -19,14 +19,7 @@ with its bizarre string quoting rules and lame lists represented as strings.
 
 The terminal emulation has two alternative implementations:
 - if X is running it uses tkterm, which uses the Tk text widget.
-- if not, is uses virterm, a parallel implementation using an array, not tK
-When using tkterm, "sleep 1" is sometimes needed between exp_send and
-term_expect for it to work. This seems to be needed if the last character
-of the strng to send is an [esc], rarely if it's a "\r" (See 0122 test 53),
-or if it's one of the special keys [larrow], [rarrow], [uarrow], [darrow],
-[Home] or [End].
-Currently, it detects [esc] at end of string and sleeps automatically.
-You can make it sleep after other strings by appending an S to them.
+- if not, is uses virterm, a parallel implementation using an array.
 
 On Debian systems, you need to
     apt-get install expect tclsh

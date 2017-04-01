@@ -66,7 +66,6 @@ ctest 118 "A"			4 ":^VA"
 ctest 119 "[ctrl V]"		4 ":^VA^"
 ctest 120 "\xFF"		8 ":^VA\\377"
 # Need to send left arrow and check that it works in the middle of the line.
-# Fails with virterm
 ctest 121 "\b\b\b"		1 ":"
 ctest 121 "abcd[larrow][larrow][ctrl V]" 3 ":ab^cd"
 ctest 122 "[ctrl V]"		5 ":ab^Vcd"

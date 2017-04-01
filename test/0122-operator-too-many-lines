@@ -17,10 +17,6 @@ exec tclsh "$0" ${1+"$@"}
 source term
 start_vi
 
-# Visual bells confuse virterm
-exp_send ":se noflash\r"
-exp_send ":se novbell\r"
-
 # Tests begin
 
 test 10 "aone\rtwo\rthree[esc]2G"	2 0 [list "one" "two" "three" "~"]
@@ -62,7 +58,7 @@ test 44 "2<<"		2 0 [list "one" "two" "three"  "~"]
 test 50 ":2,2++d\r"	2 0 [list "one" "two" "three"  "~"]
 test 51 "d2+"		2 0 [list "one" "two" "three"  "~"]
 test 52 "jd+"		3 0 [list "one" "two" "three"  "~"]
-test 53 "kd2\rS"	2 0 [list "one" "two" "three"  "~"]
+test 53 "kd2\r"		2 0 [list "one" "two" "three"  "~"]
 test 54 "d2\n"		2 0 [list "one" "two" "three"  "~"]
 test 55 "d2j"		2 0 [list "one" "two" "three"  "~"]
 test 56 "d2[darrow]"	2 0 [list "one" "two" "three"  "~"]
