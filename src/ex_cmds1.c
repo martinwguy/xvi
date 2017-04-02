@@ -61,7 +61,7 @@ bool_t	force;
 	 */
 	wp = window;
 	do {
-	    unpreserve(window->w_buffer);
+	    unpreserve(wp->w_buffer);
 	} while ((wp = xvNextWindow(wp)) != window);
 
 	State = EXITING;
