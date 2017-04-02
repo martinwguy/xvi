@@ -545,6 +545,7 @@ bool_t	do_clear;
 		    } else if (w->w_next != NULL) {
 			curwin = w->w_next;
 		    }
+		    curbuf = curwin->w_buffer;
 		}
 	    } else {
 		/*
