@@ -47,10 +47,8 @@ char	*psv_strings[] =
 static FILE *
 psvfile()
 {
-    register Buffer	*buffer;
+    register Buffer	*buffer = curbuf;
     FILE		*fp;
-
-    buffer = curwin->w_buffer;
 
     if (buffer->b_tempfname == NULL) {
 	char	*fname;
@@ -88,7 +86,7 @@ register FILE	*fp;
     unsigned long	l1, l2;
 
     if (put_file(fp, (Line *) NULL, (Line *) NULL, &l1, &l2) == FALSE) {
-	show_error(curwin->w_buffer->b_tempfname);
+	show_error(curbuf->b_tempfname);
 	return(FALSE);
     } else {
 	return(TRUE);
@@ -112,7 +110,6 @@ bool_t
 preservebuf()
 {
     FILE	*fp;
-    Buffer	*bp;
 
     if (
 	Pn(P_preserve) == psv_UNSAFE
@@ -123,9 +120,9 @@ preservebuf()
 	    /*
 	     * If there is a preserve file already ...
 	     */
-	    (bp = curwin->w_buffer)->b_tempfname != NULL
+	    curbuf->b_tempfname != NULL
 	    &&
-	    exists(bp->b_tempfname)
+	    exists(curbuf->b_tempfname)
 	    &&
 	    /*
 	     * & a preserve appears to have been done recently ...
@@ -169,12 +166,12 @@ Buffer	*buffer;
 bool_t
 exPreserveAllBuffers()
 {
-    Xviwin		*oldcurwin;
+    Xviwin		*savecurwin;
     bool_t		psvstatus = TRUE;
 
     /* Cycle "curwin" through all the open windows, preserving each */
     do {
-	if (is_modified(curwin->w_buffer)) {
+	if (is_modified(curbuf)) {
 	    FILE	*fp;
 
 	    fp = psvfile();
@@ -185,7 +182,8 @@ exPreserveAllBuffers()
 		psvstatus = FALSE;
 	    }
 	}
-    } while ((curwin = xvNextWindow(curwin)) != oldcurwin);
+	set_curwin(xvNextWindow(curwin));
+    } while (curwin != savecurwin);
 
     return(psvstatus);
 }

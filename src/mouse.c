@@ -150,9 +150,10 @@ int row1, row2, col1, col2;
 	    savecho = echo;
 	    echo &= ~e_CHARUPDATE;
 
-	    curwin = wp;
+	    /* Use curwin as a phantom parameter to xvMoveStatusLine() */
+	    set_curwin(wp);
 	    (void) xvMoveStatusLine(row2 - row1);
-	    curwin = savecurwin;
+	    set_curwin(savecurwin);
 
 	    echo = savecho;
 

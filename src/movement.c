@@ -396,7 +396,7 @@ move_window_to_cursor()
     /*
      * First stage: move window towards cursor.
      */
-    if (bufempty(curwin->w_buffer)) {
+    if (bufempty()) {
 	/*
 	 * Special case - file is empty.
 	 */

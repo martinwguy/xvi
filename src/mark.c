@@ -71,7 +71,7 @@ Line	*line;
 void
 setpcmark()
 {
-    curwin->w_buffer->b_pcmark.m_line = curwin->w_cursor->p_line;
+    curbuf->b_pcmark.m_line = curwin->w_cursor->p_line;
 }
 
 /*

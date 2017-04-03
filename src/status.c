@@ -83,24 +83,22 @@ show_file_info(show_numbers)
 bool_t	show_numbers;
 {
     if (echo & e_SHOWINFO) {
-	Buffer	*buffer;
+	Buffer	*buffer = curbuf;
 	Flexbuf	*slp;
-
-	buffer = curwin->w_buffer;
 
 	slp = &curwin->w_statusline;
 	flexclear(slp);
 	if (buffer->b_filename == NULL) {
 	    (void) lformat(slp, "No File");
-	    if (bufempty(buffer)) {
+	    if (bufempty()) {
 		show_numbers = FALSE;
 	    }
 	} else {
 	    (void) lformat(slp, "\"%s\"", buffer->b_filename);
 	}
-	if (is_readonly(buffer))
+	if (is_readonly(curbuf))
 	    (void) lformat(slp, " [Read only]");
-	if (is_modified(buffer))
+	if (is_modified(curbuf))
 	    (void) lformat(slp, " [Modified]");
 	if (show_numbers) {
 	    long	position, total;

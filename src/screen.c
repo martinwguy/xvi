@@ -23,7 +23,7 @@
 
 static	int	line_to_new P((Line *, int, long));
 static	void	file_to_new P((void));
-static	void	do_sline P((Xviwin *));
+static	void	do_sline P((void));
 
 /*
  * Transfer the specified window line into the "new" screen array, at
@@ -196,15 +196,15 @@ static void
 file_to_new()
 {
     Xviwin		*win = curwin;
+    register Buffer	*buffer;
     register int	row;
     register Line	*line;
-    register Buffer	*buffer;
     long		lnum;
 
     if (win->w_nrows < Pn(P_minrows))
 	return;
 
-    buffer = win->w_buffer;
+    buffer = curbuf;
     row = win->w_winpos;
     line = win->w_topline;
     lnum = lineno(line);
@@ -257,18 +257,19 @@ file_to_new()
 void
 update_sline()
 {
-    do_sline(curwin);
+    do_sline();
     xvUpdateScr(curwin->w_vs, (int) curwin->w_cmdline, 1);
 }
 
 /*
- * Update the status line of the given window,
- * from the one in win->w_statusline.
+ * Update the status line of the current window,
+ * from the one in curwin->w_statusline.
  */
 static void
-do_sline(win)
-Xviwin	*win;
+do_sline()
 {
+    Xviwin		*win = curwin;
+    VirtScr		*vs = curwin->w_vs;
     register char	*from;
     register char	*to;
     register char	*end;
@@ -277,13 +278,13 @@ Xviwin	*win;
     Sline		*slp;
 
     if ((win->w_nrows == 0) ||
-	(VSrows(win->w_vs)  == 0) ||
-	(VScols(win->w_vs) == 0)) {
+	(VSrows(vs)  == 0) ||
+	(VScols(vs) == 0)) {
 	return;
     }
 
     from = sline_text(win);
-    slp = win->w_vs->pv_int_lines + win->w_cmdline;
+    slp = vs->pv_int_lines + win->w_cmdline;
     to = slp->s_line;
     end = to + win->w_ncols - win->w_spare_cols;
 
@@ -319,7 +320,7 @@ Xviwin	*win;
     /*
      * Set the colour of the status line.
      */
-    colour = is_readonly(win->w_buffer) ? VSCroscolour : VSCstatuscolour;
+    colour = is_readonly(curbuf) ? VSCroscolour : VSCstatuscolour;
     for (colindex = win->w_ncols - win->w_spare_cols - 1; colindex >= 0;
 							--colindex) {
 	slp->s_colour[colindex] = colour;
@@ -327,10 +328,10 @@ Xviwin	*win;
 
     slp->s_used = win->w_ncols - win->w_spare_cols;
     slp->s_flags = S_MESSAGE;
-    if (is_readonly(win->w_buffer)) {
+    if (is_readonly(curbuf)) {
 	slp->s_flags |= S_READONLY;
     }
-    xvMarkDirty(win->w_vs, (int) win->w_cmdline);
+    xvMarkDirty(vs, (int) win->w_cmdline);
 }
 
 void
@@ -390,8 +391,7 @@ void
 updateline(flag)
 bool_t	flag;
 {
-    Xviwin	*oldcurwin;
-    Xviwin	*w;
+    Xviwin	*savecurwin;
     Line	*currline;
     int		nlines;
     int		curs_row;
@@ -399,11 +399,11 @@ bool_t	flag;
     currline = curwin->w_cursor->p_line;
 
     /* Loop curwin through all the windows */
-    oldcurwin = curwin;
+    savecurwin = curwin;
     do {
-	w = curwin;	/* local temp for faster/smaller code */
+	Xviwin *w = curwin;	/* local temp for faster/smaller code */
 
-	if (w->w_buffer == oldcurwin->w_buffer &&
+	if (w->w_buffer == savecurwin->w_buffer &&
 		!earlier(currline, w->w_topline) &&
 		!later(currline, w->w_botline)) {
 	    /*
@@ -423,8 +423,8 @@ bool_t	flag;
 
 	    xvUpdateScr(w->w_vs, (int) (curs_row + w->w_winpos), nlines);
 	}
-	curwin = xvNextDisplayedWindow(w);
-    } while (curwin != oldcurwin);
+	set_curwin(xvNextDisplayedWindow(w));
+    } while (curwin != savecurwin);
 }
 
 /*
@@ -457,27 +457,28 @@ void
 redraw_all(clrflag)
 bool_t	clrflag;
 {
-    Xviwin	*w;
+    Xviwin	*savecurwin;
+    VirtScr	*vs = curwin->w_vs;
 
-    if ((VSrows(curwin->w_vs) < Pn(P_minrows)) || (VScols(curwin->w_vs) == 0)) {
+    if ((VSrows(vs) < Pn(P_minrows)) || (VScols(vs) == 0)) {
 	return;
     }
 
     if (clrflag) {
-	xvClear(curwin->w_vs);
+	xvClear(vs);
     }
 
-    w = curwin;
+    savecurwin = curwin;
     do {
-	if (w->w_nrows > 0) {
-	    if (w->w_nrows >= Pn(P_minrows))
+	if (curwin->w_nrows > 0) {
+	    if (curwin->w_nrows >= Pn(P_minrows))
 		file_to_new();
-	    do_sline(w);
+	    do_sline();
 	}
-	w = xvNextDisplayedWindow(w);
-    } while (w != curwin);
+        set_curwin(xvNextDisplayedWindow(curwin));
+    } while (curwin != savecurwin);
 
-    xvUpdateScr(curwin->w_vs, 0, (int) VSrows(curwin->w_vs));
+    xvUpdateScr(vs, 0, (int) VSrows(vs));
 }
 
 /*

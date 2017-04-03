@@ -229,7 +229,7 @@ bool_t	split;			/* true if want to split */
     } else {
 	if (!force) {
 	    xvAutoWrite();
-	    if (is_modified(curwin->w_buffer)) {
+	    if (is_modified(curbuf)) {
 		show_error(nowrtmsg);
 		return(FALSE);
 	    }

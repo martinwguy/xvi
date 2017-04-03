@@ -578,10 +578,8 @@ char	*fname;
 Line	*start, *end;
 bool_t	force;
 {
-    Buffer		*buffer;
+    Buffer		*buffer = curbuf;
     bool_t		need_preserve = FALSE;
-
-    buffer = curwin->w_buffer;
 
     if (buffer->b_filename != NULL &&
 		    strcmp(buffer->b_filename, fname) == 0) {
@@ -653,12 +651,10 @@ unsigned long	*ncp, *nlp;
 #ifndef i386
     register
 #endif
-	Line			*lp;
+	     Line		*lp;
     register unsigned long	nchars;
     unsigned long		nlines;
-    Buffer			*buffer;
-
-    buffer = curwin->w_buffer;
+    Buffer			*buffer = curbuf;
 
 #ifdef	SETVBUF_AVAIL
     {

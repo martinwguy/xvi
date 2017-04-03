@@ -111,7 +111,7 @@ bool_t	split_line;
     move_cursor(l, indentchars);
     move_window_to_cursor();
     cursupdate();
-    xvUpdateAllBufferWindows(curwin->w_buffer);
+    xvUpdateAllBufferWindows(curbuf);
 
     return(TRUE);
 }
@@ -621,14 +621,17 @@ bool_t	exclam;
 bool_t
 xvChangesNotSaved()
 {
-    Xviwin	*wp;
+    Xviwin	*savecurwin;
 
-    wp = curwin;
+    savecurwin = curwin;
     do {
-	if (is_modified(wp->w_buffer)) {
+	if (is_modified(curbuf)) {
+	    set_curwin(savecurwin);
 	    return(TRUE);
 	}
-    } while ((wp = xvNextWindow(wp)) != curwin);
+	set_curwin(xvNextWindow(curwin));
+    } while (curwin != savecurwin);
+
     return(FALSE);
 }
 
@@ -642,15 +645,16 @@ xvChangesNotSaved()
 void
 xvAutoWriteAll()
 {
-    Xviwin	*oldcurwin = curwin;
 
     if (Pb(P_autowrite)) {
+	Xviwin	*savecurwin = curwin;
 	do {
-	    if (is_modified(curwin->w_buffer)) {
+	    if (is_modified(curbuf)) {
 		(void) exWriteToFile((char *) NULL, (Line *) NULL,
 					     (Line *) NULL, 0);
 	    }
-	} while ((curwin = xvNextWindow(curwin)) != oldcurwin);
+	    set_curwin(xvNextWindow(curwin));
+	} while (curwin != savecurwin);
     }
 
     return;
@@ -664,7 +668,7 @@ xvAutoWriteAll()
 void
 xvAutoWrite()
 {
-    if (is_modified(curwin->w_buffer) && Pb(P_autowrite)) {
+    if (is_modified(curbuf) && Pb(P_autowrite)) {
 	(void) exWriteToFile((char *) NULL, (Line *) NULL, (Line *) NULL, 0);
     }
 }

@@ -390,7 +390,7 @@ char	*envp;				/* init string from the environment */
 	} else if (line != 0) {
 	    echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
 	    if (line < 0) {
-		line = lineno(b_last_line_of(curwin->w_buffer)) + line;
+		line = lineno(b_last_line_of(curbuf)) + line;
 	    }
 	    xvMoveToLineNumber(line);
 	}

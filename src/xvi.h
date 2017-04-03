@@ -733,8 +733,9 @@ extern volatile int	keystrokes;
 /*
  * Miscellaneous global vars.
  */
-extern	Buffer		*curbuf;	/* current buffer */
 extern	Xviwin		*curwin;	/* current window */
+extern	Buffer		*curbuf;	/* current buffer */
+#define set_curwin(w)	do { curwin=(w); curbuf=curwin->w_buffer; } while(0)
 
 extern	int		indentchars;	/* number of chars of auto-indentation
 					 * on current line */
@@ -858,7 +859,7 @@ extern	char	*strsave P((const char *));
 extern	Line	*newline P((int));
 extern	Line	*snewline P((char *));
 extern	bool_t	lnresize P((Line *, unsigned));
-extern	bool_t	bufempty P((Buffer *));
+extern	bool_t	bufempty P((void));
 extern	bool_t	buf1line P((Buffer *));
 extern	bool_t	endofline P((Posn *));
 extern	bool_t	grow_line P((Line *, int));

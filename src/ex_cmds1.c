@@ -83,7 +83,7 @@ exSplitWindow()
 	return;
     }
 
-    xvMapWindowOntoBuffer(newwin, curwin->w_buffer);
+    xvMapWindowOntoBuffer(newwin, curbuf);
 
     /*
      * Update the status line of the old window
@@ -196,9 +196,7 @@ bool_t
 exCloseWindow(force)
 bool_t	force;
 {
-    Buffer	*buffer;
-
-    buffer = curwin->w_buffer;
+    Buffer	*buffer = curbuf;
 
     /*
      * If the window is the only one onto a modified buffer, and
@@ -253,11 +251,10 @@ bool_t	force;
 	State = EXITING;
 	return(TRUE);
     }
-
-    curbuf = curwin->w_buffer;
     if (buffer->b_nwindows == 0) {
 	free_buffer(buffer);
     }
+    buffer = curbuf = curwin->w_buffer;
 
     {
 	unsigned	savecho;
@@ -324,15 +321,14 @@ exEditFile(force, arg)
 bool_t	force;
 char	*arg;
 {
+    Buffer	*buffer = curbuf;
     long	line = 1;		/* line # to go to in new file */
     long	nlines;			/* no of lines read from file */
     Line	*head;			/* start of list of lines */
     Line	*tail;			/* last element of list of lines */
     bool_t	readonly;		/* true if cannot write file */
-    Buffer	*buffer;
     Xviwin	*wp;
-
-    buffer = curwin->w_buffer;
+    Xviwin	*savecurwin;
 
     if (!force && is_modified(buffer)) {
 	show_error(nowrtmsg);
@@ -413,17 +409,15 @@ char	*arg;
     /*
      * Be sure to re-map all window structures onto the buffer,
      * in order to eliminate any pointers into the old buffer.
-     * wp is reused to remember the original value of curwin.
      */
-    wp = curwin;
+    savecurwin = curwin;
     do {
-	if (curwin->w_buffer != buffer)
-	    continue;
-
-	xvUnMapWindow();
-	xvMapWindowOntoBuffer(curwin, buffer);
-
-    } while ((curwin = xvNextWindow(curwin)) != wp);
+	if (curwin->w_buffer == buffer) {
+	    xvUnMapWindow();
+	    xvMapWindowOntoBuffer(curwin, buffer);
+	}
+        set_curwin(xvNextWindow(curwin));
+    } while (curwin != savecurwin);
 
     readonly = Pb(P_readonly) || !can_write(buffer->b_filename);
 
@@ -433,13 +427,14 @@ char	*arg;
 
     update_sline();		/* ensure colour is updated */
 
-    /* wp is reused here to remember the original value of curwin. */
-    wp = curwin;
-    while ((curwin = xvNextDisplayedWindow(curwin)) != wp) {
-	/*
-	 * If there are any other windows on to the same buffer, make
-	 * sure they're properly updated.
-	 */
+    /*
+     * If there are any other windows on to the same buffer,
+     * update their status line.
+     */
+    while (1) {
+	set_curwin(xvNextDisplayedWindow(curwin));
+	if (curwin == savecurwin) break;
+
 	if (curwin->w_buffer == buffer) {
 	    show_message("%s", sline_text(wp));
 	}
@@ -585,7 +580,7 @@ bool_t	force;
 
     if (!force) {
 	xvAutoWrite();
-	if (is_modified(curwin->w_buffer)) {
+	if (is_modified(curbuf)) {
 	    show_error(nowrtmsg);
 	    return(FALSE);
 	}
@@ -737,7 +732,7 @@ bool_t	force;
 	    success = FALSE;
 	}
 	move_window_to_cursor();
-	xvUpdateAllBufferWindows(curwin->w_buffer);
+	xvUpdateAllBufferWindows(curbuf);
     } else {
 	show_message("No more files");
 	success = FALSE;
@@ -762,7 +757,7 @@ bool_t	force;
 
     if (!force) {
 	xvAutoWrite();
-        if (is_modified(curwin->w_buffer)) {
+        if (is_modified(curbuf)) {
 	    show_error(nowrtmsg);
 	    return(FALSE);
 	}
@@ -772,7 +767,7 @@ bool_t	force;
     echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
     success = exEditFile(force, files[0]);
     move_window_to_cursor();
-    xvUpdateAllBufferWindows(curwin->w_buffer);
+    xvUpdateAllBufferWindows(curbuf);
     echo = savecho;
     return(success);
 }
@@ -790,7 +785,7 @@ Line	*l1, *l2;
 bool_t	force;
 {
     if (filename == NULL) {
-	filename = curwin->w_buffer->b_filename;
+	filename = curbuf->b_filename;
     }
     if (filename == NULL) {
 	show_error("No output file");
@@ -817,9 +812,7 @@ char	*filename;
 Line	*l1, *l2;
 bool_t	force;
 {
-    register Buffer	*buffer;
-
-    buffer = curwin->w_buffer;
+    register Buffer	*buffer = curbuf;
 
     if (filename == NULL) {
 	filename = buffer->b_filename;
@@ -887,7 +880,7 @@ Line	*atline;
 	 * Default to the current filename if none specified.
 	 * This seems odd, but vi does it, so why not.
 	 */
-	filename = curwin->w_buffer->b_filename;
+	filename = curbuf->b_filename;
     }
 
     if (filename[0] == '!') {
@@ -916,7 +909,7 @@ Line	*atline;
 	echo &= ~e_REPORT;
 	repllines(atline->l_next, 0L, head);
 	echo |= e_REPORT;
-	xvUpdateAllBufferWindows(curwin->w_buffer);
+	xvUpdateAllBufferWindows(curbuf);
 
 	/*
 	 * Move the cursor to the first character
@@ -951,7 +944,7 @@ exEditAlternateFile()
 	result = exNewBuffer(alt_file_name(), 0);
     } else {
 	xvAutoWrite();
-	if (is_modified(curwin->w_buffer)) {
+	if (is_modified(curbuf)) {
 	    show_error("No write since last change");
 	    result = FALSE;
 	} else {
@@ -970,9 +963,7 @@ void
 exShowFileStatus(newfile)
 char	*newfile;
 {
-    Buffer	*buffer;
-
-    buffer = curwin->w_buffer;
+    Buffer	*buffer = curbuf;
 
     if (newfile != NULL) {
 	if (buffer->b_filename != NULL)

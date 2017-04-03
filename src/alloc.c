@@ -283,23 +283,14 @@ char *str;
 }
 
 /*
- * bufempty() - return TRUE if the buffer is empty
+ * bufempty() - return TRUE if the current buffer is empty
  */
 bool_t
-bufempty(b)
-Buffer	*b;
+bufempty()
 {
-    return(buf1line(b) && b->b_file->l_text[0] == '\0');
-}
-
-/*
- * buf1line() - return TRUE if there is only one line
- */
-bool_t
-buf1line(b)
-Buffer	*b;
-{
-    return(b->b_file->l_next == b->b_lastline);
+    /* TRUE if the buffer has exactly one line and the line has no text */
+    return(curbuf->b_file->l_next == curbuf->b_lastline &&
+	   curbuf->b_file->l_text[0] == '\0');
 }
 
 /*

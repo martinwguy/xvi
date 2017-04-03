@@ -52,8 +52,8 @@ Line	*l2;
 	l1 = l2;
 	l2 = tmp;
     }
-    line1 = (l1 != NULL) ? l1 : curwin->w_buffer->b_file;
-    line2 = (l2 != NULL) ? l2->l_next : curwin->w_buffer->b_lastline;
+    line1 = (l1 != NULL) ? l1 : curbuf->b_file;
+    line2 = (l2 != NULL) ? l2->l_next : curbuf->b_lastline;
     specwin = curwin;
 }
 
@@ -94,7 +94,7 @@ char	*command;
 	posn1.p_index = 0;
 	posn2.p_line = line2->l_prev;
 	posn2.p_index = 0;
-	do_yank(curwin->w_buffer, &posn1, &posn2, FALSE, '@');
+	do_yank(curbuf, &posn1, &posn2, FALSE, '@');
     }
 
     newlines = NULL;
@@ -102,7 +102,7 @@ char	*command;
     if (success) {
 	if (newlines != NULL) {
 	    repllines(line1, cntllines(line1, line2) - 1, newlines);
-	    xvUpdateAllBufferWindows(curwin->w_buffer);
+	    xvUpdateAllBufferWindows(curbuf);
 	    begin_line(TRUE);
 	} else {
 	    /*
@@ -294,12 +294,12 @@ Line	*l1, *l2;
     }
 
     if (l1 == NULL) {
-	line1 = curwin->w_buffer->b_file;
+	line1 = curbuf->b_file;
     } else {
 	line1 = l1;
     }
     if (l2 == NULL) {
-	line2 = curwin->w_buffer->b_lastline;
+	line2 = curbuf->b_lastline;
     } else {
 	line2 = l2->l_next;
     }
@@ -372,7 +372,7 @@ Line	*atline;
     if (success) {
 	if (newlines != NULL) {
 	    repllines(atline->l_next, 0L, newlines);
-	    xvUpdateAllBufferWindows(curwin->w_buffer);
+	    xvUpdateAllBufferWindows(curbuf);
 	    begin_line(TRUE);
 	} else {
 	    /*

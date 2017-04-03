@@ -614,7 +614,7 @@ bool_t		wrapscan;
     Line	*lp;		/* current line */
     Line	*last;
 
-    last = curwin->w_buffer->b_lastline;
+    last = curbuf->b_lastline;
 
     /*
      * First, search for a match on the current line after the cursor
@@ -637,7 +637,7 @@ bool_t		wrapscan;
 	 */
 	if (lp == last) {
 	    if (wrapscan) {
-		lp = curwin->w_buffer->b_line0;
+		lp = curbuf->b_line0;
 		continue;
 	    } else {
 		return(NULL);
@@ -700,7 +700,7 @@ bool_t		wrapscan;
      * and then from the end of the buffer back to the
      * line after the cursor line if wrapscan is set.
      */
-    line0 = curwin->w_buffer->b_line0;
+    line0 = curbuf->b_line0;
     for (lp = startline->l_prev; lp != startline; lp = lp->l_prev) {
 
 	if (lp == line0) {
@@ -709,7 +709,7 @@ bool_t		wrapscan;
 		 * Note we do a continue here so that
 		 * the loop control works properly.
 		 */
-		lp = curwin->w_buffer->b_lastline;
+		lp = curbuf->b_lastline;
 		continue;
 	    } else {
 		return(NULL);
@@ -815,8 +815,8 @@ bool_t		matchtype;
      * last one in the range, to make the loop easier.
      */
     if (lp == NULL) {
-	lp = curwin->w_buffer->b_file;
-	up = curwin->w_buffer->b_lastline;
+	lp = curbuf->b_file;
+	up = curbuf->b_lastline;
     } else if (up == NULL) {
 	up = lp->l_next;
     } else {
@@ -944,7 +944,7 @@ bool_t		matchtype;
     case '~':
 	end_command();
 	if (ndone) {
-	    xvUpdateAllBufferWindows(curwin->w_buffer);
+	    xvUpdateAllBufferWindows(curbuf);
 	    cursupdate();
 	    begin_line(TRUE);
 	    if (ndone >= Pn(P_report)) {

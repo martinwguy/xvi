@@ -682,12 +682,12 @@ int	opchar1, opchar2;
 	 */
 	switch (dir) {
 	case BACKWARD:
-	    store_pos.p_line = curwin->w_buffer->b_file;
+	    store_pos.p_line = curbuf->b_file;
 	    store_pos.p_index = 0;	/* should begin_line() if [[ or ]] ? */
 	    break;
 
 	case FORWARD:
-	    store_pos.p_line = b_last_line_of(curwin->w_buffer);
+	    store_pos.p_line = b_last_line_of(curbuf);
 	    store_pos.p_index = 0;
 	    while (inc(&store_pos) != mv_EOL) {
 		;
