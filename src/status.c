@@ -26,10 +26,9 @@
  * according to the number of columns available.
  */
 void
-init_sline(win)
-Xviwin	*win;
+init_sline()
 {
-    flexclear(&win->w_statusline);
+    flexclear(&curwin->w_statusline);
 }
 
 /*VARARGS2*/
@@ -37,10 +36,9 @@ Xviwin	*win;
 void
 show_message
 #ifdef	__STDC__
-    (Xviwin *window, char *format, ...)
+    (char *format, ...)
 #else /* not __STDC__ */
-    (window, format, va_alist)
-    Xviwin	*window;
+    (format, va_alist)
     char	*format;
     va_dcl
 #endif	/* __STDC__ */
@@ -48,11 +46,11 @@ show_message
     va_list	argp;
 
     VA_START(argp, format);
-    flexclear(&window->w_statusline);
-    (void) vformat(&window->w_statusline, format, argp);
+    flexclear(&curwin->w_statusline);
+    (void) vformat(&curwin->w_statusline, format, argp);
     va_end(argp);
 
-    update_sline(window);
+    update_sline();
 }
 
 /*VARARGS2*/
@@ -60,10 +58,9 @@ show_message
 void
 show_error
 #ifdef	__STDC__
-    (Xviwin *window, char *format, ...)
+    (char *format, ...)
 #else /* not __STDC__ */
-    (window, format, va_alist)
-    Xviwin	*window;
+    (format, va_alist)
     char	*format;
     va_dcl
 #endif	/* __STDC__ */
@@ -71,28 +68,27 @@ show_error
     va_list	argp;
 
     if (Pb(P_errorbells)) {
-	beep(window);
+	beep();
     }
     VA_START(argp, format);
-    flexclear(&window->w_statusline);
-    (void) vformat(&window->w_statusline, format, argp);
+    flexclear(&curwin->w_statusline);
+    (void) vformat(&curwin->w_statusline, format, argp);
     va_end(argp);
 
-    update_sline(window);
+    update_sline();
 }
 
 void
-show_file_info(window, show_numbers)
-Xviwin	*window;
+show_file_info(show_numbers)
 bool_t	show_numbers;
 {
     if (echo & e_SHOWINFO) {
 	Buffer	*buffer;
 	Flexbuf	*slp;
 
-	buffer = window->w_buffer;
+	buffer = curwin->w_buffer;
 
-	slp = &window->w_statusline;
+	slp = &curwin->w_statusline;
 	flexclear(slp);
 	if (buffer->b_filename == NULL) {
 	    (void) lformat(slp, "No File");
@@ -110,7 +106,7 @@ bool_t	show_numbers;
 	    long	position, total;
 	    long	percentage;
 
-	    position = lineno(window->w_cursor->p_line);
+	    position = lineno(curwin->w_cursor->p_line);
 	    total = lineno(b_last_line_of(buffer));
 	    percentage = (total > 0) ? (position * 100) / total : 0;
 
@@ -120,12 +116,11 @@ bool_t	show_numbers;
 			percentage);
 	}
     }
-    update_sline(window);
+    update_sline();
 }
 
 void
-info_update(win)
-    Xviwin *win;
+info_update()
 {
-    show_file_info(win, Pen(P_infoupdate) == iu_CONTINUOUS);
+    show_file_info(Pen(P_infoupdate) == iu_CONTINUOUS);
 }

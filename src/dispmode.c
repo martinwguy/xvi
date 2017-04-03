@@ -32,20 +32,19 @@ static bool_t	disp_listmode;
  * The function returns NULL when no more lines are available.
  */
 void
-disp_init(win, func, colwidth, listmode)
-Xviwin		*win;
+disp_init(func, colwidth, listmode)
 char		*(*func) P((void));
 int		colwidth;
 bool_t		listmode;
 {
     State = DISPLAY;
     disp_func = func;
-    if (colwidth > win->w_ncols)
-	colwidth = win->w_ncols;
+    if (colwidth > curwin->w_ncols)
+	colwidth = curwin->w_ncols;
     disp_colwidth = colwidth;
-    disp_maxcol = (win->w_ncols / colwidth) * colwidth;
+    disp_maxcol = (curwin->w_ncols / colwidth) * colwidth;
     disp_listmode = listmode;
-    (void) disp_screen(win, '\0');
+    (void) disp_screen('\0');
 }
 
 /*
@@ -57,8 +56,7 @@ bool_t		listmode;
  * before redisplaying our editing screen.
  */
 bool_t
-disp_screen(win, ch)
-Xviwin	*win;
+disp_screen(ch)
 int	ch;
 {
     int		row;	/* current screen row */
@@ -66,15 +64,15 @@ int	ch;
     static bool_t	finished = FALSE;
     VirtScr		*vs;
 
-    vs = win->w_vs;
+    vs = curwin->w_vs;
 
     if (finished || kbdintr || ch == CTRL('C')) {
 	/*
 	 * Ensure that the window on the current buffer is
 	 * in the right place; then update the whole window.
 	 */
-	move_window_to_cursor(win);
-	redraw_all(win, TRUE);
+	move_window_to_cursor();
+	redraw_all(TRUE);
 	State = NORMAL;
 	/*
 	 * If they typed a colon, take it as valid input.

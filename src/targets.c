@@ -135,7 +135,7 @@ Cmd	*cmd;
 
     case 'n':
     case 'N':
-	pp = xvDoSearch(curwin, "", cmd->cmd_ch1);
+	pp = xvDoSearch("", cmd->cmd_ch1);
 	if (pp != NULL) {
 	    cmd->cmd_target = *pp;
 	}
@@ -151,7 +151,7 @@ Cmd	*cmd;
 	int	num;
 
 	for (num = IDEF1(cmd->cmd_prenum); num > 0; --num) {
-	    pp = xvLocateTextObject(curwin, &lastpos, cmd->cmd_ch1, cmd->cmd_ch2);
+	    pp = xvLocateTextObject(&lastpos, cmd->cmd_ch1, cmd->cmd_ch2);
 	    if (pp != NULL) {
 		lastpos = *pp;
 	    } else {
@@ -173,7 +173,7 @@ Cmd	*cmd;
 
 	lp = getmark(cmd->cmd_ch2, curbuf);
 	if (lp == NULL) {
-	    show_error(curwin, "Unknown mark");
+	    show_error("Unknown mark");
 	} else {
 	    if (cmd->cmd_ch1 == '\'') {
 		skip_spaces = TRUE;
@@ -188,7 +188,7 @@ Cmd	*cmd;
 	/*
 	 * We don't return a position here as these targets are deferred.
 	 */
-	cmd_init(curwin, cmd->cmd_ch1);
+	cmd_init(cmd->cmd_ch1);
     }
 
     if (cmd->cmd_target.p_line != NULL && skip_spaces) {

@@ -122,15 +122,13 @@ int	tfindex;
  * Check value of P_format parameter.
  */
 bool_t
-set_format(window, new_value, interactive)
-Xviwin	*window;
+set_format(new_value, interactive)
 Paramval new_value;
 bool_t	interactive;
 {
     if (!txtformset(new_value.pv_i)) {
 	if (interactive) {
-	    show_error(window, "Invalid text file format (%d)",
-						new_value.pv_i);
+	    show_error("Invalid text file format (%d)", new_value.pv_i);
 	}
 	return(FALSE);
     }
@@ -235,8 +233,7 @@ initline()
  * gf_NEWFILE.
  */
 long
-get_file(window, filename, headp, tailp, extra_str, no_file_str)
-Xviwin		*window;
+get_file(filename, headp, tailp, extra_str, no_file_str)
 char		*filename;
 Line		**headp;
 Line		**tailp;
@@ -275,20 +272,20 @@ char		*no_file_str;
     unsigned		savecho;
 
     if (P_ischanged(P_format)) {
-	show_message(window, "\"%s\" [%s]%s", filename, fmtname, extra_str);
+	show_message("\"%s\" [%s]%s", filename, fmtname, extra_str);
     } else {
-	show_message(window, "\"%s\"%s", filename, extra_str);
+	show_message("\"%s\"%s", filename, extra_str);
     }
-    VSflush(window->w_vs);
+    VSflush(curwin->w_vs);
 
     fp = fopenrb(filename);
     if (fp == NULL) {
 	*headp = *tailp = NULL;
 	if (exists(filename)) {
-	    show_error(window, "Can't read \"%s\"", filename);
+	    show_error("Can't read \"%s\"", filename);
 	    return(gf_CANTOPEN);
 	} else {
-	    show_message(window, "\"%s\"%s", filename, no_file_str);
+	    show_message("\"%s\"%s", filename, no_file_str);
 	    return(gf_NEWFILE);
 	}
     }
@@ -480,11 +477,11 @@ char		*no_file_str;
 	 */
 	errs = flexgetstr(&errbuf);
 	if (P_ischanged(P_format)) {
-	    show_message(window, "\"%s\" [%s]%s %ld/%ld%s",
+	    show_message("\"%s\" [%s]%s %ld/%ld%s",
 				filename, fmtname, extra_str,
 				nlines, nchars, errs);
 	} else {
-	    show_message(window, "\"%s\"%s %ld/%ld%s",
+	    show_message("\"%s\"%s %ld/%ld%s",
 				filename, extra_str, nlines, nchars, errs);
 	}
 	flexdelete(&errbuf);
@@ -497,7 +494,7 @@ char		*no_file_str;
 
 nomem:
     nlines = gf_NOMEM;
-    show_error(window, out_of_memory);
+    show_error(out_of_memory);
 fail:
     throw(lptr);
     (void) fclose(fp);
@@ -507,7 +504,7 @@ fail:
 }
 
 /* Code common to writeit() and appendit(). */
-static bool_t write_file P((Xviwin *, char *, Line *, Line *, bool_t));
+static bool_t write_file P((char *, Line *, Line *, bool_t));
 
 /*
  * appendit - append to file 'fname' lines 'start' through 'end'
@@ -516,27 +513,24 @@ static bool_t write_file P((Xviwin *, char *, Line *, Line *, bool_t));
  * is to use the start or end of the file respectively.
  */
 bool_t
-appendit(window, fname, start, end, force)
-Xviwin	*window;
+appendit(fname, start, end, force)
 char	*fname;
 Line	*start, *end;
 bool_t	force;
 {
-    show_message(window,
-	    (P_ischanged(P_format) ? "\"%s\" [%s]" :  "\"%s\""),
-						fname, fmtname);
+    show_message(P_ischanged(P_format) ? "\"%s\" [%s]" :  "\"%s\"",
+		 fname, fmtname);
 
     if (!force && !exists(fname)) {
-	show_error(window, "\"%s\" No such file or directory", fname);
+	show_error("\"%s\" No such file or directory", fname);
 	return(FALSE);
     }
 
-    return(write_file(window, fname, start, end, TRUE));
+    return(write_file(fname, start, end, TRUE));
 }
 
 static bool_t
-write_file(window, fname, start, end, append)
-Xviwin	*window;
+write_file(fname, start, end, append)
 char	*fname;
 Line	*start, *end;
 bool_t	append;
@@ -545,25 +539,25 @@ bool_t	append;
     unsigned long	nc, nl;
 
     if (!Pb(P_writeany) && !can_write(fname)) {
-	show_error(window, "\"%s\" Permission denied", fname);
+	show_error("\"%s\" Permission denied", fname);
 	return(FALSE);
     }
 
     if (append) fp = fopenab(fname);
     else	fp = fopenwb(fname);
     if (fp == NULL) {
-	show_error(window, "Can't write \"%s\"", fname);
+	show_error("Can't write \"%s\"", fname);
 	return(FALSE);
     }
 
-    if (put_file(window, fp, start, end, &nc, &nl) == FALSE) {
+    if (put_file(fp, start, end, &nc, &nl) == FALSE) {
 	return(FALSE);
     }
 
     if (P_ischanged(P_format)) {
-	show_message(window, "\"%s\" [%s] %ld/%ld", fname, fmtname, nl, nc);
+	show_message("\"%s\" [%s] %ld/%ld", fname, fmtname, nl, nc);
     } else {
-	show_message(window, "\"%s\" %ld/%ld", fname, nl, nc);
+	show_message("\"%s\" %ld/%ld", fname, nl, nc);
     }
     return(TRUE);
 }
@@ -579,8 +573,7 @@ bool_t	append;
  * out buffers which have the "readonly" flag set.
  */
 bool_t
-writeit(window, fname, start, end, force)
-Xviwin	*window;
+writeit(fname, start, end, force)
 char	*fname;
 Line	*start, *end;
 bool_t	force;
@@ -588,7 +581,7 @@ bool_t	force;
     Buffer		*buffer;
     bool_t		need_preserve = FALSE;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
     if (buffer->b_filename != NULL &&
 		    strcmp(buffer->b_filename, fname) == 0) {
@@ -596,28 +589,27 @@ bool_t	force;
 	 * We are trying to write the file back to the original.
 	 */
 	if (is_readonly(buffer) && !force) {
-	    show_error(window, "\"%s\" File is read only", fname);
+	    show_error("\"%s\" File is read only", fname);
 	    return(FALSE);
 	}
 	need_preserve = TRUE;
     } else if (!force && exists(fname)) {
-	show_error(window, "File exists - use \"w! %s\" to overwrite", fname);
+	show_error("File exists - use \"w! %s\" to overwrite", fname);
 	return(FALSE);
     }
 
-    show_message(window,
-	    (P_ischanged(P_format) ? "\"%s\" [%s]" :  "\"%s\""),
-						fname, fmtname);
+    show_message(P_ischanged(P_format) ? "\"%s\" [%s]" :  "\"%s\"",
+		 fname, fmtname);
 
     /*
      * Preserve the buffer here so if the write fails it will at
      * least have been saved.
      */
-    if (need_preserve && !preservebuf(window)) {
+    if (need_preserve && !preservebuf()) {
 	return(FALSE);
     }
 
-    if (!write_file(window, fname, start, end, FALSE)) return(FALSE);
+    if (!write_file(fname, start, end, FALSE)) return(FALSE);
 
     /*
      * Make sure any preserve file is removed if it isn't wanted.
@@ -653,8 +645,7 @@ bool_t	force;
  * failure.
  */
 bool_t
-put_file(window, f, start, end, ncp, nlp)
-Xviwin		*window;
+put_file(f, start, end, ncp, nlp)
 register FILE	*f;
 Line		*start, *end;
 unsigned long	*ncp, *nlp;
@@ -667,7 +658,7 @@ unsigned long	*ncp, *nlp;
     unsigned long		nlines;
     Buffer			*buffer;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
 #ifdef	SETVBUF_AVAIL
     {

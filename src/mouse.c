@@ -28,11 +28,11 @@
  * Line starts.
  */
 static Line *
-findline(wp, row, pstartrow)
-Xviwin		*wp;
+findline(row, pstartrow)
 register int	row;
 int		*pstartrow;
 {
+    Xviwin		*wp = curwin;
     register int	lposn;
     int			maxrow;
     register Line	*lp;
@@ -44,7 +44,7 @@ int		*pstartrow;
     for (;;) {
 	register int	newposn;
 
-	newposn = lposn + LONG2INT(plines(wp, lp));
+	newposn = lposn + LONG2INT(plines(lp));
 	if (
 	    (
 		/*
@@ -85,8 +85,7 @@ int		*pstartrow;
  * screen co-ordinates.
  */
 static void
-setcursor(wp, row, col)
-Xviwin	*wp;
+setcursor(row, col)
 int	row;		/* row where mouse was clicked */
 int	col;		/* column where mouse was clicked */
 {
@@ -94,10 +93,10 @@ int	col;		/* column where mouse was clicked */
     int		vcol;		/* virtual column */
     Line	*lp;		/* logical line corresponding to row */
 
-    lp = findline(wp, row, &startrow);
-    vcol = col + ((row - startrow) * wp->w_ncols);
-    move_cursor(wp, lp, 0);
-    xvMoveToColumn(wp->w_cursor, (wp->w_curswant = vcol));
+    lp = findline(row, &startrow);
+    vcol = col + ((row - startrow) * curwin->w_ncols);
+    move_cursor(lp, 0);
+    xvMoveToColumn(curwin->w_cursor, (curwin->w_curswant = vcol));
 }
 
 /*
@@ -146,18 +145,21 @@ int row1, row2, col1, col2;
 
 	if (wp->w_cmdline == row1) {
 	    unsigned savecho;
+	    Xviwin *savecurwin = curwin;
 
 	    savecho = echo;
 	    echo &= ~e_CHARUPDATE;
 
-	    (void) xvMoveStatusLine(wp, row2 - row1);
+	    curwin = wp;
+	    (void) xvMoveStatusLine(row2 - row1);
+	    curwin = savecurwin;
 
 	    echo = savecho;
 
-	    move_cursor_to_window(curwin);
-	    redraw_all(curwin, FALSE);
-	    cursupdate(curwin);
-	    wind_goto(curwin);
+	    move_cursor_to_window();
+	    redraw_all(FALSE);
+	    cursupdate();
+	    wind_goto();
 	}
     }
 }
@@ -199,6 +201,8 @@ int		col;	/* column the mouse cursor is in */
 	curbuf = wp->w_buffer;
     }
 
+    /* From here on, use curwin, not wp, in function calls */
+
     if (row == wp->w_cmdline) {
 	/*
 	 * If the mouse is on the status line of any window,
@@ -206,13 +210,13 @@ int		col;	/* column the mouse cursor is in */
 	 * applies whether or not it was already the current
 	 * window.
 	 */
-	show_file_info(wp, TRUE);
+	show_file_info(TRUE);
     } else {
 	/*
 	 * Move the cursor as near as possible to where the
 	 * mouse was clicked.
 	 */
-	setcursor(wp, row, col);
+	setcursor(row, col);
 
 	/*
 	 * If the window has at least 2 text rows, and ...
@@ -223,15 +227,15 @@ int		col;	/* column the mouse cursor is in */
 		 * ... we're on the top line of the
 		 * window - scroll down ...
 		 */
-		scrolldown(wp, (unsigned) 1);
-		redraw_window(wp, FALSE);
-	    } else if (row == wp->w_cmdline - 1) {
+		scrolldown((unsigned) 1);
+		redraw_window(FALSE);
+	    } else if (row == curwin->w_cmdline - 1) {
 		/*
 		 * ... or we're on the bottom line of
 		 * the window - scroll up ...
 		 */
-		scrollup(wp, (unsigned) 1);
-		redraw_window(wp, FALSE);
+		scrollup((unsigned) 1);
+		redraw_window(FALSE);
 	    }
 	}
     }
@@ -239,8 +243,8 @@ int		col;	/* column the mouse cursor is in */
     /*
      * Make sure physical screen and cursor position are updated.
      */
-    cursupdate(wp);
-    wind_goto(wp);
+    cursupdate();
+    wind_goto();
 }
 
 /*
@@ -262,10 +266,10 @@ int ypos;
 	return;
     }
 
-    show_file_info(curwin, TRUE);
+    show_file_info(TRUE);
 
     curwin = wp;
     curbuf = wp->w_buffer;
-    cursupdate(wp);
-    wind_goto(wp);
+    cursupdate();
+    wind_goto();
 }

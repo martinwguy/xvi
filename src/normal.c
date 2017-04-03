@@ -159,7 +159,7 @@ Cmd	*cmd;
     if ((cmd->cmd_flags & COMMAND) == 0) {
 	cmd->cmd_operator = NOP;
 	cmd->cmd_prenum = 0;
-	beep(curwin);
+	beep();
 	return(FALSE);
     }
 
@@ -211,7 +211,7 @@ Cmd	*cmd;
 	 * no operators need apply.
 	 */
 	if (cmd->cmd_target.p_line == NULL) {
-	    beep(curwin);
+	    beep();
 	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;
 	    /* Bad motions interrupt redos and mapped commands */
@@ -224,7 +224,7 @@ Cmd	*cmd;
 	 * context mark now (we only do this if the target worked).
 	 */
 	if (cmd->cmd_flags & LONG_DISTANCE) {
-	    setpcmark(curwin);
+	    setpcmark();
 	}
 
 	if (cmd->cmd_flags & SET_CURSOR_COL) {
@@ -239,7 +239,7 @@ Cmd	*cmd;
 	if (cmd->cmd_operator != NOP) {
 	    HandleOperator(cmd);
 	} else {
-	    move_cursor(curwin, cmd->cmd_target.p_line,
+	    move_cursor(cmd->cmd_target.p_line,
 				cmd->cmd_target.p_index);
 	}
 
@@ -249,7 +249,7 @@ Cmd	*cmd;
 	 * Since it isn't a target, no operators need apply.
 	 */
 	if (cmd->cmd_operator != NOP) {
-	    beep(curwin);
+	    beep();
 	    cmd->cmd_operator = NOP;
 	    return(FALSE);
 	}
@@ -272,14 +272,13 @@ Cmd	*cmd;
      */
     if (IsCharBased(cmd) && IsExclusive(cmd) &&
 			    eq(&cmd->cmd_startpos, &cmd->cmd_target)) {
-	beep(curwin);
+	beep();
 	cmd->cmd_operator = NOP;
 	return;
     }
 
     if (IsExclusive(cmd) && IsLineBased(cmd)) {
-	show_error(curwin,
-		    "Oops! I can't handle exclusive line-based operations!");
+	show_error("Oops! I can't handle exclusive line-based operations!");
 	cmd->cmd_operator = NOP;
 	return;
     }
@@ -326,13 +325,12 @@ Cmd	*cmd;
 	break;
 
     case '!':
-	specify_pipe_range(curwin, cmd->cmd_startpos.p_line,
-				    cmd->cmd_target.p_line);
-	cmd_init(curwin, '!');
+	specify_pipe_range(cmd->cmd_startpos.p_line, cmd->cmd_target.p_line);
+	cmd_init('!');
 	break;
 
     default:
-	beep(curwin);
+	beep();
     }
     cmd->cmd_operator = NOP;
 }
@@ -356,7 +354,7 @@ char	*pattern;
 
     cmd = curwin->w_cmd;
 
-    p = xvDoSearch(curwin, pattern, type);
+    p = xvDoSearch(pattern, type);
     if (p == NULL) {
 	cmd->cmd_operator = NOP;
 	cmd->cmd_prenum = 0;
@@ -371,9 +369,9 @@ char	*pattern;
 	HandleOperator(cmd);
     } else {
 	curwin->w_set_want_col = TRUE;
-	setpcmark(curwin);
-	move_cursor(curwin, p->p_line, p->p_index);
-	move_window_to_cursor(curwin);
+	setpcmark();
+	move_cursor(p->p_line, p->p_index);
+	move_window_to_cursor();
     }
     return(TRUE);
 }
@@ -406,7 +404,7 @@ void
 do_badcmd(cmd)
 Cmd	*cmd;
 {
-    beep(curwin);
+    beep();
 }
 
 void

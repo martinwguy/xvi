@@ -52,8 +52,8 @@ xvEvent	*ev;
 	break;
 
     case Ev_refresh:
-	/*redraw_all((Xviwin *) ev->ev_vs->pv_window, ev->ev_do_clear);*/
-	redraw_all((Xviwin *) ev->ev_vs->pv_window, TRUE);
+	/*redraw_all(ev->ev_do_clear);*/
+	redraw_all(TRUE);
 	break;
 
     case Ev_resize:
@@ -67,12 +67,12 @@ xvEvent	*ev;
 		 * This is very difficult to fix...
 		 */
 		(void) exPreserveAllBuffers();
-		show_error(win, out_of_memory);
+		show_error(out_of_memory);
 	    }
 	    xvAdjustWindows(ev->ev_vs, (ev->ev_columns != 0));
-	    move_cursor_to_window(curwin);
-	    cursupdate(curwin);
-	    wind_goto(curwin);	/* ensure cursor is where it should be */
+	    move_cursor_to_window();
+	    cursupdate();
+	    wind_goto();	/* ensure cursor is where it should be */
 	    break;
 	}
 	break;
@@ -105,7 +105,7 @@ xvEvent	*ev;
 	 * We only allow editor suspension in top-level command state.
 	 */
 	if (State == NORMAL) {
-	    exSuspend(curwin, FALSE);
+	    exSuspend(FALSE);
 	} else if (State == SUBNORMAL) {
 	    /*
 	     * Treat ^Z as 2nd char of a two-char command as being an ESCAPE.
@@ -114,7 +114,7 @@ xvEvent	*ev;
 	     */
 	    map_char(ESC);
 	} else {
-	    beep(curwin);
+	    beep();
 	}
 	break;
 
@@ -167,7 +167,7 @@ xvEvent	*ev;
 	}
 
 	if (Pb(P_showmode) && (State == INSERT || State == REPLACE || State == NORMAL)) {
-	    update_sline(curwin);
+	    update_sline();
 	}
 
 	/*
@@ -185,10 +185,10 @@ xvEvent	*ev;
 	case INSERT:
 	case REPLACE:
 	    if (do_update) {
-		move_window_to_cursor(curwin);
-		cursupdate(curwin);
+		move_window_to_cursor();
+		cursupdate();
 	    }
-	    wind_goto(curwin);
+	    wind_goto();
 	    break;
 
 	case EXITING:
@@ -202,8 +202,8 @@ xvEvent	*ev;
     }
 
     if (imessage) {
-	show_message(curwin, "Interrupted");
-	wind_goto(curwin);	/* put cursor back */
+	show_message("Interrupted");
+	wind_goto();	/* put cursor back */
 	imessage = FALSE;
     }
 
@@ -251,12 +251,12 @@ int	c;
     char	*savedline;
     bool_t	retval = TRUE;
 
-    switch (cmd_input(curwin, c)) {
+    switch (cmd_input(c)) {
     case cmd_CANCEL:
 	/*
 	 * Put the status line back as it should be.
 	 */
-	info_update(curwin);
+	info_update();
 	break;
 
     case cmd_INCOMPLETE:
@@ -264,7 +264,7 @@ int	c;
 	break;
 
     case cmd_COMPLETE:
-	cmdline = get_cmd(curwin);
+	cmdline = get_cmd();
 	savedline = strsave(cmdline);
 	switch (cmdline[0]) {
 	case '/':
@@ -275,7 +275,7 @@ int	c;
 	    break;
 
 	case '!':
-	    if (!do_pipe(curwin, cmdline + 1)) {
+	    if (!do_pipe(cmdline + 1)) {
 		unstuff();
 	    }
 	    break;
@@ -304,5 +304,5 @@ static bool_t
 d_proc(c)
 int	c;
 {
-    return(disp_screen(curwin, c));
+    return(disp_screen(c));
 }

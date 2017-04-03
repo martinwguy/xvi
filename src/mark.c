@@ -69,10 +69,9 @@ Line	*line;
  * setpcmark() - set the previous context mark to the current position
  */
 void
-setpcmark(window)
-Xviwin	*window;
+setpcmark()
 {
-    window->w_buffer->b_pcmark.m_line = window->w_cursor->p_line;
+    curwin->w_buffer->b_pcmark.m_line = curwin->w_cursor->p_line;
 }
 
 /*

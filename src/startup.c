@@ -134,7 +134,7 @@ char	*envp;				/* init string from the environment */
      */
     init_yankput();
 
-    init_sline(curwin);
+    init_sline();
 
     /*
      * Save a copy of the passed environment string in case it was
@@ -267,7 +267,7 @@ char	*envp;				/* init string from the environment */
 		    usage();
 		    return(NULL);
 		}
-		exSet(curwin, 1, &argv[count], FALSE);
+		exSet(1, &argv[count], FALSE);
 		break;
 
 	    case 'w':	/* "window" size, not used in xvi */
@@ -347,7 +347,7 @@ char	*envp;				/* init string from the environment */
     /*
      * Initialise the cursor.
      */
-    move_cursor(curwin, curbuf->b_file, 0);
+    move_cursor(curbuf->b_file, 0);
     curwin->w_col = 0;
     curwin->w_row = 0;
 
@@ -364,15 +364,15 @@ char	*envp;				/* init string from the environment */
 	    echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
 	}
 
-	(void) exNext(curwin, numfiles, files, FALSE);
+	(void) exNext(numfiles, files, FALSE);
 
 	/* If there are more than one window, move to the first */
 	if (curwin->w_last != NULL) {
 	    do {
 		curwin = curwin->w_last;
 	    } while (curwin->w_last != NULL);
-	    xvUseWindow(curwin);
 	    curbuf = curwin->w_buffer;
+	    xvUseWindow();
 	}
 
 	if (pat != NULL) {
@@ -381,10 +381,10 @@ char	*envp;				/* init string from the environment */
 	    echo = e_CHARUPDATE | e_SHOWINFO |
 			e_REGERR | e_NOMATCH | e_ALLOCFAIL;
 
-	    p = xvDoSearch(curwin, pat, '/');
+	    p = xvDoSearch(pat, '/');
 	    if (p != NULL) {
-		setpcmark(curwin);
-		move_cursor(curwin, p->p_line, p->p_index);
+		setpcmark();
+		move_cursor(p->p_line, p->p_index);
 		curwin->w_set_want_col = TRUE;
 	    }
 	} else if (line != 0) {
@@ -397,7 +397,7 @@ char	*envp;				/* init string from the environment */
 
     } else if (tag != NULL) {
 	echo = e_CHARUPDATE | e_SHOWINFO | e_REGERR | e_NOMATCH | e_ALLOCFAIL;
-	if (exTag(curwin, tag, FALSE, TRUE, FALSE) == FALSE) {
+	if (exTag(tag, FALSE, TRUE, FALSE) == FALSE) {
 	    /*
 	     * Failed to find tag - wait for a while
 	     * to allow user to read tags error and then
@@ -405,11 +405,11 @@ char	*envp;				/* init string from the environment */
 	     */
 	    VSflush(curwin->w_vs);
 	    sleep(2);
-	    show_file_info(curwin, TRUE);
+	    show_file_info(TRUE);
 	}
     } else {
 	echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
-	show_file_info(curwin, TRUE);
+	show_file_info(TRUE);
     }
 
     /* Run any commands given with -c flag */
@@ -421,25 +421,25 @@ char	*envp;				/* init string from the environment */
 	free(commands);
     }
 
-    setpcmark(curwin);
+    setpcmark();
 
     echo = e_CHARUPDATE | e_ALLOCFAIL;
 
     /*
      * Ensure we are at the right screen position.
      */
-    move_window_to_cursor(curwin);
+    move_window_to_cursor();
 
     /*
      * Redraw the screen.
      */
-    redraw_all(curwin, FALSE);
+    redraw_all(FALSE);
 
     /*
      * Update the cursor position on the screen, and go there.
      */
-    cursupdate(curwin);
-    wind_goto(curwin);
+    cursupdate();
+    wind_goto();
 
     /*
      * Allow everything.

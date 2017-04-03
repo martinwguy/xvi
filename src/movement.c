@@ -28,8 +28,7 @@
  * Return number of physical lines shifted.
  */
 int
-shiftdown(win, nlines)
-register Xviwin	*win;
+shiftdown(nlines)
 unsigned	nlines;
 {
     register unsigned	k;		/* loop counter */
@@ -42,14 +41,14 @@ unsigned	nlines;
 	/*
 	 * Set the top screen line to the previous one.
 	 */
-	p = win->w_topline->l_prev;
-	if (p == win->w_buffer->b_line0)
+	p = curwin->w_topline->l_prev;
+	if (p == curwin->w_buffer->b_line0)
 	    break;
 
-	physlines = plines(win, p);
+	physlines = plines(p);
 	done += LONG2INT(physlines);
 
-	win->w_topline = p;
+	curwin->w_topline = p;
     }
 
     return(done);
@@ -62,8 +61,7 @@ unsigned	nlines;
  * Return number of physical lines shifted.
  */
 int
-shiftup(win, nlines)
-register Xviwin	*win;
+shiftup(nlines)
 unsigned	nlines;
 {
     register unsigned	k;		/* loop counter */
@@ -76,14 +74,14 @@ unsigned	nlines;
 	/*
 	 * Set the top screen line to the next one.
 	 */
-	p = win->w_topline->l_next;
-	if (p == win->w_buffer->b_lastline)
+	p = curwin->w_topline->l_next;
+	if (p == curwin->w_buffer->b_lastline)
 	    break;
 
-	physlines = plines(win, win->w_topline);
+	physlines = plines(curwin->w_topline);
 	done += LONG2INT(physlines);
 
-	win->w_topline = p;
+	curwin->w_topline = p;
     }
 
     return(done);
@@ -93,22 +91,20 @@ unsigned	nlines;
  * Scroll the screen down 'nlines' lines.
  */
 void
-scrolldown(win, nlines)
-register Xviwin	*win;
+scrolldown(nlines)
 unsigned	nlines;
 {
-    s_ins(win, 0, shiftdown(win, nlines));
+    s_ins(0, shiftdown(nlines));
 }
 
 /*
  * Scroll the screen up 'nlines' lines.
  */
 void
-scrollup(win, nlines)
-register Xviwin	*win;
+scrollup(nlines)
 unsigned	nlines;
 {
-    s_del(win, 0, shiftup(win, nlines));
+    s_del(0, shiftup(nlines));
 }
 
 /*
@@ -176,12 +172,11 @@ bool_t	too_many_is_OK;
 }
 
 bool_t
-one_left(window, unused)
-Xviwin	*window;
+one_left(unused)
 bool_t	unused;
 {
-    window->w_set_want_col = TRUE;
-    return(xvMoveLeft(window->w_cursor, unused));
+    curwin->w_set_want_col = TRUE;
+    return(xvMoveLeft(curwin->w_cursor, unused));
 }
 
 /*ARGSUSED*/
@@ -204,12 +199,11 @@ bool_t	unused;
  * never move past this character.
  */
 bool_t
-one_right(window, move_past_end)
-Xviwin	*window;
+one_right(move_past_end)
 bool_t	move_past_end;
 {
-    window->w_set_want_col = TRUE;
-    return(xvMoveRight(window->w_cursor, move_past_end));
+    curwin->w_set_want_col = TRUE;
+    return(xvMoveRight(curwin->w_cursor, move_past_end));
 }
 
 bool_t
@@ -230,12 +224,11 @@ bool_t	move_past_end;
 }
 
 void
-begin_line(window, flag)
-Xviwin	*window;
+begin_line(flag)
 bool_t	flag;
 {
-    xvSetPosnToStartOfLine(window->w_cursor, flag);
-    window->w_set_want_col = TRUE;
+    xvSetPosnToStartOfLine(curwin->w_cursor, flag);
+    curwin->w_set_want_col = TRUE;
 }
 
 void
@@ -299,20 +292,19 @@ void
 xvMoveToLineNumber(line)
 long line;
 {
-    move_cursor(curwin, gotoline(curbuf, (unsigned long) line), 0);
-    begin_line(curwin, TRUE);
+    move_cursor(gotoline(curbuf, (unsigned long) line), 0);
+    begin_line(TRUE);
 }
 
 /*
  * Move the cursor to the specified line, at the specified position.
  */
 void
-move_cursor(win, lp, index)
-Xviwin	*win;
+move_cursor(lp, index)
 Line	*lp;
 int	index;
 {
-    Buffer *buffer = win->w_buffer;
+    Buffer *buffer = curwin->w_buffer;
     Posn *p;
 
     /*
@@ -324,10 +316,10 @@ int	index;
 	buffer->b_Undotext = strsave(lp->l_text);
 	buffer->b_prevline = lp;
     }
-    p = win->w_cursor;
+    p = curwin->w_cursor;
     p->p_line = lp;
     p->p_index = index;
-    info_update(win);
+    info_update();
 }
 
 /*
@@ -337,28 +329,27 @@ int	index;
  * Don't update the screen: move_window_to_cursor() does that.
  */
 static void
-jump(win, currline, halfwinsize)
-Xviwin		*win;
+jump(currline, halfwinsize)
 Line		*currline;
 int		halfwinsize;
 {
     register int	count;
     register int	spare;
     register Line	*topline;
-    register Line	*filestart = win->w_buffer->b_file;
+    register Line	*filestart = curwin->w_buffer->b_file;
 
-    spare = win->w_nrows - (unsigned int) plines(win, topline = currline) - 1;
+    spare = curwin->w_nrows - (unsigned int) plines(topline = currline) - 1;
     for (count = 0; count < halfwinsize && topline != filestart;) {
 	topline = topline->l_prev;
-	count += (unsigned int) plines(win, topline);
+	count += (unsigned int) plines(topline);
 	if (count >= spare) {
 	    if (count > spare)
 		topline = topline->l_next;
 	    break;
 	}
     }
-    win->w_topline = topline;
-    xvUpdateAllBufferWindows(win->w_buffer);
+    curwin->w_topline = topline;
+    xvUpdateAllBufferWindows(curwin->w_buffer);
 
     /*
      * The result of calling info_update here is that if the
@@ -366,7 +357,7 @@ int		halfwinsize;
      * - the status line is updated with the correct line number.
      * This is a small cost compared to updating the whole window.
      */
-    info_update(win);
+    info_update();
 }
 
 /*
@@ -384,8 +375,7 @@ int		halfwinsize;
  * compared to updating the whole window.
  */
 void
-move_window_to_cursor(win)
-register Xviwin		*win;
+move_window_to_cursor()
 {
     register Line	*currline;
     int			halfwinsize;
@@ -394,6 +384,7 @@ register Xviwin		*win;
     int			start_row;
     int			end_row;
     Line		*topline;
+    Xviwin		*win = curwin;
 
     currline = win->w_cursor->p_line;
     halfwinsize = (win->w_nrows - 1) / 2;
@@ -405,7 +396,7 @@ register Xviwin		*win;
     /*
      * First stage: move window towards cursor.
      */
-    if (bufempty(win->w_buffer)) {
+    if (bufempty(curwin->w_buffer)) {
 	/*
 	 * Special case - file is empty.
 	 */
@@ -421,7 +412,7 @@ register Xviwin		*win;
 	 * window towards it.
 	 */
 
-	nlines = cntplines(win, currline, topline);
+	nlines = cntplines(currline, topline);
 
 	/*
 	 * Decide whether it's worthwhile - & possible - to scroll to
@@ -445,11 +436,11 @@ register Xviwin		*win;
 		! VScan_scroll(vsp, start_row, end_row + 1, (int) -nlines)
 	    )
 	) {
-	    jump(win, currline, halfwinsize);
+	    jump(currline, halfwinsize);
 	} else {
-	    s_ins(win, 0, (int) nlines);
+	    s_ins(0, (int) nlines);
 	    win->w_topline = currline;
-	    redraw_window(win, FALSE);
+	    redraw_window(FALSE);
 	}
     } else {
 	long	nlines;
@@ -463,11 +454,11 @@ register Xviwin		*win;
 	 * called very often, so we must not take too much time.
 	 */
 	if (earlier(currline, win->w_botline->l_prev) ||
-			    (plines(win, currline) == 1 &&
+			    (plines(currline) == 1 &&
 			     earlier(currline, win->w_botline))) {
 	    return;
 	}
-	distance = cntplines(win, topline, currline->l_next);
+	distance = cntplines(topline, currline->l_next);
 	if (distance <= win->w_nrows - 1) {
 	    return;
 	}
@@ -502,7 +493,7 @@ register Xviwin		*win;
 		! VScan_scroll(vsp, start_row, end_row + 1, (int) nlines)
 	    )
 	) {
-	    jump(win, currline, halfwinsize);
+	    jump(currline, halfwinsize);
 	} else {
 	    long	done = 0;
 	    Line	*l;
@@ -514,14 +505,14 @@ register Xviwin		*win;
 	     * bottom line of the screen.
 	     */
 	    for (l = currline;; l = l->l_prev) {
-		done += plines(win, l);
+		done += plines(l);
 		if (done >= win->w_nrows - 1)
 		    break;
 		if (l == win->w_buffer->b_file)
 		    break;
 	    }
 	    while (done > win->w_nrows - 1 && l != currline) {
-		done -= plines(win, l);
+		done -= plines(l);
 		l = l->l_next;
 	    }
 	    newtopline = l;
@@ -534,15 +525,15 @@ register Xviwin		*win;
 	     * first.
 	     */
 	    if (earlier(topline, newtopline)) {
-		done = cntplines(win, topline, newtopline);
+		done = cntplines(topline, newtopline);
 
 		if (done != 0) {
-		    s_del(win, 0, (int) done);
+		    s_del(0, (int) done);
 		}
 	    }
 
 	    win->w_topline = newtopline;
-	    redraw_window(win, FALSE);
+	    redraw_window(FALSE);
 	}
     }
 }
@@ -553,21 +544,21 @@ register Xviwin		*win;
  * This is needed for commands like control-E & control-Y.
  */
 void
-move_cursor_to_window(win)
-Xviwin		*win;
+move_cursor_to_window()
 {
+    Xviwin	*win = curwin;
     Posn	*cp;
 
     cp = win->w_cursor;
 
     if (earlier(cp->p_line, win->w_topline)) {
 	cp->p_line = win->w_topline;
-	info_update(win);
+	info_update();
 	xvMoveToColumn(win->w_cursor, win->w_curswant);
     } else if (!earlier(cp->p_line, win->w_botline)
 	       && earlier(win->w_topline, win->w_botline)) {
 	cp->p_line = win->w_botline->l_prev;
-	info_update(win);
+	info_update();
 	xvMoveToColumn(win->w_cursor, win->w_curswant);
     }
 }

@@ -510,19 +510,19 @@ bool_t	interactive;			/* true if reading from tty */
 	 * Otherwise, it's just a simple shell command.
 	 */
 	if (l_line != NULL) {
-	    specify_pipe_range(curwin, l_line, u_line);
-	    if (!do_pipe(curwin, arg)) {
+	    specify_pipe_range(l_line, u_line);
+	    if (!do_pipe(arg)) {
 		error++;
 	    }
 	} else {
-	    if (!exShellCommand(curwin, arg)) {
+	    if (!exShellCommand(arg)) {
 		error++;
 	    }
 	}
 	break;
 
     case EX_ARGS:
-	if (!exArgs(curwin)) {
+	if (!exArgs()) {
 	    error++;
 	}
 	break;
@@ -530,11 +530,11 @@ bool_t	interactive;			/* true if reading from tty */
     case EX_BUFFER:
 	if (arg != NULL)
 	    echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-	if (!exNewBuffer(curwin, arg, 0)) {
+	if (!exNewBuffer(arg, 0)) {
 	    error++;
 	}
-	move_window_to_cursor(curwin);
-	redraw_window(curwin, FALSE);
+	move_window_to_cursor();
+	redraw_window(FALSE);
 	break;
 
     case EX_CHDIR:
@@ -549,7 +549,7 @@ bool_t	interactive;			/* true if reading from tty */
 
 	    if ((dirp = alloc(MAXPATHLEN + 2)) != NULL &&
 		getcwd(dirp, MAXPATHLEN + 2) != NULL) {
-		show_message(curwin, "%s", dirp);
+		show_message("%s", dirp);
 	    }
 	    if (dirp) {
 		free(dirp);
@@ -559,7 +559,7 @@ bool_t	interactive;			/* true if reading from tty */
     }
 
     case EX_CLOSE:
-	if (!exCloseWindow(curwin, exclam)) {
+	if (!exCloseWindow(exclam)) {
 	    error++;
 	}
 	break;
@@ -590,20 +590,20 @@ bool_t	interactive;			/* true if reading from tty */
 		break;
 	    }
 	}
-	update_sline(curwin);
+	update_sline();
 	break;
     }
 
     case EX_EDIT:
     case EX_VISUAL:			/* treat :vi as :edit */
 	echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-	if (!exEditFile(curwin, exclam, arg)) {
+	if (!exEditFile(exclam, arg)) {
 	    error++;
 	}
-	move_window_to_cursor(curwin);
+	move_window_to_cursor();
 	xvUpdateAllBufferWindows(curbuf);
 #if 0
-	show_file_info(curwin, TRUE);
+	show_file_info(TRUE);
 #endif
 	break;
 
@@ -612,21 +612,21 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_FILE:
-	exShowFileStatus(curwin, arg);
+	exShowFileStatus(arg);
 	break;
 
     case EX_GLOBAL:
-	if (!exGlobal(curwin, l_line, u_line, arg, !exclam)) {
+	if (!exGlobal(l_line, u_line, arg, !exclam)) {
 	    error++;
 	}
 	break;
 
     case EX_HELP:
-	exHelp(curwin);
+	exHelp();
 	break;
 
     case EX_JOIN:
-	if (!exJoin(curwin, l_line, u_line, exclam)) {
+	if (!exJoin(l_line, u_line, exclam)) {
 	    error++;
 	}
 	break;
@@ -673,7 +673,7 @@ bool_t	interactive;			/* true if reading from tty */
 	 * xvUpdateAllBufferWindows() as required, so we don't
 	 * have to do any of that here.
 	 */
-	if (!exNext(curwin, argc, argv, exclam)) {
+	if (!exNext(argc, argv, exclam)) {
 	    error++;
 	}
 	break;
@@ -698,8 +698,8 @@ bool_t	interactive;			/* true if reading from tty */
 	    lastline = u_line->l_next;
 	}
 	do_line_numbers = (Pb(P_number) || command == EX_NUMBER);
-	disp_init(curwin, show_line, (int) curwin->w_ncols,
-				command == EX_LIST || Pb(P_list));
+	disp_init(show_line, (int) curwin->w_ncols,
+		  command == EX_LIST || Pb(P_list));
 	break;
 
     case EX_PUT:
@@ -713,33 +713,33 @@ bool_t	interactive;			/* true if reading from tty */
 	    where.p_index = curwin->w_cursor->p_index;
 	    where.p_line = curwin->w_cursor->p_line;
 	}
-	do_put(curwin, &where, FORWARD, '@');
+	do_put(&where, FORWARD, '@');
 	break;
     }
 
     case EX_QUIT:
-	exQuit(curwin, exclam);
+	exQuit(exclam);
 	break;
 
     case EX_REWIND:
-	if (!exRewind(curwin, exclam)) {
+	if (!exRewind(exclam)) {
 	    error++;
 	}
 	break;
 
     case EX_READ:
-	if (!exReadFile(curwin, arg, (l_line != NULL) ?
+	if (!exReadFile(arg, (l_line != NULL) ?
 				l_line : curwin->w_cursor->p_line)) {
 	    error++;
 	}
 	break;
 
     case EX_SET:
-	exSet(curwin, argc, argv, interactive);
+	exSet(argc, argv, interactive);
 	break;
 
     case EX_SHELL:
-	exInteractiveShell(curwin, exclam);
+	exInteractiveShell(exclam);
 	break;
 
     case EX_SOURCE:
@@ -747,7 +747,7 @@ bool_t	interactive;			/* true if reading from tty */
 	    badcmd(interactive, "Missing filename");
 	} else if (exSource(interactive, arg) && interactive) {
 #if 0
-	    show_file_info(curwin, TRUE);
+	    show_file_info(TRUE);
 #endif
 	    ;
 	} else {
@@ -759,7 +759,7 @@ bool_t	interactive;			/* true if reading from tty */
 	/*
 	 * "split".
 	 */
-	exSplitWindow(curwin);
+	exSplitWindow();
 	break;
 
     case EX_SUBSTITUTE:
@@ -767,7 +767,7 @@ bool_t	interactive;			/* true if reading from tty */
     case EX_TILDE:
     {
 	long		nsubs;
-	register long	(*func) P((Xviwin *, Line *, Line *, char *));
+	register long	(*func) P((Line *, Line *, char *));
 
 	switch (command) {
 	case EX_SUBSTITUTE:
@@ -780,15 +780,15 @@ bool_t	interactive;			/* true if reading from tty */
 	    func = exTilde;
 	}
 
-	nsubs = (*func)(curwin, l_line, u_line, arg);
+	nsubs = (*func)(l_line, u_line, arg);
 	if (nsubs == 0) {
 	    error++;
 	}
 	xvUpdateAllBufferWindows(curbuf);
-	cursupdate(curwin);
-	begin_line(curwin, TRUE);
+	cursupdate();
+	begin_line(TRUE);
 	if (nsubs >= Pn(P_report)) {
-	    show_message(curwin, "%ld substitution%c",
+	    show_message("%ld substitution%c",
 			nsubs,
 			(nsubs > 1) ? 's' : ' ');
 	}
@@ -796,27 +796,27 @@ bool_t	interactive;			/* true if reading from tty */
     }
 
     case EX_SUSPEND:
-	exSuspend(curwin, exclam);
+	exSuspend(exclam);
 	break;
 
     case EX_TAG:
-	if (!exTag(curwin, arg, exclam, TRUE, TRUE)) {
+	if (!exTag(arg, exclam, TRUE, TRUE)) {
 	    error++;
 	}
 	break;
 
     case EX_UNDO:
-	undo(curwin);
+	undo();
 	break;
 
     case EX_V:
-	if (!exGlobal(curwin, l_line, u_line, arg, FALSE)) {
+	if (!exGlobal(l_line, u_line, arg, FALSE)) {
 	    error++;;
 	}
 	break;
 
     case EX_VERSION:
-	show_message(curwin, Version);
+	show_message(Version);
 	break;
 
     case EX_WN:
@@ -824,12 +824,11 @@ bool_t	interactive;			/* true if reading from tty */
 	 * This is not a standard "vi" command, but it
 	 * is provided in PC vi, and it's quite useful.
 	 */
-	if (exWriteToFile(curwin, (char *) NULL, (Line *) NULL, (Line *) NULL,
-								exclam)) {
+	if (exWriteToFile((char *)NULL, (Line *)NULL, (Line *)NULL, exclam)) {
 	    /*
 	     * See comment for EX_NEXT (above).
 	     */
-	    if (!exNext(curwin, 0, argv, exclam)) {
+	    if (!exNext(0, argv, exclam)) {
 		error++;
 	    }
 	} else {
@@ -838,7 +837,7 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_WQ:
-	exWQ(curwin, arg, exclam);
+	exWQ(arg, exclam);
 	if (State != EXITING) error++;
 	break;
 
@@ -851,22 +850,22 @@ bool_t	interactive;			/* true if reading from tty */
 		    arg = NULL;
 		}
 	    } else {
-		show_error(curwin, "Write forms are 'w' and 'w>>'");
+		show_error("Write forms are 'w' and 'w>>'");
 		error++;
 		break;
 	    }
-	    if (!exAppendToFile(curwin, arg, l_line, u_line, exclam)) {
+	    if (!exAppendToFile(arg, l_line, u_line, exclam)) {
 		error++;
 	    }
 	} else {
-	    if (!exWriteToFile(curwin, arg, l_line, u_line, exclam)) {
+	    if (!exWriteToFile(arg, l_line, u_line, exclam)) {
 		error++;
 	    }
 	}
 	break;
 
     case EX_XIT:
-	if (!exXit(curwin)) {
+	if (!exXit()) {
 	    error++;
 	}
 	break;
@@ -878,11 +877,11 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_EXBUFFER:
-	yp_stuff_input(curwin, arg[0], FALSE);
+	yp_stuff_input(arg[0], FALSE);
 	break;
 
     case EX_EQUALS:
-	exEquals(curwin, l_line);
+	exEquals(l_line);
 	break;
 
     case EX_LSHIFT:
@@ -894,7 +893,7 @@ bool_t	interactive;			/* true if reading from tty */
 	    u_line = l_line;
 	}
 	tabinout((command == EX_LSHIFT) ? '<' : '>', l_line, u_line);
-	begin_line(curwin, TRUE);
+	begin_line(TRUE);
 	xvUpdateAllBufferWindows(curbuf);
 	break;
 
@@ -909,8 +908,8 @@ bool_t	interactive;			/* true if reading from tty */
 	    if (l_line == curbuf->b_line0) {
 		l_line = l_line->l_next;
 	    }
-	    move_cursor(curwin, l_line, 0);
-	    begin_line(curwin, TRUE);
+	    move_cursor(l_line, 0);
+	    begin_line(TRUE);
 	}
 	break;
 
@@ -1304,8 +1303,7 @@ get_line(cpp, startline, lpp)
 
     case '/':
     case '?':
-	pos = linesearch(curwin, startline,
-			(c == '/') ? FORWARD : BACKWARD, &cp);
+	pos = linesearch(startline, (c == '/') ? FORWARD : BACKWARD, &cp);
 	if (pos == NULL) {
 	    return FALSE;
 	}
@@ -1331,7 +1329,7 @@ get_line(cpp, startline, lpp)
     {
 	pos = getmark(*cp++, curbuf);
 	if (pos == NULL) {
-	    show_error(curwin, "Unknown mark");
+	    show_error("Unknown mark");
 	    return FALSE;
 	}
 	break;
@@ -1401,7 +1399,7 @@ bool_t	interactive;
 char	*str;
 {
     if (interactive) {
-	show_error(curwin, str);
+	show_error(str);
     }
     /* Halt any macros being executed */
     unstuff();
@@ -1449,14 +1447,14 @@ char	*str;
 	    switch (*from) {
 	    case '%':
 		if (curbuf->b_filename == NULL) {
-		    show_error(curwin, "Current filename is not set");
+		    show_error("Current filename is not set");
 		    return(NULL);
 		}
 		(void) lformat(&newstr, "%s", curbuf->b_filename);
 		break;
 	    case '#':
 	        if (alt_file_name() == NULL) {
-		    show_error(curwin, "Alternate filename is not set");
+		    show_error("Alternate filename is not set");
 		    return(NULL);
 		}
 		(void) lformat(&newstr, "%s", alt_file_name());

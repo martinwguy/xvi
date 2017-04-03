@@ -39,7 +39,7 @@ register Cmd	*cmd;
      * cursor is in the range of lines specified, which is normally
      * will be.
      */
-    begin_line(curwin, TRUE);
+    begin_line(TRUE);
     xvUpdateAllBufferWindows(curbuf);
 
     /*
@@ -71,7 +71,7 @@ register Cmd	*cmd;
 
     nlines = cntllines(cmd->cmd_startpos.p_line, cmd->cmd_target.p_line);
     if (nlines == 1) {
-        nplines = plines(curwin, cmd->cmd_startpos.p_line);
+        nplines = plines(cmd->cmd_startpos.p_line);
     }
 
     /*
@@ -91,18 +91,18 @@ register Cmd	*cmd;
 	 * so that repllines will correctly update it and the screen
 	 * pointer, and update the screen.
 	 */
-	move_cursor(curwin, cmd->cmd_startpos.p_line, 0);
-	repllines(curwin, cmd->cmd_startpos.p_line, nlines, (Line *) NULL);
-	begin_line(curwin, TRUE);
-	info_update(curwin);	/* bcos the current line might have changed */
+	move_cursor(cmd->cmd_startpos.p_line, 0);
+	repllines(cmd->cmd_startpos.p_line, nlines, (Line *) NULL);
+	begin_line(TRUE);
+	info_update();	/* bcos the current line might have changed */
     } else {
 	if (cmd->cmd_startpos.p_line == cmd->cmd_target.p_line) {
 	    /*
 	     * Delete characters within line.
 	     */
 	    n = (cmd->cmd_target.p_index - cmd->cmd_startpos.p_index) + 1;
-	    replchars(curwin, cmd->cmd_startpos.p_line,
-			      cmd->cmd_startpos.p_index, n, "");
+	    replchars(cmd->cmd_startpos.p_line,
+		      cmd->cmd_startpos.p_index, n, "");
 	} else {
 	    /*
 	     * Character-based delete between lines.
@@ -111,35 +111,35 @@ register Cmd	*cmd;
 	     * one to delete the intervening lines, and
 	     * one to delete up to the target position.
 	     */
-	    if (!start_command(curwin)) {
+	    if (!start_command()) {
 		return;
 	    }
 
 	    /*
 	     * First delete part of the last line.
 	     */
-	    replchars(curwin, cmd->cmd_target.p_line, 0,
-			      cmd->cmd_target.p_index + 1, "");
+	    replchars(cmd->cmd_target.p_line, 0,
+		      cmd->cmd_target.p_index + 1, "");
 
 	    /*
 	     * Now replace the rest of the top line with the
 	     * remainder of the bottom line.
 	     */
-	    replchars(curwin, cmd->cmd_startpos.p_line,
-			      cmd->cmd_startpos.p_index,
-				INT_MAX,
-				cmd->cmd_target.p_line->l_text);
+	    replchars(cmd->cmd_startpos.p_line,
+		      cmd->cmd_startpos.p_index,
+		      INT_MAX,
+		      cmd->cmd_target.p_line->l_text);
 
 	    /*
 	     * Finally, delete all lines from (top + 1) to bot,
 	     * inclusive.
 	     */
-	    repllines(curwin, cmd->cmd_startpos.p_line->l_next,
+	    repllines(cmd->cmd_startpos.p_line->l_next,
 			    cntllines(cmd->cmd_startpos.p_line,
 				      cmd->cmd_target.p_line) - 1,
 			    (Line *) NULL);
 
-	    end_command(curwin);
+	    end_command();
 	}
 
 	/*
@@ -155,7 +155,7 @@ register Cmd	*cmd;
 		p->p_index--;
 	    }
 	}
-	move_cursor(curwin, cmd->cmd_startpos.p_line,
+	move_cursor(cmd->cmd_startpos.p_line,
 			    cmd->cmd_startpos.p_index);
     }
 
@@ -174,7 +174,7 @@ register Cmd	*cmd;
      * If the deletion only affected a single screen line,
      * don't bother updating the screen lines below it.
      */
-    updateline(curwin, !(IsCharBased(cmd) && nlines == 1 && nplines == 1));
+    updateline(!(IsCharBased(cmd) && nlines == 1 && nplines == 1));
 }
 
 /*
@@ -189,7 +189,7 @@ register Cmd	*cmd;
      * included in the meta-command and hence undo will
      * work properly.
      */
-    if (!start_command(curwin)) {
+    if (!start_command()) {
 	return;
     }
 
@@ -213,20 +213,19 @@ register Cmd	*cmd;
 
 	nlines = cntllines(lp, cmd->cmd_target.p_line);
 	if (nlines > 1) {
-	    repllines(curwin, lp->l_next, nlines - 1, (Line *) NULL);
+	    repllines(lp->l_next, nlines - 1, (Line *) NULL);
 	}
 
-	move_cursor(curwin, lp, 0);
+	move_cursor(lp, 0);
 
 	/*
 	 * This is not right; it won't do the right thing when
 	 * the cursor is in the whitespace of an indented line.
 	 * However, it will do for the moment.
 	 */
-	begin_line(curwin, TRUE);
+	begin_line(TRUE);
 
-	replchars(curwin, lp, curwin->w_cursor->p_index,
-						strlen(lp->l_text), "");
+	replchars(lp, curwin->w_cursor->p_index, strlen(lp->l_text), "");
 	xvUpdateAllBufferWindows(curbuf);
     } else {
 	bool_t	doappend;	/* true if we should do append, not insert */
@@ -240,7 +239,7 @@ register Cmd	*cmd;
 	xvOpDelete(cmd);
 
 	if (doappend) {
-	    (void) one_right(curwin, TRUE);
+	    (void) one_right(TRUE);
 	}
     }
 
@@ -266,7 +265,7 @@ register Cmd	*cmd;
     nlines = cntllines(cmd->cmd_startpos.p_line, cmd->cmd_target.p_line);
 
     if (nlines > Pn(P_report)) {
-	show_message(curwin, "%ld lines yanked", nlines);
+	show_message("%ld lines yanked", nlines);
     }
 
     (void) do_yank(curbuf, &cmd->cmd_startpos, &cmd->cmd_target,

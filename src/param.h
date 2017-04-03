@@ -52,7 +52,7 @@ typedef	struct	param {
      * Special function to set parameter.
      * This is called whenever the parameter is set by the user.
      */
-    bool_t	(*p_func) P((Xviwin *, Paramval, bool_t));
+    bool_t	(*p_func) P((Paramval, bool_t));
 
     /*
      * This field is used for strings, lists and enums.

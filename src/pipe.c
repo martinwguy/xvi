@@ -38,8 +38,7 @@ static	char	*lastcmd = NULL;	/* last command (used for !!) */
  * Note that we record the first and last+1th lines to make the loop easier.
  */
 void
-specify_pipe_range(window, l1, l2)
-Xviwin	*window;
+specify_pipe_range(l1, l2)
 Line	*l1;
 Line	*l2;
 {
@@ -53,9 +52,9 @@ Line	*l2;
 	l1 = l2;
 	l2 = tmp;
     }
-    line1 = (l1 != NULL) ? l1 : window->w_buffer->b_file;
-    line2 = (l2 != NULL) ? l2->l_next : window->w_buffer->b_lastline;
-    specwin = window;
+    line1 = (l1 != NULL) ? l1 : curwin->w_buffer->b_file;
+    line2 = (l2 != NULL) ? l2->l_next : curwin->w_buffer->b_lastline;
+    specwin = curwin;
 }
 
 /*
@@ -63,27 +62,25 @@ Line	*l2;
  * replacing the old set with its output.
  */
 bool_t
-do_pipe(window, command)
-Xviwin	*window;
+do_pipe(command)
 char	*command;
 {
     int	success;
 
-    if (line1 == NULL || line2 == NULL || specwin != window) {
-	show_error(window,
-	    "Internal error: pipe through badly-specified range.");
+    if (line1 == NULL || line2 == NULL || specwin != curwin) {
+	show_error("Internal error: pipe through badly-specified range.");
 	return(FALSE);
     }
     if (command[0] == '!' && command[1] == '\0' && lastcmd != NULL) {
 	command = lastcmd;
-	show_message(window, "!%s", command);
+	show_message("!%s", command);
     } else {
 	if (lastcmd != NULL) {
 	    free(lastcmd);
 	}
 	lastcmd = strsave(command);
     }
-    VSflush(window->w_vs);
+    VSflush(curwin->w_vs);
 
     /*
      * POSIX: "The specified lines shall be copied into the unnamed buffer
@@ -97,29 +94,29 @@ char	*command;
 	posn1.p_index = 0;
 	posn2.p_line = line2->l_prev;
 	posn2.p_index = 0;
-	do_yank(window->w_buffer, &posn1, &posn2, FALSE, '@');
+	do_yank(curwin->w_buffer, &posn1, &posn2, FALSE, '@');
     }
 
     newlines = NULL;
     success = sys_pipe(command, p_write, p_read);
     if (success) {
 	if (newlines != NULL) {
-	    repllines(window, line1, cntllines(line1, line2) - 1, newlines);
-	    xvUpdateAllBufferWindows(window->w_buffer);
-	    begin_line(window, TRUE);
+	    repllines(line1, cntllines(line1, line2) - 1, newlines);
+	    xvUpdateAllBufferWindows(curwin->w_buffer);
+	    begin_line(TRUE);
 	} else {
 	    /*
 	     * Command succeeded, but produced no output.
 	     */
-	    show_message(window, "Command produced no output");
-	    redraw_all(window, TRUE);
+	    show_message("Command produced no output");
+	    redraw_all(TRUE);
 	}
     } else {
-	show_error(window, "Failed to execute \"%s\"", command);
-	redraw_all(window, TRUE);
+	show_error("Failed to execute \"%s\"", command);
+	redraw_all(TRUE);
 	success = FALSE;
     }
-    cursupdate(window);
+    cursupdate();
 
     return(success);
 }
@@ -284,8 +281,7 @@ FILE	*fp;
  * Returns TRUE if everything seems to have succeeded.
  */
 bool_t
-xvWriteToCommand(window, command, l1, l2)
-Xviwin	*window;
+xvWriteToCommand(command, l1, l2)
 char	*command;
 Line	*l1, *l2;
 {
@@ -293,17 +289,17 @@ Line	*l1, *l2;
     bool_t	success;
 
     if (!subshells) {
-	show_error(window, "Can't shell escape from a window");
+	show_error("Can't shell escape from a window");
 	return FALSE;
     }
 
     if (l1 == NULL) {
-	line1 = window->w_buffer->b_file;
+	line1 = curwin->w_buffer->b_file;
     } else {
 	line1 = l1;
     }
     if (l2 == NULL) {
-	line2 = window->w_buffer->b_lastline;
+	line2 = curwin->w_buffer->b_lastline;
     } else {
 	line2 = l2->l_next;
     }
@@ -316,7 +312,7 @@ Line	*l1, *l2;
 	lastcmd = strsave(command);
     }
 
-    VSflush(window->w_vs);
+    VSflush(curwin->w_vs);
     sys_endv();
 
     (void) fputs(command, stdout);
@@ -333,11 +329,11 @@ Line	*l1, *l2;
     sys_startv();
 
     if (!success) {
-	show_error(window, "Failed to execute \"%s\"", command);
+	show_error("Failed to execute \"%s\"", command);
     }
 
-    redraw_all(window, TRUE);
-    cursupdate(window);
+    redraw_all(TRUE);
+    cursupdate();
 
     return(success);
 }
@@ -353,8 +349,7 @@ Line	*l1, *l2;
  * assumption is misplaced we may be in some serious shit. Ho hum.
  */
 bool_t
-xvReadFromCommand(window, command, atline)
-Xviwin	*window;
+xvReadFromCommand(command, atline)
 char	*command;
 Line	*atline;
 {
@@ -369,27 +364,27 @@ Line	*atline;
 	lastcmd = strsave(command);
     }
 
-    VSflush(window->w_vs);
+    VSflush(curwin->w_vs);
 
     newlines = NULL;
     success = sys_pipe(command, NOFUNC, p_read);
 
     if (success) {
 	if (newlines != NULL) {
-	    repllines(window, atline->l_next, 0L, newlines);
-	    xvUpdateAllBufferWindows(window->w_buffer);
-	    begin_line(window, TRUE);
+	    repllines(atline->l_next, 0L, newlines);
+	    xvUpdateAllBufferWindows(curwin->w_buffer);
+	    begin_line(TRUE);
 	} else {
 	    /*
 	     * Command succeeded, but produced no output.
 	     */
-	    show_message(window, "Command produced no output");
+	    show_message("Command produced no output");
 	}
     } else {
-	show_error(window, "Failed to execute \"%s\"", command);
+	show_error("Failed to execute \"%s\"", command);
     }
-    redraw_all(window, TRUE);
-    cursupdate(window);
+    redraw_all(TRUE);
+    cursupdate();
 
     return(success);
 }

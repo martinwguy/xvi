@@ -26,7 +26,7 @@
 overlay "ex_cmds2"
 #endif
 
-static	void	WarnUnSaved P((Xviwin *));
+static	void	WarnUnSaved P((void));
 
 /*
  * Run shell command.
@@ -51,31 +51,30 @@ static	void	WarnUnSaved P((Xviwin *));
  */
 /*ARGSUSED*/
 bool_t
-exShellCommand(window, command)
-Xviwin	*window;
+exShellCommand(command)
 char	*command;
 {
     int	c;
     int	status;
 
     if (!subshells) {
-	show_error(window, "Can't shell escape from a window");
+	show_error("Can't shell escape from a window");
 	return(FALSE);
     }
 
     sys_endv();
 
-    xvAutoWriteAll(window);
+    xvAutoWriteAll();
     /*
      * POSIX: "If autowrite is set, and the edit buffer has been modified
      * since it was last completely written to any file [and] the write
      * fails, it shall be an error and the command shall not be executed.
      */
-    if (Pb(P_autowrite) && xvChangesNotSaved(window)) {
-	show_error(window, nowrtmsg);
+    if (Pb(P_autowrite) && xvChangesNotSaved()) {
+	show_error(nowrtmsg);
 	return(FALSE);
     }
-    WarnUnSaved(window);
+    WarnUnSaved();
     (void) fputs(command, stdout);
     (void) fputs("\r\n", stdout);
     (void) fflush(stdout);
@@ -86,61 +85,59 @@ char	*command;
 	;
 
     sys_startv();
-    redraw_all(window, TRUE);
+    redraw_all(TRUE);
 
     return(status == 0);
 }
 
 void
-exInteractiveShell(window, force)
-Xviwin	*window;
+exInteractiveShell(force)
 bool_t	force;
 {
     char	*sh = NULL;
     int	sysret;
 
     if (!subshells) {
-	show_error(window, "Can't shell escape from a window");
+	show_error("Can't shell escape from a window");
 	return;
     }
 
     sh = Ps(P_shell);
     if (sh == NULL) {
-	show_error(window, "SHELL variable not set");
+	show_error("SHELL variable not set");
 	return;
     }
 
     if (!force) {
-	xvAutoWriteAll(window);
-	if (Pb(P_autowrite) && xvChangesNotSaved(window)) {
-	    show_error(window, nowrtmsg);
+	xvAutoWriteAll();
+	if (Pb(P_autowrite) && xvChangesNotSaved()) {
+	    show_error(nowrtmsg);
 	    return;
 	}
     }
 
     sys_endv();
 
-    WarnUnSaved(window);
+    WarnUnSaved();
 
     sysret = call_shell(sh);
 
     sys_startv();
-    redraw_all(window, TRUE);
+    redraw_all(TRUE);
 
     if (sysret != 0) {
 #ifdef STRERROR_AVAIL
-	show_error(window, "Can't execute %s [%s]", sh,
+	show_error("Can't execute %s [%s]", sh,
 			(errno > 0 ? strerror(errno) : "Unknown Error"));
 #else	/* strerror() not available */
-	show_error(window, "Can't execute %s", sh);
+	show_error("Can't execute %s", sh);
 #endif	/* strerror() not available */
     }
 }
 
 /*ARGSUSED*/
 void
-exSuspend(window, force)
-Xviwin	*window;
+exSuspend(force)
 bool_t	force;
 {
     if (State == NORMAL) {
@@ -152,16 +149,16 @@ bool_t	force;
 	extern volatile bool_t win_size_changed;
 
 	if (!force) {
-	    xvAutoWriteAll(window);
-	    if (Pb(P_autowrite) && xvChangesNotSaved(window)) {
-		show_error(window, nowrtmsg);
+	    xvAutoWriteAll();
+	    if (Pb(P_autowrite) && xvChangesNotSaved()) {
+		show_error(nowrtmsg);
 		return;
 	    }
 	}
 
 	sys_endv();
 
-	WarnUnSaved(window);
+	WarnUnSaved();
 
 	(void) kill(getpid(), SIGSTOP);
 
@@ -174,7 +171,7 @@ bool_t	force;
 	win_size_changed = TRUE;
 
 	sys_startv();
-	redraw_all(window, TRUE);
+	redraw_all(TRUE);
 
 #else /* SIGSTOP */
 
@@ -182,45 +179,43 @@ bool_t	force;
 	 * Can't suspend unless we're on a BSD UNIX system;
 	 * just pretend by invoking a shell instead.
 	 */
-	exInteractiveShell(window, force);
+	exInteractiveShell(force);
 
 #endif /* SIGSTOP */
     }
 }
 
 void
-exEquals(window, line)
-Xviwin	*window;
+exEquals(line)
 Line	*line;
 {
     if (line == NULL) {
 	/*
 	 * Default position is ".".
 	 */
-	line = window->w_cursor->p_line;
+	line = curwin->w_cursor->p_line;
     }
 
-    show_message(window, "%ld", lineno(line));
+    show_message("%ld", lineno(line));
 }
 
 void
-exHelp(window)
-Xviwin	*window;
+exHelp()
 {
     unsigned	savecho;
 
     savecho = echo;
     echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
     if (Ps(P_helpfile) != NULL &&
-		    exNewBuffer(window, fexpand(Ps(P_helpfile), FALSE), 0)) {
+		    exNewBuffer(fexpand(Ps(P_helpfile), FALSE), 0)) {
 	/*
 	 * We use "curbuf" here because the new buffer will
 	 * have been made the current one by do_buffer().
 	 */
 	curbuf->b_flags |= FL_READONLY;
-	move_window_to_cursor(curwin);
-	show_file_info(curwin, TRUE);
-	redraw_window(curwin, FALSE);
+	move_window_to_cursor();
+	show_file_info(TRUE);
+	redraw_window(FALSE);
     }
     echo = savecho;
 }
@@ -239,7 +234,7 @@ char	*file;
     fp = fopen(file, "r");
     if (fp == NULL) {
 	if (interactive) {
-	    show_error(curwin, "Can't open \"%s\"", file);
+	    show_error("Can't open \"%s\"", file);
 	}
 	return(FALSE);
     }
@@ -361,7 +356,7 @@ Line	*destline;		/* destination line for copy/move */
 
     if (type == 't' || type == 'm') {
 	if (destline == NULL) {
-	    show_error(curwin, "No destination specified");
+	    show_error("No destination specified");
 	    return(FALSE);
 	}
     }
@@ -376,7 +371,7 @@ Line	*destline;		/* destination line for copy/move */
 	destlineno = lineno(destline);
 	if (destlineno >= lineno(p1.p_line) &&
 			    destlineno <= lineno(p2.p_line)) {
-	    show_error(curwin, "Source conflicts with destination of move");
+	    show_error("Source conflicts with destination of move");
 	    return(FALSE);
 	}
     }
@@ -391,19 +386,19 @@ Line	*destline;		/* destination line for copy/move */
 	return(FALSE);
     }
 
-    if (!start_command(curwin)) {
+    if (!start_command()) {
 	return(FALSE);
     }
 
     switch (type) {
     case 'd':			/* delete */
     case 'm':			/* move */
-	move_cursor(curwin, p1.p_line, 0);
-	repllines(curwin, p1.p_line, cntllines(p1.p_line, p2.p_line),
+	move_cursor(p1.p_line, 0);
+	repllines(p1.p_line, cntllines(p1.p_line, p2.p_line),
 						(Line *) NULL);
 	xvUpdateAllBufferWindows(curbuf);
-	cursupdate(curwin);
-	begin_line(curwin, TRUE);
+	cursupdate();
+	begin_line(TRUE);
     }
 
     switch (type) {
@@ -414,13 +409,13 @@ Line	*destline;		/* destination line for copy/move */
 	 */
 	destpos.p_line = destline;
 	destpos.p_index = 0;
-	do_put(curwin, &destpos, FORWARD, '=');
+	do_put(&destpos, FORWARD, '=');
 
 	xvUpdateAllBufferWindows(curbuf);
-	cursupdate(curwin);
+	cursupdate();
     }
 
-    end_command(curwin);
+    end_command();
 
     return(TRUE);
 }
@@ -430,8 +425,7 @@ Line	*destline;		/* destination line for copy/move */
  * inclusive, or (by default) to the current line in window.
  */
 bool_t
-exJoin(window, l1, l2, exclam)
-Xviwin	*window;
+exJoin(l1, l2, exclam)
 Line	*l1, *l2;
 bool_t	exclam;
 {
@@ -448,11 +442,11 @@ bool_t	exclam;
     l3 = is_lastline(l2) ? l2 : l2->l_next;
 
     if (is_lastline(l1)) {
-	beep(window);
+	beep();
 	return(FALSE);
     }
 
-    if (!start_command(window)) {
+    if (!start_command()) {
 	return(FALSE);
     }
 
@@ -461,29 +455,28 @@ bool_t	exclam;
 	if (is_lastline(l1->l_next)) {
 	    break;
 	}
-	if (!xvJoinLine(window, l1, exclam)) {
-	    beep(window);
+	if (!xvJoinLine(l1, exclam)) {
+	    beep();
 	    success = FALSE;
 	    break;
 	}
 	/* Leave the cursor at the start of the joined line.
 	 * Original "vi" either does this or leaves it where it was,
 	 * apparently at random. */
-        move_cursor(window, l1, 0);
+        move_cursor(l1, 0);
     }
 
-    xvUpdateAllBufferWindows(window->w_buffer);
+    xvUpdateAllBufferWindows(curwin->w_buffer);
 
-    end_command(window);
+    end_command();
 
     return(success);
 }
 
 static void
-WarnUnSaved(window)
-Xviwin	*window;
+WarnUnSaved()
 {
-    if (Pb(P_warn) && xvChangesNotSaved(window)) {
+    if (Pb(P_warn) && xvChangesNotSaved()) {
 	fputs("[No write since last change]\r\n", stdout);
 	fflush(stdout);
     }

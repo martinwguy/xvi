@@ -139,13 +139,13 @@ tagword()
      * If the identifier is too long, just beep.
      */
     if (cp >= tagbuf + sizeof(tagbuf)) {
-	beep(curwin);
+	beep();
 	return;
     }
 
     *cp = '\0';
 
-    (void) exTag(curwin, tagbuf, FALSE, TRUE, TRUE);
+    (void) exTag(tagbuf, FALSE, TRUE, TRUE);
 }
 
 /*
@@ -161,8 +161,7 @@ tagword()
  * Returns TRUE if it succeeds, FALSE if it fails.
  */
 bool_t
-exTag(window, tag, force, interactive, split)
-Xviwin	*window;
+exTag(tag, force, interactive, split)
 char	*tag;			/* function to search for */
 bool_t	force;			/* if true, force re-edit */
 bool_t	interactive;		/* true if reading from tty */
@@ -185,19 +184,19 @@ bool_t	split;			/* true if want to split */
 
     if (tag == NULL || tag[0] == '\0') {
 	if (interactive) {
-	    show_error(window, "Usage: :tag <identifier>");
+	    show_error("Usage: :tag <identifier>");
 	} else {
-	    beep(window);
+	    beep();
 	}
 	return(FALSE);
     }
 
-    gotocmd(window, FALSE);
+    gotocmd(FALSE);
 
     tp = tagLookup(tag, &l1, &l2);
     if (tp == NULL) {
 	if (interactive) {
-	    show_error(window, hashtable==NULL	? "No tags file"
+	    show_error(hashtable==NULL	? "No tags file"
 						: "Tag not found");
 	}
 	return(FALSE);
@@ -218,29 +217,28 @@ bool_t	split;			/* true if want to split */
      *
      * Else just edit it in the current window.
      */
-    tagwindow = xvFindWindowByName(window, tp->t_file);
+    tagwindow = xvFindWindowByName(curwin, tp->t_file);
     if (tagwindow != NULL) {
 	curwin = tagwindow;
 	curbuf = curwin->w_buffer;
 	edited = TRUE;
 
-    } else if (split && xvCanSplit(window) &&
-				exNewBuffer(window, tp->t_file, 0)) {
+    } else if (split && xvCanSplit() && exNewBuffer(tp->t_file, 0)) {
 	edited = TRUE;
 
     } else {
 	if (!force) {
-	    xvAutoWrite(window);
-	    if (is_modified(window->w_buffer)) {
-		show_error(window, nowrtmsg);
+	    xvAutoWrite();
+	    if (is_modified(curwin->w_buffer)) {
+		show_error(nowrtmsg);
 		return(FALSE);
 	    }
 	}
 	if (!exists(tp->t_file)) {
-	    show_error(window, "File not found");
+	    show_error("File not found");
 	    return(FALSE);
 	}
-	if (!exEditFile(window, force, tp->t_file)) {
+	if (!exEditFile(force, tp->t_file)) {
 	    return(FALSE);
 	}
 	edited = TRUE;
@@ -297,25 +295,25 @@ bool_t	split;			/* true if want to split */
 	    old_wrapscan = Pb(P_wrapscan);
 	    set_param(P_wrapscan, TRUE);
 
-	    p = xvDoSearch(curwin, pattern, '/');
+	    p = xvDoSearch(pattern, '/');
 	    free(pattern);
 	    if (p != NULL) {
-		setpcmark(curwin);
-		move_cursor(curwin, p->p_line, p->p_index);
+		setpcmark();
+		move_cursor(p->p_line, p->p_index);
 		curwin->w_set_want_col = TRUE;
-		show_file_info(curwin, TRUE);
+		show_file_info(TRUE);
 	    } else {
-		beep(curwin);
+		beep();
 	    }
 	    set_param(P_regextype, old_rxtype, (char **) NULL);
 	    set_param(P_wrapscan, old_wrapscan);
 	    break;
 
 	default:
-	    show_error(curwin, "Ill-formed tag pattern \"%s\"", tp->t_locator);
+	    show_error("Ill-formed tag pattern \"%s\"", tp->t_locator);
 	}
-	move_window_to_cursor(curwin);
-	redraw_all(curwin, FALSE);
+	move_window_to_cursor();
+	redraw_all(FALSE);
     }
 
     return(edited);
@@ -516,8 +514,7 @@ tagFree()
  */
 /*ARGSUSED*/
 bool_t
-tagSetParam(win, new_value, interactive)
-Xviwin		*win;
+tagSetParam(new_value, interactive)
 Paramval	new_value;
 bool_t		interactive;
 {

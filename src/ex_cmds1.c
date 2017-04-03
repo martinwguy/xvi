@@ -36,8 +36,7 @@ static	char	nowrtbufs[] = "Some buffers not written (use ! to override)";
 static	bool_t	more_files P((void));
 
 void
-exQuit(window, force)
-Xviwin	*window;
+exQuit(force)
 bool_t	force;
 {
     Xviwin	*wp;
@@ -46,8 +45,8 @@ bool_t	force;
     if (force) {
 	canexit = TRUE;
     } else {
-	if (xvChangesNotSaved(window)) {
-	    show_error(window, nowrtbufs);
+	if (xvChangesNotSaved()) {
+	    show_error(nowrtbufs);
 	    canexit = FALSE;
 	} else {
 	    canexit = ! more_files();
@@ -59,10 +58,10 @@ bool_t	force;
 	 * Remove any preserve files we may have written - we don't
 	 * want to just leave them lying around, it's messy.
 	 */
-	wp = window;
+	wp = curwin;
 	do {
 	    unpreserve(wp->w_buffer);
-	} while ((wp = xvNextWindow(wp)) != window);
+	} while ((wp = xvNextWindow(wp)) != curwin);
 
 	State = EXITING;
     }
@@ -73,19 +72,18 @@ bool_t	force;
  * onto the same buffer.
  */
 void
-exSplitWindow(window)
-Xviwin	*window;
+exSplitWindow()
 {
     Xviwin		*newwin;
     Posn		*curposn;
     unsigned		savecho;
 
-    newwin = xvOpenWindow(window, 0);
+    newwin = xvOpenWindow(0);
     if (newwin == NULL) {
 	return;
     }
 
-    xvMapWindowOntoBuffer(newwin, window->w_buffer);
+    xvMapWindowOntoBuffer(newwin, curwin->w_buffer);
 
     /*
      * Update the status line of the old window
@@ -93,8 +91,8 @@ Xviwin	*window;
      * Also update the window - this will almost certainly
      * have no effect on the screen, but is necessary.
      */
-    show_file_info(window, TRUE);
-    redraw_window(window, FALSE);
+    show_file_info(TRUE);
+    redraw_window(FALSE);
 
     /*
      * Show the new window.
@@ -107,23 +105,24 @@ Xviwin	*window;
     savecho = echo;
     echo &= ~(e_CHARUPDATE | e_SCROLL | e_REPORT | e_SHOWINFO);
 
-    init_sline(newwin);
-    curposn = window->w_cursor;
-    move_cursor(newwin, curposn->p_line, curposn->p_index);
-    redraw_window(newwin, FALSE);
+    /* Remember cursor position */
+    curposn = curwin->w_cursor;
+
+    /* Update the global window variable. */
+    curwin = newwin;
+
+    /* Draw the new window */
+    init_sline();
+    move_cursor(curposn->p_line, curposn->p_index);
+    redraw_window(FALSE);
 
     echo = savecho;
 
-    move_window_to_cursor(newwin);
-    cursupdate(newwin);
+    move_window_to_cursor();
+    cursupdate();
 
-    redraw_window(newwin, FALSE);
-    show_file_info(newwin, TRUE);
-
-    /*
-     * Update the global window variable.
-     */
-    curwin = newwin;
+    redraw_window(FALSE);
+    show_file_info(TRUE);
 }
 
 /*
@@ -138,8 +137,7 @@ Xviwin	*window;
  * split the window evenly.
  */
 bool_t
-exNewBuffer(window, filename, sizehint)
-Xviwin	*window;
+exNewBuffer(filename, sizehint)
 char	*filename;
 int	sizehint;
 {
@@ -148,10 +146,10 @@ int	sizehint;
 
     new = new_buffer();
     if (new == NULL) {
-	show_error(window, "No more buffers!");
+	show_error("No more buffers!");
 	return(FALSE);
     }
-    newwin = xvOpenWindow(window, sizehint);
+    newwin = xvOpenWindow(sizehint);
     if (newwin == NULL) {
 	free_buffer(new);
 	return(FALSE);
@@ -169,17 +167,8 @@ int	sizehint;
      * Note that we don't need to call move_window_to_cursor() for
      * the old window until it becomes the current window again.
      */
-    show_file_info(window, TRUE);
-    init_sline(newwin);
-
-    if (filename != NULL) {
-	(void) exEditFile(newwin, FALSE, filename);
-    } else {
-	new->b_filename = new->b_tempfname = NULL;
-	show_file_info(newwin, TRUE);
-    }
-
-    redraw_window(window, FALSE);
+    show_file_info(TRUE);
+    redraw_window(FALSE);  /* superfluous?  stderr! */
 
     /*
      * The current buffer (a global variable) has
@@ -188,6 +177,15 @@ int	sizehint;
     curbuf = new;
     curwin = newwin;
 
+    init_sline();
+
+    if (filename != NULL) {
+	(void) exEditFile(FALSE, filename);
+    } else {
+	new->b_filename = new->b_tempfname = NULL;
+	show_file_info(TRUE);
+    }
+
     return(TRUE);
 }
 
@@ -195,24 +193,23 @@ int	sizehint;
  * "close" (the current window).
  */
 bool_t
-exCloseWindow(win, force)
-Xviwin	*win;
+exCloseWindow(force)
 bool_t	force;
 {
     Buffer	*buffer;
 
-    buffer = win->w_buffer;
+    buffer = curwin->w_buffer;
 
     /*
      * If the window is the only one onto a modified buffer, and
      * they are not forcing the close, don't allow it to happen.
      */
     if (is_modified(buffer) && !force && buffer->b_nwindows < 2) {
-	show_error(win, nowrtmsg);
+	show_error(nowrtmsg);
 	return(FALSE);
     }
 
-    if (win == xvNextWindow(win)) {
+    if (curwin == xvNextWindow(curwin)) {
 	/* There's only one window open */
 	if (more_files()) {
 	    /*
@@ -221,7 +218,7 @@ bool_t	force;
 	     */
 	    return(FALSE);
 	} else {
-	    (void) xvCloseWindow(win);
+	    (void) xvCloseWindow();
 	    State = EXITING;
 	    return(TRUE);
 	}
@@ -232,7 +229,7 @@ bool_t	force;
 	 * Before we free the buffer, save its filename.
 	 */
 	push_alternate(buffer->b_filename,
-			lineno(win->w_cursor->p_line));
+			lineno(curwin->w_cursor->p_line));
 	free(buffer->b_filename);
 	buffer->b_filename = NULL;
 
@@ -247,7 +244,7 @@ bool_t	force;
      * Close the old window, and move to the next one.
      * Have to update the globals "curbuf" and "curwin" here.
      */
-    curwin = xvCloseWindow(win);
+    curwin = xvCloseWindow();
     if (curwin == NULL) {
 	/*
 	 * This is not supposed to happen; if this is the last window
@@ -274,12 +271,12 @@ bool_t	force;
 	 * window is still on the screen.
 	 */
 	echo &= ~(e_CHARUPDATE | e_SHOWINFO | e_SCROLL);
-	move_window_to_cursor(curwin);
+	move_window_to_cursor();
 	echo = savecho;
 
     }
-    redraw_window(curwin, FALSE);
-    show_file_info(curwin, TRUE);
+    redraw_window(FALSE);
+    show_file_info(TRUE);
 
     return(TRUE);
 }
@@ -292,26 +289,25 @@ bool_t	force;
  * If the buffer has been modified, we must write it out before closing it.
  */
 bool_t
-exXit(window)
-Xviwin	*window;
+exXit()
 {
     Buffer	*buffer;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
     if (is_modified(buffer) && buffer->b_nwindows < 2) {
 	if (buffer->b_filename != NULL) {
-	    if (!writeit(window, buffer->b_filename,
-				(Line *) NULL, (Line *) NULL, FALSE)) {
+	    if (!writeit(buffer->b_filename,
+			 (Line *) NULL, (Line *) NULL, FALSE)) {
 		return(FALSE);
 	    }
 	} else {
-	    show_error(window, "No output file");
+	    show_error("No output file");
 	    return(FALSE);
 	}
     }
 
-    return(exCloseWindow(window, FALSE));
+    return(exCloseWindow(FALSE));
 }
 
 /*
@@ -324,8 +320,7 @@ Xviwin	*window;
  * Returns TRUE for success, FALSE for failure.
  */
 bool_t
-exEditFile(window, force, arg)
-Xviwin	*window;
+exEditFile(force, arg)
 bool_t	force;
 char	*arg;
 {
@@ -337,10 +332,10 @@ char	*arg;
     Buffer	*buffer;
     Xviwin	*wp;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
     if (!force && is_modified(buffer)) {
-	show_error(window, nowrtmsg);
+	show_error(nowrtmsg);
 	return(FALSE);
     }
 
@@ -349,7 +344,7 @@ char	*arg;
 	 * No filename specified; we must already have one.
 	 */
 	if (buffer->b_filename == NULL) {
-	    show_error(window, "No filename");
+	    show_error("No filename");
 	    return(FALSE);
 	}
     } else /* arg != NULL */ {
@@ -386,7 +381,7 @@ char	*arg;
 	     */
 	    if (buffer->b_filename != NULL) {
 		push_alternate(buffer->b_filename,
-				    lineno(window->w_cursor->p_line));
+				    lineno(curwin->w_cursor->p_line));
 		free(buffer->b_filename);
 		buffer->b_filename = NULL;
 	    }
@@ -411,40 +406,42 @@ char	*arg;
      * Clear out the old buffer and read the file.
      */
     if (clear_buffer(buffer) == FALSE) {
-	show_error(window, out_of_memory);
+	show_error(out_of_memory);
 	return(FALSE);
     }
 
     /*
      * Be sure to re-map all window structures onto the buffer,
      * in order to eliminate any pointers into the old buffer.
+     * wp is reused to remember the original value of curwin.
      */
-    wp = window;
+    wp = curwin;
     do {
-	if (wp->w_buffer != buffer)
+	if (curwin->w_buffer != buffer)
 	    continue;
 
-	xvUnMapWindow(wp);
-	xvMapWindowOntoBuffer(wp, buffer);
+	xvUnMapWindow();
+	xvMapWindowOntoBuffer(curwin, buffer);
 
-    } while ((wp = xvNextWindow(wp)) != window);
+    } while ((curwin = xvNextWindow(curwin)) != wp);
 
     readonly = Pb(P_readonly) || !can_write(buffer->b_filename);
 
-    nlines = get_file(window, buffer->b_filename, &head, &tail,
-				    (readonly ? " [Read only]" : ""),
+    nlines = get_file(buffer->b_filename, &head, &tail,
+			(readonly ? " [Read only]" : ""),
 				    " [New file]");
 
-    update_sline(window);		/* ensure colour is updated */
+    update_sline();		/* ensure colour is updated */
 
-    wp = window;
-    while ((wp = xvNextDisplayedWindow(wp)) != window) {
+    /* wp is reused here to remember the original value of curwin. */
+    wp = curwin;
+    while ((curwin = xvNextDisplayedWindow(curwin)) != wp) {
 	/*
 	 * If there are any other windows on to the same buffer, make
 	 * sure they're properly updated.
 	 */
-	if (wp->w_buffer == buffer) {
-	    show_message(wp, "%s", sline_text(window));
+	if (curwin->w_buffer == buffer) {
+	    show_message("%s", sline_text(wp));
 	}
     }
 
@@ -470,11 +467,11 @@ char	*arg;
 	 * We have successfully read the file in,
 	 * so now we must link it into the buffer.
 	 */
-	replbuffer(window, head);
+	replbuffer(head);
 
-	move_cursor(window, gotoline(buffer, (unsigned long) line), 0);
-	begin_line(window, TRUE);
-	setpcmark(window);
+	move_cursor(gotoline(buffer, (unsigned long) line), 0);
+	begin_line(TRUE);
+	setpcmark();
 
 	/*
 	 * We only call redraw_window() here because we want
@@ -483,7 +480,7 @@ char	*arg;
 	 */
 	savecho = echo;
 	echo &= ~(e_CHARUPDATE | e_SCROLL | e_REPORT | e_SHOWINFO);
-	redraw_window(window, FALSE);
+	redraw_window(FALSE);
 	echo = savecho;
 
 	return(TRUE);
@@ -525,8 +522,7 @@ show_arg()
 }
 
 bool_t
-exArgs(window)
-Xviwin	*window;
+exArgs()
 {
     Flexbuf	fb;
     int		colwidth;
@@ -534,12 +530,12 @@ Xviwin	*window;
     int		maxcols;
 
     if (numfiles == 0) {
-	show_message(window, "No files");
+	show_message("No files");
 	return(FALSE);
     }
 
     colwidth = 0;
-    maxcols = window->w_ncols - window->w_spare_cols;
+    maxcols = curwin->w_ncols - curwin->w_spare_cols;
     flexnew(&fb);
     for (count = 0; count < numfiles; count++) {
 	char	*fn;
@@ -564,10 +560,10 @@ Xviwin	*window;
 	}
     }
     if (flexlen(&fb) <= maxcols) {
-	show_message(window, "%s", flexgetstr(&fb));
+	show_message("%s", flexgetstr(&fb));
     } else {
 	curr_arg = 0;
-	disp_init(window, show_arg, colwidth, FALSE);
+	disp_init(show_arg, colwidth, FALSE);
     }
     flexdelete(&fb);
     return(TRUE);
@@ -579,8 +575,7 @@ Xviwin	*window;
  * no argument is given.
  */
 bool_t
-exNext(window, argc, argv, force)
-Xviwin	*window;
+exNext(argc, argv, force)
 int	argc;
 char	*argv[];
 bool_t	force;
@@ -589,9 +584,9 @@ bool_t	force;
     bool_t	success = TRUE;
 
     if (!force) {
-	xvAutoWrite(window);
-	if (is_modified(window->w_buffer)) {
-	    show_error(window, nowrtmsg);
+	xvAutoWrite();
+	if (is_modified(curwin->w_buffer)) {
+	    show_error(nowrtmsg);
 	    return(FALSE);
 	}
     }
@@ -663,7 +658,7 @@ bool_t	force;
 	 */
 	echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
 
-	if (!exEditFile(curwin, force, files[0])) {
+	if (!exEditFile(force, files[0])) {
 	    success = FALSE;
 	}
 
@@ -671,7 +666,7 @@ bool_t	force;
 	 * Update the current window before
 	 * creating any new ones.
 	 */
-	move_window_to_cursor(curwin);
+	move_window_to_cursor();
 
 	/*
 	 * Work out how many files we can edit and
@@ -687,7 +682,7 @@ bool_t	force;
 	    do {
 		wp = xvNextWindow(wp);
 		oldnw++;
-	    } while (wp != window);
+	    } while (wp != curwin);
 
 	    newnw = numfiles - curfile;
 	    totalrows = VSrows(curwin->w_vs);
@@ -703,11 +698,10 @@ bool_t	force;
 	    }
 	}
 
-	while ((curfile + 1) < numfiles && xvCanSplit(curwin)) {
+	while ((curfile + 1) < numfiles && xvCanSplit()) {
 	    bool_t	success;
 
-	    success = exNewBuffer(curwin, files[++curfile],
-				  winsize + sparelines);
+	    success = exNewBuffer(files[++curfile], winsize + sparelines);
 	    if (sparelines > 0) {
 		sparelines = 0;
 	    }
@@ -717,14 +711,14 @@ bool_t	force;
 	     * for every window before calling
 	     * xvUpdateAllBufferWindows().
 	     */
-	    move_window_to_cursor(curwin);
+	    move_window_to_cursor();
 	    if (!success) {
 		--curfile;
 		break;
 	    }
 	}
 	xvEqualiseWindows(0);
-	redraw_window(curwin, FALSE);
+	redraw_window(FALSE);
 
     } else if ((curfile + 1) < numfiles) {
 	/*
@@ -739,13 +733,13 @@ bool_t	force;
 	 * Just edit the next file.
 	 */
 	echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-	if (!exEditFile(window, force, files[++curfile])) {
+	if (!exEditFile(force, files[++curfile])) {
 	    success = FALSE;
 	}
-	move_window_to_cursor(window);
-	xvUpdateAllBufferWindows(window->w_buffer);
+	move_window_to_cursor();
+	xvUpdateAllBufferWindows(curwin->w_buffer);
     } else {
-	show_message(window, "No more files");
+	show_message("No more files");
 	success = FALSE;
     }
     echo = savecho;
@@ -755,8 +749,7 @@ bool_t	force;
 
 /*ARGSUSED*/
 bool_t
-exRewind(window, force)
-Xviwin	*window;
+exRewind(force)
 bool_t	force;
 {
     unsigned	savecho;
@@ -768,18 +761,18 @@ bool_t	force;
     curfile = 0;
 
     if (!force) {
-	xvAutoWrite(window);
-        if (is_modified(window->w_buffer)) {
-	    show_error(window, nowrtmsg);
+	xvAutoWrite();
+        if (is_modified(curwin->w_buffer)) {
+	    show_error(nowrtmsg);
 	    return(FALSE);
 	}
     }
 
     savecho = echo;
     echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
-    success = exEditFile(window, force, files[0]);
-    move_window_to_cursor(window);
-    xvUpdateAllBufferWindows(window->w_buffer);
+    success = exEditFile(force, files[0]);
+    move_window_to_cursor();
+    xvUpdateAllBufferWindows(curwin->w_buffer);
     echo = savecho;
     return(success);
 }
@@ -791,21 +784,20 @@ bool_t	force;
  * If no filename given, use the buffer's filename.
  */
 bool_t
-exAppendToFile(window, filename, l1, l2, force)
-Xviwin	*window;
+exAppendToFile(filename, l1, l2, force)
 char	*filename;
 Line	*l1, *l2;
 bool_t	force;
 {
     if (filename == NULL) {
-	filename = window->w_buffer->b_filename;
+	filename = curwin->w_buffer->b_filename;
     }
     if (filename == NULL) {
-	show_error(window, "No output file");
+	show_error("No output file");
 	return(FALSE);
     }
 
-    return(appendit(window, filename, l1, l2, force));
+    return(appendit(filename, l1, l2, force));
 }
 
 /*
@@ -820,24 +812,23 @@ bool_t	force;
  * The return value is TRUE is the write succeeded, FALSE otherwise.
  */
 bool_t
-exWriteToFile(window, filename, l1, l2, force)
-Xviwin	*window;
+exWriteToFile(filename, l1, l2, force)
 char	*filename;
 Line	*l1, *l2;
 bool_t	force;
 {
     register Buffer	*buffer;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
     if (filename == NULL) {
 	filename = buffer->b_filename;
     } else if (filename[0] == '!') {
-	return(xvWriteToCommand(window, filename + 1, l1, l2));
+	return(xvWriteToCommand(filename + 1, l1, l2));
     }
 
     if (filename == NULL) {
-	show_error(window, "No output file");
+	show_error("No output file");
 	return(FALSE);
     }
 
@@ -861,20 +852,19 @@ bool_t	force;
 	buffer->b_tempfname = NULL;
     }
 
-    return(writeit(window, filename, l1, l2, force));
+    return(writeit(filename, l1, l2, force));
 }
 
 /*
  * Write to the given filename then quit.
  */
 void
-exWQ(window, filename, force)
-Xviwin	*window;
+exWQ(filename, force)
 char	*filename;
 bool_t	force;
 {
-    if (exWriteToFile(window, filename, (Line *) NULL, (Line *) NULL, force)) {
-	exQuit(window, force);	
+    if (exWriteToFile(filename, (Line *) NULL, (Line *) NULL, force)) {
+	exQuit(force);	
     }
 }
 
@@ -884,8 +874,7 @@ bool_t	force;
  * referenced by the passed window parameter.
  */
 bool_t
-exReadFile(window, filename, atline)
-Xviwin	*window;
+exReadFile(filename, atline)
 char	*filename;
 Line	*atline;
 {
@@ -898,19 +887,19 @@ Line	*atline;
 	 * Default to the current filename if none specified.
 	 * This seems odd, but vi does it, so why not.
 	 */
-	filename = window->w_buffer->b_filename;
+	filename = curwin->w_buffer->b_filename;
     }
 
     if (filename[0] == '!') {
 	if (filename[1] == '\0') {
-	    show_error(window, "No shell command specified!");
+	    show_error("No shell command specified!");
 	    return(FALSE);
 	} else {
-	    return (xvReadFromCommand(window, filename + 1, atline));
+	    return (xvReadFromCommand(filename + 1, atline));
 	}
     }
 
-    nlines = get_file(window, filename, &head, &tail, "", " No such file");
+    nlines = get_file(filename, &head, &tail, "", " No such file");
 
     /*
      * If nlines > 0, we need to insert the lines returned into
@@ -925,16 +914,16 @@ Line	*atline;
 	 * report().
 	 */
 	echo &= ~e_REPORT;
-	repllines(window, atline->l_next, 0L, head);
+	repllines(atline->l_next, 0L, head);
 	echo |= e_REPORT;
-	xvUpdateAllBufferWindows(window->w_buffer);
+	xvUpdateAllBufferWindows(curwin->w_buffer);
 
 	/*
 	 * Move the cursor to the first character
 	 * of the file we just read in.
 	 */
-	move_cursor(window, atline->l_next, 0);
-	begin_line(window, TRUE);
+	move_cursor(atline->l_next, 0);
+	begin_line(TRUE);
     }
 
     return(nlines >= 0);
@@ -945,47 +934,45 @@ Line	*atline;
  * Use a new window for the edit only if autosplit allows.
  */
 void
-exEditAlternateFile(window)
-Xviwin	*window;
+exEditAlternateFile()
 {
     unsigned	savecho;
     bool_t	result;
 
     if (alt_file_name() == NULL) {
-	show_error(window, "No alternate file to edit");
+	show_error("No alternate file to edit");
 	return;
     }
 
     savecho = echo;
     echo &= ~e_SCROLL;
 
-    if (xvCanSplit(window)) {
-	result = exNewBuffer(window, alt_file_name(), 0);
+    if (xvCanSplit()) {
+	result = exNewBuffer(alt_file_name(), 0);
     } else {
-	xvAutoWrite(window);
-	if (is_modified(window->w_buffer)) {
-	    show_error(window, "No write since last change");
+	xvAutoWrite();
+	if (is_modified(curwin->w_buffer)) {
+	    show_error("No write since last change");
 	    result = FALSE;
 	} else {
-	    result = exEditFile(window, FALSE, alt_file_name());
+	    result = exEditFile(FALSE, alt_file_name());
 	}
     }
 
     if (result) {
-	move_window_to_cursor(curwin);
-	redraw_window(curwin, FALSE);
+	move_window_to_cursor();
+	redraw_window(FALSE);
     }
     echo = savecho;
 }
 
 void
-exShowFileStatus(window, newfile)
-Xviwin	*window;
+exShowFileStatus(newfile)
 char	*newfile;
 {
     Buffer	*buffer;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
     if (newfile != NULL) {
 	if (buffer->b_filename != NULL)
@@ -998,9 +985,9 @@ char	*newfile;
 	 * on the setting of preserve, but it's worth the call.
 	 */
 	unpreserve(buffer);
-	(void) preservebuf(window);
+	(void) preservebuf();
     }
-    show_file_info(window, TRUE);
+    show_file_info(TRUE);
 }
 
 static bool_t
@@ -1010,7 +997,7 @@ more_files()
 
     n = numfiles - (curfile + 1);
     if (n > 0) {
-	show_error(curwin, "%d more file%s to edit", n, (n > 1) ? "s" : "");
+	show_error("%d more file%s to edit", n, (n > 1) ? "s" : "");
 	return(TRUE);
     } else {
 	return(FALSE);

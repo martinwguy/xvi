@@ -894,10 +894,10 @@ extern	void	wait_return P((void));
 /*
  * cmdmode.c
  */
-extern	void	cmd_init P((Xviwin *, int));
+extern	void	cmd_init P((int));
 extern	Cmd_State
-		cmd_input P((Xviwin *, int));
-extern	char	*get_cmd P((Xviwin *));
+		cmd_input P((int));
+extern	char	*get_cmd P((void));
 
 /*
  * vi_cmds.c
@@ -913,8 +913,7 @@ extern	void	do_ins P((Cmd *));
 /*
  * cursor.c
  */
-extern	void	cursupdate P((Xviwin *));
-extern	void	curs_horiz P((Xviwin *, int));
+extern	void	cursupdate P((void));
 
 /*
  * defscr.c
@@ -924,8 +923,8 @@ extern	void	defscr_main P((int, char **));
 /*
  * dispmode.c
  */
-extern	void	disp_init P((Xviwin *, char *(*) P((void)), int, bool_t));
-extern	bool_t	disp_screen P((Xviwin *, int));
+extern	void	disp_init P((char *(*) P((void)), int, bool_t));
+extern	bool_t	disp_screen P((int));
 extern	void	prompt P((char *));
 
 /*
@@ -945,45 +944,45 @@ extern	xvResponse	*xvi_handle_event P((xvEvent *));
 /*
  * ex_cmds1.c
  */
-extern	void	exQuit P((Xviwin *, bool_t));
-extern	void	exSplitWindow P((Xviwin *));
-extern	bool_t	exNewBuffer P((Xviwin *, char *, int));
-extern	bool_t	exCloseWindow P((Xviwin *, bool_t));
-extern	bool_t	exXit P((Xviwin *));
-extern	bool_t	exEditFile P((Xviwin *, bool_t, char *));
-extern	bool_t	exArgs P((Xviwin *));
-extern	bool_t	exNext P((Xviwin *, int, char **, bool_t));
-extern	bool_t	exRewind P((Xviwin *, bool_t));
-extern	bool_t	exAppendToFile P((Xviwin *, char *, Line *, Line *, bool_t));
-extern	bool_t	exWriteToFile P((Xviwin *, char *, Line *, Line *, bool_t));
-extern	void	exWQ P((Xviwin *, char *, bool_t));
-extern	bool_t	exReadFile P((Xviwin *, char *, Line *));
-extern	void	exEditAlternateFile P((Xviwin *));
-extern	void	exShowFileStatus P((Xviwin *, char *));
+extern	void	exQuit P((bool_t));
+extern	void	exSplitWindow P((void));
+extern	bool_t	exNewBuffer P((char *, int));
+extern	bool_t	exCloseWindow P((bool_t));
+extern	bool_t	exXit P((void));
+extern	bool_t	exEditFile P((bool_t, char *));
+extern	bool_t	exArgs P((void));
+extern	bool_t	exNext P((int, char **, bool_t));
+extern	bool_t	exRewind P((bool_t));
+extern	bool_t	exAppendToFile P((char *, Line *, Line *, bool_t));
+extern	bool_t	exWriteToFile P((char *, Line *, Line *, bool_t));
+extern	void	exWQ P((char *, bool_t));
+extern	bool_t	exReadFile P((char *, Line *));
+extern	void	exEditAlternateFile P((void));
+extern	void	exShowFileStatus P((char *));
 extern	char	nowrtmsg[];
 
 /*
  * ex_cmds2.c
  */
-extern	void	exInteractiveShell P((Xviwin *, bool_t));
-extern	bool_t	exShellCommand P((Xviwin *, char *));
-extern	void	exSuspend P((Xviwin *, bool_t));
-extern	void	exEquals P((Xviwin *, Line *));
-extern	void	exHelp P((Xviwin *));
+extern	void	exInteractiveShell P((bool_t));
+extern	bool_t	exShellCommand P((char *));
+extern	void	exSuspend P((bool_t));
+extern	void	exEquals P((Line *));
+extern	void	exHelp P((void));
 extern	bool_t	exSource P((bool_t, char *));
 extern	char	*exChangeDirectory P((char *));
 extern	bool_t	exLineOperation P((int, Line *, Line *, Line *));
-extern	bool_t	exJoin P((Xviwin *, Line *, Line *, bool_t));
+extern	bool_t	exJoin P((Line *, Line *, bool_t));
 
 /*
  * fileio.c
  */
-extern	bool_t	set_format P((Xviwin *, Paramval, bool_t));
-extern	long	get_file P((Xviwin *, char *, Line **, Line **, char *,
+extern	bool_t	set_format P((Paramval, bool_t));
+extern	long	get_file P((char *, Line **, Line **, char *,
 							char *));
-extern	bool_t	appendit P((Xviwin *, char *, Line *, Line *, bool_t));
-extern	bool_t	writeit P((Xviwin *, char *, Line *, Line *, bool_t));
-extern	bool_t	put_file P((Xviwin *, FILE *, Line *, Line *,
+extern	bool_t	appendit P((char *, Line *, Line *, bool_t));
+extern	bool_t	writeit P((char *, Line *, Line *, bool_t));
+extern	bool_t	put_file P((FILE *, Line *, Line *,
 				unsigned long *, unsigned long *));
 
 /*
@@ -995,8 +994,8 @@ extern	Posn	*showmatch P((void));
 extern	Posn	*fwd_word P((Posn *, int, bool_t));
 extern	Posn	*bck_word P((Posn *, int, bool_t));
 extern	Posn	*end_word P((Posn *, int, bool_t));
-extern	Posn	*xvDoSearch P((Xviwin *, char *, int));
-extern	Posn	*xvLocateTextObject P((Xviwin *, Posn *, int, int));
+extern	Posn	*xvDoSearch P((char *, int));
+extern	Posn	*xvLocateTextObject P((Posn *, int, int));
 
 /*
  * flexbuf.c
@@ -1029,7 +1028,7 @@ extern	bool_t	xvi_unmap P((int, char **, bool_t, bool_t));
  */
 extern	void	init_marks P((Buffer *));
 extern	bool_t	setmark P((int, Buffer *, Line *));
-extern	void	setpcmark P((Xviwin *));
+extern	void	setpcmark P((void));
 extern	Line	*getmark P((int, Buffer *));
 extern	void	clrmark P((Line *, Buffer *));
 extern	void	restoremarks P((Line *, Buffer *));
@@ -1037,21 +1036,21 @@ extern	void	restoremarks P((Line *, Buffer *));
 /*
  * misccmds.c
  */
-extern	bool_t	openfwd P((Xviwin *, Posn *, bool_t));
+extern	bool_t	openfwd P((Posn *, bool_t));
 extern	bool_t	openbwd P((void));
 extern	long	cntllines P((Line *, Line *));
-extern	long	cntplines P((Xviwin *, Line *, Line *));
-extern	long	plines P((Xviwin *, Line *));
+extern	long	cntplines P((Line *, Line *));
+extern	long	plines P((Line *));
 extern	Line	*gotoline P((Buffer *, unsigned long));
 extern	int	get_indent P((Line *));
 extern	int	set_indent P((Line *, int));
 extern	void	tabinout P((int, Line *, Line *));
 extern	void	makeargv P((char *, int *, char ***, char *));
 extern	void	xvConvertWhiteSpace P((char *));
-extern	bool_t	xvJoinLine P((Xviwin *, Line *, bool_t));
-extern	bool_t	xvChangesNotSaved P((Xviwin *));
-extern	void	xvAutoWriteAll P((Xviwin *));
-extern	void	xvAutoWrite P((Xviwin *));
+extern	bool_t	xvJoinLine P((Line *, bool_t));
+extern	bool_t	xvChangesNotSaved P((void));
+extern	void	xvAutoWriteAll P((void));
+extern	void	xvAutoWrite P((void));
 
 /*
  * mouse.c
@@ -1063,23 +1062,23 @@ extern	void	mousemove P((int));
 /*
  * movement.c
  */
-extern	int	shiftdown P((Xviwin *, unsigned));
-extern	int	shiftup P((Xviwin *, unsigned));
-extern	void	scrolldown P((Xviwin *, unsigned));
-extern	void	scrollup P((Xviwin *, unsigned));
+extern	int	shiftdown P((unsigned));
+extern	int	shiftup P((unsigned));
+extern	void	scrolldown P((unsigned));
+extern	void	scrollup P((unsigned));
 extern	bool_t	xvMoveUp P((Posn *, long, bool_t));
 extern	bool_t	xvMoveDown P((Posn *, long, bool_t));
-extern	bool_t	one_left P((Xviwin *, bool_t));
+extern	bool_t	one_left P((bool_t));
 extern	bool_t	xvMoveLeft P((Posn *, bool_t));
-extern	bool_t	one_right P((Xviwin *, bool_t));
+extern	bool_t	one_right P((bool_t));
 extern	bool_t	xvMoveRight P((Posn *, bool_t));
-extern	void	begin_line P((Xviwin *, bool_t));
+extern	void	begin_line P((bool_t));
 extern	void	xvSetPosnToStartOfLine P((Posn *, bool_t));
 extern	void	xvMoveToColumn P((Posn *, int));
 extern	void	xvMoveToLineNumber P((long));
-extern	void	move_cursor P((Xviwin *, Line *, int));
-extern	void	move_window_to_cursor P((Xviwin *));
-extern	void	move_cursor_to_window P((Xviwin *));
+extern	void	move_cursor P((Line *, int));
+extern	void	move_window_to_cursor P((void));
+extern	void	move_cursor_to_window P((void));
 
 /*
  * normal.c
@@ -1103,22 +1102,22 @@ extern	void	xvOpYank P((Cmd *));
  * param.c
  */
 extern	void	init_params P((void));
-extern	void	exSet P((Xviwin *, int, char **, bool_t));
+extern	void	exSet P((int, char **, bool_t));
 extern	void	set_param P((int, ...));
 extern	int	xv_strtoi P((char **));
 
 /*
  * pipe.c
  */
-extern	void	specify_pipe_range P((Xviwin *, Line *, Line *));
-extern	bool_t	do_pipe P((Xviwin *, char *));
-extern	bool_t	xvWriteToCommand P((Xviwin *, char *, Line *, Line *));
-extern	bool_t	xvReadFromCommand P((Xviwin *, char *, Line *));
+extern	void	specify_pipe_range P((Line *, Line *));
+extern	bool_t	do_pipe P((char *));
+extern	bool_t	xvWriteToCommand P((char *, Line *, Line *));
+extern	bool_t	xvReadFromCommand P((char *, Line *));
 
 /*
  * preserve.c
  */
-extern	bool_t	preservebuf P((Xviwin *));
+extern	bool_t	preservebuf P((void));
 extern	void	unpreserve P((Buffer *));
 extern	bool_t	exPreserveAllBuffers P((void));
 
@@ -1134,28 +1133,28 @@ extern	bool_t	eq P((Posn *, Posn *));
 /*
  * screen.c
  */
-extern	void	updateline P((Xviwin *, bool_t));
-extern	void	update_sline P((Xviwin *));
-extern	void	update_cline P((Xviwin *, int));
-extern	void	redraw_window P((Xviwin *, bool_t));
-extern	void	redraw_all P((Xviwin *, bool_t));
-extern	void	s_ins P((Xviwin *, int, int));
-extern	void	s_del P((Xviwin *, int, int));
-extern	void	s_inschar P((Xviwin *, int));
-extern	void	wind_goto P((Xviwin *));
-extern	void	gotocmd P((Xviwin *, bool_t));
-extern	void	beep P((Xviwin *));
+extern	void	updateline P((bool_t));
+extern	void	update_sline P((void));
+extern	void	update_cline P((int));
+extern	void	redraw_window P((bool_t));
+extern	void	redraw_all P((bool_t));
+extern	void	s_ins P((int, int));
+extern	void	s_del P((int, int));
+extern	void	s_inschar P((int));
+extern	void	wind_goto P((void));
+extern	void	gotocmd P((bool_t));
+extern	void	beep P((void));
 
 /*
  * search.c
  */
-extern	Posn	*search P((Xviwin *, Line *, int, int, char **));
-extern	Posn	*xvFindPattern P((Xviwin *, Posn *, char *, int, bool_t));
-extern	Line	*linesearch P((Xviwin *, Line *, int, char **));
-extern	bool_t	exGlobal P((Xviwin *, Line *, Line *, char *, bool_t));
-extern	long	exSubstitute P((Xviwin *, Line *, Line *, char *));
-extern	long	exAmpersand P((Xviwin *, Line *, Line *, char *));
-extern	long	exTilde P((Xviwin *, Line *, Line *, char *));
+extern	Posn	*search P((Line *, int, int, char **));
+extern	Posn	*xvFindPattern P((Posn *, char *, int, bool_t));
+extern	Line	*linesearch P((Line *, int, char **));
+extern	bool_t	exGlobal P((Line *, Line *, char *, bool_t));
+extern	long	exSubstitute P((Line *, Line *, char *));
+extern	long	exAmpersand P((Line *, Line *, char *));
+extern	long	exTilde P((Line *, Line *, char *));
 
 /*
  * signal.c
@@ -1172,20 +1171,20 @@ extern	void	startup_error P((char *));
 /*
  * status.c
  */
-extern	void	init_sline P((Xviwin *));
-extern	void	show_message P((Xviwin *, char *, ...));
-extern	void	show_error P((Xviwin *, char *, ...));
-extern	void	show_file_info P((Xviwin *, bool_t));
-extern	void	info_update P((Xviwin *));
+extern	void	init_sline P((void));
+extern	void	show_message P((char *, ...));
+extern	void	show_error P((char *, ...));
+extern	void	show_file_info P((bool_t));
+extern	void	info_update P((void));
 
 /*
  * tags.c
  */
 extern	void	tagInit P((void));
 extern	void	tagword P((void));
-extern	bool_t	exTag P((Xviwin *, char *, bool_t, bool_t, bool_t));
+extern	bool_t	exTag P((char *, bool_t, bool_t, bool_t));
 extern	TAG	*tagLookup P((char *, int *, int *));
-extern	bool_t	tagSetParam P((Xviwin *, Paramval, bool_t));
+extern	bool_t	tagSetParam P((Paramval, bool_t));
 
 /*
  * targets.c
@@ -1201,19 +1200,18 @@ extern	void	do_HLM P((Cmd *));
  */
 extern	void	init_undo P((Buffer *));
 extern	void	free_undo P((Buffer *));
-extern	bool_t	start_command P((Xviwin *));
-extern	void	end_command P((Xviwin *));
-extern	void	replchars P((Xviwin *, Line *, int, int, char *));
-extern	void	repllines P((Xviwin *, Line *, long, Line *));
-extern	void	replbuffer P((Xviwin *, Line *));
-extern	void	undo P((Xviwin *));
-extern	void	undoline P((Xviwin *));
-extern	bool_t	set_edit P((Xviwin *, Paramval, bool_t));
+extern	bool_t	start_command P((void));
+extern	void	end_command P((void));
+extern	void	replchars P((Line *, int, int, char *));
+extern	void	repllines P((Line *, long, Line *));
+extern	void	replbuffer P((Line *));
+extern	void	undo P((void));
+extern	void	undoline P((void));
 
 /*
  * update.c
  */
-extern	void	xvUpdateScr P((Xviwin *, VirtScr *, int, int));
+extern	void	xvUpdateScr P((VirtScr *, int, int));
 extern	void	xvMarkDirty P((VirtScr *, int));
 extern	void	xvClearLine P((VirtScr *, unsigned));
 extern	void	xvClear P((VirtScr *));
@@ -1230,20 +1228,20 @@ extern	int	xv_decode_colour P((VirtScr *, int, char *));
  * windows.c
  */
 extern	Xviwin	*xvInitWindow P((VirtScr *));
-extern	Xviwin	*xvOpenWindow P((Xviwin *, int));
-extern	Xviwin	*xvCloseWindow P((Xviwin *));
+extern	Xviwin	*xvOpenWindow P((int));
+extern	Xviwin	*xvCloseWindow P((void));
 extern	void	xvMapWindowOntoBuffer P((Xviwin *, Buffer *));
-extern	void	xvUnMapWindow P((Xviwin *));
+extern	void	xvUnMapWindow P((void));
 extern	Xviwin	*xvNextWindow P((Xviwin *));
 extern	Xviwin	*xvNextDisplayedWindow P((Xviwin *));
 extern	Xviwin	*xvFindWindowByName P((Xviwin *, char *));
 extern	void	xvEqualiseWindows P((int));
-extern	void	xvResizeWindow P((Xviwin *, int));
+extern	void	xvResizeWindow P((int));
 extern	void	xvAdjustWindows P((VirtScr *, bool_t));
-extern	int	xvMoveStatusLine P((Xviwin *, int));
-extern	void	xvUseWindow P((Xviwin *));
+extern	int	xvMoveStatusLine P((int));
+extern	void	xvUseWindow P((void));
 extern	void	xvUpdateAllBufferWindows P((Buffer *));
-extern	bool_t	xvCanSplit P((Xviwin *));
+extern	bool_t	xvCanSplit P((void));
 
 /*
  * yankput.c
@@ -1251,6 +1249,6 @@ extern	bool_t	xvCanSplit P((Xviwin *));
 extern	void	init_yankput P((void));
 extern	bool_t	do_yank P((Buffer *, Posn *, Posn *, bool_t, int));
 extern	bool_t	yank_str P((int, char *, bool_t));
-extern	void	do_put P((Xviwin *, Posn *, int, int));
-extern	void	yp_stuff_input P((Xviwin *, int, bool_t));
+extern	void	do_put P((Posn *, int, int));
+extern	void	yp_stuff_input P((int, bool_t));
 extern	void	yp_push_deleted P((void));

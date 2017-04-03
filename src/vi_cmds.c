@@ -29,16 +29,16 @@ Cmd	*cmd;
 {
     switch (cmd->cmd_ch1) {
     case K_HELP:
-	exHelp(curwin);
+	exHelp();
 	break;
 
     case CTRL('R'):
     case CTRL('L'):
-	redraw_all(curwin, TRUE);
+	redraw_all(TRUE);
 	break;
 
     case CTRL('G'):
-	show_file_info(curwin, TRUE);
+	show_file_info(TRUE);
 	break;
 
     case CTRL(']'):		/* :ta to current identifier */
@@ -67,7 +67,7 @@ Cmd	*cmd;
     case 'p':
     case 'P':
 	Redo.r_mode = r_normal;
-	do_put(curwin, curwin->w_cursor,
+	do_put(curwin->w_cursor,
 		(cmd->cmd_ch1 == 'p') ? FORWARD : BACKWARD, cmd->cmd_yp_name);
 	if (is_digit(cmd->cmd_yp_name) && cmd->cmd_yp_name != '0' && cmd->cmd_yp_name != '9') {
 	    cmd->cmd_yp_name++;
@@ -78,10 +78,10 @@ Cmd	*cmd;
 	break;
 
     case 's':		/* substitute characters */
-	if (start_command(curwin)) {
-	    replchars(curwin, curwin->w_cursor->p_line,
+	if (start_command()) {
+	    replchars(curwin->w_cursor->p_line,
 			curwin->w_cursor->p_index, IDEF1(cmd->cmd_prenum), "");
-	    updateline(curwin, FALSE);
+	    updateline(FALSE);
 	    Redo.r_mode = r_insert;
 	    flexclear(&Redo.r_fb);
 	    (void) lformat(&Redo.r_fb, "%ds", IDEF1(cmd->cmd_prenum));
@@ -92,14 +92,14 @@ Cmd	*cmd;
     case ':':
     case '?':
     case '/':
-	cmd_init(curwin, cmd->cmd_ch1);
+	cmd_init(cmd->cmd_ch1);
 	break;
 
     case '&':
-	(void) exAmpersand(curwin, curwin->w_cursor->p_line,
-				    curwin->w_cursor->p_line, "");
-	begin_line(curwin, TRUE);
-	updateline(curwin, FALSE);
+	(void) exAmpersand(curwin->w_cursor->p_line,
+			   curwin->w_cursor->p_line, "");
+	begin_line(TRUE);
+	updateline(FALSE);
 	break;
 
     case 'R':
@@ -116,16 +116,16 @@ Cmd	*cmd;
 	int	size1;		/* chars in the first line */
 	Line *	line = curwin->w_cursor->p_line;
 
-	if (!start_command(curwin)) {
-	    beep(curwin);
+	if (!start_command()) {
+	    beep();
 	    break;
 	}
 
 	size1 = strlen(line->l_text);
 	count = IDEF1(cmd->cmd_prenum) - 1; /* 4J does 3 Joins to join 4 lines */
 	do {				    /* but 0J and 1J do one, like 2J */
-	    if (!xvJoinLine(curwin, line, FALSE)) {
-		beep(curwin);
+	    if (!xvJoinLine(line, FALSE)) {
+		beep();
 		break;
 	    }
 	} while (--count > 0);
@@ -135,11 +135,11 @@ Cmd	*cmd;
 	 * with a special case for when we join a line to nothing.
 	 */
 	if (line->l_text[size1] == '\0') size1--;
-	move_cursor(curwin, line, size1);
+	move_cursor(line, size1);
 
 	xvUpdateAllBufferWindows(curbuf);
 
-	end_command(curwin);
+	end_command();
 
 	Redo.r_mode = r_normal;
 	flexclear(&Redo.r_fb);
@@ -154,36 +154,36 @@ Cmd	*cmd;
      */
     case CTRL('^'):
 #endif
-	exEditAlternateFile(curwin);
+	exEditAlternateFile();
 	break;
 
     case 'u':
     case K_UNDO:
-	undo(curwin);
+	undo();
 	break;
 
     case 'U':
-	undoline(curwin);
+	undoline();
 	break;
 
     case CTRL('Z'):			/* suspend editor */
-	exSuspend(curwin, FALSE);
+	exSuspend(FALSE);
 	break;
 
     /*
      * Buffer handling.
      */
     case CTRL('T'):			/* shrink window */
-	xvResizeWindow(curwin, - IDEF1(cmd->cmd_prenum));
-	move_cursor_to_window(curwin);
+	xvResizeWindow(-IDEF1(cmd->cmd_prenum));
+	move_cursor_to_window();
 	break;
 
     case CTRL('W'):			/* grow window */
-	xvResizeWindow(curwin, IDEF1(cmd->cmd_prenum));
+	xvResizeWindow(IDEF1(cmd->cmd_prenum));
 	break;
 
     case CTRL('O'):	/* make window as large as possible */
-	xvResizeWindow(curwin, INT_MAX);
+	xvResizeWindow(INT_MAX);
 	break;
 
     case 'g':
@@ -191,14 +191,14 @@ Cmd	*cmd;
 	 * Move the cursor to the next window that is displayed.
 	 */
 	curwin = xvNextDisplayedWindow(curwin);
-	xvUseWindow(curwin);
 	curbuf = curwin->w_buffer;
-	move_cursor_to_window(curwin);
-	cursupdate(curwin);
+	xvUseWindow();
+	move_cursor_to_window();
+	cursupdate();
 	break;
 
     case '@':
-	yp_stuff_input(curwin, cmd->cmd_ch2, TRUE);
+	yp_stuff_input(cmd->cmd_ch2, TRUE);
 	break;
 
     /*
@@ -206,19 +206,19 @@ Cmd	*cmd;
      */
     case 'm':
 	if (!setmark(cmd->cmd_ch2, curbuf, curwin->w_cursor->p_line))
-	    beep(curwin);
+	    beep();
 	break;
 
     case 'Z':		/* write, if changed, and exit */
 	if (cmd->cmd_ch2 != 'Z') {
-	    beep(curwin);
+	    beep();
 	    break;
 	}
 
 	/*
 	 * Make like a ":x" command.
 	 */
-	if (!exXit(curwin)) {
+	if (!exXit()) {
 	    unstuff();
 	}
 	break;
@@ -229,7 +229,7 @@ Cmd	*cmd;
 	 */
 	stuff("%s", flexgetstr(&Redo.r_fb));
 	if (Redo.r_mode != r_normal) {
-	    yp_stuff_input(curwin, '<', TRUE);
+	    yp_stuff_input('<', TRUE);
 	    if (Redo.r_mode == r_insert) {
 		stuff("%c", ESC);
 	    }
@@ -237,7 +237,7 @@ Cmd	*cmd;
 	break;
 
     default:
-	beep(curwin);
+	beep();
 	break;
     }
 }
@@ -256,7 +256,7 @@ Cmd	*cmd;
      * First move the cursor to the top of the screen
      * (for ^B), or to the top of the next screen (for ^F).
      */
-    move_cursor(curwin, (cmd->cmd_ch1 == CTRL('B')) ?
+    move_cursor((cmd->cmd_ch1 == CTRL('B')) ?
 		   curwin->w_topline : curwin->w_botline, 0);
 
     /*
@@ -265,7 +265,7 @@ Cmd	*cmd;
      * the cursor from being outside the buffer's bounds.
      */
     if (curwin->w_cursor->p_line == curbuf->b_lastline) {
-	move_cursor(curwin, b_last_line_of(curbuf), 0);
+	move_cursor(b_last_line_of(curbuf), 0);
     }
 
     /*
@@ -308,24 +308,24 @@ Cmd	*cmd;
     /*
      * Redraw the screen with the cursor at the top.
      */
-    begin_line(curwin, TRUE);
+    begin_line(TRUE);
     curwin->w_topline = curwin->w_cursor->p_line;
-    redraw_window(curwin, FALSE);
+    redraw_window(FALSE);
 
     if (cmd->cmd_ch1 == CTRL('B')) {
 	/*
 	 * And move it to the bottom.
 	 */
-	move_window_to_cursor(curwin);
-	cursupdate(curwin);
-	move_cursor(curwin, curwin->w_botline->l_prev, 0);
-	begin_line(curwin, TRUE);
+	move_window_to_cursor();
+	cursupdate();
+	move_cursor(curwin->w_botline->l_prev, 0);
+	begin_line(TRUE);
     }
 
     /*
      * Finally, show where we are in the file.
      */
-    show_file_info(curwin, TRUE);
+    show_file_info(TRUE);
 }
 
 void
@@ -336,32 +336,32 @@ Cmd	*cmd;
 
     switch (cmd->cmd_ch1) {
     case CTRL('D'):
-	scrollup(curwin, scroll);
+	scrollup(scroll);
 	if (xvMoveDown(curwin->w_cursor, (long) scroll, TRUE)) {
-	    info_update(curwin);
+	    info_update();
 	    xvMoveToColumn(curwin->w_cursor, curwin->w_curswant);
 	}
 	break;
 
     case CTRL('U'):
-	scrolldown(curwin, scroll);
+	scrolldown(scroll);
 	if (xvMoveUp(curwin->w_cursor, (long) scroll, TRUE)) {
-	    info_update(curwin);
+	    info_update();
 	    xvMoveToColumn(curwin->w_cursor, curwin->w_curswant);
 	}
 	break;
 
     case CTRL('E'):
-	scrollup(curwin, (unsigned) IDEF1(cmd->cmd_prenum));
+	scrollup((unsigned) IDEF1(cmd->cmd_prenum));
 	break;
 
     case CTRL('Y'):
-	scrolldown(curwin, (unsigned) IDEF1(cmd->cmd_prenum));
+	scrolldown((unsigned) IDEF1(cmd->cmd_prenum));
 	break;
     }
 
-    redraw_window(curwin, FALSE);
-    move_cursor_to_window(curwin);
+    redraw_window(FALSE);
+    move_cursor_to_window();
 }
 
 /*
@@ -398,13 +398,13 @@ Cmd	*cmd;
     }
     lp = curwin->w_cursor->p_line;
     for (l = 0; l < znum && lp != curbuf->b_line0; ) {
-	l += plines(curwin, lp);
+	l += plines(lp);
 	curwin->w_topline = lp;
 	lp = lp->l_prev;
     }
-    move_cursor_to_window(curwin);	/* just to get cursupdate to work */
-    cursupdate(curwin);
-    redraw_window(curwin, FALSE);
+    move_cursor_to_window();	/* just to get cursupdate to work */
+    cursupdate();
+    redraw_window(FALSE);
 }
 
 /*
@@ -425,14 +425,14 @@ Cmd	*cmd;
     flexclear(&Redo.r_fb);
     (void) lformat(&Redo.r_fb, "%d%c", nchars, cmd->cmd_ch1);
     curp = curwin->w_cursor;
-    nlines = plines(curwin, curp->p_line);
+    nlines = plines(curp->p_line);
 
     if (cmd->cmd_ch1 == 'X') {
-	for (i = 0; i < nchars && one_left(curwin, FALSE); i++)
+	for (i = 0; i < nchars && one_left(FALSE); i++)
 	    ;
 	nchars = i;
 	if (nchars == 0) {
-	    beep(curwin);
+	    beep();
 	    return;
 	}
 
@@ -451,7 +451,7 @@ Cmd	*cmd;
 	    /*
 	     * Can't do it on a blank line.
 	     */
-	    beep(curwin);
+	    beep();
 	    return;
 	}
     }
@@ -460,11 +460,11 @@ Cmd	*cmd;
     lastpos.p_index = curp->p_index + nchars - 1;
     yp_push_deleted();
     (void) do_yank(curbuf, curp, &lastpos, TRUE, cmd->cmd_yp_name);
-    replchars(curwin, curp->p_line, curp->p_index, nchars, "");
+    replchars(curp->p_line, curp->p_index, nchars, "");
     if (curp->p_line->l_text[curp->p_index] == '\0') {
-	(void) one_left(curwin, FALSE);
+	(void) one_left(FALSE);
     }
-    updateline(curwin, nlines != plines(curwin, curp->p_line));
+    updateline(nlines != plines(curp->p_line));
 }
 
 /*
@@ -489,11 +489,11 @@ Cmd	*cmd;
 	/*
 	 * Can't do it on a blank line.
 	 */
-	beep(curwin);
+	beep();
 	return;
     }
     count = IDEF1(cmd->cmd_prenum);
-    start_command(curwin);
+    start_command();
     do {
 	c = tp[cp->p_index];
 
@@ -512,18 +512,18 @@ Cmd	*cmd;
 		newc[0] = c;
 	    }
 #else	/* not TOP_BIT */
-	    beep(curwin);
+	    beep();
 	    return;
 #endif	/* TOP_BIT */
 	}
 
 	newc[1] = '\0';
-	replchars(curwin, cp->p_line, cp->p_index, 1, newc);
-	updateline(curwin, FALSE);
-	if (!one_right(curwin, FALSE))
+	replchars(cp->p_line, cp->p_index, 1, newc);
+	updateline(FALSE);
+	if (!one_right(FALSE))
 	    break;
     } while (--count > 0);
-    end_command(curwin);
+    end_command();
 }
 
 /*
@@ -536,7 +536,7 @@ Cmd	*cmd;
 {
     bool_t	startpos = TRUE;	/* FALSE means start position moved */
 
-    if (!start_command(curwin)) {
+    if (!start_command()) {
 	return;
     }
 
@@ -550,23 +550,23 @@ Cmd	*cmd;
 	if (
 	    (
 		(cmd->cmd_ch1 == 'o') ?
-		    openfwd(curwin, curwin->w_cursor, FALSE)
+		    openfwd(curwin->w_cursor, FALSE)
 		    :
 		    openbwd()
 	    ) == FALSE
 	) {
-oom:	    beep(curwin);
-	    end_command(curwin);
+oom:	    beep();
+	    end_command();
 	    return;
 	}
 	break;
 
     case 'I':
-	begin_line(curwin, TRUE);
+	begin_line(TRUE);
 	break;
 
     case 'A':
-	while (one_right(curwin, TRUE))
+	while (one_right(TRUE))
 	    ;
 	break;
 
@@ -574,7 +574,7 @@ oom:	    beep(curwin);
 	/*
 	 * 'a' works just like an 'i' on the next character.
 	 */
-	(void) one_right(curwin, TRUE);
+	(void) one_right(TRUE);
     }
 
     switch (cmd->cmd_ch1) {

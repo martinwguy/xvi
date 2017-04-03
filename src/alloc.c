@@ -148,7 +148,7 @@ size_t size;
 
     if ((p = malloc(size)) == NULL) {
 	if (echo & e_ALLOCFAIL) {
-	    show_error(curwin, out_of_memory);
+	    show_error(out_of_memory);
 	}
     }
     return(p);
@@ -163,7 +163,7 @@ size_t size;
 
     if ((p = realloc(ref, size)) == NULL) {
 	if (echo & e_ALLOCFAIL) {
-	    show_error(curwin, out_of_memory);
+	    show_error(out_of_memory);
 	}
     }
     return(p);
@@ -181,14 +181,14 @@ size_t num, size;
     if ((size != 0) && ((total / size) != num)) {
 	/* overflow */
 	if (echo & e_ALLOCFAIL) {
-	    show_error(curwin, "Allocation size overflow!");
+	    show_error("Allocation size overflow!");
 	}
 	return(NULL);
     }
 
     if ((p = malloc(total)) == NULL) {
 	if (echo & e_ALLOCFAIL) {
-	    show_error(curwin, out_of_memory);
+	    show_error(out_of_memory);
 	}
     } else {
 	memset(p, 0, total);
@@ -196,7 +196,7 @@ size_t num, size;
 #else
     if ((p = calloc(num, size)) == NULL) {
 	if (echo & e_ALLOCFAIL) {
-	    show_error(curwin, out_of_memory);
+	    show_error(out_of_memory);
 	}
     }
 #endif

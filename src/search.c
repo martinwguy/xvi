@@ -59,12 +59,12 @@ static	bool_t	greptype;
 static	char	*last_rhs = NULL;
 
 static	Posn	*match P((Line *, int));
-static	Posn	*bcksearch P((Xviwin *, Line *, int, bool_t));
-static	Posn	*fwdsearch P((Xviwin *, Line *, int, bool_t));
+static	Posn	*bcksearch P((Line *, int, bool_t));
+static	Posn	*fwdsearch P((Line *, int, bool_t));
 static	char	*mapstring P((char **, int));
 static	char	*compile P((char *, int, bool_t));
 static	char	*grep_line P((void));
-static	long	substitute P((Xviwin *, Line *, Line *, char *, char *));
+static	long	substitute P((Line *, Line *, char *, char *));
 static	void	add_char_to_rhs P((Flexbuf *dest, int c, int ulmode));
 
 /*
@@ -387,15 +387,14 @@ bool_t	delim_only;
  * If the pattern is found, return a pointer to its Posn, otherwise NULL.
  */
 Posn *
-search(window, startline, startindex, dir, strp)
-Xviwin		*window;
+search(startline, startindex, dir, strp)
 Line		*startline;	/* Where to start searching from */
 int		startindex;	/* Where to start searching from */
 int		dir;		/* FORWARD or BACKWARD */
 char		**strp;		/* Pointer to pattern without initial / or ? */
 {
     Posn	*pos;
-    Posn	*(*sfunc) P((Xviwin *, Line *, int, bool_t));
+    Posn	*(*sfunc) P((Line *, int, bool_t));
     char	*str;
 
     str = compile(*strp, (dir == FORWARD) ? '/' : '?', FALSE);
@@ -409,7 +408,7 @@ char		**strp;		/* Pointer to pattern without initial / or ? */
     } else {
 	sfunc = fwdsearch;
     }
-    pos = (*sfunc)(window, startline, startindex, Pb(P_wrapscan));
+    pos = (*sfunc)(startline, startindex, Pb(P_wrapscan));
 
     return(pos);
 }
@@ -421,8 +420,7 @@ char		**strp;		/* Pointer to pattern without initial / or ? */
  * cache the compiled form for the last string we were given.
  */
 Posn *
-xvFindPattern(window, startpos, str, dir, match_curpos)
-Xviwin		*window;
+xvFindPattern(startpos, str, dir, match_curpos)
 Posn		*startpos;
 char		*str;
 int		dir;
@@ -432,7 +430,7 @@ bool_t		match_curpos;
     static char		*last_str = NULL;
     Rnode		*old_progp;
     Posn		*pos;
-    Posn		*(*sfunc) P((Xviwin *, Line *, int, bool_t));
+    Posn		*(*sfunc) P((Line *, int, bool_t));
 
     if (str == NULL) {
 	return(NULL);
@@ -470,7 +468,7 @@ bool_t		match_curpos;
 	||
 	(pos = match(startpos->p_line, startpos->p_index)) == NULL
     ) {
-	pos = (*sfunc)(window, startpos->p_line, startpos->p_index, FALSE);
+	pos = (*sfunc)(startpos->p_line, startpos->p_index, FALSE);
     }
 
     lastprogp = old_progp;
@@ -484,8 +482,7 @@ bool_t		match_curpos;
  * is none in the buffer specified.
  */
 Line *
-linesearch(window, startline, dir, strp)
-Xviwin	*window;
+linesearch(startline, dir, strp)
 Line	*startline;	/* Where to start searching from */
 int	dir;		/* FORWARDS or BACKWARDS */
 char	**strp;		/* The search pattern without the initial / or ? */
@@ -509,7 +506,7 @@ char	**strp;		/* The search pattern without the initial / or ? */
 	}
     }
 
-    newpos = search(window, pos.p_line, pos.p_index, dir, strp);
+    newpos = search(pos.p_line, pos.p_index, dir, strp);
     return((newpos != NULL) ? newpos->p_line : NULL);
 }
 
@@ -521,7 +518,7 @@ regerror(s)
 char	*s;
 {
     if (echo & e_REGERR) {
-	show_error(curwin, "%s", s);
+	show_error("%s", s);
     }
     echo &= ~(e_REGERR | e_NOMATCH);
 }
@@ -608,8 +605,7 @@ int		maxindex;
  * pattern compiled.
  */
 static Posn *
-fwdsearch(window, startline, startindex, wrapscan)
-Xviwin		*window;
+fwdsearch(startline, startindex, wrapscan)
 Line		*startline;
 int		startindex;
 bool_t		wrapscan;
@@ -618,7 +614,7 @@ bool_t		wrapscan;
     Line	*lp;		/* current line */
     Line	*last;
 
-    last = window->w_buffer->b_lastline;
+    last = curwin->w_buffer->b_lastline;
 
     /*
      * First, search for a match on the current line after the cursor
@@ -641,7 +637,7 @@ bool_t		wrapscan;
 	 */
 	if (lp == last) {
 	    if (wrapscan) {
-		lp = window->w_buffer->b_line0;
+		lp = curwin->w_buffer->b_line0;
 		continue;
 	    } else {
 		return(NULL);
@@ -680,8 +676,7 @@ bool_t		wrapscan;
  * rmatch() instead of match().
  */
 static Posn *
-bcksearch(window, startline, startindex, wrapscan)
-Xviwin		*window;
+bcksearch(startline, startindex, wrapscan)
 Line		*startline;
 int		startindex;
 bool_t		wrapscan;
@@ -705,7 +700,7 @@ bool_t		wrapscan;
      * and then from the end of the buffer back to the
      * line after the cursor line if wrapscan is set.
      */
-    line0 = window->w_buffer->b_line0;
+    line0 = curwin->w_buffer->b_line0;
     for (lp = startline->l_prev; lp != startline; lp = lp->l_prev) {
 
 	if (lp == line0) {
@@ -714,7 +709,7 @@ bool_t		wrapscan;
 		 * Note we do a continue here so that
 		 * the loop control works properly.
 		 */
-		lp = window->w_buffer->b_lastline;
+		lp = curwin->w_buffer->b_lastline;
 		continue;
 	    } else {
 		return(NULL);
@@ -762,8 +757,7 @@ bool_t		wrapscan;
  * The "matchtype" parameter says whether we are doing 'g' or 'v'.
  */
 bool_t
-exGlobal(window, lp, up, cmd, matchtype)
-Xviwin		*window;
+exGlobal(lp, up, cmd, matchtype)
 Line		*lp, *up;
 char		*cmd;
 bool_t		matchtype;
@@ -803,7 +797,7 @@ bool_t		matchtype;
 	cmd++;	/* cmd points at char after modifier */
 	 /* fall through ... */
     case 'd':
-	if (!start_command(window)) {
+	if (!start_command()) {
 	    return(FALSE);
 	}
 	break;
@@ -821,8 +815,8 @@ bool_t		matchtype;
      * last one in the range, to make the loop easier.
      */
     if (lp == NULL) {
-	lp = window->w_buffer->b_file;
-	up = window->w_buffer->b_lastline;
+	lp = curwin->w_buffer->b_file;
+	up = curwin->w_buffer->b_lastline;
     } else if (up == NULL) {
 	up = lp->l_next;
     } else {
@@ -843,7 +837,7 @@ bool_t		matchtype;
 	curline = lp;
 	lastline = up;
 	greptype = matchtype;
-	disp_init(window, grep_line, (int) window->w_ncols, (cmdchar == 'l'));
+	disp_init(grep_line, (int) curwin->w_ncols, (cmdchar == 'l'));
 	return(TRUE);
     }
 
@@ -874,7 +868,7 @@ bool_t		matchtype;
      * It is safe not to put the cursor back, because
      * we are going to produce some more output anyway.
      */
-    gotocmd(window, FALSE);
+    gotocmd(FALSE);
 
     /*
      * Try every line from lp up to (but not including) up.
@@ -891,14 +885,14 @@ bool_t		matchtype;
 	     * functions which might alter or delete
 	     * the line.
 	     */
-	    move_cursor(window, lp, 0);
+	    move_cursor(lp, 0);
 
 	    thisline = lp;
 	    lp = lp->l_next;
 
 	    switch (cmdchar) {
 	    case 'd':	/* delete the line */
-		repllines(window, thisline, 1L,
+		repllines(thisline, 1L,
 			(Line *) NULL);
 		ndone++;
 		break;
@@ -906,7 +900,7 @@ bool_t		matchtype;
 	    case '&':
 	    case '~':
 	    {
-		register long	(*func) P((Xviwin *, Line *, Line *, char *));
+		register long	(*func) P((Line *, Line *, char *));
 		unsigned	savecho;
 
 		switch (cmdchar) {
@@ -923,7 +917,7 @@ bool_t		matchtype;
 		savecho = echo;
 
 		echo &= ~e_NOMATCH;
-		ndone += (*func) (window, thisline, thisline, cmd);
+		ndone += (*func) (thisline, thisline, cmd);
 
 		echo = savecho;
 		break;
@@ -948,13 +942,13 @@ bool_t		matchtype;
     case 's':
     case '&':
     case '~':
-	end_command(window);
+	end_command();
 	if (ndone) {
-	    xvUpdateAllBufferWindows(window->w_buffer);
-	    cursupdate(window);
-	    begin_line(window, TRUE);
+	    xvUpdateAllBufferWindows(curwin->w_buffer);
+	    cursupdate();
+	    begin_line(TRUE);
 	    if (ndone >= Pn(P_report)) {
-		show_message(window,
+		show_message(
 			 (cmdchar == 'd') ?
 			 "%ld fewer line%c" :
 			 "%ld substitution%c",
@@ -1142,7 +1136,7 @@ register int		ulmode;
 }
 
 /*
- * exSubstitute(window, lp, up, cmd)
+ * exSubstitute(lp, up, cmd)
  *
  * Perform a substitution from line 'lp' up to (but not including)
  * line 'up' using the command pointed to by 'cmd' which should be
@@ -1158,8 +1152,7 @@ register int		ulmode;
  * 0 if there were no matches or an error.
  */
 long
-exSubstitute(window, lp, up, command)
-Xviwin	*window;
+exSubstitute(lp, up, command)
 Line	*lp, *up;
 char	*command;
 {
@@ -1175,7 +1168,7 @@ char	*command;
 
     /* ":s" means repeat the last substitution */
     if (*command == '\0') {
-	return(exAmpersand(window, lp, up, command));
+	return(exAmpersand(lp, up, command));
     }
 
     copy = strsave(command);
@@ -1280,7 +1273,7 @@ char	*command;
 	copy = sub;	/* What to free instead */
     }
 
-    nsubs = substitute(window, lp, up, sub, cp);
+    nsubs = substitute(lp, up, sub, cp);
 
     /*
      * Save the rhs.
@@ -1302,20 +1295,19 @@ char	*command;
  * regular expression used.
  */
 long
-exAmpersand(window, lp, up, flags)
-Xviwin	*window;
+exAmpersand(lp, up, flags)
 Line	*lp, *up;
 char	*flags;
 {
     long	nsubs;
 
     if (last_lhs == NULL || last_rhs == NULL) {
-	show_error(window, "No substitute to repeat!");
+	show_error("No substitute to repeat!");
 	return(0);
     }
     rn_delete(lastprogp);
     lastprogp = rn_duplicate(last_lhs);
-    nsubs = substitute(window, lp, up, last_rhs, flags);
+    nsubs = substitute(lp, up, last_rhs, flags);
     return(nsubs);
 }
 
@@ -1327,28 +1319,26 @@ char	*flags;
  * substitution.
  */
 long
-exTilde(window, lp, up, flags)
-Xviwin	*window;
+exTilde(lp, up, flags)
 Line	*lp, *up;
 char	*flags;
 {
     long	nsubs;
 
     if (lastprogp == NULL || last_rhs == NULL) {
-	show_error(window, "No substitute to repeat!");
+	show_error("No substitute to repeat!");
 	return(0);
     }
     if (last_lhs) {
 	rn_delete(last_lhs);
     }
     last_lhs = rn_duplicate(lastprogp);
-    nsubs = substitute(window, lp, up, last_rhs, flags);
+    nsubs = substitute(lp, up, last_rhs, flags);
     return(nsubs);
 }
 
 static long
-substitute(window, lp, up, sub, flags)
-Xviwin	*window;
+substitute(lp, up, sub, flags)
 Line	*lp, *up;
 char	*sub;
 char	*flags;
@@ -1359,7 +1349,7 @@ char	*flags;
     bool_t	do_all;		/* true if 'g' was specified */
     Line	*lp0;
 
-    if (!start_command(window)) {
+    if (!start_command()) {
 	return(0);
     }
 
@@ -1368,7 +1358,7 @@ char	*flags;
     do_all = (*flags == 'g');
 
     nsubs = 0;
-    lp0 = window->w_cursor->p_line;
+    lp0 = curwin->w_cursor->p_line;
 
     /*
      * If no range was given, do the current line.
@@ -1394,10 +1384,10 @@ char	*flags;
 	     * cursor position (just like the real vi).
 	     */
 	    if (lp0 != NULL && lp != lp0) {
-		setpcmark(window);
+		setpcmark();
 		lp0 = NULL;
 	    }
-	    move_cursor(window, lp, 0);
+	    move_cursor(lp, 0);
 
 	    flexclear(&ns);
 	    p = lp->l_text;
@@ -1438,13 +1428,13 @@ char	*flags;
 	     * Copy the rest of the line, that didn't match.
 	     */
 	    (void) lformat(&ns, "%s", p);
-	    replchars(window, lp, 0, strlen(lp->l_text),
+	    replchars(lp, 0, strlen(lp->l_text),
 		  flexgetstr(&ns));
 	    nsubs++;
 	}
     }
     flexdelete(&ns);			/* free the temp buffer */
-    end_command(window);
+    end_command();
 
     if (!nsubs && (echo & e_NOMATCH)) {
 	regerror("No match");

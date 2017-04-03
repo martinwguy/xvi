@@ -42,16 +42,15 @@ char	*psv_strings[] =
 };
 
 /*
- * Open temporary file for given buffer.
+ * Open temporary file for current buffer.
  */
 static FILE *
-psvfile(window)
-Xviwin	*window;
+psvfile()
 {
     register Buffer	*buffer;
     FILE		*fp;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
     if (buffer->b_tempfname == NULL) {
 	char	*fname;
@@ -61,38 +60,35 @@ Xviwin	*window;
 	    fname = "unnamed";
 	buffer->b_tempfname = tempfname(fname);
 	if (buffer->b_tempfname == NULL) {
-	    show_error(window, out_of_memory);
+	    show_error(out_of_memory);
 	    return(NULL);
 	}
     }
     fp = fopenwb(buffer->b_tempfname);
     if (fp == NULL) {
-	show_error(window, "Can't open preserve file %s",
-					     buffer->b_tempfname);
+	show_error(buffer->b_tempfname);
 	/*
 	 * This can happen asynchronously, so put
 	 * the cursor back in the right place.
 	 */
-	wind_goto(curwin);
-	VSflush(window->w_vs);
+	wind_goto();
+	VSflush(curwin->w_vs);
     }
     return(fp);
 }
 
 /*
- * Write contents of buffer to file & close file. Return TRUE if no
+ * Write contents of current buffer to file & close file. Return TRUE if no
  * errors detected.
  */
 static bool_t
-putbuf(wp, fp)
-Xviwin		*wp;
+putbuf(fp)
 register FILE	*fp;
 {
     unsigned long	l1, l2;
 
-    if (put_file(wp, fp, (Line *) NULL, (Line *) NULL, &l1, &l2) == FALSE) {
-	show_error(wp, "Error writing preserve file %s",
-					     wp->w_buffer->b_tempfname);
+    if (put_file(fp, (Line *) NULL, (Line *) NULL, &l1, &l2) == FALSE) {
+	show_error(curwin->w_buffer->b_tempfname);
 	return(FALSE);
     } else {
 	return(TRUE);
@@ -113,8 +109,7 @@ register FILE	*fp;
  * Return FALSE if an error occurs during preservation, otherwise TRUE.
  */
 bool_t
-preservebuf(window)
-Xviwin	*window;
+preservebuf()
 {
     FILE	*fp;
     Buffer	*bp;
@@ -128,7 +123,7 @@ Xviwin	*window;
 	    /*
 	     * If there is a preserve file already ...
 	     */
-	    (bp = window->w_buffer)->b_tempfname != NULL
+	    (bp = curwin->w_buffer)->b_tempfname != NULL
 	    &&
 	    exists(bp->b_tempfname)
 	    &&
@@ -144,12 +139,12 @@ Xviwin	*window;
 	return(TRUE);
     }
 
-    fp = psvfile(window);
+    fp = psvfile();
     if (fp == NULL) {
 	return(FALSE);
     }
 
-    return(putbuf(window, fp));
+    return(putbuf(fp));
 }
 
 /*
@@ -174,23 +169,23 @@ Buffer	*buffer;
 bool_t
 exPreserveAllBuffers()
 {
-    Xviwin		*wp;
+    Xviwin		*oldcurwin;
     bool_t		psvstatus = TRUE;
 
-    wp = curwin;
+    /* Cycle "curwin" through all the open windows, preserving each */
     do {
-	if (is_modified(wp->w_buffer)) {
+	if (is_modified(curwin->w_buffer)) {
 	    FILE	*fp;
 
-	    fp = psvfile(wp);
+	    fp = psvfile();
 	    if (fp != NULL) {
-		if (!putbuf(wp, fp))
+		if (!putbuf(fp))
 		    psvstatus = FALSE;
 	    } else {
 		psvstatus = FALSE;
 	    }
 	}
-    } while ((wp = xvNextWindow(wp)) != curwin);
+    } while ((curwin = xvNextWindow(curwin)) != oldcurwin);
 
     return(psvstatus);
 }

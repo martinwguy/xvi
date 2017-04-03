@@ -41,12 +41,12 @@
 
 #include "xvi.h"
 
-static	bool_t	save_position P((Xviwin *, Change **));
-static	bool_t	init_change_data P((Xviwin *));
+static	bool_t	save_position P((Change **));
+static	bool_t	init_change_data P((void));
 static	void	free_changes P((Change *));
-static	Change	*_replchars P((Xviwin *, Line *, int, int, char *));
-static	Change	*_repllines P((Xviwin *, Line *, long, Line *));
-static	void	report P((Xviwin *));
+static	Change	*_replchars P((Line *, int, int, char *));
+static	Change	*_repllines P((Line *, long, Line *));
+static	void	report P((void));
 
 void
 init_undo(buffer)
@@ -122,12 +122,11 @@ Change		*change;
  * the previous saved state if the cd_nlevels variable is 0.
  */
 bool_t
-start_command(window)
-Xviwin	*window;
+start_command()
 {
-    ChangeData	*cdp = window->w_buffer->b_change;
+    ChangeData	*cdp = curwin->w_buffer->b_change;
 
-    if (!init_change_data(window)) {
+    if (!init_change_data()) {
 	return(FALSE);
     }
 
@@ -137,17 +136,16 @@ Xviwin	*window;
 }
 
 static bool_t
-init_change_data(window)
-Xviwin	*window;
+init_change_data()
 {
-    ChangeData	*cdp = window->w_buffer->b_change;
+    ChangeData	*cdp = curwin->w_buffer->b_change;
 
     if (cdp->cd_nlevels == 0) {
 	free_changes(cdp->cd_undo);
 	cdp->cd_undo = NULL;
 	cdp->cd_total_lines = 0;
 	cdp->cd_nlevels = 0;
-	if (!save_position(window, &(window->w_buffer->b_change->cd_undo))) {
+	if (!save_position(&(curwin->w_buffer->b_change->cd_undo))) {
 	    return(FALSE);
 	}
     }
@@ -161,8 +159,7 @@ Xviwin	*window;
  * the cursor will return to the right place after an undo.
  */
 static bool_t
-save_position(window, csp)
-Xviwin	*window;
+save_position(csp)
 Change **csp;		/* Stack where to save the change */
 {
     register Change	*change;
@@ -174,8 +171,8 @@ Change **csp;		/* Stack where to save the change */
 
     change->c_type = C_POSITION;
     change->c_lineno =
-    change->c_pline = lineno(window->w_cursor->p_line);
-    change->c_pindex = window->w_cursor->p_index;
+    change->c_pline = lineno(curwin->w_cursor->p_line);
+    change->c_pindex = curwin->w_cursor->p_index;
 
     push_change(csp, change);
 
@@ -183,18 +180,17 @@ Change **csp;		/* Stack where to save the change */
 }
 
 void
-end_command(window)
-Xviwin	*window;
+end_command()
 {
-    register ChangeData	*cdp = window->w_buffer->b_change;
+    register ChangeData	*cdp = curwin->w_buffer->b_change;
 
     if (cdp->cd_nlevels > 0) {
 	cdp->cd_nlevels -= 1;
 	if (cdp->cd_nlevels == 0) {
-	    report(window);
+	    report();
 	}
     } else {
-	show_error(window, "Internal error: too many \"end_command\"s");
+	show_error("Internal error: too many \"end_command\"s");
     }
 }
 
@@ -206,21 +202,20 @@ Xviwin	*window;
  * when we don't want those things to happen.
  */
 void
-replchars(window, line, start, nchars, newstring)
-Xviwin	*window;
+replchars(line, start, nchars, newstring)
 Line	*line;
 int	start;
 int	nchars;
 char	*newstring;
 {
-    ChangeData	*cdp = window->w_buffer->b_change;
+    ChangeData	*cdp = curwin->w_buffer->b_change;
     Change	*change;
 
-    if (!init_change_data(window)) {
+    if (!init_change_data()) {
 	return;
     }
 
-    change = _replchars(window, line, start, nchars, newstring);
+    change = _replchars(line, start, nchars, newstring);
 
     /*
      * Push this change onto the LIFO of changes
@@ -239,20 +234,19 @@ char	*newstring;
  * when we don't want those things to happen.
  */
 void
-repllines(window, line, nolines, newlines)
-register Xviwin	*window;
+repllines(line, nolines, newlines)
 Line		*line;
 long		nolines;
 Line		*newlines;
 {
-    ChangeData	*cdp = window->w_buffer->b_change;
+    ChangeData	*cdp = curwin->w_buffer->b_change;
     Change	*change;
 
-    if (!init_change_data(window)) {
+    if (!init_change_data()) {
 	return;
     }
 
-    change = _repllines(window, line, nolines, newlines);
+    change = _repllines(line, nolines, newlines);
 
     /*
      * Push this change onto the LIFO of changes
@@ -263,7 +257,7 @@ Line		*newlines;
     }
 
     if (cdp->cd_nlevels == 0) {
-	report(window);
+	report();
     }
 }
 
@@ -282,8 +276,7 @@ Line		*newlines;
  * higher locations in memory.
  */
 static Change *
-_replchars(window, line, start, nchars, newstring)
-Xviwin	*window;
+_replchars(line, start, nchars, newstring)
 Line	*line;
 int	start;
 int	nchars;
@@ -297,7 +290,7 @@ char	*newstring;
     Buffer		*buffer;
     Change		*change;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
 
     /*
      * First thing we have to do is to obtain a change
@@ -401,12 +394,13 @@ char	*newstring;
  * list may be a NULL pointer.
  */
 static Change *
-_repllines(window, line, nolines, newlines)
-register Xviwin	*window;
+_repllines(line, nolines, newlines)
 Line		*line;
 long		nolines;
 Line		*newlines;
 {
+    Xviwin		*window = curwin;
+    Xviwin		*oldcurwin;
     register Buffer	*buffer;	/* buffer window is mapped onto */
     Line		*firstp;	/* line before first to delete */
     Line		*lastp;		/* line after last to delete */
@@ -421,7 +415,7 @@ Line		*newlines;
     Change		*change;
     register ChangeData	*cdp;
 
-    buffer = window->w_buffer;
+    buffer = curwin->w_buffer;
     cdp = buffer->b_change;
 
     /*
@@ -450,10 +444,10 @@ Line		*newlines;
 	for (new_end = newlines; new_end->l_next != NULL;
 					    new_end = new_end->l_next) {
 	    nnlines++;
-	    nplines += plines(window, new_end);
+	    nplines += plines(new_end);
 	    restoremarks(new_end, buffer);
 	}
-	nplines += plines(window, new_end);
+	nplines += plines(new_end);
     } else {
 	/*
 	 * No new lines; we are just deleting some.
@@ -492,7 +486,7 @@ Line		*newlines;
 	 */
 	clrmark(lastp, buffer);
 
-	oplines += plines(window, lastp);
+	oplines += plines(lastp);
 
 	/*
 	 * Scan through all windows which are mapped
@@ -555,7 +549,7 @@ Line		*newlines;
 	    echo = savecho;
 	}
 	if (new_start == NULL) {
-	    show_error(window, out_of_memory);
+	    show_error(out_of_memory);
 	    chfree(change);
 	    return(NULL);
 	}
@@ -569,35 +563,35 @@ Line		*newlines;
      * the buffer being changed, and do any screen updates
      * that seem like a good idea.
      */
-    wp = window;
+    oldcurwin = curwin;
     do {
 	/*
 	 * Only do windows onto the right buffer.
 	 */
-	if (wp->w_buffer != buffer)
+	if (curwin->w_buffer != buffer)
 	    continue;
 
 	/*
 	 * Redraw part of the screen if necessary.
 	 */
-	if (!earlier(line, wp->w_topline) &&
-	    earlier(lastline, wp->w_botline)) {
+	if (!earlier(line, curwin->w_topline) &&
+	    earlier(lastline, curwin->w_botline)) {
 
 	    int	start_row;
 
-	    start_row = cntplines(wp, wp->w_topline, line);
+	    start_row = cntplines(curwin->w_topline, line);
 	    if (nplines > oplines && start_row > 0 &&
-		(start_row + nplines - oplines) < wp->w_nrows - 2) {
+		(start_row + nplines - oplines) < curwin->w_nrows - 2) {
 
-		s_ins(wp, start_row, (int) (nplines - oplines));
+		s_ins(start_row, (int) (nplines - oplines));
 
 	    } else if (nplines < oplines &&
-		    (start_row + oplines - nplines) < (wp->w_nrows - 2)) {
+		    (start_row + oplines - nplines) < (curwin->w_nrows - 2)) {
 
-		s_del(wp, start_row, (int) (oplines - nplines));
+		s_del(start_row, (int) (oplines - nplines));
 	    }
 	}
-    } while ((wp = xvNextDisplayedWindow(wp)) != window);
+    } while ((curwin = xvNextDisplayedWindow(curwin)) != oldcurwin);
 
     /*
      * Record the old set of lines as the replacement
@@ -640,8 +634,9 @@ Line		*newlines;
      * for which the lines to which they were pointing have
      * been deleted.
      */
-    wp = window;
     do {
+	wp = curwin;
+
 	/*
 	 * Only do windows onto the right buffer.
 	 */
@@ -669,7 +664,7 @@ Line		*newlines;
 				  FALSE);	/* Can't fail */
 	    }
 	    wp->w_cursor->p_index = 0;
-	    begin_line(wp, TRUE);
+	    begin_line(TRUE);
 	}
 
 	/*
@@ -680,7 +675,7 @@ Line		*newlines;
 			lastline->l_number >= wp->w_topline->l_number) {
 	    wp->w_topline = wp->w_cursor->p_line;
 	}
-    } while ((wp = xvNextWindow(wp)) != window);
+    } while ((curwin = xvNextWindow(wp)) != oldcurwin);
 
     /*
      * Renumber the buffer - but not until all the pointers,
@@ -710,29 +705,27 @@ Line		*newlines;
  * marked as unmodified. No screen updating is performed.
  */
 void
-replbuffer(window, newlines)
-register Xviwin	*window;
+replbuffer(newlines)
 Line		*newlines;
 {
+    Xviwin		*window = curwin;
+    Xviwin		*oldcurwin;
     register Buffer	*buffer;	/* buffer window is mapped onto */
     Line		*new_end;	/* last line to be inserted */
     Line		*p;
     unsigned long	l;
-    Xviwin		*wp;
     ChangeData		*cdp;
 
     cdp = window->w_buffer->b_change;
     buffer = window->w_buffer;
 
     if (newlines == NULL) {
-	show_error(window,
-		"Internal error: replbuffer called with no lines");
+	show_error("Internal error: replbuffer called with no lines");
 	return;
     }
 
     if (cdp->cd_nlevels != 0) {
-	show_error(window,
-		"Internal error: replbuffer called with nlevels != 0");
+	show_error("Internal error: replbuffer called with nlevels != 0");
 	return;
     }
 
@@ -768,15 +761,15 @@ Line		*newlines;
      * Update the w_cursor and w_topline fields in all Xviwins
      * mapped onto the current Buffer.
      */
-    wp = window;
+    oldcurwin = curwin;
     do {
-	if (wp->w_buffer != buffer)
+	if (curwin->w_buffer != buffer)
 	    continue;
 
-	move_cursor(wp, buffer->b_file, 0);
-	wp->w_topline = wp->w_cursor->p_line;
+	move_cursor(buffer->b_file, 0);
+	curwin->w_topline = curwin->w_cursor->p_line;
 
-    } while ((wp = xvNextWindow(wp)) != window);
+    } while ((curwin = xvNextWindow(curwin)) != oldcurwin);
 
     /*
      * Renumber the buffer.
@@ -810,19 +803,18 @@ Line		*newlines;
  * In xvi at present, a double Undo leaves you with 'u'ndo making no change.
  */
 void
-undoline(window)
-Xviwin	*window;
+undoline()
 {
-    Line   *line = window->w_cursor->p_line;
-    Buffer *buffer = window->w_buffer;
+    Line   *line = curwin->w_cursor->p_line;
+    Buffer *buffer = curwin->w_buffer;
 
     /* Set the undo history to a command that restores the line to
      * the way it was before they did the line undo.
      */
     buffer->b_change->cd_nlevels = 0;
-    init_change_data(window);
-    replchars(window, line, 0, strlen(line->l_text), buffer->b_Undotext);
-    move_cursor(window, line, 0);
+    init_change_data();
+    replchars(line, 0, strlen(line->l_text), buffer->b_Undotext);
+    move_cursor(line, 0);
 
     xvUpdateAllBufferWindows(buffer);
 }
@@ -831,8 +823,7 @@ Xviwin	*window;
  * Perform an undo.
  */
 void
-undo(window)
-Xviwin	*window;
+undo()
 {
     register Buffer	*buffer;
     ChangeData		*cdp;
@@ -840,11 +831,11 @@ Xviwin	*window;
     Change		*change;
     Change		*redo;
 
-    cdp = window->w_buffer->b_change;
-    buffer = window->w_buffer;
+    cdp = curwin->w_buffer->b_change;
+    buffer = curwin->w_buffer;
 
     if (cdp->cd_nlevels != 0) {
-	show_error(window, "Internal error: undo called with nlevels != 0");
+	show_error("Internal error: undo called with nlevels != 0");
 	return;
     }
 
@@ -853,7 +844,7 @@ Xviwin	*window;
      */
     chp = cdp->cd_undo;
     if (chp == NULL) {
-	show_error(window, "Nothing to undo!");
+	show_error("Nothing to undo!");
 	return;
     }
 
@@ -863,7 +854,7 @@ Xviwin	*window;
      * onto the redo stack.  First, record the cursor position.
      */
     redo = NULL;
-    if (!save_position(window, &redo)) {
+    if (!save_position(&redo)) {
 	return;
     }
 
@@ -902,15 +893,15 @@ Xviwin	*window;
 	     * free_changes, when the next line
 	     * change happens.
 	     */
-	    change = _repllines(window, lp, tmp->c_nlines, tmp->c_lines);
+	    change = _repllines(lp, tmp->c_nlines, tmp->c_lines);
 	    break;
 
 	case C_DEL_CHAR:
-	    change = _replchars(window, lp, tmp->c_index, tmp->c_nchars, "");
+	    change = _replchars(lp, tmp->c_index, tmp->c_nchars, "");
 	    break;
 
 	case C_CHAR:
-	    change = _replchars(window, lp, tmp->c_index, tmp->c_nchars,
+	    change = _replchars(lp, tmp->c_index, tmp->c_nchars,
 							    tmp->c_chars);
 
 	    /*
@@ -921,14 +912,12 @@ Xviwin	*window;
 	    break;
 
 	case C_POSITION:
-	    move_cursor(window,
-			gotoline(buffer, (unsigned long) tmp->c_pline),
+	    move_cursor(gotoline(buffer, (unsigned long) tmp->c_pline),
 			tmp->c_pindex);
 	    break;
 
 	default:
-	    show_error(window,
-	     "Internal error in undo: invalid change type. This is serious.");
+	    show_error("Internal error in undo: invalid change type.");
 	    break;
 	}
 	if (change != NULL) {
@@ -968,18 +957,17 @@ Change	*chp;
 }
 
 static void
-report(window)
-Xviwin	*window;
+report()
 {
     register ChangeData	*cdp;
 
-    cdp = window->w_buffer->b_change;
+    cdp = curwin->w_buffer->b_change;
 
     if (echo & e_REPORT) {
 	if (cdp->cd_total_lines > Pn(P_report)) {
-	    show_message(window, "%ld more lines", cdp->cd_total_lines);
+	    show_message("%ld more lines", cdp->cd_total_lines);
 	} else if (-(cdp->cd_total_lines) > Pn(P_report)) {
-	    show_message(window, "%ld fewer lines", -(cdp->cd_total_lines));
+	    show_message("%ld fewer lines", -(cdp->cd_total_lines));
 	}
     }
 }

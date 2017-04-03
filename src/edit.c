@@ -95,7 +95,7 @@ int	c;
     /*
      * Get the number of physical lines the current line occupies.
      */
-    nlines = plines(curwin, curpos->p_line);
+    nlines = plines(curpos->p_line);
 
     if (kbdintr) {
 	    kbdintr = FALSE;
@@ -111,7 +111,7 @@ int	c;
 	if (!wait_buffer) {
 	    c = '<';
 	}
-	yp_stuff_input(curwin, c, TRUE);
+	yp_stuff_input(c, TRUE);
 	wait_buffer = FALSE;
 	return(FALSE);
     }
@@ -129,14 +129,14 @@ int	c;
 	     */
 	    if (curpos->p_line == Insertloc.p_line &&
 		curpos->p_index == Insertloc.p_index) {
-		yp_stuff_input(curwin, '<', TRUE);
+		yp_stuff_input('<', TRUE);
 		stuff("%c", ESC);
 	    } else {
 		/*
 		 * Xvi can't handle NULs in files because it
 		 * stores Lines as nul-terminated strings.
 		 */
-		beep(curwin);
+		beep();
 	    }
 	    return(FALSE);
 
@@ -170,8 +170,8 @@ int	c;
 	     */
 	    if (curpos->p_index == indentchars &&
 		cltext[indentchars] == '\0') {
-		replchars(curwin, curpos->p_line, 0, indentchars, "");
-		begin_line(curwin, FALSE);
+		replchars(curpos->p_line, 0, indentchars, "");
+		begin_line(FALSE);
 	    }
 	    indentchars = 0;
 
@@ -187,15 +187,15 @@ int	c;
 
 	    State = NORMAL;
 
-	    end_command(curwin);
+	    end_command();
 
 	    (void) yank_str('<', flexgetstr(&Insbuff), FALSE);
 	    flexclear(&Insbuff);
 
 	    if (!(echo & e_CHARUPDATE)) {
 		echo |= e_CHARUPDATE;
-		move_window_to_cursor(curwin);
-		cursupdate(curwin);
+		move_window_to_cursor();
+		cursupdate();
 	    }
 	    xvUpdateAllBufferWindows(curbuf);
 	    return(TRUE);
@@ -218,11 +218,11 @@ int	c;
 		gc = gchar(&pos);
 		if (gc == '0' || gc == '^') {
 		    if (gc == '^') next_indent = get_indent(curpos->p_line);
-		    replchars(curwin, curpos->p_line, 0, indentchars + 1, "");
+		    replchars(curpos->p_line, 0, indentchars + 1, "");
 		    indentchars = set_indent(curpos->p_line, 0);
-		    move_cursor(curwin, curpos->p_line, 0);
-		    cursupdate(curwin);
-		    updateline(curwin, nlines != plines(curwin, curpos->p_line));
+		    move_cursor(curpos->p_line, 0);
+		    cursupdate();
+		    updateline(nlines != plines(curpos->p_line));
 		    (void) flexaddch(&Insbuff, c);
 		    return(TRUE);
 		}
@@ -250,12 +250,12 @@ int	c;
 		    ind += sw - (ind % sw);
 		}
 		indentchars = set_indent(lp, ind);
-		move_cursor(curwin, curpos->p_line, indentchars);
-		cursupdate(curwin);
-		updateline(curwin, nlines != plines(curwin, curpos->p_line));
+		move_cursor(curpos->p_line, indentchars);
+		cursupdate();
+		updateline(nlines != plines(curpos->p_line));
 		(void) flexaddch(&Insbuff, c);
 	    } else {
-		beep(curwin);
+		beep();
 	    }
 	    return(TRUE);
 
@@ -266,7 +266,7 @@ int	c;
 	     */
 	    if (curpos->p_line == Insertloc.p_line &&
 			    curpos->p_index <= Insertloc.p_index) {
-		beep(curwin);
+		beep();
 		return(TRUE);
 	    }
 
@@ -274,20 +274,20 @@ int	c;
 	     * Can't backup to a previous line.
 	     */
 	    if (curpos->p_line != Insertloc.p_line && curpos->p_index <= 0) {
-		beep(curwin);
+		beep();
 		return(TRUE);
 	    }
-	    (void) one_left(curwin, FALSE);
+	    (void) one_left(FALSE);
 	    if (curpos->p_index < indentchars)
 		indentchars--;
-	    replchars(curwin, curpos->p_line, curpos->p_index, 1, "");
+	    replchars(curpos->p_line, curpos->p_index, 1, "");
 	    (void) flexaddch(&Insbuff, '\b');
-	    cursupdate(curwin);
+	    cursupdate();
 	    /*
 	     * Make sure backspacing over a physical line
 	     * break updates the screen correctly.
 	     */
-	    updateline(curwin, curwin->w_col == 0);
+	    updateline(curwin->w_col == 0);
 	    return(TRUE);
 
 	case CTRL('U'):
@@ -334,22 +334,22 @@ int	c;
 		return(TRUE);
 	    }
 
-	    plines_before = plines(curwin, curpos->p_line);
+	    plines_before = plines(curpos->p_line);
 
-	    replchars(curwin, curpos->p_line, from_index,
+	    replchars(curpos->p_line, from_index,
 		      curpos->p_index - from_index, "");
 
-	    plines_after = plines(curwin, curpos->p_line);
+	    plines_after = plines(curpos->p_line);
 
 	    curpos->p_index = from_index;
 
 	    (void) flexaddch(&Insbuff, c);
-	    cursupdate(curwin);
+	    cursupdate();
 	    /*
 	     * Make sure cancelling over a physical line
 	     * break updates the screen correctly.
 	     */
-	    updateline(curwin, plines_before != plines_after);
+	    updateline(plines_before != plines_after);
 	    return(TRUE);
 	  }
 
@@ -366,9 +366,9 @@ int	c;
 		prevline = curpos->p_line;
 		previndex = curpos->p_index;
 
-		if (openfwd(curwin, curpos, TRUE) == FALSE) {
+		if (openfwd(curpos, TRUE) == FALSE) {
 		    stuff("%c", ESC);
-		    show_error(curwin, out_of_memory);
+		    show_error(out_of_memory);
 		    return(TRUE);
 		}
 
@@ -377,12 +377,12 @@ int	c;
 		 * auto-indent on it, delete it.
 		 */
 		if (i == previndex) {
-		    replchars(curwin, prevline, 0, i, "");
+		    replchars(prevline, 0, i, "");
 		}
 
-		move_window_to_cursor(curwin);
-		cursupdate(curwin);
-		updateline(curwin, TRUE);
+		move_window_to_cursor();
+		cursupdate();
+		updateline(TRUE);
 	    }
 	    return(TRUE);
 
@@ -429,7 +429,7 @@ int	c;
 	 */
 
 	/* Get rid of the ^ that we inserted to show the ^V */
-	replchars(curwin, curpos->p_line, curpos->p_index, 1, "");
+	replchars(curpos->p_line, curpos->p_index, 1, "");
 	flexrmchar(&Insbuff);
 
         literal_next = FALSE;
@@ -456,7 +456,7 @@ int	c;
     /*
      * Do the actual insertion of the new character.
      */
-    replchars(curwin, curpos->p_line, curpos->p_index, 0, mkstr(c));
+    replchars(curpos->p_line, curpos->p_index, 0, mkstr(c));
 
     /*
      * Deal with wrapmargin.
@@ -506,8 +506,8 @@ int	c;
 	    target.p_line = curpos->p_line;
 	    target.p_index = wspos;
 	    offset = curpos->p_index - nwspos;
-	    if (openfwd(curwin, &target, TRUE) == FALSE) {
-		show_error(curwin, out_of_memory);
+	    if (openfwd(&target, TRUE) == FALSE) {
+		show_error(out_of_memory);
 	    } else {
 		int	newindex = curpos->p_index;
 		Line	*newlp = curpos->p_line;
@@ -519,8 +519,8 @@ int	c;
 		 * line.
 		 */
 		while ((c = newlp->l_text[newindex]) != '\0' && is_space(c))
-		    replchars(curwin, newlp, newindex, 1, "");
-		move_cursor(curwin, newlp, newindex + offset);
+		    replchars(newlp, newindex, 1, "");
+		move_cursor(newlp, newindex + offset);
 	    }
 	}
     }
@@ -528,8 +528,8 @@ int	c;
     /*
      * Update the screen.
      */
-    s_inschar(curwin, c);
-    updateline(curwin, nlines != plines(curwin, curpos->p_line));
+    s_inschar(c);
+    updateline(nlines != plines(curpos->p_line));
 
     /*
      * If showmatch mode is set, check for right parens
@@ -545,7 +545,7 @@ int	c;
 
 	lpos = showmatch();
 	if (lpos == NULL) {
-	    beep(curwin);
+	    beep();
 	} else if (!earlier(lpos->p_line, curwin->w_topline) &&
 		       earlier(lpos->p_line, curwin->w_botline)) {
 	    /*
@@ -554,15 +554,15 @@ int	c;
 	    xvUpdateAllBufferWindows(curbuf);
 
 	    csave = *curpos;
-	    move_cursor(curwin, lpos->p_line, lpos->p_index);
-	    cursupdate(curwin);
-	    wind_goto(curwin);
+	    move_cursor(lpos->p_line, lpos->p_index);
+	    cursupdate();
+	    wind_goto();
 	    VSflush(curwin->w_vs);
 
 	    Wait200ms();
 
-	    move_cursor(curwin, csave.p_line, csave.p_index);
-	    cursupdate(curwin);
+	    move_cursor(csave.p_line, csave.p_index);
+	    cursupdate();
 	}
     }
 
@@ -571,11 +571,11 @@ int	c;
      * of the line if required.
      */
     if (beginline) {
-	begin_line(curwin, TRUE);
+	begin_line(TRUE);
     } else {
 	/* If we're showing the ^ for a ^V, leave the cursor on the ^ */
 	if (!literal_next) {
-	    (void) one_right(curwin, TRUE);
+	    (void) one_right(TRUE);
 	}
     }
 
@@ -636,7 +636,7 @@ int	c;
 	if (!wait_buffer) {
 	    c = '<';
 	}
-	yp_stuff_input(curwin, c, TRUE);
+	yp_stuff_input(c, TRUE);
 	wait_buffer = FALSE;
 	return(FALSE);
     }
@@ -651,15 +651,15 @@ int	c;
 	case '\b':			/* back space */
 	case DEL:
 	    if (repstate == overwrite && curwin->w_virtcol > start_column) {
-		(void) one_left(curwin, FALSE);
-		replchars(curwin, curpos->p_line,
+		(void) one_left(FALSE);
+		replchars(curpos->p_line,
 				curpos->p_index, 1,
 				(curpos->p_index < nchars) ?
 				mkstr(saved_line[curpos->p_index]) : "");
-		updateline(curwin, FALSE);
+		updateline(FALSE);
 		(void) flexaddch(&Insbuff, '\b');
 	    } else {
-		beep(curwin);
+		beep();
 		if (repstate == replace_one) {
 		    end_replace(c);
 		}
@@ -668,11 +668,11 @@ int	c;
 
 	case K_LARROW:			/* left arrow */
 	    if (repstate == overwrite && curwin->w_virtcol > start_column &&
-						one_left(curwin, FALSE)) {
+						one_left(FALSE)) {
 		(void) flexaddch(&Insbuff, c);
 		return(TRUE);
 	    } else {
-		beep(curwin);
+		beep();
 		if (repstate == replace_one) {
 		    end_replace(c);
 		}
@@ -680,11 +680,11 @@ int	c;
 	    }
 
 	case K_RARROW:			/* right arrow */
-	    if (repstate == overwrite && one_right(curwin, FALSE)) {
+	    if (repstate == overwrite && one_right(FALSE)) {
 		(void) flexaddch(&Insbuff, c);
 		return(TRUE);
 	    } else {
-		beep(curwin);
+		beep();
 		if (repstate == replace_one) {
 		    end_replace(c);
 		}
@@ -699,7 +699,7 @@ int	c;
 		 * Don't allow splitting of last line of
 		 * buffer in overwrite mode. Why not?
 		 */
-		beep(curwin);
+		beep();
 		return(TRUE);
 	    }
 
@@ -709,13 +709,13 @@ int	c;
 		/*
 		 * First remove the character which is being replaced.
 		 */
-		replchars(curwin, curpos->p_line, curpos->p_index, 1, "");
+		replchars(curpos->p_line, curpos->p_index, 1, "");
 
 		/*
 		 * Then split the line at the current position.
 		 */
-		if (openfwd(curwin, curpos, TRUE) == FALSE) {
-		    show_error(curwin, out_of_memory);
+		if (openfwd(curpos, TRUE) == FALSE) {
+		    show_error(out_of_memory);
 		    return(TRUE);
 		}
 
@@ -728,7 +728,7 @@ int	c;
 		(void) flexaddch(&Insbuff, '\n');
 
 		if (xvMoveDown(curwin->w_cursor, 1L, FALSE)) {
-		    info_update(curwin);
+		    info_update();
 
 		    /*
 		     * This is wrong, but it's difficult
@@ -785,7 +785,7 @@ int	c;
 
 	/* The ^ that we inserted to show the ^V-in-progress is replaced
 	 * by the literal character because we didn't call one_right for it. */
-	//replchars(curwin, curpos->p_line, curpos->p_index, 1, "");
+	//replchars(curpos->p_line, curpos->p_index, 1, "");
 	/* Remove the phantom ^ from the insert buffer */
 	flexrmchar(&Insbuff);
 
@@ -803,10 +803,10 @@ int	c;
     if (!literal_next) (void) flexaddch(&Insbuff, c);
 
     if (repstate == overwrite || repstate == replace_one) {
-	replchars(curwin, curpos->p_line, curpos->p_index, 1, mkstr(c));
-	updateline(curwin, FALSE);
+	replchars(curpos->p_line, curpos->p_index, 1, mkstr(c));
+	updateline(FALSE);
 	if (!literal_next) {
-	    (void) one_right(curwin, TRUE);
+	    (void) one_right(TRUE);
 	}
     }
 
@@ -843,14 +843,14 @@ int	repeat;
 	char *line = curp->p_line->l_text + curp->p_index;
 
 	if (repeat + 1 > strlen(line)) {
-	    beep(curwin);
+	    beep();
 	    /* Failed commands interrupt redos and mapped commands */
 	    unstuff();
 	    return;
 	}
     }
 
-    if (!start_command(curwin)) {
+    if (!start_command()) {
 	return;
     }
     start_index = curwin->w_cursor->p_index;
@@ -863,8 +863,8 @@ int	repeat;
 	repstate = overwrite;
 	saved_line = strsave(curwin->w_cursor->p_line->l_text);
 	if (saved_line == NULL) {
-	    beep(curwin);
-	    end_command(curwin);
+	    beep();
+	    end_command();
 	    return;
 	}
 	nchars = strlen(saved_line);
@@ -901,7 +901,7 @@ end_replace(c)
     }
 
     State = NORMAL;
-    end_command(curwin);
+    end_command();
 
     indentchars = 0;	/* must reset this before leaving replace mode */
 
@@ -926,14 +926,14 @@ end_replace(c)
 	 * The cursor should end up on the
 	 * last replaced character.
 	 */
-	while (one_left(curwin, FALSE) && gchar(curwin->w_cursor) == '\0') {
+	while (one_left(FALSE) && gchar(curwin->w_cursor) == '\0') {
 	    ;
 	}
 
 	if (!(echo & e_CHARUPDATE)) {
 	    echo |= e_CHARUPDATE;
-	    move_window_to_cursor(curwin);
-	    cursupdate(curwin);
+	    move_window_to_cursor();
+	    cursupdate();
 	}
 	xvUpdateAllBufferWindows(curbuf);
     }

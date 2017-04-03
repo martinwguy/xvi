@@ -510,11 +510,11 @@ bool_t	skip_white;
 }
 
 Posn *
-xvDoSearch(window, str, cmd_char)
-Xviwin		*window;
+xvDoSearch(str, cmd_char)
 char		*str;
 int		cmd_char;
 {
+    Xviwin	*window = curwin;
     Posn	*p;
     unsigned	savecho;
     Posn	*retpos;
@@ -525,7 +525,7 @@ int		cmd_char;
      * Place the cursor at bottom left of the window,
      * so the user knows what we are doing.
      */
-    gotocmd(window, FALSE);
+    gotocmd(FALSE);
 
     switch (cmd_char) {
     case '/':
@@ -549,8 +549,8 @@ int		cmd_char;
 
     savecho = echo;
 
-    p = search(window, window->w_cursor->p_line,
-			window->w_cursor->p_index, dir, &str);
+    p = search(window->w_cursor->p_line,
+	       window->w_cursor->p_index, dir, &str);
     if (p == NULL) {
 	regerror("Pattern not found");
 	retpos = NULL;
@@ -593,8 +593,7 @@ Posn	*pos;
 }
 
 Posn *
-xvLocateTextObject(win, startpos, opchar1, opchar2)
-Xviwin	*win;
+xvLocateTextObject(startpos, opchar1, opchar2)
 Posn	*startpos;
 int	opchar1, opchar2;
 {
@@ -638,14 +637,14 @@ int	opchar1, opchar2;
      */
     newpos = NULL;
     if (opchar1 == ')') {
-	newpos = xvFindPattern(win, startpos, pattern, BACKWARD, TRUE);
+	newpos = xvFindPattern(startpos, pattern, BACKWARD, TRUE);
     }
 
     /*
      * Default case, or if no match is found backward for ')'.
      */
     if (newpos == NULL) {
-	newpos = xvFindPattern(win, startpos, pattern, dir, FALSE);
+	newpos = xvFindPattern(startpos, pattern, dir, FALSE);
     }
 
     /*
@@ -661,7 +660,7 @@ int	opchar1, opchar2;
 	    /*
 	     * Make sure we don't sit on our current position.
 	     */
-	    newpos = xvFindPattern(win, &store_pos, pattern, dir, FALSE);
+	    newpos = xvFindPattern(&store_pos, pattern, dir, FALSE);
 	    if (newpos != NULL) {
 		store_pos = *newpos;
 		xvMoveToNextNonWhite(newpos);
@@ -683,12 +682,12 @@ int	opchar1, opchar2;
 	 */
 	switch (dir) {
 	case BACKWARD:
-	    store_pos.p_line = win->w_buffer->b_file;
+	    store_pos.p_line = curwin->w_buffer->b_file;
 	    store_pos.p_index = 0;	/* should begin_line() if [[ or ]] ? */
 	    break;
 
 	case FORWARD:
-	    store_pos.p_line = b_last_line_of(win->w_buffer);
+	    store_pos.p_line = b_last_line_of(curwin->w_buffer);
 	    store_pos.p_index = 0;
 	    while (inc(&store_pos) != mv_EOL) {
 		;
@@ -713,7 +712,7 @@ int	opchar1, opchar2;
 	/*
 	 * Paragraph boundaries are also sentence boundaries.
 	 */
-	newpos = xvFindPattern(win, startpos, Ps(P_paragraphs), dir, FALSE);
+	newpos = xvFindPattern(startpos, Ps(P_paragraphs), dir, FALSE);
 	if (
 	    newpos != NULL
 	    &&
@@ -730,7 +729,7 @@ int	opchar1, opchar2;
 	/*
 	 * Section boundaries are also paragraph and sentence boundaries.
 	 */
-	newpos = xvFindPattern(win, startpos, Ps(P_sections), dir, FALSE);
+	newpos = xvFindPattern(startpos, Ps(P_sections), dir, FALSE);
 	if (
 	    newpos != NULL
 	    &&

@@ -33,8 +33,7 @@
  * All windows associated with the changed buffer are updated.
  */
 bool_t
-openfwd(window, oldposn, split_line)
-Xviwin	*window;
+openfwd(oldposn, split_line)
 Posn	*oldposn;
 bool_t	split_line;
 {
@@ -59,7 +58,7 @@ bool_t	split_line;
     /*
      * Link the new line into the list.
      */
-    repllines(window, oldline->l_next, 0L, l);
+    repllines(oldline->l_next, 0L, l);
 
     /*
      * Do auto-indent.
@@ -97,22 +96,22 @@ bool_t	split_line;
 	/*
 	 * Add the text after the split-point onto the "new" line.
 	 */
-	replchars(window, l, indentchars, 0, s);
+	replchars(l, indentchars, 0, s);
 
 	/*
 	 * Remove the text after the split-point on the "old" line.
 	 */
-	replchars(window, oldline, oldposn->p_index,
+	replchars(oldline, oldposn->p_index,
 				strlen(otext + oldposn->p_index), "");
     }
 
     /*
      * Move cursor to the new line.
      */
-    move_cursor(window, l, indentchars);
-    move_window_to_cursor(window);
-    cursupdate(window);
-    xvUpdateAllBufferWindows(window->w_buffer);
+    move_cursor(l, indentchars);
+    move_window_to_cursor();
+    cursupdate();
+    xvUpdateAllBufferWindows(curwin->w_buffer);
 
     return(TRUE);
 }
@@ -141,7 +140,7 @@ openbwd()
     /*
      * Link the new line into the list.
      */
-    repllines(curwin, oldline, 0L, l);
+    repllines(oldline, 0L, l);
 
     /*
      * Do auto-indent.
@@ -156,9 +155,9 @@ openbwd()
     /*
      * Ensure the cursor is pointing at the right line.
      */
-    move_cursor(curwin, l, indentchars);
-    move_window_to_cursor(curwin);
-    cursupdate(curwin);
+    move_cursor(l, indentchars);
+    move_window_to_cursor();
+    cursupdate();
     xvUpdateAllBufferWindows(curbuf);
 
     return(TRUE);
@@ -206,8 +205,7 @@ register Line	*pend;
  * plines(lp) - return the number of physical screen lines taken by line 'lp'.
  */
 long
-plines(win, lp)
-Xviwin	*win;
+plines( lp)
 Line	*lp;
 {
     register long	col;
@@ -236,7 +234,7 @@ Line	*lp;
 	register int	row;
 	register int	columns;
 
-	columns = win->w_ncols;
+	columns = curwin->w_ncols;
 	for (row = 1; col > columns; ) {
 	    row++;
 	    col -= columns;
@@ -257,8 +255,7 @@ Line	*lp;
  *	the caller isn't interested in the exact number.
  */
 long
-cntplines(win, pbegin, pend)
-Xviwin		*win;
+cntplines(pbegin, pend)
 Line		*pbegin;
 register Line	*pend;
 {
@@ -275,9 +272,9 @@ register Line	*pend;
 	pend = lp;
     }
 
-    toomuch = win->w_nrows * 2;
+    toomuch = curwin->w_nrows * 2;
     for (physlines = 0, lp = pbegin; lp != pend; lp = lp->l_next) {
-	physlines += plines(win, lp);
+	physlines += plines(lp);
 	if (physlines >= toomuch)
 	    break;
     }
@@ -321,7 +318,7 @@ register Line	*lp;
     register int    ts = Pn(P_tabstop);	/* synonym for efficiency */
 
     if (lp == NULL || (text = lp->l_text) == NULL) {
-	show_error(curwin, "Internal error: get_indent(NULL)");
+	show_error("Internal error: get_indent(NULL)");
 	return 0;
     }
 
@@ -349,7 +346,7 @@ register int	indent;
     int			tabstop;	/* value of P_tabstop */
 
     if (lp == NULL || lp->l_text == NULL) {
-	show_error(curwin, "Internal error: set_indent(0)");
+	show_error("Internal error: set_indent(0)");
 	return(0);
     }
 
@@ -387,7 +384,7 @@ register int	indent;
     /*
      * Finally, replace the old with the new.
      */
-    replchars(curwin, lp, 0, (int) nold, flexgetstr(&newstr));
+    replchars(lp, 0, (int) nold, flexgetstr(&newstr));
 
     /*
      * This is the number of characters we've inserted.
@@ -409,7 +406,7 @@ Line	*finish;
     Line	*lp;
     long	nlines = 0;
 
-    if (!start_command(curwin)) {
+    if (!start_command()) {
 	return;
     }
 
@@ -427,7 +424,7 @@ Line	*finish;
 	    ;
 	if (*p == '\0') {
 	    if (p > lp->l_text) {
-		replchars(curwin, lp, 0, p - lp->l_text, "");
+		replchars(lp, 0, p - lp->l_text, "");
 	    }
 	} else if (inout == '<') {
 	    int oldindent = get_indent(lp);
@@ -441,10 +438,10 @@ Line	*finish;
 	nlines++;
     }
 
-    end_command(curwin);
+    end_command();
 
     if (nlines > Pn(P_report)) {
-	show_message(curwin, "%ld lines %ced", nlines, inout);
+	show_message("%ld lines %ced", nlines, inout);
     }
 }
 
@@ -563,8 +560,7 @@ register char	*str;
  * The screen is not updated; that is left to the caller.
  */
 bool_t
-xvJoinLine(window, line, exclam)
-Xviwin	*window;
+xvJoinLine(line, exclam)
 Line	*line;
 bool_t	exclam;
 {
@@ -578,7 +574,7 @@ bool_t	exclam;
 	return(FALSE);
     }
 
-    if (!start_command(window)) {
+    if (!start_command()) {
 	return(FALSE);
     }
 
@@ -594,8 +590,8 @@ bool_t	exclam;
 	nextline++;
     }
 
-    replchars(window, line, size1, 0, nextline);
-    repllines(window, line->l_next, (long) 1, (Line *) NULL);
+    replchars(line, size1, 0, nextline);
+    repllines(line->l_next, (long) 1, (Line *) NULL);
 
     /*
      * If the last char of the first line is not space and
@@ -611,10 +607,10 @@ bool_t	exclam;
 	&&
 	line->l_text[size1] != '\0'
     ) {
-	replchars(window, line, size1, 0, " ");
+	replchars(line, size1, 0, " ");
     }
 
-    end_command(window);
+    end_command();
 
     return(TRUE);
 }
@@ -623,17 +619,16 @@ bool_t	exclam;
  * Test to see if there exist any modified-and-unsaved buffers.
  */
 bool_t
-xvChangesNotSaved(window)
-Xviwin	*window;
+xvChangesNotSaved()
 {
     Xviwin	*wp;
 
-    wp = window;
+    wp = curwin;
     do {
 	if (is_modified(wp->w_buffer)) {
 	    return(TRUE);
 	}
-    } while ((wp = xvNextWindow(wp)) != window);
+    } while ((wp = xvNextWindow(wp)) != curwin);
     return(FALSE);
 }
 
@@ -645,19 +640,17 @@ Xviwin	*window;
  * xvChangesNotSaved() for example) should work fine.
  */
 void
-xvAutoWriteAll(window)
-Xviwin	*window;
+xvAutoWriteAll()
 {
-    Xviwin	*wp;
+    Xviwin	*oldcurwin = curwin;
 
     if (Pb(P_autowrite)) {
-	wp = window;
 	do {
-	    if (is_modified(wp->w_buffer)) {
-		(void) exWriteToFile(wp, (char *) NULL, (Line *) NULL,
+	    if (is_modified(curwin->w_buffer)) {
+		(void) exWriteToFile((char *) NULL, (Line *) NULL,
 					     (Line *) NULL, 0);
 	    }
-	} while ((wp = xvNextWindow(wp)) != window);
+	} while ((curwin = xvNextWindow(curwin)) != oldcurwin);
     }
 
     return;
@@ -669,11 +662,9 @@ Xviwin	*window;
  * will tell callers if it succeeded or not.
  */
 void
-xvAutoWrite(window)
-Xviwin *window;
+xvAutoWrite()
 {
-    if (is_modified(window->w_buffer) && Pb(P_autowrite)) {
-	(void) exWriteToFile(window, (char *) NULL, (Line *) NULL,
-				     (Line *) NULL, 0);
+    if (is_modified(curwin->w_buffer) && Pb(P_autowrite)) {
+	(void) exWriteToFile((char *) NULL, (Line *) NULL, (Line *) NULL, 0);
     }
 }

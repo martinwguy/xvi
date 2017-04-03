@@ -33,29 +33,28 @@ static	unsigned int	inend = 0;		/* one past the last char */
 static	unsigned char	colposn[CMDSZ];		/* holds n chars per char */
 
 /*
- * cmd_init(window, firstch)
+ * cmd_init(firstch)
  *
  * Initialise command line input.
  */
 void
-cmd_init(win, firstch)
-Xviwin	*win;
+cmd_init(firstch)
 int	firstch;
 {
     if (inpos > 0) {
-	show_error(win, "Internal error: re-entered command line input mode");
+	show_error("Internal error: re-entered command line input mode");
 	return;
     }
 
     State = CMDLINE;
 
-    flexclear(&win->w_statusline);
-    (void) flexaddch(&win->w_statusline, firstch);
+    flexclear(&curwin->w_statusline);
+    (void) flexaddch(&curwin->w_statusline, firstch);
     inbuf[0] = firstch;
     colposn[0] = 0;
     inpos = 1; inend = 1;
     colposn[1] = 1;
-    update_cline(win, colposn[1]);
+    update_cline(colposn[1]);
 }
 
 /*
@@ -95,7 +94,7 @@ common_prefix(s)
 }
 
 /*
- * cmd_input(window, character)
+ * cmd_input(character)
  *
  * Deal with command line input. Takes an input character and returns
  * one of cmd_CANCEL (meaning they deleted past the prompt character),
@@ -104,11 +103,10 @@ common_prefix(s)
  * mode to be in).
  *
  * Once cmd_COMPLETE has been returned, it is possible to call
- * get_cmd(win) to obtain the command line.
+ * get_cmd() to obtain the command line.
  */
 Cmd_State
-cmd_input(win, ch)
-Xviwin	*win;
+cmd_input(ch)
 int	ch;
 {
     unsigned		len;
@@ -122,7 +120,7 @@ int	ch;
 
     /* Nuls are disallowed whether literal or not */
     if (ch == CTRL('@')) {
-	beep(win);
+	beep();
 	return(cmd_INCOMPLETE);
     }
 
@@ -143,7 +141,7 @@ int	ch;
 	    inbuf[inend] = '\0';	/* terminate input line */
 	    inpos = 0; inend = 0;
 	    State = NORMAL;		/* return state to normal */
-	    update_sline(win);		/* line is now a message line */
+	    update_sline();	/* line is now a message line */
 	    return(cmd_COMPLETE);	/* and indicate we are done */
 
 	case '\b':		/* backspace or delete */
@@ -181,7 +179,7 @@ int	ch;
 	      /* Update the screen columns */
 	      for (i=inpos; i <= inend; i++) colposn[i] -= len;
 	      /* Move the end of the status line down to fill the gap */
-              stat = &win->w_statusline.fxb_chars[win->w_statusline.fxb_rcnt];
+              stat = &curwin->w_statusline.fxb_chars[curwin->w_statusline.fxb_rcnt];
 	      memmove(stat+colposn[inpos], stat+colposn[inpos]+len,
 		      colposn[inend]-colposn[inpos]);
 	    }
@@ -194,9 +192,9 @@ int	ch;
 		return(cmd_CANCEL);
 	    }
 	    len = colposn[inend];
-	    while (flexlen(&win->w_statusline) > len)
-		flexrmchar(&win->w_statusline);
-	    update_cline(win,colposn[inpos]);
+	    while (flexlen(&curwin->w_statusline) > len)
+		flexrmchar(&curwin->w_statusline);
+	    update_cline(colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
 	case '\t':
@@ -216,7 +214,7 @@ int	ch;
 	    inbuf[inend] = '\0';	/* ensure word is terminated */
 	    to_expand = strrchr(inbuf, ' ');
 	    if (to_expand == NULL || *(to_expand + 1) == '\0') {
-		beep(win);
+		beep();
 		return(cmd_INCOMPLETE);
 	    } else {
 		to_expand++;
@@ -236,13 +234,13 @@ int	ch;
 		 */
 		inend = inpos = to_expand - inbuf - 1;
 		len = colposn[inpos - 1] + 1;
-		while (flexlen(&win->w_statusline) > len)
-		    flexrmchar(&win->w_statusline);
+		while (flexlen(&curwin->w_statusline) > len)
+		    flexrmchar(&curwin->w_statusline);
 		if (common_prefix(expansion) > 1)
-		    beep(win);
+		    beep();
 		stuff(" %s", expansion);
 	    } else {
-		beep(win);
+		beep();
 	    }
 
 	    return(cmd_INCOMPLETE);
@@ -251,16 +249,16 @@ int	ch;
 	case EOF:
 	case CTRL('U'):		/* line kill */
 	    inpos = 1; inend = 1;
-	    flexclear(&win->w_statusline);
-	    (void) flexaddch(&win->w_statusline, inbuf[0]);
-	    update_cline(win, colposn[inpos]);
+	    flexclear(&curwin->w_statusline);
+	    (void) flexaddch(&curwin->w_statusline, inbuf[0]);
+	    update_cline(colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
 	case CTRL('C'):
 	case ESC:
 	    inpos = 0; inend = 0;
-	    flexclear(&win->w_statusline);
-	    update_cline(win, colposn[inpos]);
+	    flexclear(&curwin->w_statusline);
+	    update_cline(colposn[inpos]);
 	    State = NORMAL;
 	    return(cmd_CANCEL);
 
@@ -269,27 +267,27 @@ int	ch;
 	case K_LARROW:
 	    if (inpos > 1) {
 		--inpos;
-	        update_cline(win, colposn[inpos]);
+	        update_cline(colposn[inpos]);
 	    }
-	    else beep(win);
+	    else beep();
 	    return(cmd_INCOMPLETE);
 
 	case K_RARROW:
 	    if (inpos < inend) {
 		++inpos;
-	        update_cline(win, colposn[inpos]);
+	        update_cline(colposn[inpos]);
 	    }
-	    else beep(win);
+	    else beep();
 	    return(cmd_INCOMPLETE);
 
 	case K_HOME:
 	    inpos = 1;
-	    update_cline(win, colposn[inpos]);
+	    update_cline(colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
 	case K_END:
 	    inpos = inend;
-	    update_cline(win, colposn[inpos]);
+	    update_cline(colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
 	/*
@@ -308,7 +306,7 @@ int	ch;
 	case K_CGRAVE:
 	case K_PGDOWN:
 	case K_PGUP:
-	    beep(win);
+	    beep();
 	    return(cmd_INCOMPLETE);
 
 	default:
@@ -336,11 +334,11 @@ int	ch;
 	}
 #endif
 	/* Move the rest of the status line down */
-	stat = &win->w_statusline.fxb_chars[win->w_statusline.fxb_rcnt];
+	stat = &curwin->w_statusline.fxb_chars[curwin->w_statusline.fxb_rcnt];
 	memmove(stat+colposn[inpos], stat+colposn[inpos]+1,
 		colposn[inend]-colposn[inpos]);
 	/* and remove its last character */
-	flexrmchar(&win->w_statusline);
+	flexrmchar(&curwin->w_statusline);
 
 	literal_next = FALSE;
     }
@@ -356,8 +354,8 @@ int	ch;
 	endposn = colposn[inend];
 	w = vischar(ch, &p, -1);
 	if (inend >= sizeof(inbuf) - 1
-	    || endposn + w > win->w_ncols - 1) {
-	    beep(win);
+	    || endposn + w > curwin->w_ncols - 1) {
+	    beep();
 	} else {
 	    int i;
 	    memmove(inbuf+inpos+1, inbuf+inpos, inend-inpos);
@@ -366,14 +364,14 @@ int	ch;
 	    inend++; inbuf[inpos++] = ch;
 	    colposn[inpos] = colposn[inpos-1] + w;
 
-	    (void) lformat(&win->w_statusline, "%s", p);
+	    (void) lformat(&curwin->w_statusline, "%s", p);
 	    /* That appended the representation of the char to the
 	     * status line, extending the flexbuf, but we were supposed
 	     * to insert the new char, not append it, so move the rest
 	     * of the status line up, then deposit the new char(s) in
 	     * the hole that this leaves.
 	     */
-            stat = &win->w_statusline.fxb_chars[win->w_statusline.fxb_rcnt];
+            stat = &curwin->w_statusline.fxb_chars[curwin->w_statusline.fxb_rcnt];
             memmove(stat+colposn[inpos],
 		    stat+colposn[inpos-1],
 		    colposn[inend-1]-colposn[inpos-1]+1);
@@ -383,7 +381,7 @@ int	ch;
 	     * If we just displayed the ^ for a literal next character,
 	     * the cursor should be shown on the ^.
 	     */
-	    update_cline(win, colposn[inpos] - literal_next);
+	    update_cline(colposn[inpos] - literal_next);
 	}
     }
 
@@ -392,8 +390,7 @@ int	ch;
 
 /*ARGSUSED*/
 char *
-get_cmd(win)
-Xviwin	*win;
+get_cmd()
 {
     return(inbuf);
 }

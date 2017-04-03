@@ -504,7 +504,7 @@ xvi_map(arg, exclam, inter)
     }
     if (arg == NULL || arg[0] == '\0') {
 	curmap = exclam ? ins_map : cmd_map;
-	disp_init(curwin, show_map, (int) curwin->w_ncols, FALSE);
+	disp_init(show_map, (int) curwin->w_ncols, FALSE);
     } else {
 	char	       *lhs;
 	char	       *rhs;
@@ -512,13 +512,13 @@ xvi_map(arg, exclam, inter)
 	lhs = arg;
 	if (!mapescape(&lhs, &rhs)) {
 	    if (inter) {
-		show_message(curwin, out_of_memory);
+		show_message(out_of_memory);
 	    }
 	    return(FALSE);
 	}
 	if (rhs == NULL) {
 	    if (inter) {
-		show_message(curwin, "Usage: :map lhs rhs");
+		show_message("Usage: :map lhs rhs");
 	    }
 	    free(lhs);
 	    return(FALSE);
@@ -616,7 +616,7 @@ bool_t	inter;
 
     if (argc < 1) {
 	if (inter) {
-	    show_message(curwin, "But what do you want me to unmap?");
+	    show_message("But what do you want me to unmap?");
 	}
 	return(FALSE);
     }

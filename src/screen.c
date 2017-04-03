@@ -21,8 +21,8 @@
 
 #include "xvi.h"
 
-static	int	line_to_new P((Xviwin *, Line *, int, long));
-static	void	file_to_new P((Xviwin *));
+static	int	line_to_new P((Line *, int, long));
+static	void	file_to_new P((void));
 static	void	do_sline P((Xviwin *));
 
 /*
@@ -33,12 +33,12 @@ static	void	do_sline P((Xviwin *));
  * which could not be displayed will have been marked with an '@'.
  */
 static int
-line_to_new(win, lp, start_row, line)
-Xviwin		*win;
+line_to_new(lp, start_row, line)
 Line		*lp;
 int		start_row;
 long		line;
 {
+    Xviwin		*win = curwin;
     register unsigned	c;		/* next character from file */
     register Sline	*curr_line;	/* output line - used for efficiency */
     register char	*ltext;		/* pointer to text of line */
@@ -193,9 +193,9 @@ long		line;
  * of stuff from file to int_lines, and update botline.
  */
 static void
-file_to_new(win)
-register Xviwin	*win;
+file_to_new()
 {
+    Xviwin		*win = curwin;
     register int	row;
     register Line	*line;
     register Buffer	*buffer;
@@ -212,7 +212,7 @@ register Xviwin	*win;
     while (row < win->w_cmdline && line != buffer->b_lastline) {
 	int nlines;
 
-	nlines = line_to_new(win, line, row, lnum);
+	nlines = line_to_new(line, row, lnum);
 	if (nlines == 0) {
 	    /*
 	     * Make it look like we have updated
@@ -255,11 +255,10 @@ register Xviwin	*win;
  * only the status line will be changed on the screen.
  */
 void
-update_sline(win)
-Xviwin	*win;
+update_sline()
 {
-    do_sline(win);
-    xvUpdateScr(win, win->w_vs, (int) win->w_cmdline, 1);
+    do_sline(curwin);
+    xvUpdateScr(curwin->w_vs, (int) curwin->w_cmdline, 1);
 }
 
 /*
@@ -335,10 +334,10 @@ Xviwin	*win;
 }
 
 void
-update_cline(win,pos)
-Xviwin	*win;
+update_cline(pos)
 int pos;	/* Position of cursor within line */
 {
+    Xviwin	*win = curwin;
     Sline	*clp;
     int		colindex;
     unsigned	width, maxwidth;
@@ -353,7 +352,7 @@ int pos;	/* Position of cursor within line */
     clp->s_used = width;
     clp->s_line[width] = '\0';
     clp->s_flags = (S_COMMAND | S_DIRTY);
-    if (is_readonly(win->w_buffer)) {
+    if (is_readonly(curbuf)) {
 	clp->s_flags |= S_READONLY;
     }
 
@@ -362,7 +361,7 @@ int pos;	/* Position of cursor within line */
      * colour as the status line would be, the rest is the normal colour of
      * the screen text (this is better for screen-updating purposes).
      */
-    clp->s_colour[0] = is_readonly(win->w_buffer) ?
+    clp->s_colour[0] = is_readonly(curbuf) ?
 					VSCroscolour : VSCstatuscolour;
     for (colindex = clp->s_used - 1; colindex >= 1; --colindex) {
 	clp->s_colour[colindex] = VSCcolour;
@@ -372,7 +371,7 @@ int pos;	/* Position of cursor within line */
      * We don't bother calling xvMarkDirty() here: it isn't worth
      * it because the line's contents have almost certainly changed.
      */
-    xvUpdateScr(win, win->w_vs, (int) win->w_cmdline, 1);
+    xvUpdateScr(win->w_vs, (int) win->w_cmdline, 1);
     VSgoto(win->w_vs, (int) win->w_cmdline, pos);
 }
 
@@ -388,20 +387,23 @@ int pos;	/* Position of cursor within line */
  * also updated.
  */
 void
-updateline(window, flag)
-Xviwin	*window;
+updateline(flag)
 bool_t	flag;
 {
+    Xviwin	*oldcurwin;
     Xviwin	*w;
     Line	*currline;
     int		nlines;
     int		curs_row;
 
-    currline = window->w_cursor->p_line;
+    currline = curwin->w_cursor->p_line;
 
-    w = window;
+    /* Loop curwin through all the windows */
+    oldcurwin = curwin;
     do {
-	if (w->w_buffer == window->w_buffer &&
+	w = curwin;	/* local temp for faster/smaller code */
+
+	if (w->w_buffer == oldcurwin->w_buffer &&
 		!earlier(currline, w->w_topline) &&
 		!later(currline, w->w_botline)) {
 	    /*
@@ -409,20 +411,20 @@ bool_t	flag;
 	     * This is not necessarily the same as window->w_row,
 	     * because longlines are different.
 	     */
-	    curs_row = (int) cntplines(w, w->w_topline, currline);
+	    curs_row = (int) cntplines(w->w_topline, currline);
 
-	    nlines = line_to_new(w, currline,
-				    (int) (curs_row + w->w_winpos),
-				    (long) lineno(currline));
+	    nlines = line_to_new(currline,
+				 (int) (curs_row + w->w_winpos),
+				 (long) lineno(currline));
 	    if (flag) {
 		nlines = w->w_nrows - curs_row - 1;
-		file_to_new(w);
+		file_to_new();
 	    }
 
-	    xvUpdateScr(w, w->w_vs, (int) (curs_row + w->w_winpos), nlines);
+	    xvUpdateScr(w->w_vs, (int) (curs_row + w->w_winpos), nlines);
 	}
-	w = xvNextDisplayedWindow(w);
-    } while (w != window);
+	curwin = xvNextDisplayedWindow(w);
+    } while (curwin != oldcurwin);
 }
 
 /*
@@ -431,21 +433,20 @@ bool_t	flag;
  * and clear the window beforehand.
  */
 void
-redraw_window(window, flag)
-Xviwin	*window;
+redraw_window(flag)
 bool_t	flag;
 {
-    if (window == NULL || window->w_nrows == 0) {
+    if (curwin == NULL || curwin->w_nrows == 0) {
 	return;
     }
     if (flag) {
-	xvClear(window->w_vs);
-	update_sline(window);
+	xvClear(curwin->w_vs);
+	update_sline();
     }
-    if (window->w_nrows > 1) {
-	file_to_new(window);
-	xvUpdateScr(window, window->w_vs,
-			(int) window->w_winpos, (int) window->w_nrows);
+    if (curwin->w_nrows > 1) {
+	file_to_new();
+	xvUpdateScr(curwin->w_vs,
+			(int) curwin->w_winpos, (int) curwin->w_nrows);
     }
 }
 
@@ -453,31 +454,30 @@ bool_t	flag;
  * Update all windows.
  */
 void
-redraw_all(win, clrflag)
-Xviwin	*win;
+redraw_all(clrflag)
 bool_t	clrflag;
 {
     Xviwin	*w;
 
-    if ((VSrows(win->w_vs) < Pn(P_minrows)) || (VScols(win->w_vs) == 0)) {
+    if ((VSrows(curwin->w_vs) < Pn(P_minrows)) || (VScols(curwin->w_vs) == 0)) {
 	return;
     }
 
     if (clrflag) {
-	xvClear(win->w_vs);
+	xvClear(curwin->w_vs);
     }
 
-    w = win;
+    w = curwin;
     do {
 	if (w->w_nrows > 0) {
 	    if (w->w_nrows >= Pn(P_minrows))
-		file_to_new(w);
+		file_to_new();
 	    do_sline(w);
 	}
 	w = xvNextDisplayedWindow(w);
-    } while (w != win);
+    } while (w != curwin);
 
-    xvUpdateScr(win, win->w_vs, 0, (int) VSrows(win->w_vs));
+    xvUpdateScr(curwin->w_vs, 0, (int) VSrows(curwin->w_vs));
 }
 
 /*
@@ -492,14 +492,14 @@ bool_t	clrflag;
  */
 
 /*
- * s_ins(win, row, nlines) - insert 'nlines' lines at 'row'
+ * s_ins(row, nlines) - insert 'nlines' lines at 'row'
  */
 void
-s_ins(win, row, nlines)
-Xviwin		*win;
+s_ins(row, nlines)
 register int	row;
 int		nlines;
 {
+    Xviwin		*win = curwin;
     register int	from, to;
     int			count;
     int			bottomline;
@@ -603,11 +603,10 @@ int		nlines;
 }
 
 /*
- * s_del(win, row, nlines) - delete 'nlines' lines starting at 'row'.
+ * s_del(row, nlines) - delete 'nlines' lines starting at 'row'.
  */
 void
-s_del(win, row, nlines)
-register Xviwin		*win;
+s_del(row, nlines)
 int			row;
 int			nlines;
 {
@@ -629,16 +628,16 @@ int			nlines;
      * There's no point in scrolling more lines than there are
      * (below row) in the window, or in scrolling 0 lines.
      */
-    if (nlines == 0 || nlines + row >= win->w_nrows - 1)
+    if (nlines == 0 || nlines + row >= curwin->w_nrows - 1)
 	return;
 
     /*
      * The row specified is relative to the top of the window;
      * add the appropriate offset to make it into a screen row.
      */
-    row += win->w_winpos;
+    row += curwin->w_winpos;
 
-    bottomline = win->w_cmdline - 1;
+    bottomline = curwin->w_cmdline - 1;
 
     /*
      * We avoid the use of 1-line scroll regions, since they don't
@@ -649,7 +648,7 @@ int			nlines;
 	return;
     }
 
-    vs = win->w_vs;
+    vs = curwin->w_vs;
 
     strategy = VScan_scroll(vs, row, bottomline, nlines) ?
 		    do_as_requested :
@@ -685,7 +684,7 @@ int			nlines;
 	 * We do this by rearranging the pointers within the Slines,
 	 * rather than copying the characters.
 	 */
-	for (to = row, from = to + nlines; from < win->w_cmdline;
+	for (to = row, from = to + nlines; from < curwin->w_cmdline;
 						    from++, to++) {
 	    register Sline	*lpfrom;
 	    register Sline	*lpto;
@@ -703,7 +702,7 @@ int			nlines;
 	/*
 	 * Clear the deleted lines.
 	 */
-	bottomline = win->w_cmdline;
+	bottomline = curwin->w_cmdline;
 	for (count = bottomline - nlines; count < bottomline; count++) {
 	    xvClearLine(vs, (unsigned) count);
 	}
@@ -720,8 +719,7 @@ int			nlines;
  * here for speed of screen updating.
  */
 void
-s_inschar(window, newchar)
-Xviwin			*window;
+s_inschar(newchar)
 int			newchar;
 {
     Sline		*rp;
@@ -734,7 +732,7 @@ int			newchar;
     unsigned		curcol;
     unsigned		columns;
 
-    vs = window->w_vs;
+    vs = curwin->w_vs;
     if (vs->v_insert == NOFUNC) {
 	return;
     }
@@ -743,7 +741,7 @@ int			newchar;
 	return;
     }
 
-    pp = window->w_cursor;
+    pp = curwin->w_cursor;
 
     /*
      * If we are at (or near) the end of the line, it's not worth
@@ -754,13 +752,13 @@ int			newchar;
 	return;
     }
 
-    curcol = window->w_col;
+    curcol = curwin->w_col;
 
     /*
      * If the cursor is on a longline, and not on the last actual
      * screen line of that longline, we can't do it.
      */
-    if (window->w_c_line_size > 1 && curcol != window->w_virtcol) {
+    if (curwin->w_c_line_size > 1 && curcol != curwin->w_virtcol) {
 	return;
     }
 
@@ -769,7 +767,7 @@ int			newchar;
     /*
      * And don't bother if we are (or will be) at the last screen column.
      */
-    columns = window->w_ncols;
+    columns = curwin->w_ncols;
     if (curcol + nchars >= columns) {
 	return;
     }
@@ -787,10 +785,10 @@ int			newchar;
     /*
      * Okay, we can do it.
      */
-    currow = window->w_row;
+    currow = curwin->w_row;
 
     VSset_colour(vs, VSCcolour);
-    VSinsert(vs, window->w_winpos + currow, curcol, newstr);
+    VSinsert(vs, curwin->w_winpos + currow, curcol, newstr);
 
     /*
      * Update ext_lines.
@@ -803,7 +801,7 @@ int			newchar;
 	register char	*fromcp;
 	unsigned char	*fromcolp;
 
-	rp = vs->pv_ext_lines + window->w_row;
+	rp = vs->pv_ext_lines + curwin->w_row;
 	rp->s_used += nchars;
 
 	curp = &(rp->s_line[curcol]);
@@ -842,38 +840,35 @@ int			newchar;
 }
 
 void
-wind_goto(win)
-Xviwin	*win;
+wind_goto()
 {
     VirtScr	*vs;
 
     if (echo & e_CHARUPDATE) {
-	vs = win->w_vs;
-	VSgoto(vs, (int) win->w_winpos + win->w_row, win->w_col);
+	vs = curwin->w_vs;
+	VSgoto(vs, (int) curwin->w_winpos + curwin->w_row, curwin->w_col);
     }
 }
 
 /*ARGSUSED*/
 void
-gotocmd(win, clr)
-Xviwin	*win;
+gotocmd(clr)
 bool_t	clr;
 {
     VirtScr	*vs;
 
-    vs = win->w_vs;
+    vs = curwin->w_vs;
     if (clr) {
-	VSclear_line(vs, (int) win->w_cmdline, 0);
+	VSclear_line(vs, (int) curwin->w_cmdline, 0);
     }
-    VSgoto(vs, (int) win->w_cmdline, 0);
+    VSgoto(vs, (int) curwin->w_cmdline, 0);
 }
 
 /*
  * Sound the alert.
  */
 void
-beep(window)
-register Xviwin *window;
+beep()
 {
-    VSbeep(window->w_vs);
+    VSbeep(curwin->w_vs);
 }

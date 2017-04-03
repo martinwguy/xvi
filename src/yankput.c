@@ -102,7 +102,7 @@ int	name;
     i = bufno(name);
 
     if (i < 0) {
-	show_error(curwin, "Invalid buffer name");
+	show_error("Invalid buffer name");
 	return(NULL);
     }
     return(&yb[i]);
@@ -539,8 +539,7 @@ bool_t	line_based;
  * in the specified direction.
  */
 void
-do_put(win, location, direction, name)
-Xviwin	*win;
+do_put(location, direction, name)
 Posn	*location;
 int	direction;
 int	name;
@@ -555,7 +554,7 @@ int	name;
 	return;
     }
 
-    buffer = win->w_buffer;
+    buffer = curwin->w_buffer;
 
     /*
      * Set up current and next line pointers.
@@ -574,11 +573,11 @@ int	name;
 	Posn	lastpos;
 	Posn	cursorpos;
 
-	if (!start_command(win)) {
+	if (!start_command()) {
 	    return;
 	}
 
-	l = win->w_cursor->p_index;
+	l = curwin->w_cursor->p_index;
 	if (direction == FORWARD && currline->l_text[l] != '\0') {
 	    ++l;
 	}
@@ -588,13 +587,13 @@ int	name;
 	 * always present. We may wish to split the line after
 	 * the inserted text if this was a multi-line yank.
 	 */
-	replchars(win, currline, l, 0, yp_buf->y_1st_text);
+	replchars(currline, l, 0, yp_buf->y_1st_text);
 	/* Cursor should end up on the first char of the newly-inserted text */
 	cursorpos.p_line = currline;
 	cursorpos.p_index = l;
-	updateline(win, TRUE);
-	lastpos.p_line = win->w_cursor->p_line;
-	lastpos.p_index = win->w_cursor->p_index + strlen(yp_buf->y_1st_text);
+	updateline(TRUE);
+	lastpos.p_line = curwin->w_cursor->p_line;
+	lastpos.p_index = curwin->w_cursor->p_index + strlen(yp_buf->y_1st_text);
 	if (direction == BACKWARD) {
 	    lastpos.p_index--;
 	}
@@ -618,23 +617,23 @@ int	name;
 	    /*
 	     * Link the new line into the list.
 	     */
-	    repllines(win, nextline, 0L, newl);
+	    repllines(nextline, 0L, newl);
 	    nextline = newl;
-	    replchars(win, nextline, 0, 0,
+	    replchars(nextline, 0, 0,
 			currline->l_text + end_of_1st_text);
-	    replchars(win, currline, end_of_1st_text,
+	    replchars(currline, end_of_1st_text,
 			strlen(currline->l_text + end_of_1st_text), "");
 	}
 
 	if (yp_buf->y_line_buf != NULL) {
 	    Line	*newlines;
 
-	    lastpos.p_line = win->w_cursor->p_line->l_next;
+	    lastpos.p_line = curwin->w_cursor->p_line->l_next;
 	    newlines = copy_lines(yp_buf->y_line_buf, (Line *) NULL);
 	    if (newlines == NULL) {
 		goto eoom;
 	    }
-	    repllines(win, nextline, 0L, newlines);
+	    repllines(nextline, 0L, newlines);
 	    lastpos.p_line = lastpos.p_line->l_prev;
 	    lastpos.p_index = strlen(lastpos.p_line->l_text) - 1;
 	}
@@ -653,19 +652,19 @@ int	name;
 		if (new == NULL) {
 		    goto eoom;
 		}
-		repllines(win, nextline, 0L, new);
+		repllines(nextline, 0L, new);
 		nextline = new;
 	    }
-	    replchars(win, nextline, 0, 0, yp_buf->y_2nd_text);
+	    replchars(nextline, 0, 0, yp_buf->y_2nd_text);
 	    lastpos.p_line = nextline;
 	    lastpos.p_index = strlen(yp_buf->y_2nd_text) - 1;
 	}
 
-	end_command(win);
+	end_command();
 
-	move_cursor(win, cursorpos.p_line, cursorpos.p_index);
-	move_window_to_cursor(win);
-	cursupdate(win);
+	move_cursor(cursorpos.p_line, cursorpos.p_index);
+	move_window_to_cursor();
+	cursupdate();
 	xvUpdateAllBufferWindows(buffer);
       }
       break;
@@ -682,28 +681,28 @@ int	name;
 	    goto oom;
 	}
 
-	repllines(win, (direction == FORWARD) ? nextline : currline, 0L, new);
+	repllines((direction == FORWARD) ? nextline : currline, 0L, new);
 
 	/*
 	 * Put the cursor at the "right" place
 	 * (i.e. the place the "real" vi uses).
 	 */
-	move_cursor(win, new, 0);
-	begin_line(win, TRUE);
-	move_window_to_cursor(win);
-	cursupdate(win);
+	move_cursor(new, 0);
+	begin_line(TRUE);
+	move_window_to_cursor();
+	cursupdate();
 	xvUpdateAllBufferWindows(buffer);
       }
       break;
     default:
-      show_error(win, "Nothing to put!");
+      show_error("Nothing to put!");
       break;
     }
     return;
 
 eoom:
     /* Out of memory needing end_command() */
-    end_command(win);
+    end_command();
 oom:
     /* "Out of memory" handler */
     return;
@@ -718,8 +717,7 @@ oom:
  * result of a :@ command rather than a vi-mode @ command.
  */
 void
-yp_stuff_input(win, name, vi_mode)
-Xviwin	*win;
+yp_stuff_input(name, vi_mode)
 int	name;
 bool_t	vi_mode;
 {
@@ -739,7 +737,7 @@ bool_t	vi_mode;
 	break;
 
     default:
-	show_error(win, "Nothing to put!");
+	show_error("Nothing to put!");
 	return;
     }
 

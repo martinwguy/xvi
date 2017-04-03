@@ -99,18 +99,18 @@ typedef enum {
 /*
  * Internal functions.
  */
-static	bool_t	_do_set P((Xviwin *, matchinfo_t *, bool_t));
+static	bool_t	_do_set P((matchinfo_t *, bool_t));
 static	char	*parmstring P((Param *, int));
-static	void	enum_usage P((Xviwin*, Param *));
-static	bool_t	not_imp P((Xviwin *, Paramval, bool_t));
-static	bool_t	xvpSetMagic P((Xviwin *, Paramval, bool_t));
-static	bool_t	xvpSetRT P((Xviwin *, Paramval, bool_t));
-static	bool_t	xvpSetTS P((Xviwin *, Paramval, bool_t));
-static	bool_t	xvpSetColour P((Xviwin *, Paramval, bool_t));
-static	bool_t	xvpSetVBell P((Xviwin *, Paramval, bool_t));
+static	void	enum_usage P((Param *));
+static	bool_t	not_imp P((Paramval, bool_t));
+static	bool_t	xvpSetMagic P((Paramval, bool_t));
+static	bool_t	xvpSetRT P((Paramval, bool_t));
+static	bool_t	xvpSetTS P((Paramval, bool_t));
+static	bool_t	xvpSetColour P((Paramval, bool_t));
+static	bool_t	xvpSetVBell P((Paramval, bool_t));
 static	char	*par_show P((void));
 static	match_t		matchname P((char *, char **, int));
-static	matchinfo_t	*findparam P((Xviwin *, char *));
+static	matchinfo_t	*findparam P((char *));
 
 /*
  * These are the available parameters. The following are non-standard:
@@ -322,14 +322,13 @@ init_params()
 	    case P_LIST:
 		pv.pv_l = pp->p_list;
 	    }
-	    (void) (*pp->p_func)(curwin, pv, FALSE);
+	    (void) (*pp->p_func)(pv, FALSE);
 	}
     }
 }
 
 void
-exSet(window, argc, argv, inter)
-Xviwin	*window;
+exSet(argc, argv, inter)
 int	argc;		/* number of parameters to set */
 char	*argv[];	/* vector of parameter strings */
 bool_t	inter;		/* TRUE if called interactively */
@@ -348,13 +347,13 @@ bool_t	inter;		/* TRUE if called interactively */
 
 	    show_all = (argc != 0 && argv[0][0] != '\0');
 	    curparam = &params[0];
-	    pcwidth = (window->w_ncols < 90 ?
-			window->w_ncols :
-			(window->w_ncols < 135 ?
-			    window->w_ncols / 2 :
-			    window->w_ncols / 3));
+	    pcwidth = (curwin->w_ncols < 90 ?
+			curwin->w_ncols :
+			(curwin->w_ncols < 135 ?
+			    curwin->w_ncols / 2 :
+			    curwin->w_ncols / 3));
 
-	    disp_init(window, par_show, pcwidth, FALSE);
+	    disp_init(par_show, pcwidth, FALSE);
 	}
 
 	return;
@@ -364,21 +363,21 @@ bool_t	inter;		/* TRUE if called interactively */
     for (count = 0; count < argc; count++) {
 	matchinfo_t	*mip;
 
-	mip = findparam(window, argv[count]);
+	mip = findparam(argv[count]);
 	if (mip == NULL) {
 	    break;
 	}
 	if (mip->mi_query) {
 	    (void) lformat(&to_show, "%s ", parmstring(mip->mi_param, 0));
 	} else {
-	    if (!_do_set(window, mip, inter)) {
+	    if (!_do_set(mip, inter)) {
 		break;
 	    }
 	}
     }
 
     if (!flexempty(&to_show)) {
-	show_message(window, "%s", flexgetstr(&to_show));
+	show_message("%s", flexgetstr(&to_show));
     }
     flexdelete(&to_show);
 
@@ -390,7 +389,7 @@ bool_t	inter;		/* TRUE if called interactively */
 	 * its appearance. We don't always have to do this,
 	 * but it's easier for now.
 	 */
-	redraw_all(window, TRUE);
+	redraw_all(TRUE);
     }
 }
 
@@ -509,8 +508,7 @@ matchname(name, argp, delim)
  * name is immediately followed by a '?'.
  */
 static matchinfo_t *
-findparam(win, arg)
-    Xviwin	      *win;
+findparam(arg)
     char	      *arg;
 {
     register Param	*pp;
@@ -642,16 +640,12 @@ findparam(win, arg)
 	    if (npartial == 1) {
 		return &lastpartial;
 	    }
-	    if (win) {
-		show_error(win, npartial == 0 ?
-				    "Invalid parameter setting" :
-				    "Ambiguous parameter name");
-	    }
+	    show_error(npartial == 0 ?
+		       "Invalid parameter setting" :
+		       "Ambiguous parameter name");
 	    break;
 	default:
-	    if (win) {
-		show_error(win, "INTERNAL ERROR: duplicate parameter names");
-	    }
+	    show_error("INTERNAL ERROR: duplicate parameter names");
     }
     return NULL;
 }
@@ -661,8 +655,7 @@ findparam(win, arg)
  * parameter was successful, otherwise FALSE.
  */
 static bool_t
-_do_set(window, mip, inter)
-Xviwin			*window;	/* NULL if not called interactively */
+_do_set(mip, inter)
 matchinfo_t		*mip;		/* details of the parameter */
 bool_t			inter;		/* TRUE if called interactively */
 {
@@ -689,7 +682,7 @@ bool_t			inter;		/* TRUE if called interactively */
 	 * don't accept it.
 	 */
 	if (value < 0 || *cp != '\0') {
-	    if (inter) show_error(window, "Invalid numeric parameter");
+	    if (inter) show_error("Invalid numeric parameter");
 	    return(FALSE);
 	}
 	val.pv_i = value;
@@ -707,7 +700,7 @@ bool_t			inter;		/* TRUE if called interactively */
 	    case m_PARTIAL:
 		if (partial_match != NULL) {
 		    /* It partially matches more than one option */
-		    if (inter) enum_usage(window, pp);
+		    if (inter) enum_usage(pp);
 		    return(FALSE);
 		} else {
 		    partial_match = ep;
@@ -720,12 +713,12 @@ bool_t			inter;		/* TRUE if called interactively */
 	if (partial_match != NULL) {
 	    ep = partial_match;
 	    /* Show the full value on the status line */
-	    if (inter) show_message(window, "%s=%s", pp->p_fullname, *ep);
+	    if (inter) show_message("%s=%s", pp->p_fullname, *ep);
 	}
 got_enum:
 
 	if (*ep == NULL) {
-	    if (inter) enum_usage(window, pp);
+	    if (inter) enum_usage(pp);
 	    return(FALSE);
 	}
 
@@ -748,7 +741,7 @@ got_enum:
      */
     val.pv_index = pp - &params[0];
     if (pp->p_func != nofunc &&
-	(*pp->p_func)(window, val, inter) == FALSE) {
+	(*pp->p_func)(val, inter) == FALSE) {
 	return(FALSE);
     }
 
@@ -844,7 +837,7 @@ void
 		/*
 		 * This is not necessarily a good idea.
 		 */
-		show_error(curwin, out_of_memory);
+		show_error(out_of_memory);
 		return;
 	    }
 
@@ -869,7 +862,7 @@ void
 	    /*
 	     * This is not necessarily a good idea.
 	     */
-	    show_error(curwin, out_of_memory);
+	    show_error(out_of_memory);
 	} else {
 	    /*
 	     * We always free up the old string, because
@@ -891,9 +884,8 @@ void
  * the legal values for it.
  */
 static void
-enum_usage(w, pp)
-    Xviwin		*w;
-    Param		*pp;
+enum_usage(pp)
+Param	*pp;
 {
     Flexbuf		s;
     char		**sp;
@@ -903,7 +895,7 @@ enum_usage(w, pp)
     for (sp = (char **) pp->p_str; *sp != NULL; sp++) {
 	(void) lformat(&s, " %s", *sp);
     }
-    show_error(w, "%s", flexgetstr(&s));
+    show_error("%s", flexgetstr(&s));
     flexdelete(&s);
 }
 
@@ -1006,21 +998,19 @@ par_show()
 
 /*ARGSUSED*/
 static bool_t
-not_imp(window, new_value, interactive)
-Xviwin		*window;
+not_imp(new_value, interactive)
 Paramval	new_value;
 bool_t		interactive;
 {
     if (interactive) {
-	show_message(window, "That parameter is not implemented!");
+	show_message("That parameter is not implemented!");
     }
     return(TRUE);
 }
 
 /*ARGSUSED*/
 static bool_t
-xvpSetMagic(window, new_value, interactive)
-Xviwin			*window;
+xvpSetMagic(new_value, interactive)
 Paramval		new_value;
 bool_t			interactive;
 {
@@ -1049,8 +1039,7 @@ bool_t			interactive;
 
 /*ARGSUSED*/
 static bool_t
-xvpSetRT(window, new_value, interactive)
-Xviwin		*window;
+xvpSetRT(new_value, interactive)
 Paramval	new_value;
 bool_t		interactive;
 {
@@ -1067,8 +1056,7 @@ bool_t		interactive;
 
 /*ARGSUSED*/
 static bool_t
-xvpSetTS(window, new_value, interactive)
-Xviwin		*window;
+xvpSetTS(new_value, interactive)
 Paramval	new_value;
 bool_t		interactive;
 {
@@ -1076,7 +1064,7 @@ bool_t		interactive;
 
     if ((i = new_value.pv_i) <= 0 || i > MAX_TABSTOP) {
 	if (interactive) {
-	    show_error(window, "Invalid tab size specified");
+	    show_error("Invalid tab size specified");
 	}
 	return(FALSE);
     }
@@ -1085,8 +1073,7 @@ bool_t		interactive;
 
 /*ARGSUSED*/
 static bool_t
-xvpSetColour(w, new_value, interactive)
-Xviwin		*w;
+xvpSetColour(new_value, interactive)
 Paramval	new_value;
 bool_t		interactive;
 {
@@ -1098,7 +1085,7 @@ bool_t		interactive;
     case P_systemcolour:	which = VSCsyscolour;		break;
     case P_roscolour:		which = VSCroscolour;
     }
-    return(VSdecode_colour(w->w_vs, which, new_value.pv_s));
+    return(VSdecode_colour(curwin->w_vs, which, new_value.pv_s));
 }
 
 /*
@@ -1106,8 +1093,7 @@ bool_t		interactive;
  */
 /*ARGSUSED*/
 static bool_t
-xvpSetVBell(w, new_value, interactive)
-Xviwin		*w;
+xvpSetVBell(new_value, interactive)
 Paramval	new_value;
 bool_t		interactive;
 {

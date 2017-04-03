@@ -23,7 +23,7 @@
 
 #include "xvi.h"
 
-static	void	calc_position_in_line P((Xviwin *));
+static	void	calc_position_in_line P((void));
 
 /*
  * Update the window's variables which say where the cursor is.
@@ -33,25 +33,24 @@ static	void	calc_position_in_line P((Xviwin *));
  * figure out whether the cursor line has changed size or not.
  */
 void
-cursupdate(win)
-Xviwin	*win;
+cursupdate()
 {
     /*
      * Calculate physical lines from logical lines.
      */
-    win->w_row = cntplines(win, win->w_topline, win->w_cursor->p_line);
-    win->w_c_line_size = plines(win, win->w_cursor->p_line);
+    curwin->w_row = cntplines(curwin->w_topline, curwin->w_cursor->p_line);
+    curwin->w_c_line_size = plines(curwin->w_cursor->p_line);
 
     /*
      * Calculate new position within the line.
      */
-    calc_position_in_line(win);
+    calc_position_in_line();
 }
 
 static void
-calc_position_in_line(win)
-Xviwin	*win;
+calc_position_in_line()
 {
+    Xviwin		*win = curwin;
     register int	i;
     register char	*cltp;
     register int	ccol;

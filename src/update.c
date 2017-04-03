@@ -23,7 +23,7 @@
 
 #include "xvi.h"
 
-static	void	xvUpdateLine P((Xviwin *, VirtScr *, int));
+static	void	xvUpdateLine P((VirtScr *, int));
 static	void	xvWriteMultiString
 		    P((VirtScr *, char *, int, unsigned char *, int, int));
 
@@ -33,8 +33,7 @@ static	void	xvWriteMultiString
  * using ext_lines to avoid unnecessary output.
  */
 void
-xvUpdateScr(win, vs, start_row, nlines)
-Xviwin			*win;
+xvUpdateScr(vs, start_row, nlines)
 register VirtScr	*vs;
 int			start_row;
 int			nlines;
@@ -61,7 +60,7 @@ int			nlines;
 	 * Only update the line if necessary.
 	 */
 	if ((nflags & S_DIRTY) || (rflags & S_DIRTY)) {
-	    xvUpdateLine(win, vs, row);
+	    xvUpdateLine(vs, row);
 
 	    /*
 	     * The real screen line is a message or command line if the
@@ -91,8 +90,7 @@ int			nlines;
  * (i.e. is marked "dirty").
  */
 static void
-xvUpdateLine(win, vs, row)
-Xviwin		*win;
+xvUpdateLine(vs, row)
 VirtScr		*vs;
 int		row;
 {

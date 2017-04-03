@@ -74,10 +74,10 @@ VirtScr	*vs;
  * is returned.
  */
 Xviwin *
-xvOpenWindow(oldwin, sizehint)
-Xviwin	*oldwin;
+xvOpenWindow(sizehint)
 int	sizehint;
 {
+    Xviwin	*oldwin = curwin;
     Xviwin	*newwin;
 
     /*
@@ -90,16 +90,16 @@ int	sizehint;
 	/*
 	 * Try to grow the current window to make room for the new one.
 	 */
-	xvResizeWindow(oldwin, (MINROWS * 2) - oldwin->w_nrows);
+	xvResizeWindow((MINROWS * 2) - oldwin->w_nrows);
     }
     if (oldwin->w_nrows < (MINROWS * 2)) {
-	show_error(oldwin, "Not enough room!");
+	show_error("Not enough room!");
 	return(NULL);
     }
 
-    newwin = add_window(oldwin, oldwin->w_next);
+    newwin = add_window(curwin, oldwin->w_next);
     if (newwin == NULL) {
-	show_error(oldwin, "No more windows!");
+	show_error("No more windows!");
 	return(NULL);
     }
 
@@ -107,7 +107,7 @@ int	sizehint;
     newwin->w_vs->pv_window = (genptr *) newwin;
 
     if (alloc_window(newwin) == FALSE) {
-	show_error(oldwin, out_of_memory);
+	show_error(out_of_memory);
 	free((genptr *) newwin);
 	return(NULL);
     }
@@ -132,16 +132,16 @@ int	sizehint;
 }
 
 /*
- * Close the given window. If this window is the last one onto
+ * Close the current window. If this window is the last one onto
  * the given VirtScr, we return NULL. In this case, the calling
  * code must not dereference the returned window pointer.
  */
 Xviwin *
-xvCloseWindow(win)
-Xviwin	*win;
+xvCloseWindow()
 {
     Xviwin	*w1, *w2;
     Xviwin	*new;
+    Xviwin	*win = curwin;
 
     w1 = win->w_last;
     w2 = win->w_next;
@@ -205,21 +205,20 @@ Buffer	*b;
 }
 
 /*
- * Unmap the given window from its buffer.
+ * Unmap the current window from its buffer.
  * We don't need to do much here, on the assumption that the
  * calling code is going to do an xvMapWindowOntoBuffer()
  * immediately afterwards; the vital thing is to decrement
  * the window reference count.
  */
 void
-xvUnMapWindow(w)
-Xviwin	*w;
+xvUnMapWindow()
 {
-    w->w_buffer->b_nwindows -= 1;
+    curwin->w_buffer->b_nwindows -= 1;
 
-    w->w_cursor->p_line = NULL;
-    w->w_topline = NULL;
-    w->w_botline = NULL;
+    curwin->w_cursor->p_line = NULL;
+    curwin->w_topline = NULL;
+    curwin->w_botline = NULL;
 }
 
 /*
@@ -232,6 +231,7 @@ void
 xvEqualiseWindows(wincount)
 int	wincount;
 {
+    Xviwin	*oldcurwin = curwin;
     Xviwin	*wp;
     int		winsize;
     int		spare;
@@ -273,11 +273,13 @@ int	wincount;
      * as it is a side-effect of resizing all the rest.
      */
     for ( ; wp->w_next != NULL; wp = wp->w_next) {
-	xvResizeWindow(wp, winsize + spare - wp->w_nrows);
+	curwin = wp;
+	xvResizeWindow(winsize + spare - wp->w_nrows);
 	if (spare > 0) {
 	    spare = 0;
 	}
     }
+    curwin = oldcurwin;
 }
 
 /*
@@ -287,10 +289,10 @@ int	wincount;
  * the current one - i.e. any windows are at minimum size.
  */
 void
-xvResizeWindow(window, nlines)
-Xviwin	*window;
+xvResizeWindow(nlines)
 int	nlines;
 {
+    Xviwin	*window = curwin;
     unsigned	savecho;
 
     if (nlines == 0 || (window->w_last == NULL && window->w_next == NULL)) {
@@ -332,14 +334,17 @@ int	nlines;
 	 * xvMoveStatusLine()'s return value should be negative or 0
 	 * in this case.
 	 */
-	nlines += xvMoveStatusLine(window, - min(spare, nlines));
+	nlines += xvMoveStatusLine(-min(spare, nlines));
 
 	/*
 	 * If that wasn't enough, grow the window above us
 	 * by the appropriate number of lines.
 	 */
 	if (nlines > 0) {
-	    (void) xvMoveStatusLine(window->w_last, nlines);
+	    Xviwin *savecurwin = curwin;
+	    curwin = curwin->w_last;
+	    (void) xvMoveStatusLine(nlines);
+	    curwin = savecurwin;
 	}
     } else {
 	/*
@@ -351,9 +356,12 @@ int	nlines;
 	/*
 	 * Expand window.
 	 */
-	nlines -= xvMoveStatusLine(window, nlines);
+	nlines -= xvMoveStatusLine(nlines);
 	if (nlines > 0) {
-	    (void) xvMoveStatusLine(window->w_last, -nlines);
+	    Xviwin *savecurwin = curwin;
+	    curwin = curwin->w_last;
+	    (void) xvMoveStatusLine(-nlines);
+	    curwin = savecurwin;
 	}
     }
 
@@ -364,7 +372,7 @@ int	nlines;
      * This still needs a lot more optimization.
      */
     echo = savecho;
-    redraw_all(window, FALSE);
+    redraw_all(FALSE);
 }
 
 /*
@@ -374,13 +382,13 @@ int	nlines;
  * Note that this can shrink the window to size 0.
  */
 int
-xvMoveStatusLine(wp, nlines)
-Xviwin	*wp;		/* window whose status line we have to move */
+xvMoveStatusLine(nlines)
 int	nlines;		/*
 			 * number of lines to move (negative for
 			 * upward moves, positive for downwards)
 			 */
 {
+    Xviwin	*wp = curwin;
     Xviwin	*nextwin;
 
     if (wp == NULL || (nextwin = wp->w_next) == NULL) {
@@ -395,12 +403,15 @@ int	nlines;		/*
 	spare = wp->w_nrows - Pn(P_minrows);
 
 	if (amount > spare && wp->w_last != NULL) {
+	    Xviwin	*savecurwin = curwin;
 	    /*
 	     * Not enough space: call xvMoveStatusLine() recursively
 	     * for previous line; note that the second parameter
 	     * should be negative.
 	     */
-	    (void) xvMoveStatusLine(wp->w_last, spare - amount);
+	    curwin = wp->w_last;
+	    (void) xvMoveStatusLine(spare - amount);
+	    curwin = savecurwin;
 	    spare = wp->w_nrows - Pn(P_minrows);
 	}
 	if (amount > spare)
@@ -410,9 +421,11 @@ int	nlines;		/*
 	    wp->w_cmdline -= amount;
 	    nextwin->w_winpos -= amount;
 	    nextwin->w_nrows += amount;
-	    (void) shiftdown(nextwin, (unsigned) amount);
+	    curwin = nextwin;
+	    (void) shiftdown((unsigned) amount);
+	    curwin = wp;	/* restore original value */
 	    if (wp->w_nrows > 0) {
-		show_file_info(wp, TRUE);
+		show_file_info(TRUE);
 	    }
 	}
 	nlines = -amount;	/* return value */
@@ -422,11 +435,14 @@ int	nlines;		/*
 	spare = nextwin->w_nrows - Pn(P_minrows);
 
 	if (nlines > spare) {
+	    Xviwin *savecurwin = curwin;
 	    /*
 	     * Not enough space: call xvMoveStatusLine()
 	     * recursively for next line.
 	     */
-	    (void) xvMoveStatusLine(nextwin, nlines - spare);
+	    curwin = nextwin;
+	    (void) xvMoveStatusLine(nlines - spare);
+	    curwin = savecurwin;
 	    spare = nextwin->w_nrows - Pn(P_minrows);
 	}
 	if (nlines > spare)
@@ -436,9 +452,11 @@ int	nlines;		/*
 	    wp->w_cmdline += nlines;
 	    nextwin->w_winpos += nlines;
 	    nextwin->w_nrows -= nlines;
-	    (void) shiftup(nextwin, (unsigned) nlines);
+	    curwin = nextwin;
+	    (void) shiftup((unsigned) nlines);
+	    curwin = wp;	/* restore original value */
 	    if (wp->w_nrows > 0) {
-		show_file_info(wp, TRUE);
+		show_file_info(TRUE);
 	    }
 	}
     }
@@ -464,6 +482,7 @@ bool_t	do_clear;
     int		nw;
     int		to_go, spare;
     int		last_winpos, last_nrows;
+    Xviwin	*savecurwin = curwin;
 
     /*
      * Find the first and last windows onto this VirtScr.
@@ -477,11 +496,14 @@ bool_t	do_clear;
     }
     last_win = w;
 
+
     if (first_win == last_win) {
 	first_win->w_nrows = VSrows(vs);
 	first_win->w_ncols = VScols(vs);
 	first_win->w_cmdline = first_win->w_nrows + first_win->w_winpos - 1;
-	redraw_all(first_win, TRUE);
+	curwin = first_win;
+	redraw_all(TRUE);
+	curwin = savecurwin;
 	return;
     }
 
@@ -584,17 +606,18 @@ bool_t	do_clear;
 	w->w_ncols = VScols(vs);
     }
 
-    redraw_all(first_win, TRUE);
+    curwin = first_win;
+    redraw_all(TRUE);
+    curwin = savecurwin;
 }
 
 /*
  * Use the specified window.
  */
 void
-xvUseWindow(win)
-Xviwin	*win;
+xvUseWindow()
 {
-    win->w_vs->pv_window = (genptr *) win;
+    curwin->w_vs->pv_window = (genptr *) curwin;
 }
 
 /*
@@ -604,15 +627,14 @@ void
 xvUpdateAllBufferWindows(buffer)
 Buffer	*buffer;
 {
-    Xviwin	*w;
+    Xviwin	*oldcurwin = curwin;
 
-    w = curwin;		/* as good a place as any to start */
     do {
-	if (w->w_buffer == buffer) {
-	    redraw_window(w, FALSE);
+	if (curwin->w_buffer == buffer) {
+	    redraw_window(FALSE);
 	}
-	w = xvNextDisplayedWindow(w);
-    } while (w != curwin);
+	curwin = xvNextDisplayedWindow(curwin);
+    } while (curwin != oldcurwin);
 }
 
 /***************************************************************************
@@ -802,17 +824,16 @@ char	*filename;
 }
 
 bool_t
-xvCanSplit(window)
-Xviwin	*window;
+xvCanSplit()
 {
     Xviwin	*wp;
     int		nw;
 
-    wp = window;
+    wp = curwin;
     nw = 0;
     do {
 	wp = xvNextWindow(wp);
 	nw++;
-    } while (wp != window);
+    } while (wp != curwin);
     return(nw < Pn(P_autosplit));
 }
