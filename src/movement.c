@@ -42,7 +42,7 @@ unsigned	nlines;
 	 * Set the top screen line to the previous one.
 	 */
 	p = curwin->w_topline->l_prev;
-	if (p == curwin->w_buffer->b_line0)
+	if (p == curbuf->b_line0)
 	    break;
 
 	physlines = plines(p);
@@ -75,7 +75,7 @@ unsigned	nlines;
 	 * Set the top screen line to the next one.
 	 */
 	p = curwin->w_topline->l_next;
-	if (p == curwin->w_buffer->b_lastline)
+	if (p == curbuf->b_lastline)
 	    break;
 
 	physlines = plines(curwin->w_topline);
@@ -304,7 +304,7 @@ move_cursor(lp, index)
 Line	*lp;
 int	index;
 {
-    Buffer *buffer = curwin->w_buffer;
+    Buffer *buffer = curbuf;
     Posn *p;
 
     /*
@@ -336,7 +336,7 @@ int		halfwinsize;
     register int	count;
     register int	spare;
     register Line	*topline;
-    register Line	*filestart = curwin->w_buffer->b_file;
+    register Line	*filestart = curbuf->b_file;
 
     spare = curwin->w_nrows - (unsigned int) plines(topline = currline) - 1;
     for (count = 0; count < halfwinsize && topline != filestart;) {
@@ -349,7 +349,7 @@ int		halfwinsize;
 	}
     }
     curwin->w_topline = topline;
-    xvUpdateAllBufferWindows(curwin->w_buffer);
+    xvUpdateAllBufferWindows();
 
     /*
      * The result of calling info_update here is that if the

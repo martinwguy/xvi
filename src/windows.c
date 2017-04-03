@@ -215,7 +215,7 @@ Buffer	*b;
 void
 xvUnMapWindow()
 {
-    curwin->w_buffer->b_nwindows -= 1;
+    curbuf->b_nwindows -= 1;
 
     curwin->w_cursor->p_line = NULL;
     curwin->w_topline = NULL;
@@ -498,14 +498,12 @@ bool_t	do_clear;
     }
     last_win = w;
 
-
     if (first_win == last_win) {
+	/* And both are == curwin */
 	first_win->w_nrows = VSrows(vs);
 	first_win->w_ncols = VScols(vs);
 	first_win->w_cmdline = first_win->w_nrows + first_win->w_winpos - 1;
-	set_curwin(first_win);
 	redraw_all(TRUE);
-	set_curwin(savecurwin);
 	return;
     }
 
@@ -623,16 +621,16 @@ xvUseWindow()
 }
 
 /*
- * Update all windows associated with the given buffer.
+ * Update all windows associated with the current buffer.
  */
 void
-xvUpdateAllBufferWindows(buffer)
-Buffer	*buffer;
+xvUpdateAllBufferWindows()
 {
+    Buffer	*buffer = curbuf;
     Xviwin	*savecurwin = curwin;
 
     do {
-	if (curwin->w_buffer == buffer) {
+	if (curbuf == buffer) {
 	    redraw_window(FALSE);
 	}
 	set_curwin(xvNextDisplayedWindow(curwin));

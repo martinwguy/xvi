@@ -251,10 +251,11 @@ bool_t	force;
 	State = EXITING;
 	return(TRUE);
     }
+    curbuf = curwin->w_buffer;
+
     if (buffer->b_nwindows == 0) {
 	free_buffer(buffer);
     }
-    buffer = curbuf = curwin->w_buffer;
 
     {
 	unsigned	savecho;
@@ -290,7 +291,7 @@ exXit()
 {
     Buffer	*buffer;
 
-    buffer = curwin->w_buffer;
+    buffer = curbuf;
 
     if (is_modified(buffer) && buffer->b_nwindows < 2) {
 	if (buffer->b_filename != NULL) {
@@ -412,7 +413,7 @@ char	*arg;
      */
     savecurwin = curwin;
     do {
-	if (curwin->w_buffer == buffer) {
+	if (curbuf == buffer) {
 	    xvUnMapWindow();
 	    xvMapWindowOntoBuffer(curwin, buffer);
 	}
@@ -435,7 +436,7 @@ char	*arg;
 	set_curwin(xvNextDisplayedWindow(curwin));
 	if (curwin == savecurwin) break;
 
-	if (curwin->w_buffer == buffer) {
+	if (curbuf == buffer) {
 	    show_message("%s", sline_text(wp));
 	}
     }
@@ -732,7 +733,7 @@ bool_t	force;
 	    success = FALSE;
 	}
 	move_window_to_cursor();
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
     } else {
 	show_message("No more files");
 	success = FALSE;
@@ -767,7 +768,7 @@ bool_t	force;
     echo &= ~(e_SCROLL | e_REPORT | e_SHOWINFO);
     success = exEditFile(force, files[0]);
     move_window_to_cursor();
-    xvUpdateAllBufferWindows(curbuf);
+    xvUpdateAllBufferWindows();
     echo = savecho;
     return(success);
 }
@@ -909,7 +910,7 @@ Line	*atline;
 	echo &= ~e_REPORT;
 	repllines(atline->l_next, 0L, head);
 	echo |= e_REPORT;
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
 
 	/*
 	 * Move the cursor to the first character

@@ -567,7 +567,7 @@ Line		*newlines;
 	/*
 	 * Only do windows onto the right buffer.
 	 */
-	if (curwin->w_buffer != buffer)
+	if (curbuf != buffer)
 	    continue;
 
 	/*
@@ -813,7 +813,7 @@ undoline()
     replchars(line, 0, strlen(line->l_text), buffer->b_Undotext);
     move_cursor(line, 0);
 
-    xvUpdateAllBufferWindows(buffer);
+    xvUpdateAllBufferWindows();
 }
 
 /*
@@ -925,7 +925,7 @@ undo()
 
     cdp->cd_undo = redo;
 
-    xvUpdateAllBufferWindows(buffer);
+    xvUpdateAllBufferWindows();
 }
 
 static void

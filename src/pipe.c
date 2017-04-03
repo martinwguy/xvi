@@ -94,7 +94,7 @@ char	*command;
 	posn1.p_index = 0;
 	posn2.p_line = line2->l_prev;
 	posn2.p_index = 0;
-	do_yank(curbuf, &posn1, &posn2, FALSE, '@');
+	do_yank(&posn1, &posn2, FALSE, '@');
     }
 
     newlines = NULL;
@@ -102,7 +102,7 @@ char	*command;
     if (success) {
 	if (newlines != NULL) {
 	    repllines(line1, cntllines(line1, line2) - 1, newlines);
-	    xvUpdateAllBufferWindows(curbuf);
+	    xvUpdateAllBufferWindows();
 	    begin_line(TRUE);
 	} else {
 	    /*
@@ -372,7 +372,7 @@ Line	*atline;
     if (success) {
 	if (newlines != NULL) {
 	    repllines(atline->l_next, 0L, newlines);
-	    xvUpdateAllBufferWindows(curbuf);
+	    xvUpdateAllBufferWindows();
 	    begin_line(TRUE);
 	} else {
 	    /*

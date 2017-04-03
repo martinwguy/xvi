@@ -40,7 +40,7 @@ register Cmd	*cmd;
      * will be.
      */
     begin_line(TRUE);
-    xvUpdateAllBufferWindows(curbuf);
+    xvUpdateAllBufferWindows();
 
     /*
      * Construct redo buffer.
@@ -80,7 +80,7 @@ register Cmd	*cmd;
      * probably wouldn't have enough memory to do it anyway.
      */
     yp_push_deleted();
-    if (!do_yank(curbuf, &cmd->cmd_startpos, &cmd->cmd_target,
+    if (!do_yank(&cmd->cmd_startpos, &cmd->cmd_target,
 			    IsCharBased(cmd), cmd->cmd_yp_name)) {
 	return;
     }
@@ -204,7 +204,7 @@ register Cmd	*cmd;
 	 * position. However, yanking the whole thing is probably okay.
 	 */
 	yp_push_deleted();
-	if (!do_yank(curbuf, &cmd->cmd_startpos, &cmd->cmd_target,
+	if (!do_yank(&cmd->cmd_startpos, &cmd->cmd_target,
 						FALSE, cmd->cmd_yp_name)) {
 	    return;
 	}
@@ -226,7 +226,7 @@ register Cmd	*cmd;
 	begin_line(TRUE);
 
 	replchars(lp, curwin->w_cursor->p_index, strlen(lp->l_text), "");
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
     } else {
 	bool_t	doappend;	/* true if we should do append, not insert */
 
@@ -268,8 +268,8 @@ register Cmd	*cmd;
 	show_message("%ld lines yanked", nlines);
     }
 
-    (void) do_yank(curbuf, &cmd->cmd_startpos, &cmd->cmd_target,
-			    IsCharBased(cmd), cmd->cmd_yp_name);
+    (void) do_yank(&cmd->cmd_startpos, &cmd->cmd_target,
+		   IsCharBased(cmd), cmd->cmd_yp_name);
 }
 
 static void

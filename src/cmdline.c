@@ -601,7 +601,7 @@ bool_t	interactive;			/* true if reading from tty */
 	    error++;
 	}
 	move_window_to_cursor();
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
 #if 0
 	show_file_info(TRUE);
 #endif
@@ -784,7 +784,7 @@ bool_t	interactive;			/* true if reading from tty */
 	if (nsubs == 0) {
 	    error++;
 	}
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
 	cursupdate();
 	begin_line(TRUE);
 	if (nsubs >= Pn(P_report)) {
@@ -894,7 +894,7 @@ bool_t	interactive;			/* true if reading from tty */
 	}
 	tabinout((command == EX_LSHIFT) ? '<' : '>', l_line, u_line);
 	begin_line(TRUE);
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
 	break;
 
     case EX_NOCMD:

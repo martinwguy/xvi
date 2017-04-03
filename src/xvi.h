@@ -1241,14 +1241,14 @@ extern	void	xvResizeWindow P((int));
 extern	void	xvAdjustWindows P((VirtScr *, bool_t));
 extern	int	xvMoveStatusLine P((int));
 extern	void	xvUseWindow P((void));
-extern	void	xvUpdateAllBufferWindows P((Buffer *));
+extern	void	xvUpdateAllBufferWindows P((void));
 extern	bool_t	xvCanSplit P((void));
 
 /*
  * yankput.c
  */
 extern	void	init_yankput P((void));
-extern	bool_t	do_yank P((Buffer *, Posn *, Posn *, bool_t, int));
+extern	bool_t	do_yank P((Posn *, Posn *, bool_t, int));
 extern	bool_t	yank_str P((int, char *, bool_t));
 extern	void	do_put P((Posn *, int, int));
 extern	void	yp_stuff_input P((int, bool_t));

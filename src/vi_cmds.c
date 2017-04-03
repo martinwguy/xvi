@@ -137,7 +137,7 @@ Cmd	*cmd;
 	if (line->l_text[size1] == '\0') size1--;
 	move_cursor(line, size1);
 
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
 
 	end_command();
 
@@ -190,8 +190,7 @@ Cmd	*cmd;
 	/*
 	 * Move the cursor to the next window that is displayed.
 	 */
-	curwin = xvNextDisplayedWindow(curwin);
-	curbuf = curwin->w_buffer;
+	set_curwin(xvNextDisplayedWindow(curwin));
 	xvUseWindow();
 	move_cursor_to_window();
 	cursupdate();
@@ -459,7 +458,7 @@ Cmd	*cmd;
     lastpos.p_line = curp->p_line;
     lastpos.p_index = curp->p_index + nchars - 1;
     yp_push_deleted();
-    (void) do_yank(curbuf, curp, &lastpos, TRUE, cmd->cmd_yp_name);
+    (void) do_yank(curp, &lastpos, TRUE, cmd->cmd_yp_name);
     replchars(curp->p_line, curp->p_index, nchars, "");
     if (curp->p_line->l_text[curp->p_index] == '\0') {
 	(void) one_left(FALSE);

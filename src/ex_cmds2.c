@@ -381,7 +381,7 @@ Line	*destline;		/* destination line for copy/move */
      * For delete and yank, the removed text goes into the default buffer.
      * For move and copy, we use the secret buffer '=' as a temporary.
      */
-    if (!do_yank(curbuf, &p1, &p2, FALSE,
+    if (!do_yank(&p1, &p2, FALSE,
 		 (type == 'd' || type == 'y') ? '@' : '=')) {
 	return(FALSE);
     }
@@ -396,7 +396,7 @@ Line	*destline;		/* destination line for copy/move */
 	move_cursor(p1.p_line, 0);
 	repllines(p1.p_line, cntllines(p1.p_line, p2.p_line),
 						(Line *) NULL);
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
 	cursupdate();
 	begin_line(TRUE);
     }
@@ -411,7 +411,7 @@ Line	*destline;		/* destination line for copy/move */
 	destpos.p_index = 0;
 	do_put(&destpos, FORWARD, '=');
 
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
 	cursupdate();
     }
 
@@ -466,7 +466,7 @@ bool_t	exclam;
         move_cursor(l1, 0);
     }
 
-    xvUpdateAllBufferWindows(curwin->w_buffer);
+    xvUpdateAllBufferWindows();
 
     end_command();
 

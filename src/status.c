@@ -83,18 +83,17 @@ show_file_info(show_numbers)
 bool_t	show_numbers;
 {
     if (echo & e_SHOWINFO) {
-	Buffer	*buffer = curbuf;
 	Flexbuf	*slp;
 
 	slp = &curwin->w_statusline;
 	flexclear(slp);
-	if (buffer->b_filename == NULL) {
+	if (curbuf->b_filename == NULL) {
 	    (void) lformat(slp, "No File");
 	    if (bufempty()) {
 		show_numbers = FALSE;
 	    }
 	} else {
-	    (void) lformat(slp, "\"%s\"", buffer->b_filename);
+	    (void) lformat(slp, "\"%s\"", curbuf->b_filename);
 	}
 	if (is_readonly(curbuf))
 	    (void) lformat(slp, " [Read only]");
@@ -105,7 +104,7 @@ bool_t	show_numbers;
 	    long	percentage;
 
 	    position = lineno(curwin->w_cursor->p_line);
-	    total = lineno(b_last_line_of(buffer));
+	    total = lineno(b_last_line_of(curbuf));
 	    percentage = (total > 0) ? (position * 100) / total : 0;
 
 	    (void) lformat(slp, " line %ld of %ld --%ld%%--",

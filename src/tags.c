@@ -219,8 +219,7 @@ bool_t	split;			/* true if want to split */
      */
     tagwindow = xvFindWindowByName(curwin, tp->t_file);
     if (tagwindow != NULL) {
-	curwin = tagwindow;
-	curbuf = curwin->w_buffer;
+	set_curwin(tagwindow);
 	edited = TRUE;
 
     } else if (split && xvCanSplit() && exNewBuffer(tp->t_file, 0)) {

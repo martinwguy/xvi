@@ -179,8 +179,7 @@ static bool_t	append_chars_to_yp_buf P((Yankbuffer *, Yankbuffer *));
 
 /*ARGSUSED*/
 bool_t
-do_yank(buffer, from, to, charbased, name)
-Buffer	*buffer;
+do_yank(from, to, charbased, name)
 Posn	*from, *to;
 bool_t	charbased;
 int	name;
@@ -554,7 +553,7 @@ int	name;
 	return;
     }
 
-    buffer = curwin->w_buffer;
+    buffer = curbuf;
 
     /*
      * Set up current and next line pointers.
@@ -665,7 +664,7 @@ int	name;
 	move_cursor(cursorpos.p_line, cursorpos.p_index);
 	move_window_to_cursor();
 	cursupdate();
-	xvUpdateAllBufferWindows(buffer);
+	xvUpdateAllBufferWindows();
       }
       break;
 
@@ -691,7 +690,7 @@ int	name;
 	begin_line(TRUE);
 	move_window_to_cursor();
 	cursupdate();
-	xvUpdateAllBufferWindows(buffer);
+	xvUpdateAllBufferWindows();
       }
       break;
     default:

@@ -944,7 +944,7 @@ bool_t		matchtype;
     case '~':
 	end_command();
 	if (ndone) {
-	    xvUpdateAllBufferWindows(curbuf);
+	    xvUpdateAllBufferWindows();
 	    cursupdate();
 	    begin_line(TRUE);
 	    if (ndone >= Pn(P_report)) {

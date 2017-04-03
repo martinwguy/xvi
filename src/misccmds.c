@@ -111,7 +111,7 @@ bool_t	split_line;
     move_cursor(l, indentchars);
     move_window_to_cursor();
     cursupdate();
-    xvUpdateAllBufferWindows(curbuf);
+    xvUpdateAllBufferWindows();
 
     return(TRUE);
 }
@@ -158,7 +158,7 @@ openbwd()
     move_cursor(l, indentchars);
     move_window_to_cursor();
     cursupdate();
-    xvUpdateAllBufferWindows(curbuf);
+    xvUpdateAllBufferWindows();
 
     return(TRUE);
 }

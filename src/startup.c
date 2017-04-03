@@ -367,13 +367,11 @@ char	*envp;				/* init string from the environment */
 	(void) exNext(numfiles, files, FALSE);
 
 	/* If there are more than one window, move to the first */
-	if (curwin->w_last != NULL) {
-	    do {
-		curwin = curwin->w_last;
-	    } while (curwin->w_last != NULL);
-	    curbuf = curwin->w_buffer;
-	    xvUseWindow();
+	while (curwin->w_last != NULL) {
+	    curwin = curwin->w_last;
 	}
+	curbuf = curwin->w_buffer;
+	xvUseWindow();
 
 	if (pat != NULL) {
 	    Posn	*p;

@@ -197,7 +197,7 @@ int	c;
 		move_window_to_cursor();
 		cursupdate();
 	    }
-	    xvUpdateAllBufferWindows(curbuf);
+	    xvUpdateAllBufferWindows();
 	    return(TRUE);
 	}
 
@@ -551,7 +551,7 @@ int	c;
 	    /*
 	     * Show the match if it's on screen.
 	     */
-	    xvUpdateAllBufferWindows(curbuf);
+	    xvUpdateAllBufferWindows();
 
 	    csave = *curpos;
 	    move_cursor(lpos->p_line, lpos->p_index);
@@ -935,7 +935,7 @@ end_replace(c)
 	    move_window_to_cursor();
 	    cursupdate();
 	}
-	xvUpdateAllBufferWindows(curbuf);
+	xvUpdateAllBufferWindows();
     }
 }
 

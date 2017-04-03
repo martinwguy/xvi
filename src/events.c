@@ -58,6 +58,7 @@ xvEvent	*ev;
 
     case Ev_resize:
 	{
+fputs("Ev_resize\n", stderr);
 	    Xviwin	*win;
 
 	    win = (Xviwin *) ev->ev_vs->pv_window;
