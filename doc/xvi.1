@@ -361,6 +361,10 @@ If the new boolean
 parameter is set, xvi sniffs files before reading them to determine their
 newline style and sets the default file-saving newline style to that
 of the file read.
+.LP
+It would be better if the file format were remembered separately for each file
+but instead it is a single editor-wide option that applies to all open buffers.
+The same could be said for the "readonly" option.
 .\"---------------------------------------------------------------------------
 .SS "Extended regular expressions"
 .LP
@@ -521,7 +525,7 @@ colour used for status lines
 \fBroscolour\fP
 as
 .BR statuscolour ,
-but for readonly files
+but for read-only files
 .TP
 \fBsystemcolour\fP
 colour used for system mode
