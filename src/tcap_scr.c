@@ -1591,54 +1591,54 @@ bool_t	doit;
     return(NOCM);
 }
 
+static int	cm_relative P((bool_t));
+
+/*
+ * Do an absolute motion, the only option when !optimise.
+ *
+ * We used to compare the cost of a CM string with that of
+ * going Home and issuing relative motions, but the win is so rare
+ * and so small that we don't bother. We use that strategy as a backup
+ * for when there is no CM capabillity.
+ */
 static int
-cm_gotoxy(doit)
+cm_absolute(doit)
 bool_t	doit;
 {
-    if (CM == NULL) return(NOCM);
-
-    cost = 0;
-    tputs(tgoto(CM, virt_col, virt_row), (int)LI, doit ? foutch : inc_cost);
-    if (doit) {
-	real_row = virt_row;
-	real_col = virt_col;
-    }
-    return(cost);
-}
-
-static int
-cm_home_relative(doit)
-bool_t	doit;
-{
-    int cost;
-
-    if (HO == NULL) return(NOCM);
-
-    cost = cost_home;
-
-    if (!doit) {
-        int save_real_col = real_col;
-        int save_real_row = real_row;
-
-	real_col = real_row = 0;	/* Pretend we went home */
-	cost += cm_v_only(FALSE);
-	cost += cm_h_only(FALSE);
-	real_col = save_real_col;
-	real_row = save_real_row;
-    } else {
-	tputs(HO, 1, foutch);
-	real_col = real_row = 0;
-	(void) cm_v_only(TRUE);
-	(void) cm_h_only(TRUE);
+    if (CM != NULL) {
+	cost = 0;	/* the global one */
+	tputs(tgoto(CM, virt_col, virt_row), (int)LI, doit ? foutch : inc_cost);
+	if (doit) {
+	    real_row = virt_row;
+	    real_col = virt_col;
+	}
+	return(cost);
     }
 
-    return(cost);
+    if (HO != NULL) {
+	int cost = cost_home;;
+	int save_real_col = real_col;
+	int save_real_row = real_row;
+
+	if (doit) {
+	    tputs(HO, 1, foutch);
+	}
+	real_col = real_row = 0;    /* if !doit, just pretend we went home */
+	cost += cm_relative(doit);
+	if (!doit) {
+	    real_col = save_real_col;
+	    real_row = save_real_row;
+	}
+	return(cost);
+    }
+
+    return(NOCM);
 }
 
 /*
  * Perform/measure a motion performed by doing the horizontal and the
  * vertical motions separately. The name is a misnomer as it may use
- * carriage-return and (one day) goto-x and goto-y commands.
+ * carriage-return.
  */
 static int
 cm_relative(doit)
@@ -1646,8 +1646,13 @@ bool_t	doit;
 {
     int cost;
 
-    /* Move to the line first, otherwise if moving from an empty line to a
-     * full one, c_right_by_redraw() spaces over junk
+    /* We can only do relative motion if we know where the cursor is! */
+    if (!optimise) return(NOCM);
+
+    /*
+     * Move to the line first, otherwise if moving from an empty line
+     * to a full one, c_right_by_redraw() moves over blanks instead of
+     * characters, which is visually less pleasing.
      */
     cost = cm_v_only(doit);
     cost += cm_h_only(doit);
@@ -1681,35 +1686,34 @@ xyupdate()
 	set_scroll_region(0, (int) LI - 1);
     }
 
-    /*
-     * We are only allowed to move when set to colour 0
-     * or some terminals will write garbage all over the screen.
-     *
-     * Exception: when moving right by rewriting a screen character
-     *		  (the first case below, using cm_right_by_redraw())
-     */
-    if (!can_move_in_standout && !(optimise && vdisp == 0 && hdisp == 1)) {
-	do_set_colour(VSCcolour);
-    }
 
     /*
      * Now choose the best optimised strategy and apply it.
      */
     {
-	int HOcost = cm_home_relative(FALSE);
-	int CMcost = cm_gotoxy(FALSE);
-	int relcost = optimise ? cm_relative(FALSE) : NOCM;
+	int abscost = cm_absolute(FALSE);
+	int relcost = cm_relative(FALSE);
+
+	/*
+	 * We are only allowed to move when set to colour 0
+	 * or some terminals will write garbage all over the screen.
+	 *
+	 * Exception: when moving right by rewriting screen characters.
+	 */
+	if (!can_move_in_standout &&
+	    !(optimise && vdisp==0 && hdisp > 0 && relcost < abscost)) {
+	    do_set_colour(VSCcolour);
+	}
 
 	/*
 	 * These <'s disable a candidate if both it and its competitor are
 	 * unavailable and in case of a match, choose the later candidate.
+	 * We prefer absolute motions to relative ones.
 	 */
-	if (HOcost < CMcost && HOcost < relcost) {
-	    cm_home_relative(TRUE);
-	} else if (CMcost < relcost) {
-	    cm_gotoxy(TRUE);
-	} else {
+	if (relcost < abscost) {
 	    cm_relative(TRUE);
+	} else {
+	    cm_absolute(TRUE);
 	}
     }
     optimise = TRUE;
