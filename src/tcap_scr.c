@@ -20,11 +20,6 @@
 	xr	bool	Return acts like ce \r \n (Delta Data)
 
 	ch	str	Like cm but horizontal motion only, line stays same
-	DO	str	down N lines
-	up	str	Upline (cursor up)
-	UP	str	up N lines
-	LE	str	left N chars
-	RI	str	right N spaces
 	ll	str	Last line, first column
 	sc	str	save cursor
 	rc	str	restore cursor from last "sc"
@@ -133,8 +128,11 @@ extern	char	*tgoto();
 /*
  * Exported.
  */
-int		cost_goto;		/* cost of doing a goto */
-static int	cost_home; 		/* cost of using the "ho" capability */
+static int	cost_home;		/* cost of using the "ho" capability */
+static int	cost_cr;		/* cost of using the "cr" capability */
+static int	cost_bc;		/* cost of using the "bc" capability */
+static int	cost_down;		/* cost of using the "do" capability */
+static int	cost_up;		/* cost of using the "up" capability */
 bool_t		can_scroll_area = FALSE; /* true if we can set scroll region */
 unsigned int	CO = 0;			/* screen dimensions; 0 at start */
 unsigned int	LI = 0;
@@ -175,6 +173,12 @@ static	char	*up;			/* up one line */
 static	char	*down;			/* down one line ("do" is reserved) */
 static	char	*cr;			/* carriage return */
 
+/* Move up or down N lines, left or right N chars */
+static	char	*nup;			/* up N lines (UP is taken) */
+static	char	*DO;			/* down N lines */
+static	char	*LE;			/* left N chars */
+static	char	*RI;			/* right N chars */
+
 static	bool_t	can_move_in_standout;	/* True if can move while SO is on */
 static	bool_t	auto_margins;		/* true if AM is set */
 static	bool_t	eat_newline_glitch;	/* "xn" capability */
@@ -182,10 +186,20 @@ static	bool_t	eat_newline_glitch;	/* "xn" capability */
 #define	can_backspace	(bc != NULL)
 #define	can_fwdspace	(nd != NULL)	/* true if can forward space (nd) */
 #define	can_movedown	(down != NULL)	/* true if can move down (do) */
+#define	can_moveup	(up != NULL)	/* true if can move up (up) */
 #define can_inschar	(IC != NULL || IM != NULL)
 #define can_del_line	(DL != NULL)	/* true if we can delete lines */
 #define can_ins_line	(AL != NULL)	/* true if we can insert lines */
 #define can_clr_to_eol	(CE != NULL)	/* true if can clr-to-eol */
+
+/*
+ * A value to return as the cost of a motion that is not available.
+ * it should be larger than any possible motion cost, but not INT_MAX
+ * because we also want to be able to add these together and still get
+ * an unappetising cost as the result.
+ * Powers of two produce smaller code on some processors.
+ */
+#define	NOCM		1024
 
 /*
  * We use this table to perform mappings from cursor keys
@@ -807,12 +821,15 @@ char	*str;
     exit(2);
 }
 
-/* Utility function used in tty_open() as counting substitute for foutch() */
+/* Utility function used as a counting substitute for foutch()
+ * when using tputs() just to count the output characters. */
+static int cost;
+
 static int
-inc_cost_goto(c)
+inc_cost(c)
 int c;
 {
-    cost_goto++;
+    cost++;
     return(c);
 }
 
@@ -957,16 +974,8 @@ unsigned int	*pcolumns;
 	up = UP;
     }
 #else
-    if ((cp = tgetstr("up", &strp)) != NULL) {
-	up = cp;
-    }
+    up = tgetstr("up", &strp));
 #endif
-
-    cp = tgetstr("nd", &strp);	/* non-destructive forward space */
-    if (cp != NULL) {
-	nd = cp;
-    }
-
 
 #ifndef	AIX
     /*
@@ -977,17 +986,15 @@ unsigned int	*pcolumns;
      * We must therefore avoid use of "do" under AIX.
      */
 
-    cp = tgetstr("do", &strp);	/* down a line */
-    if (cp != NULL) {
-	down = cp;
-    }
+    down = tgetstr("do", &strp);	/* down a line */
 #endif
 
-    cr = tgetstr("cr", &strp);	/* carriage return */
 
     /*
-     * Strings.
+     * Other strings.
      */
+    cr = tgetstr("cr", &strp);
+    nd = tgetstr("nd", &strp);
     KS = tgetstr("ks", &strp);
     KE = tgetstr("ke", &strp);
     VS = tgetstr("vs", &strp);
@@ -1003,6 +1010,10 @@ unsigned int	*pcolumns;
     EI = tgetstr("ei", &strp);
     CM = tgetstr("cm", &strp);
     HO = tgetstr("ho", &strp);
+    nup= tgetstr("UP", &strp);
+    DO = tgetstr("DO", &strp);
+    LE = tgetstr("LE", &strp);
+    RI = tgetstr("RI", &strp);
     CS = tgetstr("cs", &strp);
     sf = tgetstr("sf", &strp);
     sr = tgetstr("sr", &strp);
@@ -1034,25 +1045,19 @@ unsigned int	*pcolumns;
 	colours[ncolours] = cap;
     }
 
-    if (CM == NULL) {
-	fail("Xvi can't work without cursor motion.");
+    if (CM == NULL && HO == NULL) {
+	fail("Xvi can't work without cursor motion or home.");
     }
-
-    /*
-     * Find out how many character a cursor goto involves.
-     * Variable-length ones probably involve decimal numbers, which are
-     * two figures for most of the screen area, so use the max value of each.
-     */
-    cost_goto = 0;
-    tputs(tgoto(CM, CO, LI), (int) LI, inc_cost_goto);
 
     /*
      * Find out how many characters a "home" takes.
      * "ho" is always a fixed string (checked in NetBSD termcap file).
      */
-    if (HO != NULL) {
-	cost_home = strlen(HO);
-    }
+    cost_home = HO   ? strlen(HO)   : NOCM;
+    cost_cr   = cr   ? strlen(cr)   : NOCM;
+    cost_down = down ? strlen(down) : NOCM;
+    cost_bc   = bc   ? strlen(bc)   : NOCM;
+    cost_up   = up   ? strlen(up)   : NOCM;
 
     /*
      * Set these variables as appropriate.
@@ -1142,7 +1147,6 @@ erase_line()
     if (CE != NULL) {
 	tputs(CE, (int) LI, foutch);
     } else {
-	int old_col = real_col;
 	/*
 	 * This happens when unix.c calls erase_line() in sys_endv() to clear
 	 * the status line on a terminal without "ce" capability.
@@ -1411,6 +1415,7 @@ int	row, col;
     virt_col = col;
 }
 
+
 /*
  * This is an internal routine which is called whenever we want
  * to be sure that the cursor position is correct; it looks at
@@ -1425,11 +1430,317 @@ int	row, col;
  * Other routines in this file can use this to turn optimisation
  * off temporarily if they "lose" the cursor.
  */
+
+/*
+ * Helper routines for xyudate() tell you how many characters it would take
+ * to move the cursor from real_{row,col} to virt_{row,col} using a particular
+ * motion strategy:
+ *
+ * cm_h_only()        Just the horizontal part, using relative motions
+ * cm_v_only()        Just the vertical part, using relative motions
+ * cm_home_relative() All of it outputting Home and relative motions
+ * cm_relative()      All of it just using relative motions (and/or CR)
+ * cm_gotoxy()	      All of it using a single cursor motion sequence
+ *
+ * Notice that "carriage return and move right" is included in cm_h_only()
+ * and hence in cm_relative() (despite its name).
+ *
+ * They all take a parameter "do_it":
+ * - If "FALSE, they calculate and return the number of characters that would
+ *   be required to perform this motion with the specified strategy;
+ * - If TRUE, they output their best motion sequence.
+ *
+ * There are also
+ * ch	Move cursor horizontally only to column %1
+ * cv   Move cursor vertically only to line %1
+ */
+
+
+/*
+ * Helper function for the helper functions:
+ * move right by redrawing the characters already on the screen.
+ * Costs
+ */
+static int
+cm_right_by_redraw(bool_t do_it)
+{
+    VirtScr *vs = curwin->w_vs;
+    Sline *sline = &(vs->pv_int_lines[real_row]);
+    int *pv_colours = vs->pv_colours;
+    int cost = virt_col - real_col;
+
+    if (do_it) while (real_col < virt_col) {
+	do_set_colour(pv_colours[sline->s_colour[real_col]]);
+	moutch(sline->s_line[real_col]);
+	real_col++;
+    }
+    return(cost);
+}
+
+/*
+ * Find the cost of, or perform, a horizontal-only motion
+ * from real_col to virt_col.
+ *
+ * Strategies are:
+ * - one or more single character motions using "bs" to go left
+ *   or rewriting the characters already on the screen to go right;
+ * - using a single LE or RI motion (move left/right by N chars)
+ */
+static int
+cm_h_only(do_it)
+bool_t	do_it;
+{
+    if (real_col == virt_col) return(0);	/* Should never happen */
+
+    /* Moving left */
+    if (real_col > virt_col) {
+        int crcost = NOCM;
+        int LEcost = NOCM;
+        int bscost = NOCM;
+
+	/* Calculate the cost of doing it with a carriage return and
+	 * re-outputting screen characters to move right */
+	if (cr != NULL) {
+	    crcost = cost_cr + virt_col;
+	}
+
+	/* Measure the cost of doing it with an N-columns-left string */
+	if (LE != NULL) {
+	    cost = 0;
+	    tputs(tgoto(LE, 0, real_col - virt_col), 1, inc_cost);
+	    LEcost = cost;
+	}
+	/* Calculate the cost of doing it with N backspaces */
+	if (can_backspace) {
+	    bscost = cost_bc * (real_col - virt_col);
+	}
+
+	/*
+	 * Choose a motion strategy.
+	 * The <'s ensure that if both are NOCM, neither is chosen and
+	 * prefer the later options to the earlier if they cost the same.
+	 */
+	/* First option: Output carriage return and redraw screen characters */
+	if (crcost < LEcost && crcost < bscost) {
+	    if (do_it) {
+		tputs(cr, 1, foutch);
+		real_col = 0;
+		cm_right_by_redraw(TRUE);
+	    }
+	    return(crcost);
+	}
+
+	/* Second option: Backspaces */
+	if (bscost < LEcost) {
+	    if (do_it) {
+		while (virt_col < real_col) {
+		    tputs(bc, 1, foutch);
+		    real_col--;
+		}
+	    }
+	    return(bscost);
+	}
+
+	/* Third option: relative motion left by N character positions */
+	if (LEcost != NOCM) {
+	    if (do_it) {
+		tputs(tgoto(LE, 0, real_col - virt_col), 1, foutch);
+		real_col = virt_col;
+	    }
+	    return(LEcost);
+	}
+    }
+
+    /* Moving right */
+    if (virt_col > real_col) {
+        int RIcost = NOCM; /* Cost of a right-N-columns motion */
+        int chcost = NOCM; /* Cost of moving right by redrawing screen chars */
+
+	/* Measure the cost of doing it with an n-columns-right string */
+	if (RI != NULL) {
+	    cost = 0;
+	    tputs(tgoto(RI, 0, virt_col - real_col), 1, inc_cost);
+	    RIcost = cost;
+	}
+	/* Calculate cost of doing it by redrawing N characters */
+	chcost = virt_col - real_col;
+
+	/*
+	 * Choose a motion strategy.
+	 * The <'s ensure that if both are NOCM, neither is chosen and
+	 * prefer the later options to the earlier if they cost the same.
+	 */
+	/* First strategy: move right by redrawing the screen's characters */
+	if (chcost < RIcost) {
+	    if (do_it) {
+		return(cm_right_by_redraw(TRUE));
+	    }
+	    return(chcost);
+	}
+	/* Second strategy: a relative motion right by N characters */
+	if (RIcost != NOCM) {
+	    if (do_it) {
+		tputs(tgoto(RI, 0, virt_col - real_col), 1, foutch);
+		real_col = virt_col;
+	    }
+	    return(RIcost);
+	}
+    }
+
+    /* Can't do this */
+    return(NOCM);
+}
+
+/* Find the cost of, or perform, a vertical motion with relative motions */
+static int
+cm_v_only(do_it)
+bool_t	do_it;
+{
+    if (real_row == virt_row) return(0);	/* Should never happen */
+
+    /* Moving up */
+    if (real_row > virt_row) {
+        int UPcost = NOCM;
+        int upcost = NOCM;
+
+	/* Measure the cost of doing it with an N-columns-left string */
+	if (nup != NULL) {
+	    cost = 0;
+	    tputs(tgoto(nup, 0, real_row - virt_row), 1, inc_cost);
+	    UPcost = cost;
+	}
+	/* Calculate the cost of doing it with N backspaces */
+	if (nup != NULL) {
+	    upcost = cost_up * (real_row - virt_row);
+	}
+
+	/*
+	 * Choose a motion strategy.
+	 * The <'s ensure that if both are NOCM, neither is chosen and
+	 * prefer the later options to the earlier if they cost the same.
+	 */
+	if (upcost < UPcost) {
+	    if (do_it) {
+		while (virt_row < real_row) {
+		    tputs(up, 1, foutch);
+		    real_row--;
+		}
+	    }
+	    return(upcost);
+	}
+	if (UPcost != NOCM ) {
+	    if (do_it) {
+		tputs(tgoto(nup, 0, real_row - virt_row), 1, foutch);
+		real_row = virt_row;
+	    }
+	    return(UPcost);
+	}
+    }
+
+    /* Moving down */
+    if (virt_row > real_row) {
+        int DOcost = NOCM;	/* Cost of a down-N-columns motion */
+        int docost = NOCM;	/* Cost of outputting N "down" sequences */
+
+	/* Measure the cost of doing it with an n-columns-left string */
+	if (DO != NULL) {
+	    cost = 0;
+	    tputs(tgoto(DO, 0, virt_row - real_row), 1, inc_cost);
+	    DOcost = cost;
+	}
+	/* Calculate the cost of doing it with N characters */
+	if (down != NULL) {
+	    docost = (virt_row - real_row) * cost_down;
+	}
+
+	/*
+	 * Choose a motion strategy.
+	 * The <'s ensure that if both are NOCM, neither is chosen and
+	 * prefer the later options to the earlier if they cost the same.
+	 */
+	if (docost < DOcost) {
+	    if (do_it) {
+		while (virt_row > real_row) {
+		    tputs(down, 1, foutch);
+		    real_row++;
+		}
+	    }
+	    return(docost);
+	}
+	if (DOcost != NOCM) {
+	    if (do_it) {
+		tputs(tgoto(DO, 0, virt_row - real_row), 1, foutch);
+		real_row = virt_row;
+	    }
+	    return(DOcost);
+	}
+    }
+
+    /* Can't do this */
+    return(NOCM);
+}
+
+static int
+cm_gotoxy(do_it)
+bool_t	do_it;
+{
+    if (CM == NULL) return(NOCM);
+
+    cost = 0;
+    tputs(tgoto(CM, virt_col, virt_row), (int)LI, do_it ? foutch : inc_cost);
+    return(cost);
+}
+
+static int
+cm_home_relative(do_it)
+bool_t	do_it;
+{
+    if (HO == NULL) return(NOCM);
+
+    if (!do_it) {
+        int save_real_col = real_col;
+        int save_real_row = real_row;
+	int cost;
+
+	cost = cost_home;
+	real_col = real_row = 0;	/* Pretend we went home */
+	cost += cm_h_only(FALSE);
+	cost += cm_v_only(FALSE);
+	real_col = save_real_col;
+	real_row = save_real_row;
+	return(cost);
+    }
+
+    tputs(HO, 1, foutch);
+    real_col = real_row = 0;
+    (void) cm_v_only(TRUE);
+    (void) cm_h_only(TRUE);
+
+    return(0);	/* return value doesn't matter when do_it is TRUE */
+}
+
+/*
+ * Perform/measure a motion performed by doing the horizontal and the
+ * vertical motions separately. The name is a misnomer as it may use
+ * carriage-return and (one day) goto-x and goto-y commands.
+ */
+static int
+cm_relative(do_it)
+bool_t	do_it;
+{
+    if (!do_it) {
+	return(cm_h_only(FALSE) + cm_v_only(FALSE));
+    } else {
+	(void) cm_v_only(TRUE);
+	(void) cm_h_only(TRUE);
+	return(0);	/* Value doesn't matter if do_it */
+    }
+}
+
 static void
 xyupdate()
 {
     register int	hdisp, vdisp;
-    register int	totaldisp;
 
     /*
      * Horizontal and vertical displacements needed
@@ -1441,220 +1752,93 @@ xyupdate()
     hdisp = virt_col - real_col;
     vdisp = virt_row - real_row;
 
-    if (optimise && hdisp == 0 && vdisp == 0)
-	return;
-
-    totaldisp = ((vdisp < 0) ? -vdisp : vdisp) +
-	    ((hdisp < 0) ? -hdisp : hdisp);
+    if (hdisp == 0 && vdisp == 0 && optimise) {
+	 return;
+    };
 
     /*
      * First, ensure that the current scroll region
      * contains the intended cursor position.
      */
-    if (virt_row < s_top || virt_row > s_bottom) {
-	if (can_scroll_area)
-	    set_scroll_region(0, (int) LI - 1);
+    if (can_scroll_area && (virt_row < s_top || virt_row > s_bottom)) {
+	set_scroll_region(0, (int) LI - 1);
     }
 
     /*
      * We are only allowed to move when set to colour 0
      * or some terminals will write garbage all over the screen.
+     *
+     * Exception: when moving right by rewriting a screen character
+     *		  (the first case below, using cm_right_by_redraw())
      */
-    if (!can_move_in_standout && old_colour != VSCcolour) {
+    if (!can_move_in_standout && !(optimise && vdisp == 0 && hdisp == 1)) {
 	do_set_colour(VSCcolour);
     }
 
-    /*
-     * If we want to go near the top of the screen, it may be
-     * worth using HO.  We musn't do this if we would thereby
-     * step outside the current scroll region.  Also, we can
-     * only move to a position near home if we can use "down"
-     * and "right" movements after having gone to "home".
-     */
-    if (
-	(
-	    HO != NULL		/* "home" capability exists */
-	)
-	&&				/* AND */
-	(
-	    !can_scroll_area	/* no scroll regions */
-	    ||
-	    s_top == 0		/* or doesn't affect us */
-	)
-	&&				/* AND */
-	(
-	    virt_col == 0		/* we're not moving right */
-	    ||
-	    can_fwdspace		/* or we can if we want */
-	)
-	&&				/* AND */
-	(
-	    virt_row == 0		/* we're not moving down */
-	    ||
-	    can_movedown		/* or we can if we want */
-	)
-    ) {
-
-	/*
-	 * Possible total cost of getting to the desired
-	 * position if we use "ho".
-	 */
-	register unsigned	netcost;
-
-	netcost = cost_home + virt_row + virt_col;
-
-	/*
-	 * Only use home if it is worth it, and if
-	 * either we are already below where we want
-	 * to be on the screen, or optimise is off
-	 * (and hence relative movements inappropriate).
-	 */
-	if (netcost < cost_goto
-	    &&
-	    (!optimise || real_row > virt_row)) {
-	    tputs(HO, (int) LI, foutch);
-	    real_row = real_col = 0;
-	    totaldisp = (hdisp = virt_col) + (vdisp = virt_row);
-	    optimise = TRUE;
+    /* This is called frequently so do common cases quickly */
+    if (optimise) {
+	if (vdisp == 0) {
+	    switch (hdisp) {
+	    case 1:			/* Right one */
+	      { /* Instead of using nd, just redraw the screen character */
+		cm_right_by_redraw(TRUE);
+		return;
+	      }
+	    case -1:			/* Left one */
+		if (can_backspace) {
+		    real_col--;
+		    tputs(bc, 1, foutch);
+		    return;
+		}
+	    }
+					/* Left to column 0 */
+	    if (virt_col == 0 && cr != NULL) {
+		real_col = 0;
+		tputs(cr, 1, foutch);
+		return;
+	    }
+	}
+	if (hdisp == 0) {
+	    switch (vdisp) {
+	    case 1:			/* Down one */
+		if (can_movedown) {
+		    real_row++;
+		    tputs(down, 1, foutch);
+		    return;
+		}
+		break;
+	    case -1:			/* Up one */
+		if (can_moveup) {
+		    real_row--;
+		    tputs(up, 1, foutch);
+		    return;
+		}
+		break;
+	    }
 	}
     }
 
-    if (!optimise) {
+    /*
+     * Now choose the best optimised strategy and apply it.
+     */
+    {
+	int HOcost = cm_home_relative(FALSE);
+	int CMcost = cm_gotoxy(FALSE);
+	int relcost = optimise ? cm_relative(FALSE) : NOCM;
+
 	/*
-	 * If optim is off, we should just go to the
-	 * specified place; we can then turn it on,
-	 * because we know where the cursor is.
+	 * These <'s disable a candidate if both it and its competitor are
+	 * unavailable and in case of a match, choose the later candidate.
 	 */
-	tputs(tgoto(CM, virt_col, virt_row), (int) LI, foutch);
-	optimise = TRUE;
-    } else {
-	if (vdisp != 0 || hdisp != 0) {
-	    /*
-	     * Update the cursor position in the best way.
-	     */
-
-	    if (
-		(totaldisp < cost_goto)
-		&&
-		(
-		    hdisp == 0
-		    ||
-		    (hdisp > 0 && can_fwdspace)
-		    ||
-		    (hdisp < 0 && can_backspace)
-		)
-		&&
-		(
-		    vdisp >= 0
-		    &&
-		    can_movedown
-		)
-	    ) {
-		/*
-		 * A small motion; worth looking at
-		 * doing it with BS, ND and DO.
-		 * No UP handling yet, and we don't
-		 * really care about whether ND is
-		 * more than one char - this can make
-		 * the output really inefficient.
-		 */
-
-		int	n;
-
-		/*
-		 * Move down to the right line.
-		 */
-		for (n = vdisp; n > 0; n--) {
-		    tputs(down, 1, foutch);
-		}
-
-		if (hdisp < 0) {
-		    if (virt_col == 0) {
-			tputs(cr, 1, foutch);
-		    } else {
-			for (n = hdisp; n < 0; n++) {
-			    tputs(bc, 1, foutch);
-			}
-		    }
-		} else if (hdisp > 0) {
-		    for (n = hdisp; n > 0; n--) {
-			tputs(nd, 1, foutch);
-		    }
-		}
-
-	    } else if (vdisp == 0) {
-
-		/*
-		 * Same row.
-		 */
-		if (virt_col == 0) {
-		    /*
-		     * Start of line - easy.
-		     */
-		    tputs(cr, 1, foutch);
-
-		} else if (can_fwdspace && hdisp > 0 &&
-			    hdisp < cost_goto) {
-		    int	n;
-
-		    /*
-		     * Forward a bit.
-		     */
-		    for (n = hdisp; n > 0; n--) {
-			tputs(nd, 1, foutch);
-		    }
-
-		} else if (can_backspace && hdisp < 0 &&
-			    (-hdisp) < cost_goto) {
-		    int	n;
-
-		    /*
-		     * Back a bit.
-		     */
-		    for (n = hdisp; n < 0; n++) {
-			tputs(bc, 1, foutch);
-		    }
-
-		} else {
-		    /*
-		     * Move a long way.
-		     */
-		    tputs(tgoto(CM, virt_col, virt_row),
-				1, foutch);
-		}
-	    } else if (virt_col == 0) {
-
-		/*
-		 * Different row, column 0.
-		 */
-		if (vdisp > 0 && vdisp + 1 < cost_goto) {
-		    /*
-		     * Want to move downwards.
-		     * This happens a lot.
-		     */
-		    int	n;
-
-		    if (real_col != 0)
-			tputs(cr, 1, foutch);
-		    for (n = vdisp; n > 0; n--) {
-			tputs(down, 1, foutch);
-		    }
-		} else {
-		    /*
-		     * Want to move upwards.
-		     */
-		    tputs(tgoto(CM, virt_col, virt_row),
-			    (int) LI, foutch);
-		}
-	    } else {
-		/*
-		 * Give up - do a goto.
-		 */
-		tputs(tgoto(CM, virt_col, virt_row),
-			(int) LI, foutch);
-	    }
+	if (HOcost < CMcost && HOcost < relcost) {
+	    cm_home_relative(TRUE);
+	} else if (CMcost < relcost) {
+	    cm_gotoxy(TRUE);
+	} else {
+	    cm_relative(TRUE);
 	}
     }
     real_row = virt_row;
     real_col = virt_col;
+    optimise = TRUE;
 }
