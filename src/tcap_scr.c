@@ -20,6 +20,12 @@
 	xr	bool	Return acts like ce \r \n (Delta Data)
 
 	ch	str	Like cm but horizontal motion only, line stays same
+	cv	str	Like cm but vertical motion only, column stays same
+	DO	str	down N lines
+	UP	str	up N lines
+	LE	str	left N chars
+	RI	str	right N spaces
+
 	ll	str	Last line, first column
 	sc	str	save cursor
 	rc	str	restore cursor from last "sc"
@@ -172,12 +178,6 @@ static	char	*nd;			/* non-destructive forward space */
 static	char	*up;			/* up one line */
 static	char	*down;			/* down one line ("do" is reserved) */
 static	char	*cr;			/* carriage return */
-
-/* Move up or down N lines, left or right N chars */
-static	char	*nup;			/* up N lines (UP is taken) */
-static	char	*DO;			/* down N lines */
-static	char	*LE;			/* left N chars */
-static	char	*RI;			/* right N chars */
 
 static	bool_t	can_move_in_standout;	/* True if can move while SO is on */
 static	bool_t	auto_margins;		/* true if AM is set */
@@ -1010,10 +1010,6 @@ unsigned int	*pcolumns;
     EI = tgetstr("ei", &strp);
     CM = tgetstr("cm", &strp);
     HO = tgetstr("ho", &strp);
-    nup= tgetstr("UP", &strp);
-    DO = tgetstr("DO", &strp);
-    LE = tgetstr("LE", &strp);
-    RI = tgetstr("RI", &strp);
     CS = tgetstr("cs", &strp);
     sf = tgetstr("sf", &strp);
     sr = tgetstr("sr", &strp);
@@ -1262,7 +1258,7 @@ int	start_row, end_row, nlines;
 	    virt_row = start_row;
 	    virt_col = 0;
 	}
-    } else /* use SF or sf or DO */ {
+    } else /* use SF or sf or down */ {
 	if (virt_row != end_row) {
 	    virt_row = end_row;
 	    virt_col = 0;
@@ -1445,7 +1441,7 @@ int	row, col;
  * Notice that "carriage return and move right" is included in cm_h_only()
  * and hence in cm_relative() (despite its name).
  *
- * They all take a parameter "do_it":
+ * They all take a parameter "doit":
  * - If "FALSE, they calculate and return the number of characters that would
  *   be required to perform this motion with the specified strategy;
  * - If TRUE, they output their best motion sequence.
@@ -1459,20 +1455,31 @@ int	row, col;
 /*
  * Helper function for the helper functions:
  * move right by redrawing the characters already on the screen.
- * Costs
  */
 static int
-cm_right_by_redraw(bool_t do_it)
+cm_right_by_redraw(bool_t doit)
 {
-    VirtScr *vs = curwin->w_vs;
-    Sline *sline = &(vs->pv_int_lines[real_row]);
-    int *pv_colours = vs->pv_colours;
     int cost = virt_col - real_col;
 
-    if (do_it) while (real_col < virt_col) {
-	do_set_colour(pv_colours[sline->s_colour[real_col]]);
-	moutch(sline->s_line[real_col]);
-	real_col++;
+    if (doit) {
+	VirtScr *vs = curwin->w_vs;
+	Sline *sline = &(vs->pv_ext_lines[real_row]);
+	int *pv_colours = vs->pv_colours;
+
+	while (real_col < virt_col) {
+	    unsigned char colour;
+	    char ch;
+	    if (real_col >= sline->s_used) {
+		colour = VSCcolour;
+		ch = ' ';
+	    } else {
+		colour = pv_colours[sline->s_colour[real_col]];
+		ch = sline->s_line[real_col];
+	    }
+	    do_set_colour(colour);
+	    moutch(ch);
+	    real_col++;
+	}
     }
     return(cost);
 }
@@ -1487,15 +1494,14 @@ cm_right_by_redraw(bool_t do_it)
  * - using a single LE or RI motion (move left/right by N chars)
  */
 static int
-cm_h_only(do_it)
-bool_t	do_it;
+cm_h_only(doit)
+bool_t	doit;
 {
-    if (real_col == virt_col) return(0);	/* Should never happen */
+    if (real_col == virt_col) return(0);
 
     /* Moving left */
     if (real_col > virt_col) {
         int crcost = NOCM;
-        int LEcost = NOCM;
         int bscost = NOCM;
 
 	/* Calculate the cost of doing it with a carriage return and
@@ -1504,12 +1510,6 @@ bool_t	do_it;
 	    crcost = cost_cr + virt_col;
 	}
 
-	/* Measure the cost of doing it with an N-columns-left string */
-	if (LE != NULL) {
-	    cost = 0;
-	    tputs(tgoto(LE, 0, real_col - virt_col), 1, inc_cost);
-	    LEcost = cost;
-	}
 	/* Calculate the cost of doing it with N backspaces */
 	if (can_backspace) {
 	    bscost = cost_bc * (real_col - virt_col);
@@ -1521,18 +1521,19 @@ bool_t	do_it;
 	 * prefer the later options to the earlier if they cost the same.
 	 */
 	/* First option: Output carriage return and redraw screen characters */
-	if (crcost < LEcost && crcost < bscost) {
-	    if (do_it) {
+	if (crcost < bscost) {
+	    if (doit) {
 		tputs(cr, 1, foutch);
 		real_col = 0;
-		cm_right_by_redraw(TRUE);
+	        return(cm_right_by_redraw(TRUE));
+	    } else {
+	        return(crcost);
 	    }
-	    return(crcost);
 	}
 
 	/* Second option: Backspaces */
-	if (bscost < LEcost) {
-	    if (do_it) {
+	if (bscost != NOCM) {
+	    if (doit) {
 		while (virt_col < real_col) {
 		    tputs(bc, 1, foutch);
 		    real_col--;
@@ -1540,139 +1541,49 @@ bool_t	do_it;
 	    }
 	    return(bscost);
 	}
-
-	/* Third option: relative motion left by N character positions */
-	if (LEcost != NOCM) {
-	    if (do_it) {
-		tputs(tgoto(LE, 0, real_col - virt_col), 1, foutch);
-		real_col = virt_col;
-	    }
-	    return(LEcost);
-	}
     }
 
     /* Moving right */
     if (virt_col > real_col) {
-        int RIcost = NOCM; /* Cost of a right-N-columns motion */
-        int chcost = NOCM; /* Cost of moving right by redrawing screen chars */
-
-	/* Measure the cost of doing it with an n-columns-right string */
-	if (RI != NULL) {
-	    cost = 0;
-	    tputs(tgoto(RI, 0, virt_col - real_col), 1, inc_cost);
-	    RIcost = cost;
-	}
-	/* Calculate cost of doing it by redrawing N characters */
-	chcost = virt_col - real_col;
-
-	/*
-	 * Choose a motion strategy.
-	 * The <'s ensure that if both are NOCM, neither is chosen and
-	 * prefer the later options to the earlier if they cost the same.
-	 */
-	/* First strategy: move right by redrawing the screen's characters */
-	if (chcost < RIcost) {
-	    if (do_it) {
-		return(cm_right_by_redraw(TRUE));
-	    }
-	    return(chcost);
-	}
-	/* Second strategy: a relative motion right by N characters */
-	if (RIcost != NOCM) {
-	    if (do_it) {
-		tputs(tgoto(RI, 0, virt_col - real_col), 1, foutch);
-		real_col = virt_col;
-	    }
-	    return(RIcost);
-	}
+	return(cm_right_by_redraw(doit));
     }
 
     /* Can't do this */
     return(NOCM);
 }
 
-/* Find the cost of, or perform, a vertical motion with relative motions */
+/* Find the cost of, or perform, a vertical motion using relative motions */
 static int
-cm_v_only(do_it)
-bool_t	do_it;
+cm_v_only(doit)
+bool_t	doit;
 {
-    if (real_row == virt_row) return(0);	/* Should never happen */
+    if (real_row == virt_row) return(0);
 
     /* Moving up */
     if (real_row > virt_row) {
-        int UPcost = NOCM;
-        int upcost = NOCM;
-
-	/* Measure the cost of doing it with an N-columns-left string */
-	if (nup != NULL) {
-	    cost = 0;
-	    tputs(tgoto(nup, 0, real_row - virt_row), 1, inc_cost);
-	    UPcost = cost;
-	}
-	/* Calculate the cost of doing it with N backspaces */
-	if (nup != NULL) {
-	    upcost = cost_up * (real_row - virt_row);
-	}
-
-	/*
-	 * Choose a motion strategy.
-	 * The <'s ensure that if both are NOCM, neither is chosen and
-	 * prefer the later options to the earlier if they cost the same.
-	 */
-	if (upcost < UPcost) {
-	    if (do_it) {
+	if (up != NULL) {
+	    int cost = cost_up * (real_row - virt_row);
+	    if (doit) {
 		while (virt_row < real_row) {
 		    tputs(up, 1, foutch);
 		    real_row--;
 		}
 	    }
-	    return(upcost);
-	}
-	if (UPcost != NOCM ) {
-	    if (do_it) {
-		tputs(tgoto(nup, 0, real_row - virt_row), 1, foutch);
-		real_row = virt_row;
-	    }
-	    return(UPcost);
+	    return(cost);
 	}
     }
 
     /* Moving down */
     if (virt_row > real_row) {
-        int DOcost = NOCM;	/* Cost of a down-N-columns motion */
-        int docost = NOCM;	/* Cost of outputting N "down" sequences */
-
-	/* Measure the cost of doing it with an n-columns-left string */
-	if (DO != NULL) {
-	    cost = 0;
-	    tputs(tgoto(DO, 0, virt_row - real_row), 1, inc_cost);
-	    DOcost = cost;
-	}
-	/* Calculate the cost of doing it with N characters */
 	if (down != NULL) {
-	    docost = (virt_row - real_row) * cost_down;
-	}
-
-	/*
-	 * Choose a motion strategy.
-	 * The <'s ensure that if both are NOCM, neither is chosen and
-	 * prefer the later options to the earlier if they cost the same.
-	 */
-	if (docost < DOcost) {
-	    if (do_it) {
+	    int cost = (virt_row - real_row) * cost_down;
+	    if (doit) {
 		while (virt_row > real_row) {
 		    tputs(down, 1, foutch);
 		    real_row++;
 		}
 	    }
-	    return(docost);
-	}
-	if (DOcost != NOCM) {
-	    if (do_it) {
-		tputs(tgoto(DO, 0, virt_row - real_row), 1, foutch);
-		real_row = virt_row;
-	    }
-	    return(DOcost);
+	    return(cost);
 	}
     }
 
@@ -1681,42 +1592,47 @@ bool_t	do_it;
 }
 
 static int
-cm_gotoxy(do_it)
-bool_t	do_it;
+cm_gotoxy(doit)
+bool_t	doit;
 {
     if (CM == NULL) return(NOCM);
 
     cost = 0;
-    tputs(tgoto(CM, virt_col, virt_row), (int)LI, do_it ? foutch : inc_cost);
+    tputs(tgoto(CM, virt_col, virt_row), (int)LI, doit ? foutch : inc_cost);
+    if (doit) {
+	real_row = virt_row;
+	real_col = virt_col;
+    }
     return(cost);
 }
 
 static int
-cm_home_relative(do_it)
-bool_t	do_it;
+cm_home_relative(doit)
+bool_t	doit;
 {
+    int cost;
+
     if (HO == NULL) return(NOCM);
 
-    if (!do_it) {
+    cost = cost_home;
+
+    if (!doit) {
         int save_real_col = real_col;
         int save_real_row = real_row;
-	int cost;
 
-	cost = cost_home;
 	real_col = real_row = 0;	/* Pretend we went home */
-	cost += cm_h_only(FALSE);
 	cost += cm_v_only(FALSE);
+	cost += cm_h_only(FALSE);
 	real_col = save_real_col;
 	real_row = save_real_row;
-	return(cost);
+    } else {
+	tputs(HO, 1, foutch);
+	real_col = real_row = 0;
+	(void) cm_v_only(TRUE);
+	(void) cm_h_only(TRUE);
     }
 
-    tputs(HO, 1, foutch);
-    real_col = real_row = 0;
-    (void) cm_v_only(TRUE);
-    (void) cm_h_only(TRUE);
-
-    return(0);	/* return value doesn't matter when do_it is TRUE */
+    return(cost);
 }
 
 /*
@@ -1725,16 +1641,17 @@ bool_t	do_it;
  * carriage-return and (one day) goto-x and goto-y commands.
  */
 static int
-cm_relative(do_it)
-bool_t	do_it;
+cm_relative(doit)
+bool_t	doit;
 {
-    if (!do_it) {
-	return(cm_h_only(FALSE) + cm_v_only(FALSE));
-    } else {
-	(void) cm_v_only(TRUE);
-	(void) cm_h_only(TRUE);
-	return(0);	/* Value doesn't matter if do_it */
-    }
+    int cost;
+
+    /* Move to the line first, otherwise if moving from an empty line to a
+     * full one, c_right_by_redraw() spaces over junk
+     */
+    cost = cm_v_only(doit);
+    cost += cm_h_only(doit);
+    return(cost);
 }
 
 static void
@@ -1775,49 +1692,6 @@ xyupdate()
 	do_set_colour(VSCcolour);
     }
 
-    /* This is called frequently so do common cases quickly */
-    if (optimise) {
-	if (vdisp == 0) {
-	    switch (hdisp) {
-	    case 1:			/* Right one */
-	      { /* Instead of using nd, just redraw the screen character */
-		cm_right_by_redraw(TRUE);
-		return;
-	      }
-	    case -1:			/* Left one */
-		if (can_backspace) {
-		    real_col--;
-		    tputs(bc, 1, foutch);
-		    return;
-		}
-	    }
-					/* Left to column 0 */
-	    if (virt_col == 0 && cr != NULL) {
-		real_col = 0;
-		tputs(cr, 1, foutch);
-		return;
-	    }
-	}
-	if (hdisp == 0) {
-	    switch (vdisp) {
-	    case 1:			/* Down one */
-		if (can_movedown) {
-		    real_row++;
-		    tputs(down, 1, foutch);
-		    return;
-		}
-		break;
-	    case -1:			/* Up one */
-		if (can_moveup) {
-		    real_row--;
-		    tputs(up, 1, foutch);
-		    return;
-		}
-		break;
-	    }
-	}
-    }
-
     /*
      * Now choose the best optimised strategy and apply it.
      */
@@ -1838,7 +1712,5 @@ xyupdate()
 	    cm_relative(TRUE);
 	}
     }
-    real_row = virt_row;
-    real_col = virt_col;
     optimise = TRUE;
 }
