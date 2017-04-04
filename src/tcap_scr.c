@@ -908,25 +908,50 @@ unsigned int	*pcolumns;
     /*
      * Find the backspace character.
      *
-     * Termcap capability "bs" means "you can move left with ^H" while
+     * Termcap capability "bs" should mean "you can move left with ^H" while
      * string capability "bc" means "how to move left if "bs" is not set."
-     * In netbsd's termcap file, five terminals (dg6053, hp9845, z29a, z29b and
-     * superbrain) have both "bs" and "bc=" defined (as ^Y, ^U and \ED)
-     * which seem wrong.  We follow the manual page and ignore "bc=" if "bs".
+     *
+     * In NetBSD termcap's descriptions (the messiest!)
+     *
+     * 172 terminals have !bs !bc but le=, often "^H"!
+     * 223 have :bs: and :le= but no bc=, for 200 le=^H, ansi has le=\E[D
+     * 3 have no bs but bc= (^H, ^H and ^N)
+     * 4 have bs, bc and le all defined:
+     * 153 have !bs !bc but le=
+     * 37 have none of them, of which 2 have :bw: (!).
+     * 5 terminals have both bs and bc:
+     *		   NetBSD termcap	emacs21 termcap   ncurses terminfo
+     * dg6053:	   :bc=^Y:ho=^H:le=^Y:	:!bs:le=^Y:	  :bc=^Y:le=^Y:ho=^H:
+     * hp9845:	   :bc=\ED:		:bc=\ED:	  :bc=\ED:le=\ED:
+     * superbrain: :bc=^U:le=^H:	:bc=^U:le=^H:	  :bc=^U:le=^H:
+     * z29:	   :bc=\ED:le=^H:	:bc=\ED:le=^H:	  :bc=\ED:le=^H:
+     *
+     * From the dg6053, if bs and bc, use bc.
+     * From the 172, if there's neither bs nor bc, use le.
+     * From ansi and the 223, if bs and le but no bc use ^H and ignore le.
      */
+#ifndef AIX
+    if ((BC = tgetstr("bc", &strp)) != NULL) {
+	bc = BC;
+    }
+#else
+    if ((cp = tgetstr("bc", &strp)) != NULL) {
+	bc = cp;
+    }
+#endif
+    else
     if (tgetflag("bs")) {
 	bc = "\b";
-    } else {
-#ifndef AIX
-	if ((BC = tgetstr("bc", &strp)) != NULL) {
-	    bc = BC;
-	}
-#else
-	if ((cp = tgetstr("bc", &strp)) != NULL) {
-	    bc = cp;
-	}
-#endif
     }
+    else
+    if ((cp = tgetstr("le", &strp)) != NULL) {
+	bc = cp;
+    }
+
+    /*
+     * Set other string capabilities
+     */
+
 #ifndef AIX
     if ((UP = tgetstr("up", &strp)) != NULL) {
 	up = UP;
@@ -936,16 +961,6 @@ unsigned int	*pcolumns;
 	up = cp;
     }
 #endif
-    /*
-     * Lastly, there is the "le" capability to move the cursor left one place.
-     * 172 terminal descriptions in NetBSD's termcap have no bs and no bc but
-     * do define "le=", often as "^H" (!)
-     */
-    if (!can_backspace) {
-	if ((cp = tgetstr("le", &strp)) != NULL) {
-	    bc = cp;
-	}
-    }
 
     cp = tgetstr("nd", &strp);	/* non-destructive forward space */
     if (cp != NULL) {
@@ -1031,7 +1046,8 @@ unsigned int	*pcolumns;
     cost_goto = 0;
     tputs(tgoto(CM, CO, LI), (int) LI, inc_cost_goto);
 
-    /* Find out how many characters a "home" takes.
+    /*
+     * Find out how many characters a "home" takes.
      * "ho" is always a fixed string (checked in NetBSD termcap file).
      */
     if (HO != NULL) {
