@@ -170,6 +170,7 @@ exPreserveAllBuffers()
     bool_t		psvstatus = TRUE;
 
     /* Cycle "curwin" through all the open windows, preserving each */
+    savecurwin = curwin;
     do {
 	if (is_modified(curbuf)) {
 	    FILE	*fp;
