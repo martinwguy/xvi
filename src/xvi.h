@@ -1119,7 +1119,7 @@ extern	bool_t	xvReadFromCommand P((char *, Line *));
  * preserve.c
  */
 extern	bool_t	preservebuf P((void));
-extern	void	unpreserve P((Buffer *));
+extern	void	unpreserve P((void));
 extern	bool_t	exPreserveAllBuffers P((void));
 
 /*

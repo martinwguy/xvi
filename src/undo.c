@@ -709,7 +709,6 @@ void
 replbuffer(newlines)
 Line		*newlines;
 {
-    Xviwin		*window = curwin;
     Xviwin		*savecurwin;
     register Buffer	*buffer = curbuf; /* buffer window is mapped onto */
     ChangeData		*cdp = curbuf->b_change;

@@ -784,7 +784,6 @@ Line	*from, *to;
 
     for (src = from; src != to; src = src->l_next) {
 	Line	*tmp;
-	size_t	size;
 
 	tmp = newline(strlen(src->l_text) + 1);
 	if (tmp == NULL) {

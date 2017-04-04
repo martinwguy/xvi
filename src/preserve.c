@@ -145,14 +145,16 @@ preservebuf()
 }
 
 /*
- * This routine is called when we are quitting without writing a buffer.
+ * This routine is called when we are quitting without writing the
+ * current buffer.
  * It removes the preserve file, assuming that preserve != paranoid.
  * It also frees up b_tempfname if it is set.
  */
 void
-unpreserve(buffer)
-Buffer	*buffer;
+unpreserve()
 {
+    Buffer *buffer = curbuf;
+
     if (Pn(P_preserve) != psv_PARANOID && buffer->b_tempfname != NULL) {
 	(void) remove(buffer->b_tempfname);
 	free(buffer->b_tempfname);

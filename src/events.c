@@ -58,10 +58,6 @@ xvEvent	*ev;
 
     case Ev_resize:
 	{
-fputs("Ev_resize\n", stderr);
-	    Xviwin	*win;
-
-	    win = (Xviwin *) ev->ev_vs->pv_window;
 	    if (!vs_resize(ev->ev_vs, ev->ev_rows, ev->ev_columns)) {
 		/*
 		 * Oh shit. Can't allocate space for new window size.

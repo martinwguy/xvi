@@ -287,8 +287,6 @@ char	*envp;				/* init string from the environment */
 	    }
 
 	} else /* argv[count][0] == '+' */ {
-	    bool_t minus_line;	/* 1 normally or -1 for negative line nos */
-
 	    /*
 	     * "+n file" or "+/pat file"
 	     */

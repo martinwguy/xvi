@@ -33,10 +33,9 @@ init_marks(buffer)
 Buffer	*buffer;
 {
     Mark	*mlist = buffer->b_mlist;
-    int	i;
 
     /* Set all m_line to NULL */
-    memset(mlist, sizeof(*mlist) * NMARKS, 0);
+    memset(mlist, 0, sizeof(*mlist) * NMARKS);
     buffer->b_pcmark.m_line = NULL;
     buffer->b_pcmark.m_deleted = FALSE;
 }

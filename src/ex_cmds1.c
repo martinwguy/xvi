@@ -39,7 +39,6 @@ void
 exQuit(force)
 bool_t	force;
 {
-    Xviwin	*wp;
     bool_t	canexit;
 
     if (force) {
@@ -54,14 +53,17 @@ bool_t	force;
     }
 
     if (canexit) {
+	Xviwin *wp;
 	/*
 	 * Remove any preserve files we may have written - we don't
 	 * want to just leave them lying around, it's messy.
 	 */
 	wp = curwin;
 	do {
-	    unpreserve(wp->w_buffer);
+	    curbuf = wp->w_buffer;
+	    unpreserve();
 	} while ((wp = xvNextWindow(wp)) != curwin);
+	curbuf = curwin->w_buffer;
 
 	State = EXITING;
     }
@@ -235,7 +237,7 @@ bool_t	force;
 	 * Also remove any preserve file we may have created,
 	 * and free up b_tempfname.
 	 */
-	unpreserve(buffer);
+	unpreserve();
     }
 
     /*
@@ -328,7 +330,6 @@ char	*arg;
     Line	*head;			/* start of list of lines */
     Line	*tail;			/* last element of list of lines */
     bool_t	readonly;		/* true if cannot write file */
-    Xviwin	*wp;
     Xviwin	*savecurwin;
 
     if (!force && is_modified(buffer)) {
@@ -396,7 +397,7 @@ char	*arg;
 	 * We are no longer editing the same file, so there is no point in
 	 * keeping a preserve file relating to it.
 	 */
-	unpreserve(buffer);
+	unpreserve();
     }
 
     /*
@@ -437,7 +438,7 @@ char	*arg;
 	if (curwin == savecurwin) break;
 
 	if (curbuf == buffer) {
-	    show_message("%s", sline_text(wp));
+	    show_message("%s", sline_text(curwin));
 	}
     }
 
@@ -976,7 +977,7 @@ char	*newfile;
 	 * preserve the new one. This may not immediately work, depending
 	 * on the setting of preserve, but it's worth the call.
 	 */
-	unpreserve(buffer);
+	unpreserve();
 	(void) preservebuf();
     }
     show_file_info(TRUE);
