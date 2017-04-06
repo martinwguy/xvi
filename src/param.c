@@ -276,16 +276,13 @@ init_params()
     int		i;
 
     /*
-     * Sanity check. The test is constant at compile-time
-     * and should get compiled out if the check succeeds.
+     * Sanity check that the params table length corresponds to the
+     * number of #defined parameters.
+     * The test is constant at compile-time and should be compiled out.
      */
     if (sizeof(params)/sizeof(params[0]) != P_sentinel + 1) {
-	sys_endv(); /* Get out of visual mode */
-	fprintf(stderr,
-		"FATAL: Tables in param.h and param.c do not correspond.\n");
-	sys_exit(1);
+	abort();
     }
-
 
     /*
      * First go through the special string and enum initialisation

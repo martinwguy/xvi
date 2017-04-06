@@ -344,7 +344,7 @@ process_event()
 
     resp = xvi_handle_event(&event);
     if (resp->xvr_type == Xvr_exit) {
-	sys_exit(0);
+	sys_exit(resp->xvr_status);
     }
     timeout = resp->xvr_timeout;
 }

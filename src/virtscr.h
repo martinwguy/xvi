@@ -183,5 +183,6 @@ typedef struct xvresponse {
 	Xvr_exit
     }		xvr_type;	/* type of event */
 
-    long	xvr_timeout;	/* num milliseconds for timeout */
+    long	xvr_timeout;	/* milliseconds for timeout if timed_input */
+    int		xvr_status;	/* status with which to exit if xvr_exit */
 } xvResponse;

@@ -36,6 +36,15 @@ xvEvent	*ev;
     bool_t		do_update;
     int			c;
 
+    /*
+     * POSIX requires us to exit non-zero on SIGHUP and SIGTERM but 0 for
+     * commands that quit.
+     * We see the signals here as Ev_ events, but the commands that exit set
+     * State = EXITING elsewhere, so we set it to 0 here and to 1 on signals.
+     */
+
+    resp.xvr_status = 0;
+
     switch (ev->ev_type) {
     case Ev_char:
 	keystrokes++;
@@ -121,6 +130,7 @@ xvEvent	*ev;
 	 * Preserve modified buffers, and then exit.
 	 */
 	(void) exPreserveAllBuffers();
+	resp.xvr_status = 1;
 	State = EXITING;
 	break;
     }
