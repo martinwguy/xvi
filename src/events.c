@@ -173,10 +173,6 @@ xvEvent	*ev;
 	    do_update = TRUE;
 	}
 
-	if (Pb(P_showmode) && (State == INSERT || State == REPLACE || State == NORMAL)) {
-	    update_sline();
-	}
-
 	/*
 	 * Look at the resultant state, and the
 	 * result of the proc() routine, to see
@@ -188,9 +184,13 @@ xvEvent	*ev;
 	    break;
 
 	case NORMAL:
-	case SUBNORMAL:
 	case INSERT:
 	case REPLACE:
+	    if (Pb(P_showmode)) {
+		update_sline();
+	    }
+	    /* Drop through... */
+	case SUBNORMAL:
 	    if (do_update) {
 		move_window_to_cursor();
 		cursupdate();
