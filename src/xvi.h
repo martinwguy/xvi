@@ -735,7 +735,16 @@ extern volatile int	keystrokes;
  */
 extern	Xviwin		*curwin;	/* current window */
 extern	Buffer		*curbuf;	/* current buffer */
-#define set_curwin(w)	do { curwin=(w); curbuf=curwin->w_buffer; } while(0)
+
+/*
+ * Set curbuf with this macro, ensuring that curbuf follows it.
+ * Be careful when it is set to NULL, and to use (w) only once as it may
+ * be a function call or have side-effects.
+ */
+#define set_curwin(w)	do { \
+			    curwin=(w); \
+			    curbuf = curwin != NULL ? curwin->w_buffer : NULL; \
+			} while(0)
 
 extern	int		indentchars;	/* number of chars of auto-indentation
 					 * on current line */
