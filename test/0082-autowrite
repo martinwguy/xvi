@@ -94,6 +94,10 @@ if { ! [file_contains $tmp1 "oneh\n"] } { fail 115 }
 exec echo one > $tmp1
 
 # Start and quit a shell - the buffer should be autowritten.
+#
+# If xvi's stderr is redirected to a file to catch debugging printfs,
+# this test fails because bash and dash output their prompt on stderr.
+
 exp_send "Ai[esc]:shell\r"
 term_expect timeout { fail 116 } \
 	    { expr { [string range [statusline] end end] == {$} } }
