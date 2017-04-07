@@ -120,7 +120,7 @@ criterr(int *pax, int *pdi)
 static void _cdecl
 inthandler(void)
 {
-    kbdintr = 1;
+    kbdintr = TRUE;
 #if 0
     return(-1);	/* don't chain to previously installed vector */
 #endif
