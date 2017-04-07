@@ -114,8 +114,12 @@ int	ch;
 
     if (kbdintr) {
 	kbdintr = FALSE;
-	if (!literal_next) imessage = TRUE;
-	ch = CTRL('C');
+	if (!literal_next) {
+	    imessage = TRUE;
+	    goto case_kbdintr_ch;
+	} else {
+	    ch = kbdintr_ch;
+	}
     }
 
     /* Nuls are disallowed whether literal or not */
@@ -254,7 +258,7 @@ int	ch;
 	    update_cline(colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
-	case CTRL('C'):
+	case_kbdintr_ch:	/* a label! */
 	case ESC:
 	    inpos = 0; inend = 0;
 	    flexclear(&curwin->w_statusline);

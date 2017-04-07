@@ -98,9 +98,17 @@ int	c;
     nlines = plines(curpos->p_line);
 
     if (kbdintr) {
-	    kbdintr = FALSE;
+	kbdintr = FALSE;
+	if (literal_next) {
+	    c = kbdintr_ch;
+	} else {
 	    imessage = TRUE;
-	    c = CTRL('C');
+	    /*
+	     * POSIX: "A keyboard interrupt in insert or replace mode should
+	     * behave identically to pressing ESC".
+	     */
+	    c = ESC;
+	}
     }
 
     if (wait_buffer || (!literal_next && c == CTRL('A'))) {
@@ -140,9 +148,8 @@ int	c;
 	    }
 	    return(FALSE);
 
-	case CTRL('C'):	/* an escape or ^C ends input mode */
-	    Ins_repeat = 0;
-	case ESC:
+	case ESC:		/* An escape or Interrupt ends input mode */
+	/* case kbdintr_ch: */
 	{
 	    char	*cltext;
 
@@ -623,9 +630,13 @@ int	c;
     curpos = curwin->w_cursor;
 
     if (kbdintr) {
-	    kbdintr = FALSE;
+	kbdintr = FALSE;
+	if (!literal_next) {
 	    imessage = TRUE;
-	    c = CTRL('C');
+	    c = ESC;
+	} else {
+	    c = kbdintr_ch;
+	}
     }
 
     if (wait_buffer || (!literal_next && c == CTRL('A'))) {
@@ -643,7 +654,7 @@ int	c;
 
     if (!literal_next) {
 	switch (c) {
-	case CTRL('C'):			/* an escape or ^C ends input mode */
+	/* case CTRL('C'):		/* an escape or ^C ends input mode */
 	case ESC:
 	    end_replace(c);
 	    return(TRUE);

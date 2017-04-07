@@ -47,11 +47,10 @@ register int	c;
     if (kbdintr) {
 	kbdintr = FALSE;
 	imessage = TRUE;
-	c = CTRL('C');
+	c = ESC;
     }
 
     switch (c) {
-	case CTRL('C'):
 	case ESC:
 	    cmd->cmd_operator = NOP;
 	    cmd->cmd_prenum = 0;

@@ -66,7 +66,7 @@ int	ch;
 
     vs = curwin->w_vs;
 
-    if (finished || kbdintr || ch == CTRL('C')) {
+    if (finished || kbdintr) {
 	/*
 	 * Ensure that the window on the current buffer is
 	 * in the right place; then update the whole window.

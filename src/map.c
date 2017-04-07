@@ -182,8 +182,8 @@ map_getc()
 	    } else {
 		/* After a ^V, ^C just inserts a ^C */
 	    }
-	    kbdintr = FALSE;
-	    return(CTRL('C'));
+	    //kbdintr = FALSE;
+	    return(kbdintr_ch);
 	}
 
 	if (!flexempty(npos.mp_src)) {

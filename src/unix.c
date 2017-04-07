@@ -520,6 +520,8 @@ sys_init()
 	raw_state.c_cc[VSUSP] = 0;
 #   endif	/* TERMIOS */
 
+    kbdintr_ch = raw_state.c_cc[VINTR];
+
 #else	/* not TERMIO */
 
     /*
@@ -552,6 +554,8 @@ sys_init()
     raw_ltchars.t_lnextc = -1;
     raw_ltchars.t_suspc = -1;
     raw_ltchars.t_dsuspc = -1;
+
+    kbdintr_ch = raw_tchars.t_intrc;
 
 #endif	/* not TERMIO */
 

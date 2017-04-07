@@ -750,6 +750,11 @@ extern	char		Version[];	/* version string for :ve command */
 extern volatile unsigned char kbdintr;
 
 /*
+ * This input character sends a keyboard interrupt, usually CTRL('C').
+ */
+extern char kbdintr_ch;
+
+/*
  * This one indicates whether we should display the "Interrupted"
  * message.
  */

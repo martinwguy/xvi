@@ -51,6 +51,8 @@ volatile unsigned char
 				 * is received
 				 */
 
+char		kbdintr_ch = CTRL('C');	/* Key that sends an interrupt */
+
 bool_t		imessage;	/*
 				 * global flag to indicate whether we should
 				 * display the "Interrupted" message
