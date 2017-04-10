@@ -1,0 +1,21 @@
+
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test for deleting a line in one window of a two-pane screen.
+# This used to make xvi loop indefinitely.
+
+source term
+start_vi 0149_file1 0149_file2
+
+test 10 "dd" 1 0 [list "Second line"]
+
+exp_send "[ctrl C]"
+exp_send ":q!\r"
+exp_send "[ctrl \\]"
+
+stop_vi
+
+exit 0

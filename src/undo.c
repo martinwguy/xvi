@@ -287,10 +287,8 @@ char	*newstring;
     register int	nlen;		/* length of newstring */
     register int	olen;		/* length of old line */
     register int	offset;		/* how much to move text by */
-    Buffer		*buffer;
+    Buffer		*buffer = curbuf;
     Change		*change;
-
-    buffer = curbuf;
 
     /*
      * First thing we have to do is to obtain a change
@@ -568,7 +566,7 @@ Line		*newlines;
 	 * Only do windows onto the right buffer.
 	 */
 	if (curbuf != buffer)
-	    continue;
+	    goto cont1;
 
 	/*
 	 * Redraw part of the screen if necessary.
@@ -590,7 +588,7 @@ Line		*newlines;
 		s_del(start_row, (int) (oplines - nplines));
 	    }
 	}
-        set_curwin(xvNextDisplayedWindow(curwin));
+cont1:	set_curwin(xvNextDisplayedWindow(curwin));
     } while (curwin != savecurwin);
 
     /*
@@ -641,7 +639,7 @@ Line		*newlines;
 	 * Only do windows onto the right buffer.
 	 */
 	if (wp->w_buffer != buffer)
-	    continue;
+	    goto cont2;
 
 	/*
 	 * Don't need to update the w_cursor or w_topline
@@ -649,7 +647,7 @@ Line		*newlines;
 	 * deleted.
 	 */
 	if (nolines == 0)
-	    continue;
+	    goto cont2;
 
 	/*
 	 * Need a new cursor line value.
@@ -675,7 +673,7 @@ Line		*newlines;
 			lastline->l_number >= wp->w_topline->l_number) {
 	    wp->w_topline = wp->w_cursor->p_line;
 	}
-        set_curwin(xvNextWindow(wp));
+cont2:	set_curwin(xvNextWindow(wp));
     } while (curwin != savecurwin);
 
     /*
