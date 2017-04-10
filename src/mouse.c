@@ -198,8 +198,7 @@ int		col;	/* column the mouse cursor is in */
 	 * The window the mouse is in isn't the current window.
 	 * Make it the current window.
 	 */
-	curwin = wp;
-	curbuf = wp->w_buffer;
+	set_curwin(wp);
     }
 
     /* From here on, use curwin, not wp, in function calls */
@@ -269,8 +268,7 @@ int ypos;
 
     show_file_info(TRUE);
 
-    curwin = wp;
-    curbuf = wp->w_buffer;
+    set_curwin(wp);
     cursupdate();
     wind_goto();
 }

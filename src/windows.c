@@ -563,11 +563,10 @@ bool_t	do_clear;
 		w->w_nrows = 0;
 		if (curwin == w) {
 		    if (w->w_last != NULL) {
-			curwin = w->w_last;
+			set_curwin(w->w_last);
 		    } else if (w->w_next != NULL) {
-			curwin = w->w_next;
+			set_curwin(w->w_next);
 		    }
-		    curbuf = curwin->w_buffer;
 		}
 	    } else {
 		/*

@@ -196,7 +196,6 @@ static void
 file_to_new()
 {
     Xviwin		*win = curwin;
-    register Buffer	*buffer;
     register int	row;
     register Line	*line;
     long		lnum;
@@ -204,12 +203,11 @@ file_to_new()
     if (win->w_nrows < Pn(P_minrows))
 	return;
 
-    buffer = curbuf;
     row = win->w_winpos;
     line = win->w_topline;
     lnum = lineno(line);
 
-    while (row < win->w_cmdline && line != buffer->b_lastline) {
+    while (row < win->w_cmdline && line != curbuf->b_lastline) {
 	int nlines;
 
 	nlines = line_to_new(line, row, lnum);
