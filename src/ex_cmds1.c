@@ -253,11 +253,11 @@ bool_t	force;
 	State = EXITING;
 	return(TRUE);
     }
-    curbuf = curwin->w_buffer;
-
+    /* Free the old buffer if that was the last view onto it */
     if (buffer->b_nwindows == 0) {
 	free_buffer(buffer);
     }
+    curbuf = curwin->w_buffer;
 
     {
 	unsigned	savecho;
