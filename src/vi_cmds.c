@@ -204,7 +204,7 @@ Cmd	*cmd;
      * Marks
      */
     case 'm':
-	if (!setmark(cmd->cmd_ch2, curbuf, curwin->w_cursor->p_line))
+	if (!setmark(cmd->cmd_ch2, curbuf, curwin->w_cursor))
 	    beep();
 	break;
 

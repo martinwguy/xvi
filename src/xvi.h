@@ -449,7 +449,7 @@ typedef	struct cmd {
 #define	NMARKS	26		/* max. # of marks that can be saved */
 
 typedef	struct	mark {
-    Line		*m_line;
+    Posn		m_posn;
     bool_t		m_deleted;
 } Mark;
 
@@ -1042,9 +1042,9 @@ extern	bool_t	xvi_unmap P((int, char **, bool_t, bool_t));
  * mark.c
  */
 extern	void	init_marks P((Buffer *));
-extern	bool_t	setmark P((int, Buffer *, Line *));
+extern	bool_t	setmark P((int, Buffer *, Posn *));
 extern	void	setpcmark P((void));
-extern	Line	*getmark P((int, Buffer *));
+extern	Posn	*getmark P((int, Buffer *));
 extern	void	clrmark P((Line *, Buffer *));
 extern	void	restoremarks P((Line *, Buffer *));
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
+/*rk Copyright (c) 1990,1991,1992,1993 Chris and John Downey */
 
 /***
 
@@ -34,9 +34,9 @@ Buffer	*buffer;
 {
     Mark	*mlist = buffer->b_mlist;
 
-    /* Set all m_line to NULL */
+    /* Set all marks' positions to NULL */
     memset(mlist, 0, sizeof(*mlist) * NMARKS);
-    buffer->b_pcmark.m_line = NULL;
+    buffer->b_pcmark.m_posn.p_line = NULL;
     buffer->b_pcmark.m_deleted = FALSE;
 }
 
@@ -46,18 +46,18 @@ Buffer	*buffer;
  * Returns TRUE on success, FALSE if no room for mark or bad name given.
  */
 bool_t
-setmark(c, buffer, line)
+setmark(c, buffer, posn)
 int	c;
 Buffer	*buffer;
-Line	*line;
+Posn	*posn;
 {
     if (c == '\'' || c == '`') {
-	buffer->b_pcmark.m_line = line;
+	buffer->b_pcmark.m_posn = *posn;
 	return(TRUE);
     }
     if (is_lower(c)) {
 	Mark *m = &(buffer->b_mlist[c - 'a']);
-	m->m_line = line;
+	m->m_posn = *posn;
 	m->m_deleted = FALSE;
 	return(TRUE);
     }
@@ -70,7 +70,7 @@ Line	*line;
 void
 setpcmark()
 {
-    curbuf->b_pcmark.m_line = curwin->w_cursor->p_line;
+    curbuf->b_pcmark.m_posn = *(curwin->w_cursor);
 }
 
 /*
@@ -78,7 +78,7 @@ setpcmark()
  *
  * Return pointer to Line or NULL if no such mark.
  */
-Line *
+Posn *
 getmark(c, buffer)
 int	c;
 Buffer	*buffer;
@@ -93,7 +93,9 @@ Buffer	*buffer;
     } else {
 	return(NULL);
     }
-    return(m->m_line);
+    if (m->m_posn.p_line == NULL)
+	return(NULL);
+    return(&(m->m_posn));
 }
 
 /*
@@ -110,12 +112,12 @@ Buffer	*buffer;
     int		 i;
 
     for (i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_line == line) {
+	if (mlist[i].m_posn.p_line == line) {
 	    mlist[i].m_deleted = TRUE;
 	}
     }
-    if (buffer->b_pcmark.m_line == line) {
-	buffer->b_pcmark.m_line = NULL;
+    if (buffer->b_pcmark.m_posn.p_line == line) {
+	buffer->b_pcmark.m_posn.p_line = NULL;
     }
 }
 
@@ -132,7 +134,7 @@ Buffer *buffer;
     int		 i;
 
     for (i = 0; i < NMARKS; i++) {
-	if (mlist[i].m_line == line) {
+	if (mlist[i].m_posn.p_line == line) {
 	    mlist[i].m_deleted = FALSE;
 	}
     }

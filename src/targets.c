@@ -169,17 +169,19 @@ Cmd	*cmd;
     case '\'':
     case '`':
     {
-	Line		*lp;
+	Posn		*posn;
 
-	lp = getmark(cmd->cmd_ch2, curbuf);
-	if (lp == NULL) {
+	posn = getmark(cmd->cmd_ch2, curbuf);
+	if (posn == NULL) {
 	    show_error("Unknown mark");
 	} else {
+	    cmd->cmd_target.p_line = posn->p_line;
 	    if (cmd->cmd_ch1 == '\'') {
+	        /* cmd->cmd_target.p_index is set by xvSetPosnToStartOfLine() */
 		skip_spaces = TRUE;
+	    } else {
+		cmd->cmd_target.p_index = posn->p_index;
 	    }
-	    cmd->cmd_target.p_line = lp;
-	    cmd->cmd_target.p_index = 0;
 	}
 	break;
     }

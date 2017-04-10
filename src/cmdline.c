@@ -654,7 +654,7 @@ bool_t	interactive;			/* true if reading from tty */
 	} else {
 	    pos.p_line = l_line;
 	}
-	if (!setmark(arg[0], curbuf, pos.p_line)) {
+	if (!setmark(arg[0], curbuf, &pos)) {
 	    error++;
 	}
 	break;
@@ -1327,11 +1327,12 @@ get_line(cpp, startline, lpp)
     case '\'':
     case '`':
     {
-	pos = getmark(*cp++, curbuf);
-	if (pos == NULL) {
+	Posn *posn = getmark(*cp++, curbuf);
+	if (posn == NULL) {
 	    show_error("Unknown mark");
 	    return FALSE;
 	}
+	pos = posn->p_line;
 	break;
     }
     case '0': case '1': case '2': case '3': case '4':
