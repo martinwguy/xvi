@@ -111,7 +111,7 @@ exSplitWindow()
     curposn = curwin->w_cursor;
 
     /* Update the global window variable. */
-    curwin = newwin;
+    set_curwin(newwin);
 
     /* Draw the new window */
     init_sline();
@@ -170,7 +170,7 @@ int	sizehint;
      * the old window until it becomes the current window again.
      */
     show_file_info(TRUE);
-    redraw_window(FALSE);  /* superfluous?  stderr! */
+    redraw_window(FALSE);
 
     /*
      * The current buffer (a global variable) has
