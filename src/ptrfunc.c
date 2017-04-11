@@ -37,7 +37,8 @@
  *
  * Increment the line pointer 'p' crossing line boundaries as
  * necessary. Return mv_CHLINE when crossing a line, mv_NOMOVE when at
- * end of file, mv_SAMELINE otherwise.
+ * end of file, mv_EOL when it ends up at the end of a line,
+ * mv_SAMELINE otherwise.
  */
 enum mvtype
 inc(lp)
