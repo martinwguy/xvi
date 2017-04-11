@@ -9,7 +9,7 @@ source term
 start_vi
 
 # Read the macros
-exp_send ":so hanoi\r"
+exp_send ":so 1748_hanoi\r"
 
 # Buffer should still be empty and there should be no error messages
 # on the status line
@@ -22,7 +22,7 @@ term_expect timeout {
 	puts "After :so hanoi, status line is \"[statusline]\"."
 	fail 101
     } \
-    { statusline_starts ":so hanoi" } { } \
+    { statusline_starts ":so 1748_hanoi" } { } \
     { statusline_is "" } { }
 
 # Run the initialization code
