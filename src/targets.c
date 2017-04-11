@@ -294,20 +294,20 @@ Cmd	*cmd;
 	    MakeInclusive(cmd);
 	}
 
-	if (n == 1 && cmd->cmd_operator == 'd' && lc == 'w') {
-	    if (inc(newpos)==mv_EOL) {
-		/* Special case for deleting the last word of the file:
-		 * fwd_word() returns the last char of the word
-		 * instead of the following space char, so either the
-		 * command now needs to include the target character
-		 * or we can just not undo the inc() used to test for
-		 * this case.
-		 * When deleting the last word of all other lines, the
-		 * above inc() returns mv_CHLINE.
-		 */
+	/*
+	 * Special case for deleting the last word of the file:
+	 * fwd_word() returns the last char of the word
+	 * instead of the following space char, so the
+	 * command now needs to include the target character.
+	 * If, instead, the file ends with "word)", fwd_word() leaves us
+	 * sitting on the ), but that should NOT be made inclusive.
+	 */
+	if ( n == 1 && cmd->cmd_operator == 'd' && lc == 'w' &&
+	     newpos->p_line == b_last_line_of(curbuf) &&
+	     newpos->p_line->l_text[newpos->p_index + 1] == '\0' &&
+	     ( is_alnum(gchar(newpos)) || gchar(newpos) == '_' ||
+	       is_space(gchar(newpos)) ) ) {
 		MakeInclusive(cmd);
-	    }
-	    dec(newpos);	/* Undo the bogus move */
 	}
 
 	if (skip_whites == FALSE) {

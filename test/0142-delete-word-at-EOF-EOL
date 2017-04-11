@@ -1,0 +1,42 @@
+#! /bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test for dw doing the right thing when deleting the last line of the file.
+#
+# The fix db4b78ff to issue 21 has, as a side effect, that deleting the last
+# word of a line that is followed by a non-word character would also delete
+# that non-word character.
+# For example, if a line ends in
+#	word)
+# and you were sitting on the w and said "dw", it would also delete the ).
+
+source term
+start_vi
+
+# First, check that the deleting-word-at-end-of-file works
+test 10 "aone two\rthree four[esc]b"	2 6 [list "one two" "three four"]
+# It should leave the space after "three"
+test 11 "dw"				2 5 [list "one two" "three"]
+# When it's followed by a non-word character it should leave it
+test 12 "Afour%[esc]bdw"		2 6 [list "one two" "three %"]
+# When it's followed by space characters it should delete them too
+# leaving just the space after "three"
+test 13 "Cfour [esc]/four\rdw\$"	2 5 [list "one two" "three"]
+test 14 "afour five \t [esc]bdw\$"	2 10 [list "one two" "three four"]
+
+# Now check the the same things work at the end of a non-last line
+test 20 "/two\r"			1 4 [list "one two" "three four"]
+# It should leave the space after "one"
+test 21 "dw"				1 3 [list "one" "three four"]
+# When it's followed by a non-word character it should leave it
+test 22 "Atwo)[esc]bdw"			1 4 [list "one )" "three four"]
+# When it's followed by space characters it should delete them too
+# leaving just the space after "one"
+test 23 "Ctwo [esc]bdw\$"		1 3 [list "one" "three four"]
+test 24 "atwo three \t [esc]bdw\$"	1 7 [list "one two" "three four"]
+
+stop_vi
+
+exit 0
