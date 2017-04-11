@@ -36,8 +36,8 @@ start_vi
 
 # Set the status line to anything other than "Interrupted"
 proc clear_statusline { } {
-    exp_send [ctrl G]	;# Prints the current filename etc
-    term_expect timeout { fail 110 } \
+    exp_send ":\b"
+    term_expect timeout { fail 127 } \
 	{ statusline_isnt "Interrupted" }
 }
 
@@ -138,15 +138,16 @@ clear_statusline
 ctest 119 ":a[ctrl V]"	2 ":a^"
 ctest 120 $intr_ch	4 ":a^${intr}"
 if { ! ( $vim || [statusline_isnt "Interrupted"] ) } { fail 121 }
-
+ctest 121 "\b\b"	1 ":"
 
 # Interrupt it while doing infinite macro recursion
 
-exp_send ":map x y\r"
+exp_send "map x y\r"
 exp_send ":map y x\r"
 exp_send "x"
+sleep 1
 exp_send $intr_ch
-term_expect timeout { fail 122 } \
+term_expect timeout { term_dump 122.dump; fail 122 } \
     { expr { [screen_is 1 0 [list "" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
