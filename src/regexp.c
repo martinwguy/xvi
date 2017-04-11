@@ -983,13 +983,13 @@ char *prog;
 	}
 	case ANYOF:
 	    if (*reginput == '\0'
-		|| strchr(OPERAND(scan), *reginput) == NULL)
+		|| cstrchr(OPERAND(scan), *reginput) == NULL)
 		return(0);
 	    reginput++;
 	    break;
 	case ANYBUT:
 	    if (*reginput == '\0'
-		|| strchr(OPERAND(scan), *reginput) != NULL)
+		|| cstrchr(OPERAND(scan), *reginput) != NULL)
 		return(0);
 	    reginput++;
 	    break;
