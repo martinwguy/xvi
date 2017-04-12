@@ -75,7 +75,7 @@ xvEvent	*ev;
 		(void) exPreserveAllBuffers();
 		show_error(out_of_memory);
 	    }
-	    xvAdjustWindows(ev->ev_vs, (ev->ev_columns != 0));
+	    xvAdjustWindows(ev->ev_vs);
 	    move_cursor_to_window();
 	    cursupdate();
 	    wind_goto();	/* ensure cursor is where it should be */

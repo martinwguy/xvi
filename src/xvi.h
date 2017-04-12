@@ -1252,7 +1252,7 @@ extern	Xviwin	*xvNextDisplayedWindow P((Xviwin *));
 extern	Xviwin	*xvFindWindowByName P((Xviwin *, char *));
 extern	void	xvEqualiseWindows P((int));
 extern	void	xvResizeWindow P((int));
-extern	void	xvAdjustWindows P((VirtScr *, bool_t));
+extern	void	xvAdjustWindows P((VirtScr *));
 extern	int	xvMoveStatusLine P((int));
 extern	void	xvUseWindow P((void));
 extern	void	xvUpdateAllBufferWindows P((void));

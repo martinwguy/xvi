@@ -473,9 +473,8 @@ int	nlines;		/*
  * to a window that has been reduced to zero size.
  */
 void
-xvAdjustWindows(vs, do_clear)
+xvAdjustWindows(vs)
 VirtScr	*vs;
-bool_t	do_clear;
 {
     Xviwin	*first_win;
     Xviwin	*last_win;
@@ -673,9 +672,6 @@ bool_t	do_clear;
     /*
      * Adjust the number of columns.
      */
-    if (first_win->w_ncols != VScols(vs)) {
-	do_clear = TRUE;
-    }
     for (w = first_win; w != NULL; w = w->w_next) {
 	w->w_ncols = VScols(vs);
     }
