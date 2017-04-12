@@ -132,10 +132,10 @@ enum {
  * single-character commands like !, " and &.
  */
 static	struct	ecmd	{
-    char	*ec_name;
-    short	ec_command;
-    short	ec_priority;
-    unsigned	ec_flags;
+    char		*ec_name;
+    short		ec_command;
+    unsigned char	ec_priority;
+    unsigned char	ec_flags;
     /*
      * Flags: EXCLAM means can use !, FILEXP means do filename
      * expansion, INTEXP means do % and # expansion. EXPALL means
