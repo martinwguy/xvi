@@ -530,7 +530,7 @@ VirtScr	*vs;
 	 * to_go is the number of screen lines not used by any window.
 	 */
 	to_go = VSrows(vs) - totlines;
-	for (w = last_win; w != NULL && to_go > 0; w = w->w_last) {
+	for (w = first_win; w != NULL && to_go > 0; w = w->w_next) {
 	    if (w->w_nrows < minrows) {
 		/* This window is undisplayed */
 		int inc = to_go > minrows ? minrows : to_go;
@@ -545,26 +545,33 @@ VirtScr	*vs;
 		     *
 		     * "navail" is the number of free lines we could get if we
 		     *		were to shrink every displayed window to minrows
+		     *		"navail" includes the lines counted by to_go.
 		     * "need"	is how many lines we need to steal from other
 		     *		windows to be able to redisplay window w.
 		     */
 		    int		navail	= VSrows(vs) - ndw * minrows;
 		    int		need	= minrows;
 		    if (navail >= need) {
-			/* It can be done. Steal lines from the above windows
+			/*
+			 * It can be done. Steal lines from the above windows
 			 * until we have enough to redisplay window w.
 			 */
 			Xviwin	*wup;	/* An upper window */
 
-			w->w_nrows += to_go; to_go = 0;
+			/* First, give it the unused screen line(s) */
+			w->w_nrows += to_go;
+			to_go = 0;
+			/* Then go stealing lines from the other windows */
 			for (wup = w->w_last; wup != NULL; wup = wup->w_last) {
 			    /* How many rows could be taken from this window? */
-			    int take = wup->w_nrows - minrows;
+			    int take;
+			    take = wup->w_nrows - minrows;
 			    /* Only take what we need */
 			    if (need < take) take = need;
 			    if (take > 0) {
 				wup->w_nrows -= take;
 				w->w_nrows += take;
+				need -= take;
 				if (w->w_nrows >= minrows)
 				    break;
 			    }
