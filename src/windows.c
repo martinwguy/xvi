@@ -584,7 +584,7 @@ VirtScr	*vs;
 	 * "spare" is how many free lines there would be if we resized
 	 *	   all the displayed windows to minimum size.
 	 */
-	spare = totlines - minrows * ndw;
+	spare = VSrows(vs) - minrows * ndw;
 	to_go = totlines - VSrows(vs);
 
 	for (w = last_win; w != NULL && to_go > 0; w = w->w_last) {
@@ -602,7 +602,7 @@ VirtScr	*vs;
 		 * There is not enough room to keep this window displayed.
 		 */
 		to_go -= w->w_nrows;
-		spare += w->w_nrows;
+		spare += minrows;
 		w->w_nrows = 0;
 		/*
 		 * If we undisplayed the current window, move to another.
