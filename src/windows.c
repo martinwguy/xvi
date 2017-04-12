@@ -481,9 +481,11 @@ bool_t	do_clear;
     Xviwin	*last_win;
     Xviwin	*w;
     int		totlines;
-    int		nw;
+    int		to_go;		/* How many lines we need to save or to fill */
+    int		nw;		/* Total number if windows in this VirtScr */
+    int		ndw;		/* Number of displayed windows */
     int		last_winpos, last_nrows;
-    Xviwin	*savecurwin = curwin;
+    int		minrows = Pn(P_minrows);
 
     /*
      * Find the first and last windows onto this VirtScr.
@@ -493,6 +495,7 @@ bool_t	do_clear;
     }
 
     first_win = w;
+
     for ( ; w->w_next != NULL; w = w->w_next) {
 	;
     }
@@ -511,52 +514,85 @@ bool_t	do_clear;
      * Count the total line usage, and at the same time
      * go to the bottom-most window onto the VirtScr.
      */
-    for (w = first_win, totlines = 0, nw = 0; w != NULL; w = w->w_next) {
+    totlines = nw = ndw = 0;
+    for (w = first_win; w != NULL; w = w->w_next) {
 	totlines += w->w_nrows;
 	nw++;
+	if (w->w_nrows > 0) ndw++;
     }
     if (totlines <= VSrows(vs)) {
-	int to_go;
 	/*
+	 * VirtScr has got longer.
+	 *
 	 * First, we need to check for undisplayed windows
 	 * and redisplay them if feasible.
+	 *
+	 * w is the window we are thinking of redisplaying.
+	 * to_go is the number of screen lines not used by any window.
 	 */
 	to_go = VSrows(vs) - totlines;
 	for (w = last_win; w != NULL && to_go > 0; w = w->w_last) {
-	    if (w->w_nrows < Pn(P_minrows)) {
-		int inc = to_go > Pn(P_minrows) ? Pn(P_minrows) : to_go;
-		w->w_nrows += inc;
-		to_go -= inc;
+	    if (w->w_nrows < minrows) {
+		/* This window is undisplayed */
+		int inc = to_go > minrows ? minrows : to_go;
+		if (w->w_nrows + inc >= minrows) {
+		    w->w_nrows += inc;
+		    to_go -= inc;
+		    ndw++;
+		} else {
+		    /* Not enough room for this window in just the new space.
+		     * See whether the above windows can donate enough lines
+		     * to be able to redisplay it.
+		     *
+		     * "navail" is the number of free lines we could get if we
+		     *		were to shrink every displayed window to minrows
+		     * "need"	is how many lines we need to steal from other
+		     *		windows to be able to redisplay window w.
+		     */
+		    int		navail	= VSrows(vs) - ndw * minrows;
+		    int		need	= minrows;
+		    if (navail >= need) {
+			/* It can be done. Steal lines from the above windows
+			 * until we have enough to redisplay window w.
+			 */
+			Xviwin	*wup;	/* An upper window */
+
+			w->w_nrows += to_go; to_go = 0;
+			for (wup = w->w_last; wup != NULL; wup = wup->w_last) {
+			    /* How many rows could be taken from this window? */
+			    int take = wup->w_nrows - minrows;
+			    /* Only take what we need */
+			    if (need < take) take = need;
+			    if (take > 0) {
+				wup->w_nrows -= take;
+				w->w_nrows += take;
+				if (w->w_nrows >= minrows)
+				    break;
+			    }
+			}
+			if (w->w_nrows < minrows) abort();
+		    }
+		}
 	    }
 	}
-	/*
-	 * Add remaining lines to bottom window.
-	 */
-	if (to_go > 0) {
-	    last_win->w_nrows += to_go;
-	}
     } else {
-	int	to_go, spare;
+	int	spare;
 	/*
 	 * VirtScr has got smaller. Shrink each window in turn from
 	 * the bottom up until we have freed up enough lines to make
-	 * all the windows fit. Leave "w" pointing at the topmost
-	 * window for the moment, as this is fairly safe.
+	 * all the windows fit.
 	 *
 	 * "spare" is how many free lines there would be if we resized
-	 *	   all the windows to minimum size.
-	 *
-	 * "to_go" is how many lines longer than the screen all the windows
-	 *	   are at their current sizes.
+	 *	   all the displayed windows to minimum size.
 	 */
-	spare = totlines - Pn(P_minrows) * nw;
+	spare = totlines - minrows * ndw;
 	to_go = totlines - VSrows(vs);
 
 	for (w = last_win; w != NULL && to_go > 0; w = w->w_last) {
 	    if (w->w_nrows == 0) {
 		continue;
 	    }
-	    if (to_go < w->w_nrows - Pn(P_minrows)) {
+	    if (to_go <= w->w_nrows - minrows) {
 		/*
 		 * Just have to reduce this window a bit.
 		 */
@@ -575,21 +611,47 @@ bool_t	do_clear;
 		 * up the list of windows for a previous one that is displayed.
 		 */
 		if (curwin == w) {
-		    if (w->w_last != NULL) {
-			set_curwin(w->w_last);
-		    } else if (w->w_next != NULL) {
-			set_curwin(w->w_next);
+		    /* Search back up the list for a displayed window */
+		    for (w = curwin->w_last; w != NULL; w = w->w_last) {
+			if (w->w_nrows != 0) {
+			    set_curwin(w);
+			    break;
+			}
+					}
+		    /* Not found? Search forward */
+		    if (w == NULL)
+		    for (w = curwin->w_next; w != NULL; w = w->w_next) {
+			if (w->w_nrows != 0) {
+			    set_curwin(w);
+			    break;
+			}
 		    }
+		    if (w == NULL) abort();
 		}
 	    } else {
 		/*
 		 * Room enough for this window at minimum size.
 		 */
-		to_go -= w->w_nrows - Pn(P_minrows);
-		spare -= w->w_nrows - Pn(P_minrows);
-		w->w_nrows = Pn(P_minrows);
+		to_go -= w->w_nrows - minrows;
+		spare -= w->w_nrows - minrows;
+		w->w_nrows = minrows;
 	    }
 	}
+    }
+
+    /*
+     * Add remaining lines to bottom displayed window.
+     *
+     * to_go is left negative if we undisplayed a window because
+     * the space left for it was less than minrows but more than zero.
+     */
+    if (to_go < 0) to_go = -to_go;
+    if (to_go > 0) {
+	/* Find the bottommost displayed window */
+	for (w=last_win; w != NULL && w->w_nrows == 0; w=w->w_last)
+	    ;
+	if (w == NULL) abort();
+	w->w_nrows += to_go;
     }
 
     /*
@@ -618,9 +680,7 @@ bool_t	do_clear;
 	w->w_ncols = VScols(vs);
     }
 
-    set_curwin(first_win);
     redraw_all(TRUE);
-    set_curwin(savecurwin);
 }
 
 /*
