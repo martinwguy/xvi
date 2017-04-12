@@ -1,4 +1,3 @@
-
 #!/bin/sh
 # -*- tcl -*-
 # The next line is executed by /bin/sh, but not tcl \
@@ -12,9 +11,7 @@ start_vi 0149_file1 0149_file2
 
 test 10 "dd" 1 0 [list "Second line"]
 
-exp_send "[ctrl C]"
 exp_send ":q!\r"
-exp_send "[ctrl \\]"
 
 stop_vi
 
