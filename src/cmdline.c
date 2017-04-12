@@ -242,7 +242,7 @@ static	struct	ecmd	{
   { "tag",	    EX_TAG,	    0,	EC_EXCLAM,		ec_1string },
 
   { "unabbreviate", EX_UNABBREV,    0,	0,			ec_strings },
-  { "undo",	    EX_UNDO,	    0,	0,			ec_none },
+  { "undo",	    EX_UNDO,	    1,	0,			ec_none },
   { "unmap",	    EX_UNMAP,	    0,	EC_EXCLAM,		ec_strings },
 
   { "v",	    EX_V,	    1,	0,			ec_nonalnum },
