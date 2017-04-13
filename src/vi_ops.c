@@ -233,8 +233,13 @@ register Cmd	*cmd;
 	/*
 	 * A character-based change really is just a delete and an insert.
 	 * So use the deletion code to make things easier.
+	 *
+	 * We need to add text after the resulting cursor position if the
+	 * changed text ended at the end of a line.  This happens when you
+	 * c$, or when the target is a search that matches at the start of
+	 * a line (so the change includes up the end of the previous line).
 	 */
-	doappend = IsInclusive(cmd) && endofline(&cmd->cmd_target);
+	doappend = endofline(&cmd->cmd_target);
 
 	xvOpDelete(cmd);
 

@@ -71,12 +71,13 @@ test 30 $init		2 0 $pattern
 test 31 "c/one\rX[esc]"	2 0 [list "three" "X" "one" "five" "~"]
 
 # Not from start of line.
-# This test fails, and is disabled because that's a different bug.
+# This test fails, and is disabled here because it's a different bug. See 154.
 #test 32 $init		2 0 $pattern
 #test 33 "lc/one\rX[esc]" 2 1 [list "three" "oX" "one" "five" "~"]
 # xvi gets this wrong, giving 2 0 [list "three" "Xo" "one" "five"]
 # nvi gets this wrong, giving 2 0 [list "three" "X" "one" "five"]
 
+# Range from start of line to not start of line
 test 34 $init		2 0 $pattern
 test 35 "c/our\rX[esc]" 2 0 [list "three" "Xour" "one" "five" "~"]
 
