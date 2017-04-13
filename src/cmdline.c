@@ -184,11 +184,11 @@ static	struct	ecmd	{
 
   { "buffer",	    EX_BUFFER,	    0,	EC_EXPALL,		ec_1string },
 
-  { "cd",	    EX_CHDIR,	    1,	EC_EXPALL,		ec_1string },
-  { "change",	    EX_CHANGE,	    2,	0,			ec_none },
-  { "chdir",	    EX_CHDIR,	    1,	EC_EXPALL,		ec_1string },
-  { "close",	    EX_CLOSE,	    1,	EC_EXCLAM,		ec_none },
-  { "copy",	    EX_COPY,	    1,	0,			ec_line },
+  { "cd",	    EX_CHDIR,	    0,	EC_EXPALL,		ec_1string },
+  { "change",	    EX_CHANGE,	    1,	0,			ec_none },
+  { "chdir",	    EX_CHDIR,	    0,	EC_EXPALL,		ec_1string },
+  { "close",	    EX_CLOSE,	    0,	EC_EXCLAM,		ec_none },
+  { "copy",	    EX_COPY,	    0,	0,			ec_line },
 
   { "delete",	    EX_DELETE,	    0,	0,			ec_none },
 
@@ -211,9 +211,10 @@ static	struct	ecmd	{
 
   { "list",	    EX_LIST,	    0,	0,			ec_none },
 
+  /* "m" is move" but "ma" is "mark" */
   { "map",	    EX_MAP,	    0,	EC_EXCLAM,		ec_nonalnum },
-  { "mark",	    EX_MARK,	    0,	0,			ec_1lower },
-  { "move",	    EX_MOVE,	    1,	0,			ec_line },
+  { "mark",	    EX_MARK,	    1,	0,			ec_1lower },
+  { "move",	    EX_MOVE,	    2,	0,			ec_line },
 
   { "next",	    EX_NEXT,	    1,	EC_EXCLAM|EC_EXPALL,	ec_strings },
   { "number",	    EX_NUMBER,	    0,	0,			ec_none },
@@ -230,13 +231,15 @@ static	struct	ecmd	{
   { "recover",	    EX_RECOVER,	    0,	0,			ec_none },
   { "rewind",	    EX_REWIND,	    0,	EC_EXCLAM,		ec_none },
 
+  /* "s" is "substitute" but "su" is "suspend" */
+  { "s",   	    EX_SUBSTITUTE,  0,	0,			ec_nonalnum },
   { "set",	    EX_SET,	    0,	0,			ec_strings },
   { "shell",	    EX_SHELL,	    0,	EC_EXCLAM,		ec_none },
   { "source",	    EX_SOURCE,	    0,	EC_EXPALL,		ec_1string },
   { "split",	    EX_SPLIT,	    0,	0,			ec_none },
   { "stop",	    EX_SUSPEND,	    0,	EC_EXCLAM,		ec_none },
-  { "substitute",   EX_SUBSTITUTE,  1,	0,			ec_nonalnum },
-  { "suspend",	    EX_SUSPEND,	    0,	EC_EXCLAM,		ec_none },
+  { "substitute",   EX_SUBSTITUTE,  0,	0,			ec_nonalnum },
+  { "suspend",	    EX_SUSPEND,	    1,	EC_EXCLAM,		ec_none },
 
   { "t",	    EX_COPY,	    1,	0,			ec_line },
   { "tag",	    EX_TAG,	    0,	EC_EXCLAM,		ec_1string },
