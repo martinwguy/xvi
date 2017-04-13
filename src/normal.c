@@ -269,15 +269,11 @@ Cmd	*cmd;
      * position as the starting position and the target's type is
      * exclusive - there's no point.
      */
-    if (IsCharBased(cmd) && IsExclusive(cmd) &&
-			    eq(&cmd->cmd_startpos, &cmd->cmd_target)) {
+    if (IsExclusive(cmd) &&
+	 (IsCharBased(cmd)
+	  ? eq(&cmd->cmd_startpos, &cmd->cmd_target)
+	  : (cmd->cmd_startpos.p_line == cmd->cmd_target.p_line))) {
 	beep();
-	cmd->cmd_operator = NOP;
-	return;
-    }
-
-    if (IsExclusive(cmd) && IsLineBased(cmd)) {
-	show_error("Oops! I can't handle exclusive line-based operations!");
 	cmd->cmd_operator = NOP;
 	return;
     }
@@ -289,6 +285,7 @@ Cmd	*cmd;
 	pswap(&cmd->cmd_startpos, &cmd->cmd_target);
     }
 
+    /* Convert range of exclusive commands into equivalent inclusive ranges */
     if (IsExclusive(cmd)) {
 	/*
 	 * For character-based exclusive targets, we always decrement the
@@ -296,12 +293,11 @@ Cmd	*cmd;
 	 * backwards in the buffer. Character-based operators work this way,
 	 * i.e. we do not affect the character under the cursor when the
 	 * target is before the starting position.
-	 *
-	 * Careful here; only decrement the end position if it is different
-	 * from the starting position.
 	 */
-	if (!eq(&cmd->cmd_startpos, &cmd->cmd_target)) {
+	if (IsCharBased(cmd)) {
 	    (void) dec(&cmd->cmd_target);
+	} else {
+	    cmd->cmd_target.p_line = cmd->cmd_target.p_line->l_prev;
 	}
     }
 
@@ -365,6 +361,14 @@ char	*pattern;
 	cmd->cmd_ch2 = '\0';
 	cmd->cmd_flags = CFLAGS('n');
 	cmd->cmd_target = *p;
+	/*
+	 * Search ranges that start and end at the beginning of a line
+	 * result in line-based operations rather than character-based
+	 * operations.
+	 */
+	if (cmd->cmd_startpos.p_index == 0 && cmd->cmd_target.p_index == 0) {
+	    cmd->cmd_flags |= TGT_LINE;
+	}
 	HandleOperator(cmd);
     } else {
 	curwin->w_set_want_col = TRUE;
