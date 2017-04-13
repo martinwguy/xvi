@@ -31,8 +31,8 @@ Cursor positioning
         ^D      Scroll down half a screenful
         ^U      Scroll up half a screenful
         G       Go to line (defaults to end of file)
-        /re     Go to next occurence of regular expression 're'
-        ?re     Go to prior occurence of regular expression 're'
+        /re     Go to next occurrence of regular expression 're'
+        ?re     Go to prior occurrence of regular expression 're'
         n       Repeat last / or ?
         N       Reverse last / or ?
         %       Go to the matching (, ), {, }, [, or ]
@@ -207,10 +207,10 @@ Global Editing
         Any of the above may be preceded by a line range, e.g. 12,15.
 
         &               Redo last substitution (same as :&)
-        :x,yyank        Yank lines from x through y
-        :x,ydelete      Delete lines from x through y
-        :x,ycopyz       Copy lines from x through y to after line z
-        :x,ymovez       Move lines from x through y to after line z
+        :x,y yank       Yank lines from x through y
+        :x,y delete     Delete lines from x through y
+        :x,y copy z     Copy lines from x through y to after line z
+        :x,y move z     Move lines from x through y to after line z
 
 File and buffer manipulation
 ============================
