@@ -181,6 +181,7 @@ Cmd	*cmd;
 		skip_spaces = TRUE;
 	    } else {
 		cmd->cmd_target.p_index = posn->p_index;
+		curwin->w_set_want_col = TRUE;
 	    }
 	}
 	break;
