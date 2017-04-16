@@ -284,7 +284,7 @@ do_sline()
     from = sline_text(win);
     slp = vs->pv_int_lines + win->w_cmdline;
     to = slp->s_line;
-    end = to + win->w_ncols - win->w_spare_cols;
+    end = to + win->w_ncols - SPARE_COLS;
 
     while (*from != '\0' && to < end) {
 	*to++ = *from++;
@@ -319,12 +319,12 @@ do_sline()
      * Set the colour of the status line.
      */
     colour = is_readonly(curbuf) ? VSCroscolour : VSCstatuscolour;
-    for (colindex = win->w_ncols - win->w_spare_cols - 1; colindex >= 0;
+    for (colindex = win->w_ncols - SPARE_COLS - 1; colindex >= 0;
 							--colindex) {
 	slp->s_colour[colindex] = colour;
     }
 
-    slp->s_used = win->w_ncols - win->w_spare_cols;
+    slp->s_used = win->w_ncols - SPARE_COLS;
     slp->s_flags = S_MESSAGE;
     if (is_readonly(curbuf)) {
 	slp->s_flags |= S_READONLY;
@@ -343,7 +343,7 @@ int pos;	/* Position of cursor within line */
 
     clp = win->w_vs->pv_int_lines + win->w_cmdline;
 
-    maxwidth = win->w_ncols - win->w_spare_cols;
+    maxwidth = win->w_ncols - SPARE_COLS;
     if ((width = flexlen(&win->w_statusline)) > maxwidth) {
 	width = maxwidth;
     }

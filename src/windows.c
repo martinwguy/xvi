@@ -741,8 +741,6 @@ Xviwin	*win;
 	return(FALSE);
     }
 
-    win->w_spare_cols = 1;
-
     win->w_cmd = alloc(sizeof(Cmd));
     if (win->w_cmd == NULL) {
 	return(FALSE);

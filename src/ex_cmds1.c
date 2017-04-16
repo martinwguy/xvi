@@ -532,7 +532,7 @@ exArgs()
     }
 
     colwidth = 0;
-    maxcols = curwin->w_ncols - curwin->w_spare_cols;
+    maxcols = curwin->w_ncols - SPARE_COLS;
     flexnew(&fb);
     for (count = 0; count < numfiles; count++) {
 	char	*fn;

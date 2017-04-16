@@ -603,18 +603,18 @@ typedef struct xviwin {
     struct xviwin	*w_last;	/* first and last pointers */
     struct xviwin	*w_next;
 
-    /*
-     * Status line glitch handling.
-     *
-     * w_spare_cols is the number of columns which are not used at the
-     * end of the status line; this is to prevent wrapping on this line,
-     * as this can do strange things to some terminals.
-     */
-    int			w_spare_cols;	/* 1 */
-
     Cmd			*w_cmd;		/* info about current command */
 
 } Xviwin;
+
+/*
+ * Status line glitch handling.
+ *
+ * SPARE_COLS is the number of columns which are not used at the
+ * end of the status line; this is to prevent wrapping on this line,
+ * as this can do strange things to some terminals.
+ */
+#define	SPARE_COLS	1
 
 typedef struct tag {
     struct tag	*t_next;
