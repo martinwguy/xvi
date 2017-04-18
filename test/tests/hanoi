@@ -1,0 +1,39 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# See if the towers of hanoi solving vi macros work
+
+source scripts/term
+start_vi
+
+# Read the macros
+exp_send ":so data/hanoi\r"
+
+# Buffer should still be empty and there should be no error messages
+# on the status line
+# vim has trailing line,column info.
+# nvi leaves the status line blank if successful
+
+test 100 ""		1 0 [list "" "~"]
+
+term_expect timeout {
+	puts "After :so hanoi, status line is \"[statusline]\"."
+	fail 101
+    } \
+    { statusline_starts ":so data/hanoi" } { } \
+    { statusline_is "" } { }
+
+# Run the initialization code
+test 111 "I" 9 0 \
+	[list "" "01234567" "0" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
+
+# Run the main loop
+set timeout 10
+test 112 "L" 2 0 \
+	[list "" "0" "01234567" "0" "" "" "T0123456n" "T0123456$" "/" "~"]
+
+stop_vi
+
+exit 0

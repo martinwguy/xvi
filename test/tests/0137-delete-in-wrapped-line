@@ -1,0 +1,29 @@
+#! /bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Test file checks that deleting some text from a line that is displayed
+# on two screen lines, if the deletion shrinks it to one screen line,
+# that garbage isn't left on what used to be its second screen line.
+#
+
+source scripts/term
+start_vi
+
+# Set up test pattern
+test 101 "90aa[esc]obbbbbbbbbb[esc]k0" 1 0 [list \
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
+"aaaaaaaaaa" \
+"bbbbbbbbbb" \
+"~"]
+
+test 102 "20x"	1 0 [list  \
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
+"bbbbbbbbbb" \
+"~"]
+
+stop_vi
+
+exit 0

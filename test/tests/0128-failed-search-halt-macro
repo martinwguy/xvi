@@ -1,0 +1,20 @@
+#! /bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Test file checks that a failed search on the command line
+# halts a macro in execution
+#
+
+source scripts/term
+start_vi
+
+test 101 "ione[esc]:map g :/dfhd[ctrl V][ctrl V][ctrl V][ctrl M]axxx\r" \
+						1 2 [list "one" "~" ]
+test 102 "gatwo[esc]"				1 5 [list "onetwo" "~"]
+
+stop_vi
+
+exit 0

@@ -1,0 +1,33 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test numeric parameter before ~ command
+
+source scripts/term
+start_vi
+
+test 100 ""			1 0 [list "" "~" ]
+
+test 101 "aabcdefgh[esc]"	1 7 [list "abcdefgh" "~" ]
+
+# Twiddle the first character
+test 102 "0~"			1 1 "Abcdefgh"
+# Undo it
+test 103 "u"			1 0 "abcdefgh"
+
+# move onto the d and set uppercase DEF
+test 104 "0lll3~"		1 6 "abcDEFgh"
+
+# Undo should undo all 3.
+test 106 "u"			1 3 "abcdefgh"
+
+# Repeat count should stop when it gets to the end of the line,
+# and not flip the final character twice,
+# tested by moving onto the g and trying 3 ~'s
+test 107 "7|3~"			1 7 "abcdefGH"
+
+stop_vi
+
+exit 0

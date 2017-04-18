@@ -1,0 +1,290 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+
+# scripts/term, part of the test suite for xvi
+#
+# This file is included by all tests, it chooses an implementation of "term"
+# and term_expect (either tkterm or virterm) and provides some utilities.
+#
+# 	Martin Guy <martinwguy@gmail.com>, January 2017.
+
+
+# Choose a terminal emulator: either tkterm (needs X) of virterm (doesn't).
+# To force use of virterm, use
+#	TKTERM=virterm make check
+# or
+#	DISPLAY= make check
+# The choice is remembered in tcl global $tkterm
+
+if { [info exists ::env(TKTERM)] && $::env(TKTERM) != "" } {
+    set tkterm $::env(TKTERM)
+} else {
+    if { ! [info exists ::env(DISPLAY)] || $::env(DISPLAY) == "" } {
+	set tkterm virterm
+    } else {
+	set tkterm tkterm
+    }
+}
+
+# Harness to run tests without the "clear to end of line" capability
+if { [info exists ::env(NOCE)] } {
+    # Drop the "ce" capability from our terminal descriptions
+    exec sed {/\\E\[K/d} < "scripts/$tkterm" > "scripts/$tkterm-noce"
+    set tkterm "$tkterm-noce"
+}
+
+source scripts/$tkterm
+
+if { [info exists ::env(NOCE)] } {
+    exec rm "scripts/$tkterm"
+}
+
+# Most tests use timeouts but 1 sec is more appropriate than the default of 10.
+set timeout 2
+
+#
+# Utility functions for xvi's tkterm test rig
+#
+
+# Start the vi editor from the shell command prompt
+#
+# To test other vi clones
+# use	VI=nvi make check
+# or	VI="vim -c redraw" make check
+# The basename of the command, "xvi", "vi", "nvi", "vim" etc is in the
+# global variable $vi, in case tests need to allow for differences.
+
+proc start_vi {args} {
+    global vi
+    set vi ../src/xvi
+    if { [info exists ::env(VI)] && $::env(VI) != "" } {
+	set vi $::env(VI)
+    }
+    exp_send "rm -f core\r"	;# To detect core dumps
+    exp_send "exec $vi $args\r"
+    set $vi [file tail $vi]
+}
+
+# Stop the editor gracefully. It should already be in normal mode.
+proc stop_vi {} {
+    # Check that it's still alive (it should be!)
+    global term_spawn_id
+
+    set xvipid [exp_pid -i $term_spawn_id]
+    set rc [catch { exec kill -0 $xvipid } msg ]
+    if { $rc != 0 } {
+	send_error "xvi seems to have died: $msg"
+	exit 124
+    }
+
+    # If xvi dumps core, term_expect seems to quit too,
+    # indicating success with exit status 0!
+    # If it does call stop_vi, though, check for core dumps.
+    if { [file exists core] } {
+	send_error "xvi seems to have dumped core."
+	exit 123
+    }
+
+    exp_send ":q!\r"
+}
+
+# Send the xvi process a signal
+proc kill_vi {sig} {
+    global term_spawn_id
+    if { $sig == "" } { set sig 9 }
+    set xvipid [exp_pid -i $term_spawn_id]
+    exec kill -$sig $xvipid
+}
+
+# screen_is row column lines
+#
+# Does the screen image start with the lines in the given list
+# and is the cursor at the expected position?
+# row is 1-24 or 25, column is 0-79 and lines is a list of strings or a
+# simple string not containing spaces.
+#
+# To test if the first three lines are "one", "two" and "three"
+# with the cursor top left, you can say:
+#	if [screen_is 1 0 [list "one" "two" "three"] ] { ...
+# or
+#	term_expect timeout { exit 100 } \
+#		 { screen_is 1 0 "abc" }
+#
+# To test if the first line is "abc" with the cursor top left, you can also say:
+#	if [screen_is 1 0 "abc"] { ...
+# or
+#	term_expect timeout { exit 100 } \
+#		 { screen_is 1 0 "abc" }
+# but if you need to test the first line of the screen against
+# a string that contains spaces, you need to use a list of one line,
+# for which the shortest syntax is:
+#	if [screen_is 1 0 "{Hello, world!}"] {
+# or
+#	term_expect timeout { exit 100 } \
+#		 { screen_is 1 0 "{Hello, world!}" }
+#
+# In double-quoted strings, backslash escapes, string substitution and
+# command execution with [ are available.
+# In strings between { and } instead, no further characters are special but
+# there is no way to include an unmatched { character.
+
+proc screen_is {crow ccol should} {
+    global term
+    if { ! [cursor_at $crow $ccol] } { return FALSE }
+    for {set i 0} {$i < [llength $should]} {incr i} {
+	set line [lindex $should $i]
+	# List of lines is indexed from 0 by i but screen row is indexed from 1
+	set row [expr $i + 1]
+	set onscreen [string trimright [$term get $row.0 $row.end]]
+	if { $onscreen != $line } { return FALSE }
+    }
+    return TRUE
+}
+
+# Is the cursor at the specified row and column?
+# Note: row numbers are 1 to $rows but column numbers are 0 to $cols-1
+proc cursor_at {row col} {
+    global term cur_row cur_col
+    # There must be a snappier way to say this, but I can't find it!
+    if { $cur_row == $row && $cur_col == $col } {
+	return TRUE
+    } else {
+	return FALSE
+    }
+}
+
+# What's on the last line of the screen (minus trailing spaces)?
+proc statusline {} {
+    global term rows
+    return [string trimright [$term get $rows.0 $rows.end]]
+}
+
+# Is the status line (with trailing spaces stripped from it) this text?
+proc statusline_is {str} {
+    global term
+    if { $str == [statusline] } {
+	return TRUE
+    } else {
+	return FALSE
+    }
+}
+
+# Is the status line (with trailing spaces stripped from it)
+# different from this text?
+proc statusline_isnt {str} {
+    global term
+    if { $str == [statusline] } {
+	return FALSE
+    } else {
+	return TRUE
+    }
+}
+
+# Is the status line (with trailing spaces stripped from it) this text?
+proc statusline_starts {str} {
+    global term
+    if { $str eq [string range [statusline] 0 [expr { [string length $str] - 1 }] ] } {
+	return TRUE
+    } else {
+	return FALSE
+    }
+}
+
+# Write the screen contents to a named file
+proc term_dump {file} {
+	global term rows cols cur_row cur_col
+
+	if { [catch {open $file w} fid] } {
+	    puts "Cannot create $file"
+	    exit 1
+	}
+
+	for {set i 1} {$i <= $rows} {incr i} {
+	    catch { puts $fid [string trimright [$term get $i.0 $i.end]] } {
+		puts "Cannot write to $file"
+		exit 1
+	    }
+	}
+
+	catch { puts $fid "Cursor is at ($cur_row,$cur_col)" } {
+	    puts "Cannot finalize $file"
+	    exit 1
+	}
+
+	catch { close $fid } {
+	    puts "Cannot close $file"
+	    exit 1
+	}
+}
+
+# What to do when a test fails
+proc fail {status} {
+    if { [info exists ::env(DUMP)] && $::env(DUMP) != "" } {
+	term_dump $::env(DUMP)
+    }
+    # If a test failed, the xvi executable is probably still running
+    kill_vi 9
+    exec rm -f #unnamed.???
+    exit $status
+}
+
+#
+# Names for funny characters and function keys.
+#
+
+# [ctrl V]
+proc ctrl {c} {
+    scan $c "%c" i
+    return [format %c [expr {$i & 0x1F}]]
+}
+proc esc    {} { return [format %c 0x1B] }
+proc uarrow {} { return "[esc]OA" }
+proc darrow {} { return "[esc]OB" }
+proc rarrow {} { return "[esc]OC" }
+proc larrow {} { return "[esc]OD" }
+proc home   {} { return "[esc]OH" }
+proc end    {} { return "[esc]OF" }
+proc pgup   {} { return "[esc]\[5~" }
+proc pgdown {} { return "[esc]\[6~" }
+proc insert {} { return "[esc]\[2~" }
+proc delete {} { return "[esc]\[3~" }
+proc f1     {} { return "[esc]OP" }
+proc f2     {} { return "[esc]OQ" }
+proc f3     {} { return "[esc]OR" }
+proc f4     {} { return "[esc]OS" }
+proc f5     {} { return "[esc]OT" }
+proc f6     {} { return "[esc]OU" }
+proc f7     {} { return "[esc]OV" }
+proc f8     {} { return "[esc]OW" }
+proc f9     {} { return "[esc]OX" }
+proc f10    {} { return "[esc]OY" }
+
+#
+# Two routines that are enough for the body of most tests,
+# sending a string, expecting a screenful (or command line full) and
+# cursor position and failing with some code if xvi's screen differs.
+#
+
+# Send a string to xvi and expect the screen to match the list of lines
+# (modulo trailing spaces) with the cursor at row (1-24), col (0-79).
+# If it doesn't show that within a second or two, fail and exit with
+# failure status code $testno (1-127).
+
+proc test { testno str row col lines } {
+    exp_send $str
+    term_expect timeout { fail $testno } {
+	screen_is $row $col $lines
+    }
+}
+
+# The same thing, but matching against the command line/status line
+
+proc ctest { testno str col line } {
+    exp_send $str
+    term_expect timeout { fail $testno } {
+	expr { [cursor_at $::rows $col] && [statusline_is $line] }
+    }
+}

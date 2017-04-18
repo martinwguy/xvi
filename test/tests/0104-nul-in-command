@@ -1,0 +1,36 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test that nul characters on the command line are ignored.
+
+source scripts/term
+
+# This test works with tcl8.6 but fails with virterm and tcl8.5
+if { $tcl_version < 8.6 } {
+    puts "Needs TCL 8.6 but you have $tcl_version"
+    fail 125	;# Skip this test
+}
+
+start_vi
+
+# Tests begin
+
+# Check it started up OK
+test 100 ""		1 0 [list "" "~"]
+
+# On the command line...
+exp_send ":"
+
+# ... nul should be ignored
+ctest 101 "a\x00b"	3 ":ab"
+
+# ... as should Control-V nul
+ctest 102 "c\x16\x00d"	5 ":abcd"
+
+exp_send "\b\b\b\b\b"
+
+stop_vi
+
+exit 0

@@ -1,0 +1,116 @@
+#! /bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Test file for autowrite parameter.
+#
+# POSIX: "If autowrite is set, and the edit buffer has been modified since
+# it was last completely written to any file, the contents of the edit
+# buffer shall be written as if the ex write command had been specified
+# without arguments, before each command affected by the autowrite edit
+# option is executed.
+#
+# Appending the character '!' to the command name of any of the ex commands
+# except '!' shall prevent the write. If the write fails, it shall be an error
+# and the command shall not be executed."
+#
+# Those "affected by the autowrite edit option" are:
+# ex commands :next :rewind :suspend :tag :!command  and
+# vi commands ^^ (edit alternate file) and ^] (tag symbol under cursor).
+#
+
+# Use: [file mtime filename]
+
+# Utility functions
+
+set tmp1 aw1.tmp
+set tmp2 aw2.tmp
+set tags awtags.tmp
+
+exec echo one > $tmp1
+exec echo two > $tmp2
+exec echo "two\t$tmp2\t/^two/" > $tags
+
+source scripts/term
+
+# Make it open one file only, so that :next has a valid target #set ::env(XVINIT) "set autosplit=1"
+start_vi -s autosplit=1 $tmp1 $tmp2
+
+proc file_contains { filename contents } {
+    set fp [open $filename r]
+    set data [read $fp]
+    close $fp
+    if { $data != $contents } { return FALSE }
+    return TRUE
+}
+
+# Tests begin
+
+# Check it started up OK
+term_expect timeout { fail 100 } { screen_is 1 0 [list "one" "~"] }
+
+# With autowrite OFF and a modified buffer, that should prevent
+# :next, :rewind, :tag to a different file and ^^ from happening, while
+# :shell should warn if "warn" option is set (:suspend does the same)
+
+test 101 "Aa[esc]:next\r"		1 3 "onea"
+test 102 ":rewind\r"			1 3 "onea"
+test 103 ":se tags=$tags\r:tag two\r"	1 3 "onea"
+test 104 ":next!\rAa[esc]"		1 3 "twoa"
+test 105 "[ctrl ^]"			1 3 "twoa"
+
+# With autowrite ON and a modified buffer, :next, :rewind,
+# :tag to a different file and ^^ should write the current file out,
+# :shell and :suspend should write all modified buffers out.
+
+test 106 ":next! $tmp1 $tmp2\r"	1 0 "one"
+exp_send ":set autowrite\r"
+
+# :next should change to file two and autowrite file one.
+test 107 "Ad[esc]:next\r"		1 0 "two"
+if { ! [file_contains $tmp1 "oned\n"] } { fail 108 }
+exec echo one > $tmp1
+
+# :rewind without autowrite should not change file
+exp_send ":set noautowrite\r"
+test 108 "Ae[esc]:rewind\r"		1 3 "twoe"
+# with autowrite it should change back to file1 having saved file2.
+test 109 ":set autowrite\r:rewind\r"	1 0 "one"
+if { ! [file_contains $tmp2 "twoe\n"] } { fail 110 }
+exec echo two > $tmp2
+
+# Same check for CTRL-^ (edit alternate file).
+# Open file 2 so that there is a valid alternate file.
+test 111 ":next\rAg[esc]"		1 3 "twog"
+test 112 "[ctrl ^]"			1 0 "one"
+if { ! [file_contains $tmp2 "twog\n"] } { fail 113 }
+exec echo two > $tmp2
+
+# Same check for :tag to file 2, should autowrite file 1
+test 114 "Ah[esc]:tag two\r"		1 0 "two"
+if { ! [file_contains $tmp1 "oneh\n"] } { fail 115 }
+exec echo one > $tmp1
+
+# Start and quit a shell - the buffer should be autowritten.
+#
+# If xvi's stderr is redirected to a file to catch debugging printfs,
+# this test fails because bash and dash output their prompt on stderr.
+
+exp_send "Ai[esc]:shell\r"
+term_expect timeout { fail 116 } \
+	    { expr { [string range [statusline] end end] == {$} } }
+test 117 "exit\r" 			1 3 "twoi"
+if { ! [file_contains $tmp2 "twoi\n"] } { fail 118 }
+
+stop_vi
+
+# With exclam, autowrites should not be performed
+
+# If autowrites should be done but autowriting the file fails,
+# the commands should not be executed.
+
+exec rm -f $tmp1 $tmp2 $tags
+
+exit 0

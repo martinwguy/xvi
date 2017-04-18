@@ -1,0 +1,34 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test xvi's startup screen.
+# Unlike the other tests, this doesn't use term_expect
+# or utility functions from file "term" (except for start_vi and fail).
+
+source scripts/term
+start_vi
+
+# Give it a second to refresh the display.
+sleep 1
+
+# The first line should be blank
+if { [string trimright [$term get 1.0 1.end]] != "" } { fail 100 }
+
+# Construct a screen image to match: first line blank and lines of ~
+# down to the last line but one.
+set screen [list ""]
+for {set i 2} {$i<$rows} {incr i} {
+    lappend screen "~"
+}
+
+term_expect timeout { fail 101 } \
+	{ screen_is 1 0 $screen }
+
+# The last line should just say "No File" but we don't really care about that
+# if { [string trimright [$term get $rows.0 $rows.end]] != "No File" } { fail 102 }
+
+stop_vi
+
+exit 0

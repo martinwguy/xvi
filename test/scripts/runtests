@@ -1,0 +1,59 @@
+#! /bin/sh
+
+# Run all tests in the test suite.
+#
+# Each test is an executable file whose name starts with four digits and
+# a hyphen, and exits 0 if it succeeds, 1 if the test cannot be run or
+# 100-127 if it fails.
+# A test may output a one-line message to say why (it failed or was skipped).
+#
+# This script exits with status 0 if all tests succeeded or were skipped,
+# 1 if any failed.
+#
+#	Martin Guy <martinwguy@gmail.com>, March 2017.
+
+status=0	# What to exit with; 0 means success.
+
+for testfile in `ls tests`
+do
+	printf "%-32.32s" "$testfile"
+	if [ ! -x tests/"$testfile" ]
+	then	echo "DISABLED"
+		continue
+	fi
+
+	rm -f core
+	output=`tests/$testfile`
+	s=$?
+	if [ -f core ]
+	then
+	    result="CORE DUMP"
+	    status=1
+	else
+	    case $s in
+	    0)	result="PASS"
+		;;
+	    123) result="CORE DUMP"
+		status=1
+exit 99
+		;;
+	    124) result="VI DIED"
+		status=1
+		;;
+	    125) retult="SKIPPED"
+		status=125;
+		;;
+	    *)	result="FAILED with status $s"
+		status=1
+		;;
+	    esac
+	fi
+
+	# If the test file said something, show that as well
+	test "$output" && result="$result: $output"
+	echo "$result"
+done
+
+rm -f \#unnamed.*
+
+exit $status

@@ -1,0 +1,25 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+#
+# Check that it works without "Clear to end of line" capability.
+#
+
+set ::env(NOCE) 1
+
+source scripts/term
+start_vi
+
+# Tests begin
+
+test 100 ""			1 0 [list "" "~"]
+test 101 "aabcde[esc]"		1 4 [list "abcde" "~"]
+test 102 "ylp"			1 5 [list "abcdee" "~"]
+test 103 "x"			1 4 [list "abcde" "~"]
+
+stop_vi
+
+exit 0
+
