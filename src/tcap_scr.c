@@ -181,7 +181,7 @@ static	char	*cr;			/* carriage return */
 
 static	bool_t	can_move_in_standout;	/* True if can move while SO is on */
 static	bool_t	auto_margins;		/* true if AM is set */
-static	bool_t	eat_newline_glitch;	/* "xn" capability */
+static	bool_t	newline_glitch;		/* "xn" capability */
 
 #define	can_backspace	(bc != NULL)
 #define	can_fwdspace	(nd != NULL)	/* true if can forward space (nd) */
@@ -738,7 +738,7 @@ static void
 do_auto_margin_motion()
 {
     if (auto_margins) {
-	if (!eat_newline_glitch) {
+	if (!newline_glitch) {
 	    /* Normal wrap */
 	    real_col = 0;
 	    real_row += 1;
@@ -865,7 +865,7 @@ unsigned int	*pcolumns;
      * Booleans.
      */
     auto_margins	= (bool_t) tgetflag("am");
-    eat_newline_glitch	= (bool_t) tgetflag("xn");
+    newline_glitch	= (bool_t) tgetflag("xn");
     can_move_in_standout = (bool_t) tgetflag("ms");
     /*
      * Standout glitch: number of spaces left when entering or leaving
@@ -974,7 +974,7 @@ unsigned int	*pcolumns;
 	up = UP;
     }
 #else
-    up = tgetstr("up", &strp));
+    up = tgetstr("up", &strp);
 #endif
 
 #ifndef	AIX
