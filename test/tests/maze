@@ -1,4 +1,7 @@
-#! /usr/bin/tclsh
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
 
 # See if the maze-solving vi macros work
 
@@ -61,12 +64,12 @@ set postRun [list \
 exec rm -f {.1991_maze_sample.swp}
 
 source scripts/term
-start_vi 1991_maze_sample
+start_vi data/sample.maz
 
 set timeout 15
 
 test 10 ""			1 0 $preInit
-ctest 11 ":so 1991_maze_mac"	17 ":so 1991_maze_mac"
+ctest 11 ":so data/maze_mac"	17 ":so data/maze_mac"
 test 12 "\r"			1 0 $preInit
 
 # Test the initialization
