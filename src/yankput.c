@@ -734,7 +734,7 @@ bool_t	vi_mode;
      */
     switch (yp_buf->y_type) {
     case y_chars:
-	put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
+	put(yp_buf->y_1st_text, vi_mode, FALSE);
 	break;
 
     case y_lines:
@@ -764,17 +764,10 @@ char	*str;
 bool_t	vi_mode;
 bool_t	newline;
 {
-    if (vi_mode) {
-	stuff_to_map(str);
-	if (newline) {
-	    stuff_to_map("\n");
-	}
-    } else {
-	stuff("%s%s%s",
-		str[0] != ':' ? ":" : "",
-		str,
-		newline ? "\n" : "");
-    }
+    stuff("%s%s%s",
+	    (!vi_mode && str[0] != ':') ? ":" : "",
+	    str,
+	    (!vi_mode || newline) ? "\n" : "");
 }
 
 /*
