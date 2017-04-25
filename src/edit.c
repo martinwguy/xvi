@@ -654,8 +654,15 @@ int	c;
 
     if (!literal_next) {
 	switch (c) {
-	/* case CTRL('C'):		/* an escape or ^C ends input mode */
-	case ESC:
+	/*
+	 * TOS doesn't seem to have a keyboard interrupt so keep the old
+	 * code that make Ctrl-C do the same on TOS as everywhere else.
+	 * POSIX for Unices says nothing special about Ctrl-C in vi.
+	 */
+#ifndef UNIX
+	case CTRL('C'):
+#endif
+	case ESC:			/* an escape ends input mode */
 	    end_replace(c);
 	    return(TRUE);
 
