@@ -40,7 +40,7 @@ exit 99
 	    124) result="VI DIED"
 		status=1
 		;;
-	    125) retult="SKIPPED"
+	    125) result="SKIPPED"
 		status=125;
 		;;
 	    *)	result="FAILED with status $s"
