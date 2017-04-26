@@ -27,7 +27,7 @@
  * window is updated. The vector is resized when the window size
  * is changed.
  *
- * The s_line part is guaranteed to be always null-terminated.
+ * The s_line part is always null-terminated.
  */
 typedef	struct line_struct {
     char		*s_line;	/* storage for character cells */
