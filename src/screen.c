@@ -143,7 +143,7 @@ long		line;
 	    curr_line->s_flags = S_TEXT;
 	    curr_line->s_used = scol;
 	    curr_line->s_line[scol] = '\0';
-	    xvMarkDirty(win->w_vs, srow);
+	    xvMarkDirty(srow);
 	    break;
 	} else {
 	    /*
@@ -153,7 +153,7 @@ long		line;
 		curr_line->s_flags = S_TEXT;
 		curr_line->s_used = scol;
 		curr_line->s_line[scol] = '\0';
-		xvMarkDirty(win->w_vs, srow);
+		xvMarkDirty(srow);
 		srow += 1;
 		scol = 0;
 		curr_line = win->w_vs->pv_int_lines + srow;
@@ -168,7 +168,7 @@ long		line;
 		    curr_line->s_line[0] = '@';
 		    curr_line->s_line[1] = '\0';
 		    curr_line->s_colour[0] = VSCcolour;
-		    xvMarkDirty(win->w_vs, srow);
+		    xvMarkDirty(srow);
 		}
 		return(0);
 	    }
@@ -242,7 +242,7 @@ file_to_new()
 	curr_line->s_line[0] = '~';
 	curr_line->s_line[1] = '\0';
 	curr_line->s_colour[0] = VSCcolour;
-	xvMarkDirty(win->w_vs, row);
+	xvMarkDirty(row);
     }
 }
 
@@ -256,7 +256,7 @@ void
 update_sline()
 {
     do_sline();
-    xvUpdateScr(curwin->w_vs, (int) curwin->w_cmdline, 1);
+    xvUpdateScr((int) curwin->w_cmdline, 1);
 }
 
 /*
@@ -329,7 +329,7 @@ do_sline()
     if (is_readonly(curbuf)) {
 	slp->s_flags |= S_READONLY;
     }
-    xvMarkDirty(vs, (int) win->w_cmdline);
+    xvMarkDirty((int) win->w_cmdline);
 }
 
 void
@@ -370,7 +370,7 @@ int pos;	/* Position of cursor within line */
      * We don't bother calling xvMarkDirty() here: it isn't worth
      * it because the line's contents have almost certainly changed.
      */
-    xvUpdateScr(win->w_vs, (int) win->w_cmdline, 1);
+    xvUpdateScr((int) win->w_cmdline, 1);
     VSgoto(win->w_vs, (int) win->w_cmdline, pos);
 }
 
@@ -419,7 +419,7 @@ bool_t	flag;
 		file_to_new();
 	    }
 
-	    xvUpdateScr(w->w_vs, (int) (curs_row + w->w_winpos), nlines);
+	    xvUpdateScr((int) (curs_row + w->w_winpos), nlines);
 	}
 	set_curwin(xvNextDisplayedWindow(w));
     } while (curwin != savecurwin);
@@ -438,13 +438,12 @@ bool_t	flag;
 	return;
     }
     if (flag) {
-	xvClear(curwin->w_vs);
+	xvClear();
 	update_sline();
     }
     if (curwin->w_nrows > 1) {
 	file_to_new();
-	xvUpdateScr(curwin->w_vs,
-			(int) curwin->w_winpos, (int) curwin->w_nrows);
+	xvUpdateScr( (int) curwin->w_winpos, (int) curwin->w_nrows);
     }
 }
 
@@ -463,7 +462,7 @@ bool_t	clrflag;
     }
 
     if (clrflag) {
-	xvClear(vs);
+	xvClear();
     }
 
     savecurwin = curwin;
@@ -476,7 +475,7 @@ bool_t	clrflag;
         set_curwin(xvNextDisplayedWindow(curwin));
     } while (curwin != savecurwin);
 
-    xvUpdateScr(vs, 0, (int) VSrows(vs));
+    xvUpdateScr(0, (int) VSrows(vs));
 }
 
 /*
@@ -553,7 +552,7 @@ int		nlines;
 	 */
 	bottomline++;
 	VSclear_line(vs, bottomline, 0);
-	xvClearLine(vs, bottomline);
+	xvClearLine(bottomline);
 	/*FALLTHROUGH*/
 
     case do_as_requested:
@@ -593,7 +592,7 @@ int		nlines;
 	 * Clear the newly inserted lines.
 	 */
 	for (count = row; count < row + nlines; count++) {
-	    xvClearLine(vs, (unsigned) count);
+	    xvClearLine((unsigned) count);
 	}
 
     case cant_do_it:
@@ -662,7 +661,7 @@ int			nlines;
 	 */
 	bottomline++;
 	VSclear_line(vs, bottomline, 0);
-	xvClearLine(vs, bottomline);
+	xvClearLine(bottomline);
 	/*FALLTHROUGH*/
 
     case do_as_requested:
@@ -703,7 +702,7 @@ int			nlines;
 	 */
 	bottomline = curwin->w_cmdline;
 	for (count = bottomline - nlines; count < bottomline; count++) {
-	    xvClearLine(vs, (unsigned) count);
+	    xvClearLine((unsigned) count);
 	}
 
     case cant_do_it:

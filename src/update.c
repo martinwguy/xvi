@@ -33,13 +33,13 @@ static	void	xvWriteMultiString
  * using ext_lines to avoid unnecessary output.
  */
 void
-xvUpdateScr(vs, start_row, nlines)
-register VirtScr	*vs;
+xvUpdateScr(start_row, nlines)
 int			start_row;
 int			nlines;
 {
     register int	row;		/* current row */
     int			end_row;	/* row after last one to be updated */
+    register VirtScr	*vs = curwin->w_vs;
 
     if (!(echo & e_CHARUPDATE)) {
 	return;
@@ -208,13 +208,13 @@ register int	col;
  * otherwise clear it. The line is an index into the VirtScr.
  */
 void
-xvMarkDirty(vs, row)
-VirtScr	*vs;
+xvMarkDirty(row)
 int	row;
 {
     Sline	*rp;
     Sline	*np;
     int		used;
+    VirtScr	*vs = curwin->w_vs;
 
     rp = vs->pv_ext_lines + row;
     np = vs->pv_int_lines + row;
@@ -243,19 +243,20 @@ int	row;
  * The line is a VirtScr index.
  */
 void
-xvClearLine(vs, line)
-VirtScr		*vs;
+xvClearLine(line)
 unsigned	line;
 {
+    VirtScr		*vs = curwin->w_vs;
+
     vs->pv_ext_lines[line].s_used = 0;
     vs->pv_ext_lines[line].s_line[0] = '\0';
-    xvMarkDirty(vs, (int) line);
+    xvMarkDirty((int) line);
 }
 
 void
-xvClear(vs)
-VirtScr	*vs;
+xvClear()
 {
+    VirtScr		*vs = curwin->w_vs;
     register unsigned	row;
     register unsigned	nrows;
 
@@ -268,6 +269,6 @@ VirtScr	*vs;
      * Clear the real screen lines, and mark them as modified.
      */
     for (row = 0; row < nrows; row++) {
-	xvClearLine(vs, row);
+	xvClearLine(row);
     }
 }

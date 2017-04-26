@@ -1226,10 +1226,10 @@ extern	void	undoline P((void));
 /*
  * update.c
  */
-extern	void	xvUpdateScr P((VirtScr *, int, int));
-extern	void	xvMarkDirty P((VirtScr *, int));
-extern	void	xvClearLine P((VirtScr *, unsigned));
-extern	void	xvClear P((VirtScr *));
+extern	void	xvUpdateScr P((int, int));
+extern	void	xvMarkDirty P((int));
+extern	void	xvClearLine P((unsigned));
+extern	void	xvClear P(());
 
 /*
  * virtscr.c

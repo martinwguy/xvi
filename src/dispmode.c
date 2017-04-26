@@ -88,7 +88,7 @@ int	ch;
 	return(TRUE);
     }
 
-    xvClear(vs);
+    xvClear();
 
     for (col = 0; col < disp_maxcol; col += disp_colwidth) {
 	for (row = 0; row < VSrows(vs) - 1; row++) {
