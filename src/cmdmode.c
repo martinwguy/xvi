@@ -22,15 +22,43 @@
 #include "xvi.h"
 
 /*
- * Size of command buffer - we won't allow anything more
- * to be typed when we get to this limit.
+ * This is the increment for resizing the commandline.
+ * If they have an 80-column screen and never overflow it,
+ * they'll never need more.
  */
-#define	CMDSZ	132
+#define	CMDSZCHUNK	80
 
-static	char		inbuf[CMDSZ];		/* command input buffer */
-static	unsigned int	inpos = 0;		/* posn to put next input char */
-static	unsigned int	inend = 0;		/* one past the last char */
-static	unsigned char	colposn[CMDSZ];		/* holds n chars per char */
+static	int		cmdsz = 0;	/* size of buffers */
+static	char		*inbuf = NULL;	/* command input buffer */
+static	unsigned int	inpos = 0;	/* posn to put next input char */
+static	unsigned int	inend = 0;	/* one past the last char */
+static	unsigned int 	*colposn = NULL;/* holds n chars per char */
+
+static bool_t
+cmd_buf_alloc()
+{
+    int new_cmdsz;
+    char *new_inbuf;
+    unsigned int *new_colposn;
+
+    new_cmdsz = (cmdsz == 0) ? CMDSZCHUNK : cmdsz + CMDSZCHUNK;
+
+    if ((new_inbuf = re_alloc(inbuf, new_cmdsz)) == NULL) {
+	show_error("Failed to allocate command line inbuf");
+	return FALSE;
+    }
+    if ((new_colposn = re_alloc(colposn, new_cmdsz * sizeof(int))) == NULL) {
+	free(new_inbuf);
+	show_error("Failed to allocate command line colposn");
+	return FALSE;
+    }
+
+    cmdsz = new_cmdsz;
+    inbuf = new_inbuf;
+    colposn = new_colposn;
+
+    return TRUE;
+}
 
 /*
  * cmd_init(firstch)
@@ -46,11 +74,17 @@ int	firstch;
 	return;
     }
 
+    inend = 0;
+
+    if (!cmd_buf_alloc())
+	return;
+
     State = CMDLINE;
 
     flexclear(&curwin->w_statusline);
     (void) flexaddch(&curwin->w_statusline, firstch);
     inbuf[0] = firstch;
+    inbuf[1] = '\0';
     colposn[0] = 0;
     inpos = 1; inend = 1;
     colposn[1] = 1;
@@ -111,6 +145,8 @@ int	ch;
 {
     unsigned		len;
     char *		stat; /* Pointer to status line text */
+    unsigned		curposn;
+    unsigned		w;
 
     if (kbdintr) {
 	kbdintr = FALSE;
@@ -126,6 +162,19 @@ int	ch;
     if (ch == CTRL('@')) {
 	beep();
 	return(cmd_INCOMPLETE);
+    }
+
+    if ((inend >= (cmdsz - CMDSZCHUNK/2)) && !cmd_buf_alloc()) {
+	/* Memory allocation failure. Free up what we can, and reset
+	* things to a semi sane state. Maybe the user will be able
+	* to save the file buffers...
+	*/
+	free(inbuf);
+	free(colposn);
+	cmdsz = 0; inpos = 0; inend = 0;
+	inbuf[inend] = '\0';
+	State = NORMAL;
+	return cmd_CANCEL;
     }
 
     if (!literal_next) {
@@ -145,7 +194,7 @@ int	ch;
 	    inbuf[inend] = '\0';	/* terminate input line */
 	    inpos = 0; inend = 0;
 	    State = NORMAL;		/* return state to normal */
-	    update_sline();	/* line is now a message line */
+	    //update_sline();	/* line is now a message line */
 	    return(cmd_COMPLETE);	/* and indicate we are done */
 
 	case '\b':		/* backspace or delete */
@@ -178,14 +227,12 @@ int	ch;
 	      len = colposn[oldinpos] - colposn[inpos];
 	      /* Delete the characters from the command line buffer */
 	      memmove(inbuf+inpos, inbuf+oldinpos, inend-oldinpos);
-	      memmove(colposn+inpos, colposn+oldinpos, inend-oldinpos+1);
+	      memmove(colposn+inpos, colposn+oldinpos,
+		      (inend-oldinpos+1) * sizeof(int));
 	      inend -= (oldinpos - inpos);
 	      /* Update the screen columns */
 	      for (i=inpos; i <= inend; i++) colposn[i] -= len;
-	      /* Move the end of the status line down to fill the gap */
-              stat = &curwin->w_statusline.fxb_chars[curwin->w_statusline.fxb_rcnt];
-	      memmove(stat+colposn[inpos], stat+colposn[inpos]+len,
-		      colposn[inend]-colposn[inpos]);
+	      flexrm(&curwin->w_statusline, colposn[inpos], len); //martin
 	    }
 	    if (inpos == 0) {
 		/*
@@ -195,9 +242,7 @@ int	ch;
 		State = NORMAL;
 		return(cmd_CANCEL);
 	    }
-	    len = colposn[inend];
-	    while (flexlen(&curwin->w_statusline) > len)
-		flexrmchar(&curwin->w_statusline);
+	    inbuf[inend] = '\0';
 	    update_cline(colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
@@ -238,8 +283,6 @@ int	ch;
 		 */
 		inend = inpos = to_expand - inbuf - 1;
 		len = colposn[inpos - 1] + 1;
-		while (flexlen(&curwin->w_statusline) > len)
-		    flexrmchar(&curwin->w_statusline);
 		if (common_prefix(expansion) > 1)
 		    beep();
 		stuff(" %s", expansion);
@@ -253,17 +296,16 @@ int	ch;
 	case EOF:
 	case CTRL('U'):		/* line kill */
 	    inpos = 1; inend = 1;
-	    flexclear(&curwin->w_statusline);
-	    (void) flexaddch(&curwin->w_statusline, inbuf[0]);
+	    inbuf[inend] = '\0';
 	    update_cline(colposn[inpos]);
 	    return(cmd_INCOMPLETE);
 
 	case_kbdintr_ch:	/* a label! */
 	case ESC:
 	    inpos = 0; inend = 0;
-	    flexclear(&curwin->w_statusline);
-	    update_cline(colposn[inpos]);
+	    inbuf[inend] = '\0';
 	    State = NORMAL;
+	    update_cline(colposn[inpos]);
 	    return(cmd_CANCEL);
 
 	/* Simple line editing */
@@ -296,7 +338,8 @@ int	ch;
 
 	/*
 	 * Function key F1 isn't used to give help on the cmdline
-	 * so map it to "#1".
+	 * so map it to "#1". This means that if they have a "Help" key
+	 * it will insert "#1" if pressed on the command line.
 	 */
 	case K_HELP:
 	    stuff_to_map("#1");
@@ -321,14 +364,14 @@ int	ch;
 	 * Insert a literal character
 	 */
 	register int i;
-	register unsigned char *cp;
+	register unsigned int *cp;
 
 	/*
 	 * Get rid of the ^ that we inserted, which is the char before inpos.
 	 */
 	inpos--; inend--;
 	memmove(inbuf+inpos, inbuf+inpos+1, inend-inpos);
-#if 0
+#if 1
 	memmove(colposn+inpos, colposn+inpos+1, (inend-inpos)+1);
 	for (i=inpos; i <= inend; i++) colposn[i]--;
 #else
@@ -338,11 +381,9 @@ int	ch;
 	}
 #endif
 	/* Move the rest of the status line down */
-	stat = &curwin->w_statusline.fxb_chars[curwin->w_statusline.fxb_rcnt];
-	memmove(stat+colposn[inpos], stat+colposn[inpos]+1,
-		colposn[inend]-colposn[inpos]);
+	flexrm(&curwin->w_statusline, colposn[inpos], 1);
 	/* and remove its last character */
-	flexrmchar(&curwin->w_statusline);
+		//flexrmchar(&curwin->w_statusline);
 
 	literal_next = FALSE;
     }
@@ -351,48 +392,48 @@ int	ch;
      * Insert the character.
      */
     {
-	unsigned	endposn;
-	unsigned	w;
-	char		*p;
+	char	*p;
+	int	i;
 
-	endposn = colposn[inend];
 	w = vischar(ch, &p, -1);
-	if (inend >= sizeof(inbuf) - 1
-	    || endposn + w > curwin->w_ncols - 1) {
-	    beep();
-	} else {
-	    int i;
-	    memmove(inbuf+inpos+1, inbuf+inpos, inend-inpos);
-	    memmove(colposn+inpos+1, colposn+inpos, inend-inpos+1);
-	    for (i=inpos+1; i <= inend+1; i++) colposn[i] += w;
-	    inend++; inbuf[inpos++] = ch;
-	    colposn[inpos] = colposn[inpos-1] + w;
 
-	    (void) lformat(&curwin->w_statusline, "%s", p);
-	    /* That appended the representation of the char to the
-	     * status line, extending the flexbuf, but we were supposed
-	     * to insert the new char, not append it, so move the rest
-	     * of the status line up, then deposit the new char(s) in
-	     * the hole that this leaves.
-	     */
-            stat = &curwin->w_statusline.fxb_chars[curwin->w_statusline.fxb_rcnt];
-            memmove(stat+colposn[inpos],
-		    stat+colposn[inpos-1],
-		    colposn[inend-1]-colposn[inpos-1]+1);
-	    memcpy(stat+colposn[inpos-1],p,w);
-
+	if (inend >= cmdsz && !cmd_buf_alloc()) {
 	    /*
-	     * If we just displayed the ^ for a literal next character,
-	     * the cursor should be shown on the ^.
+	     * Memory allocation failure. Free up what we can and reset
+	     * things to a semi sane state. Maybe the user will be able
+	     * to save the file buffers...
 	     */
-	    update_cline(colposn[inpos] - literal_next);
+	    free(inbuf);
+	    free(colposn);
+	    cmdsz = 0; inpos = 0; inend = 0;
+	    inbuf[inend] = '\0';
+	    State = NORMAL;
+	    return cmd_CANCEL;
 	}
+
+	curposn = colposn[inpos];
+
+	flexinsstr(&curwin->w_statusline, curposn, p);
+
+	for (i=inpos+1; i <= inend+1; i++) {
+	    colposn[i] += w;
+	}
+
+	inend++; inbuf[inpos++] = ch;
+	inbuf[inend] = '\0';
+	colposn[inpos] = colposn[inpos-1] + w;
+
+	/*
+	 * Show the status line with the cursor after the last char or,
+	 * if we just displayed the ^ for a literal next character,
+	 * the cursor should be shown on the ^.
+	 */
+	update_cline(colposn[inpos] - literal_next);
     }
 
     return(cmd_INCOMPLETE);
 }
 
-/*ARGSUSED*/
 char *
 get_cmd()
 {

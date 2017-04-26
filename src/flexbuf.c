@@ -26,15 +26,11 @@
 #define FLEXEXTRA	64
 
 /*
- * Append a single character to a Flexbuf. Return FALSE if we've run
- * out of space.
- *
- * Note that the f->fxb_chars array is not necessarily null-terminated.
+ * Initialize an empty Flexbuf. Return FALSE if we've run out of space.
  */
 bool_t
-flexaddch(f, ch)
+flexinit(f)
 register Flexbuf	*f;
-int	ch;
 {
     if (flexempty(f))
 	f->fxb_rcnt = f->fxb_wcnt = 0;
@@ -56,7 +52,90 @@ int	ch;
 	    }
 	}
     }
+    return TRUE;
+}
+
+/*
+ * Append a single character to a Flexbuf. Return FALSE if we've run
+ * out of space.
+ *
+ * Note that the f->fxb_chars array is not necessarily null-terminated.
+ */
+bool_t
+flexaddch(f, ch)
+register Flexbuf	*f;
+int	ch;
+{
+    flexinit(f);
     f->fxb_chars[f->fxb_wcnt++] = ch;
+    return TRUE;
+}
+
+bool_t
+flexrm(f, pos, len)
+register Flexbuf	*f;
+int	pos;
+int	len;
+{
+    unsigned start;
+
+    start = f->fxb_rcnt+pos;
+    if (flexempty(f) || (len >= flexlen(f)) || (start+len > f->fxb_wcnt))
+	return FALSE;
+    memmove(f->fxb_chars+start, f->fxb_chars+start+len, f->fxb_wcnt - (start+len));
+    f->fxb_wcnt -= len;
+    return TRUE;
+}
+
+bool_t
+flexinsch(f, pos, ch)
+register Flexbuf	*f;
+int	pos;
+int	ch;
+{
+    unsigned start;
+
+    flexinit(f);
+    if (flexempty(f) || (pos >= flexlen(f)))
+	return(flexaddch(f, ch));
+    start = f->fxb_rcnt+pos;
+    memmove(f->fxb_chars+start+1, f->fxb_chars+start, flexlen(f)-pos);
+    f->fxb_chars[start] = ch;
+    f->fxb_wcnt++;
+    return TRUE;
+}
+
+bool_t
+flexinsstr(f, pos, str)
+register Flexbuf	*f;
+int	pos;
+char	*str;
+{
+    unsigned start;
+    size_t len, remain;
+
+    flexinit(f);
+    start = f->fxb_rcnt+pos;
+    len = strlen(str);
+    remain = f->fxb_max - f->fxb_wcnt;
+    if (start > f->fxb_wcnt) {
+	start = f->fxb_wcnt;
+    }
+    if (remain < len) {
+	unsigned newsize = f->fxb_wcnt + (((remain/FLEXEXTRA)+1) * FLEXEXTRA);
+
+	if ((f->fxb_chars = re_alloc(f->fxb_chars, newsize)) == NULL) {
+	    f->fxb_wcnt = f->fxb_max = 0;
+	    return FALSE;
+	} else {
+	    f->fxb_max = newsize;
+	}
+    }
+    if (start < f->fxb_wcnt) {
+        memmove(f->fxb_chars+start+len, f->fxb_chars+start, flexlen(f)-pos);
+    }
+    memcpy(f->fxb_chars+start, str, len);
+    f->fxb_wcnt += len;
     return TRUE;
 }
 
