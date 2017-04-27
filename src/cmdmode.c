@@ -88,7 +88,7 @@ int	firstch;
     colposn[0] = 0;
     inpos = 1; inend = 1;
     colposn[1] = 1;
-    update_cline(colposn[1]);
+    update_cline();
 }
 
 /*
@@ -243,7 +243,7 @@ int	ch;
 		return(cmd_CANCEL);
 	    }
 	    inbuf[inend] = '\0';
-	    update_cline(colposn[inpos]);
+	    update_cline();
 	    return(cmd_INCOMPLETE);
 
 	case '\t':
@@ -297,7 +297,7 @@ int	ch;
 	case CTRL('U'):		/* line kill */
 	    inpos = 1; inend = 1;
 	    inbuf[inend] = '\0';
-	    update_cline(colposn[inpos]);
+	    update_cline();
 	    return(cmd_INCOMPLETE);
 
 	case_kbdintr_ch:	/* a label! */
@@ -305,7 +305,7 @@ int	ch;
 	    inpos = 0; inend = 0;
 	    inbuf[inend] = '\0';
 	    State = NORMAL;
-	    update_cline(colposn[inpos]);
+	    update_cline();
 	    return(cmd_CANCEL);
 
 	/* Simple line editing */
@@ -313,7 +313,7 @@ int	ch;
 	case K_LARROW:
 	    if (inpos > 1) {
 		--inpos;
-	        update_cline(colposn[inpos]);
+	        update_cline();
 	    }
 	    else beep();
 	    return(cmd_INCOMPLETE);
@@ -321,19 +321,19 @@ int	ch;
 	case K_RARROW:
 	    if (inpos < inend) {
 		++inpos;
-	        update_cline(colposn[inpos]);
+	        update_cline();
 	    }
 	    else beep();
 	    return(cmd_INCOMPLETE);
 
 	case K_HOME:
 	    inpos = 1;
-	    update_cline(colposn[inpos]);
+	    update_cline();
 	    return(cmd_INCOMPLETE);
 
 	case K_END:
 	    inpos = inend;
-	    update_cline(colposn[inpos]);
+	    update_cline();
 	    return(cmd_INCOMPLETE);
 
 	/*
@@ -428,7 +428,8 @@ int	ch;
 	 * if we just displayed the ^ for a literal next character,
 	 * the cursor should be shown on the ^.
 	 */
-	update_cline(colposn[inpos] - literal_next);
+	//update_cline();
+	update_cline();
     }
 
     return(cmd_INCOMPLETE);
@@ -438,4 +439,11 @@ char *
 get_cmd()
 {
     return(inbuf);
+}
+
+/* Which screen column should the cursor be displayed in? */
+int
+get_pos()
+{
+    return(colposn[inpos] - literal_next);
 }

@@ -332,15 +332,20 @@ do_sline()
     xvMarkDirty((int) win->w_cmdline);
 }
 
+/*
+ * update_cline()
+ *
+ * Update the status line from the command line buffer.
+ */
 void
-update_cline(pos)
-int pos;	/* Position of cursor within line */
+update_cline()
 {
     Xviwin	*win = curwin;
     Sline	*clp;
     size_t	cont, width, maxwidth;
     int		colindex, start, col;
     char *cbuf = flexgetstr(&curwin->w_statusline);
+    int		pos = get_pos();	/* Position of cursor within line */
 
     clp = win->w_vs->pv_int_lines + win->w_cmdline;
     cont = 0;

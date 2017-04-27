@@ -913,6 +913,7 @@ extern	void	cmd_init P((int));
 extern	Cmd_State
 		cmd_input P((int));
 extern	char	*get_cmd P((void));
+extern	int	get_pos P((void));
 
 /*
  * vi_cmds.c
@@ -1154,7 +1155,7 @@ extern	bool_t	eq P((Posn *, Posn *));
  */
 extern	void	updateline P((bool_t));
 extern	void	update_sline P((void));
-extern	void	update_cline P((int));
+extern	void	update_cline P((void));
 extern	void	redraw_window P((bool_t));
 extern	void	redraw_all P((bool_t));
 extern	void	s_ins P((int, int));
