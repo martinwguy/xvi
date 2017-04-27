@@ -1,0 +1,23 @@
+When xvi runs out of memory, you can't save the buffer
+
+When xvi runs out of RAM (like in issue #130) you can't write the file.
+To ":w foo" it says "Cannot open preserve file /tmp/#foo.tmp", also if you force the write ``:w! foo"
+
+If you bypass the preserve file when forcing:
+
+--- a/src/fileio.c
++++ b/src/fileio.c
+@@ -612,7 +612,9 @@ bool_t     force;
+     /*
+      * Preserve the buffer here so if the write fails it will at
+-     * least have been saved.
++     * least have been saved.  The exception when forcing is to
++     * improve the chances of being able to save the buffer
++     * when xvi has run out of memory.
+      */
+-    if (need_preserve && !preservebuf(window)) {
++    if (!force && need_preserve && !preservebuf(window)) {
+        return(FALSE);
+     }
+
+It says "Can't write foo" instead because the fopen() fails for lack of RAM.

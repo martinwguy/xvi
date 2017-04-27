@@ -1,0 +1,797 @@
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+ The Open Group Shell and Utilities Verification Suite Test-Set Summary Report
+ _____________________________________________________________________________
+
+                              VSC Release 5.3.12
+                              __________________
+
+	Test Engineer:				Signature:
+
+	Job Title:				Date:
+
+	Organisation:
+
+	Address:
+
+	Client Name:				Signature:
+
+	Job Title:				Date:
+
+	Organisation:
+
+	Address:
+
+	Test Date:		Apr 24, 2017 19:09:37
+
+	Test System:		sdf
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 1 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                                Report Contents
+                                _______________
+
+	1. Operational Summary
+
+	2. Conformance Summary
+
+	3. Inspect Results Signatures
+
+	4. POSIX User Portability Utilities Section Report
+
+	5. Test Parameters
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 2 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                              Operational Summary
+                              ___________________
+
+	Test Date:    		Apr 24, 2017 19:09:37
+
+	Test Agency:  		ef
+
+	Test Engineer:		
+
+	Report Date:  		Thu Apr 27 10:45:12 CDT 2017
+
+	Report Level: 		Test-Set
+
+	Report Range: 		all
+
+	Journal File: 		/home/martin/vsc/results/0004e/journal
+
+	System Configuration
+
+		Hardware Description:
+
+		Software Description and Release:
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 3 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+CONFORMANCE Summary
+
+	This is to certify that this system when tested for conformance
+	to POSIX.1-2008 achieved the results below.
+
+BASE subset:
+            |    TOTALS     Succeed         Fatal       Inspect               |
+Section     |Expect Actual            Fail    Unresolved        Unsupp        |
+____________|_________________________________________________________________|
+            |                                                                 |
+POSIX.upe   |     0     54       37     10      0      0      0      0        |
+TOTAL       |     0     54       37     10      0      0      0      0        |
+____________|_________________________________________________________________|
+
+            |    TOTALS    Noresult      NotInUse    Unapproved               |
+Section     |Expect Actual        Untested       NotImpl    Uninitiated       |
+____________|_________________________________________________________________|
+            |                                                                 |
+POSIX.upe   |     0     54        0      6      0      1      0      0        |
+TOTAL       |     0     54        0      6      0      1      0      0        |
+____________|_________________________________________________________________|
+
+	I declare that no changes have been made to the test suite code
+	or test suite data other than those detailed in the user and
+	installation guide.
+
+	Signature/Date _________________________________
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 4 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                          Inspect Results Signatures
+                          __________________________
+
+	No Inspect results obtained.
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 5 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	
+	Test-Set Name: /tset/POSIX.upe/vi/vi_04.ex
+	------------------------------------------
+	
+	Test-Set Results:
+	----------------
+	
+	Test-Set Started: 19:09:37
+	
+	Test Results:
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 201	Failed
+
+	
+		Test Information:
+	Assertion #201 (C): d command uses numeric buffers
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:12:02 2017
+	--- vi_exp_1	Mon Apr 24 19:11:25 2017
+	***************
+	*** 1,11 ****
+	- aaaaaaaaaa
+	- dddddddddd
+	  bbbbbbbbbb
+	  ccccc
+	  eeeee
+	  bbbbbbbbbb
+	  ccccc
+	  iiiiiiiiii
+	  fffffffffffffff
+	! gggggggggg
+	! hhhhhhhhhh
+	--- 1,16 ----
+	  bbbbbbbbbb
+	  ccccc
+	+ dddddddddd
+	  eeeee
+	+ fffffffffffffff
+	+ aaaaaaaaaa
+	+ gggggggggg
+	+ hhhhhhhhhh
+	  bbbbbbbbbb
+	  ccccc
+	  iiiiiiiiii
+	+ dddddddddd
+	+ eeeee
+	  fffffffffffffff
+	! bbbbbbbbbb
+	! ccccc
+	Standard output isn't the same as file 'vi_exp_2'
+	diff of "out.stdout" and "vi_exp_2":
+	*** out.stdout	Mon Apr 24 19:13:44 2017
+	--- vi_exp_2	Mon Apr 24 19:12:02 2017
+	***************
+	*** 1,34 ****
+	  aaaaaaaaaa
+	! 88888888
+	  X
+	  bbbbbbbbbb
+	! 77777777
+	  X
+	  ccccc
+	! 66666666
+	  X
+	  dddddddddd
+	! 55555555
+	  X
+	  eeeeeeeeee
+	! 44444444
+	  X
+	  ffffffffff
+	! 33333333
+	  X
+	  gggggggggg
+	! 22222222
+	  X
+	  hhhhhhhhhh
+	! 11111111
+	  X
+	  iiiiiiiiii
+	  jjjjjjjjjj
+	  kkkkkkkkkk
+	  vvvvvvvvvv
+	  wwwwwwwwww
+	- 11111111
+	- X
+	  22222222
+	  X
+	  33333333
+	--- 1,34 ----
+	  aaaaaaaaaa
+	! 99999999
+	  X
+	  bbbbbbbbbb
+	! 88888888
+	  X
+	  ccccc
+	! 77777777
+	  X
+	  dddddddddd
+	! 66666666
+	  X
+	  eeeeeeeeee
+	! 55555555
+	  X
+	  ffffffffff
+	! 44444444
+	  X
+	  gggggggggg
+	! 33333333
+	  X
+	  hhhhhhhhhh
+	! 22222222
+	  X
+	  iiiiiiiiii
+	+ 11111111
+	+ X
+	  jjjjjjjjjj
+	  kkkkkkkkkk
+	  vvvvvvvvvv
+	  wwwwwwwwww
+	  22222222
+	  X
+	  33333333
+	***************
+	*** 45,47 ****
+	--- 45,49 ----
+	  X
+	  99999999
+	  X
+	+ yyyyyyyyyy
+	+ zzzzzzzzzz
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 203	Failed
+
+	
+		Test Information:
+	Assertion #203 (C):  double-quote X d command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:15:23 2017
+	--- vi_exp_1	Mon Apr 24 19:14:33 2017
+	***************
+	*** 1,8 ****
+	  bye
+	  penult
+	  last
+	- cond
+	- t
+	  penult
+	  last
+	  sehird
+	--- 1,6 ----
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 204	Failed
+
+	
+		Test Information:
+	Assertion #204 (C):  double-quote c count d and count double-quote c d
+		command
+	Expected exit code = 0; Received 1
+	Standard output isn't empty
+	Contents of out.stdout:
+	2c2
+	< se
+	---
+	> seline
+	4c4
+	< lcond lineast
+	---
+	> lcond ast
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 207	Failed
+
+	
+		Test Information:
+	Assertion #207 (C):  double-quote X D command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:18:08 2017
+	--- vi_exp_1	Mon Apr 24 19:17:29 2017
+	***************
+	*** 2,9 ****
+	  se
+	  irdh
+	  fo
+	  cond line here
+	! cond line here
+	! urthurthfifth
+	! penult
+	  lcond line hereast
+	--- 2,8 ----
+	  se
+	  irdh
+	  fo
+	+ urthfifth
+	  cond line here
+	! urthpenult
+	  lcond line hereast
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 208	Not Implemented
+
+	
+		Test Information:
+	Assertion #208 (C):  buffer count D and count buffer D
+	TEST NOT WRITTEN - incorrect assertion
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 212	Untested
+
+	
+		Test Information:
+	Assertion #212 (C): count e command over blank lines
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 213	Untested
+
+	
+		Test Information:
+	Assertion #213 (C): count E command at end of bigword
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 216	Untested
+
+	
+		Test Information:
+	Assertion #216 (C): count E command over blank lines
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 223	Untested
+
+	
+		Test Information:
+	Assertion #223 (C): H command
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 231	Failed
+
+	
+		Test Information:
+	Assertion #231 (C): J command on line ending .
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:31:32 2017
+	--- vi_exp_1	Mon Apr 24 19:31:05 2017
+	***************
+	*** 1,2 ****
+	! first line.1 Second one
+	  last line
+	--- 1,2 ----
+	! first line.1  Second one
+	  last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 234	Failed
+
+	
+		Test Information:
+	Assertion #234 (C): count J command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:32:58 2017
+	--- vi_exp_1	Mon Apr 24 19:32:26 2017
+	***************
+	*** 1,4 ****
+	  first line1 second one
+	  three
+	! four 2five. six)seven
+	  last line
+	--- 1,4 ----
+	  first line1 second one
+	  three
+	! four 2five.  six)seven
+	  last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 235	Failed
+
+	
+		Test Information:
+	Assertion #235 (C): 1J command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:33:40 2017
+	--- vi_exp_1	Mon Apr 24 19:32:58 2017
+	***************
+	*** 1,4 ****
+	  first line1 second one
+	  three 2four
+	! five.3 six
+	  seven4)last line
+	--- 1,4 ----
+	  first line1 second one
+	  three 2four
+	! five.3  six
+	  seven4)last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 236	Untested
+
+	
+		Test Information:
+	Assertion #236 (C): L command
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 239	Untested
+
+	
+		Test Information:
+	Assertion #239 (D): M in command mode
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 247	Failed
+
+	
+		Test Information:
+	Assertion #247 (C): p command on parts of lines
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:40:39 2017
+	--- vi_exp_1	Mon Apr 24 19:40:00 2017
+	***************
+	*** 1,4 ****
+	! fc1onirst
+	  second line
+	  third or penult line
+	  ll2ine
+	--- 1,4 ----
+	! fcon1irst
+	  second line
+	  third or penult line
+	  ll2ine
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 250	Failed
+
+	
+		Test Information:
+	Assertion #250 (C): P command on parts of lines
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:42:37 2017
+	--- vi_exp_1	Mon Apr 24 19:41:58 2017
+	***************
+	*** 1,4 ****
+	! c1onfirst
+	  second line
+	  third or penult line
+	  l2ine
+	--- 1,4 ----
+	! con1first
+	  second line
+	  third or penult line
+	  l2ine
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_04.ex 252	Failed
+
+	
+		Test Information:
+	Assertion #252 (C): Q command 
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:44:04 2017
+	--- vi_exp_1	Mon Apr 24 19:43:08 2017
+	***************
+	*** 1,3 ****
+	--- 1,5 ----
+	+ data
+	  first
+	     second line
+	+    penultimate line
+	  last one
+	
+	***********************************************************************
+
+	
+	Test-Set Ended:   19:44:04
+	
+	Test-Set Results Summary:
+	------------------------
+	
+	   54  Tests Executed
+	   37  Tests Succeeded
+	   10  Tests Failed
+	    1  Tests Not Implemented
+	    6  Tests Untested
+		
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 6 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	
+	Section Name: POSIX.upe
+	-----------------------
+	
+	Section Started: 19:09:37
+	
+	Test Set       Failed   Inspect  Unapprvd    Uninit  Untested    Unrept
+	        Executed  Warnings Unimplt'd Unreslved Unsupported NotInUse
+	TOTAL         54   10    0    0    1    0    0    0    0    6    0    0
+	
+	Section Ended:   19:44:04
+	
+	Failed            Unresolved        Uninitiated       Unsupported
+	
+	vi_04 201                                                             
+	vi_04 203                                                             
+	vi_04 204                                                             
+	vi_04 207                                                             
+	vi_04 231                                                             
+	vi_04 234                                                             
+	vi_04 235                                                             
+	vi_04 247                                                             
+	vi_04 250                                                             
+	vi_04 252                                                             
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 7 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	Journal Summary
+	----------------
+	
+	Test Started: 19:09:37
+	
+	Test Ended:   19:44:11
+	
+	Journal Results Summary:
+	-----------------------
+	
+		1	Sections Containing   1  Test-Sets Completed
+	
+		   54  Tests Executed
+		   37  Tests Succeeded
+		   10  Tests Failed
+		    1  Tests Not Implemented
+		    6  Tests Untested
+	
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 8 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+Test Parameters:
+
+	TET_OUTPUT_CAPTURE   =	False
+	TET_EXEC_TOOL        =	sh
+	TET_DONT_REPORT_MISSING_ICS =	True
+	PCTS_NAME_MAX        =	2048
+	PCTS_PATH_MAX        =	4096
+	PCTS_LINK_MAX        =	256
+	VSC_WINK             =	2
+	VSC_NAP              =	10
+	VSC_SNOOZE           =	30
+	VSC_EXPECT_SUPPORT   =	TRUE
+	VSC_ESC              =	033
+	VSC_END_OF_FILE      =	004
+	VSC_BS               =	010
+	VSC_KILL             =	025
+	VSC_NL               =	012
+	VSC_LNEXT            =	026
+	VSC_STOP             =	032
+	VSC_REDRAW           =	014
+	VSC_INTR             =	003
+	VSC_CTLW             =	027
+	VSC_CTLP             =	020
+	VSC_LARGEFILE_OPTS   =	
+	VSC_PAX_BIG_FILE_SUPPORT =	TRUE
+	VSC_POSIX_VERSION    =	200809
+	VSC_XOPEN_VERSION    =	0
+	VSC_CC               =	c99
+	VSC_OPER             =	Martin
+	VSC_ORG              =	ef
+	VSC_ADDR1            =	sdf
+	VSC_ADDR2            =	
+	VSC_ADDR3            =	
+	VSC_ADDR4            =	
+	VSC_ADDR5            =	
+	VSC_SYS              =	sdf
+	VSC_TESTER           =	martin
+	VSC_TESTER_UID       =	10086
+	VSC_GRP_NAME_1       =	wheel
+	VSC_GRP_NAME_2       =	turds
+	VSC_NON_MEMBER_GRP   =	wheel
+	VSC_NON_MEMBER_GID   =	121
+	VSC_NAMELESS_UID     =	123
+	VSC_NAMELESS_GID     =	123
+	VSC_GRP_ID_1         =	121
+	VSC_GRP_ID_2         =	123
+	POSIX1_SUPPORT       =	TRUE
+	VSC_XPG_SW_DEV       =	
+	VSC_ILP32_OFF32_SUPPORT =	undefined
+	VSC_ILP32_OFFBIG_SUPPORT =	undefined
+	VSC_LP64_OFF64_SUPPORT =	TRUE
+	VSC_LPBIG_OFFBIG_SUPPORT =	undefined
+	VSC_DEFAULT_C89_PROG_ENV =	LP64_OFF64
+	VSC_XOPEN_RT         =	undefined
+	VSC_XOPEN_RTT        =	undefined
+	VSC_XPG_LEGACY       =	undefined
+	VSC_DATE_CAN_SET     =	undefined
+	VSC_LOCALEDEF_OUTPUT_FTYPE =	undefined
+	VSC_LOCALE_NAME      =	undefined
+	VSC_CHARMAP_FILE     =	undefined
+	VSC_LOCALEDEF_FILE   =	undefined
+	VSC_TRAP_NUMERIC_SIGS =	undefined
+	VSC_IPC_KEY          =	undefined
+	VSC_OTHER_UID        =	141
+	VSC_OTHER_GID        =	143
+	VSC_UID0             =	141
+	VSC_UID1             =	141
+	VSC_UID2             =	141
+	VSC_GID0             =	143
+	VSC_GID1             =	153
+	VSC_GID2             =	124
+	VSC_OTHER_USER_NAME  =	root
+	VSC_OTHER_USER_UID   =	0
+	VSC_ASA_1            =	\f
+	VSC_ASA_P            =	\b
+	VSC_DOT_O_FILE       =	/home/martin/vsc/Lib/Data/POSIX/tcm.o
+	VSC_EXE_FILE         =	/home/martin/vsc/Lib/Data/POSIX/tcc
+	VSC_FORT77_DLD       =	/bin
+	VSC_TALKNAME         =	root
+	VSC_PS_SUPPORT       =	TRUE
+	VSC_PRINTF_FLOAT_SUPPORT =	undefined
+	VSC_AWK_ATOF         =	undefined
+	VSC_AWK_NUMBER_HEX   =	undefined
+	VSC_TERMIOS_SUPPORT  =	TRUE
+	VSC_BYTE_SIZE        =	8
+	VSC_FLT_RADIX_POWER_OF_2 =	TRUE
+	VSC_NAN_NCHARSEQ     =	undefined
+	VSC_LPDEST           =	lpr
+	VSC_LPNODEST         =	lpe
+	VSC_LPSTAT           =	
+	VSC_CANCEL           =	
+	VSC_UULOG            =	undefined
+	VSC_UUNAME           =	undefined
+	VSC_UUPICK           =	undefined
+	VSC_UUTO             =	undefined
+	VSC_LP_MFLAG_SUPPORT =	TRUE
+	VSC_LP_OFLAG_SUPPORT =	TRUE
+	VSC_LP_TFLAG_SUPPORT =	TRUE
+	VSC_LP_WFLAG_SUPPORT =	TRUE
+	VSC_UUX_JFLAG_SUPPORT =	unsupported
+	VSC_UUSTAT_QFLAG_SUPPORT =	unsupported
+	VSC_UUSTAT_RFLAG_SUPPORT =	unsupported
+	VSC_MAIL_USER        =	martin
+	VSC_MAIL_FILE        =	martin
+	VSC_CHRDEV           =	YES
+	VSC_BLKDEV           =	YES
+	VSC_TEST_SUITE_FS    =	undefined
+	VSC_TEST_SUITE_MOUNT_POINT =	undefined
+	VSC_OTHER_FS         =	undefined
+	VSC_RO_FS            =	undefined
+	VSC_LFS_MAX_FILE_SIZE =	2000000000
+	VSC_LFS_FS           =	undefined
+	VSC_CHR_DEV_FILE     =	undefined
+	VSC_BLK_DEV_FILE     =	undefined
+	VSC_STREAM_DEV       =	undefined
+	VSC_SXAF             =	Y
+	VSC_MV_X_FS          =	TRUE
+	VSC_LN_X_FS          =	undefined
+	VSC_LINK_DIR_SUPPORT =	undefined
+	VSC_WPERM_TO_MV_DIR  =	undefined
+	VSC_NO_MV_FILE_IN_USE =	undefined
+	VSC_IDS_ON_SYMLINKS  =	TRUE
+	VSC_NO_SYMLINKS_DIR  =	undefined
+	VSC_LINK_MAX         =	1024
+	VSC_DU_SZ            =	4096
+	VSC_ICONV_FROM       =	UTF-8
+	VSC_ICONV_TO         =	UTF-8
+	VSC_ICONV_FROMFILE   =	/home/martin/vsc/Lib/Data/POSIX/charmap
+	VSC_AT_ALLOWDENY_DIR =	/usr/lib/cron
+	VSC_CRON_ALLOWDENY_DIR =	/usr/lib/cron
+	_L_PUBDIR            =	
+	_L_SYS               =	
+	_R_PUBDIR            =	
+	_R_SYS               =	
+	_R_SYS2              =	
+	M_SPOOL_FILE         =	
+	VSC_UUCP_CFLAG_SUPPORT =	
+	VSC_UUCP_FFLAG_SUPPORT =	
+	VSC_UUCP_JFLAG_SUPPORT =	
+	VSC_UUCP_NFLAG_SUPPORT =	
+	VSC_UUCP_RFLAG_SUPPORT =	
+	VSC_UUCP_NOSUCH_SYS  =	
+	VSC_UUCP_XFER_DELAY  =	
+	VSC_SPACE            =	SPACE
+	TET_API_COMPLIANT    =	True
+	TET_PASS_TC_NAME     =	False
+	TET_VERSION          =	3.8-lite
+
+Report Command Line:	vrpt -L6000 journal
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 9 of 9
+

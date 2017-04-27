@@ -1,0 +1,28 @@
+:@ and :* with a line range only execute the named buffer on the last line
+
+They should execute the commands in the named buffer for each line in the range.
+
+Repeat-by:
+Put "s/a/b/" in buffer "a, create some lines with a's in them then :1,$@a
+should change the first a on each line; instead it only changes the last line.
+Similarly, 2,4@a ony changes line 4.
+
+POSIX says:
+
+"If no buffer is specified or is specified as '@' or '*', the last
+buffer executed shall be used. If no previous buffer has been executed,
+it shall be an error.
+
+For each line specified by the addresses, set the current line ( '.' )
+to the specified line, and execute the contents of the named buffer (as
+they were at the time the @ command was executed) as ex commands. For each
+line of a line-mode buffer, and all but the last line of a character-mode
+buffer, the ex command parser shall behave as if the line was terminated
+by a newline.
+
+If an error occurs during this process, or a line specified by the
+addresses does not exist when the current line would be set to it, or
+more than a single line was specified by the addresses, and the contents
+of the edit buffer are replaced (for example, by the ex :edit command)
+an error message shall be written, and no more commands resulting from
+the execution of this command shall be processed."

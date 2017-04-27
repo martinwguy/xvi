@@ -1,0 +1,10 @@
+UTF-8 characters are not supported
+
+You can type an e-grave character but it displays as \303\250.
+
+On Jan 29 3016, http://github.com/ullman wrote:
+This works in DOS builds, è input is displayed as è.
+In linux the behaviour is like the one above.
+This is a display issue as saving a file displaying characters incorrectly
+writes the correct bits and the characters will display correctly in other
+editors.

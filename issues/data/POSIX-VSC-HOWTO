@@ -1,0 +1,185 @@
+#! /bin/sh
+
+#
+# How to  install/run the OpenGroup VSC POSIX Unix Utilities test suite
+# and run the "vi" test suite against xvi.
+#
+# Long story short:
+# - It needs fixing in several places to be compilable.
+# - Configuring it requires answering dozens of bizarre questions but for vi
+#   you can get away with giving it random answers to most of them.
+# - It doesn't work on Linux, refusing to run most of the vi tests because
+#   "getconf POSIX2_UPE" returns "undefined" on Linux systems.
+# - It only tests the contents of saved files, not the correctness of the
+#   screen image.
+# 
+# 	Martin Guy <martinwguy@gmail.com>, 27 April 2017.
+# 
+
+echo "This isn't a shell script. It just looks like one." 1>&2
+exit 1
+
+#
+# TET3 installation
+#
+
+wget http://tetworks.opengroup.org/downloads/38/software/Sources/3.8/tet3.8-src.tar.gz
+wget http://tetworks.opengroup.org/downloads/38/software/Sources/3.8/tet3.8A-src.tar.Z
+gunzip < tet3.8-src.tar.gz | tar xf -
+mv tet3.8/* .
+rmdir tet3.8
+rm -f src/tet3/dtet2lib/putenv.c
+rm -f src/tet3/dtet2lib/shared.mk
+uncompress < tet3.8A-src.tar.Z | tar xf -
+
+# The installation guide for TET is at
+# http://tetworks.opengroup.org/documents/3.8/iguide_unix.pdf
+(
+    echo ''
+    echo 'TET_ROOT=$HOME'
+    echo 'export TET_ROOT'
+) >> ~/.profile
+. ~/.profile
+
+# TET's "configure" script fails on AIX7.2, saying
+# "configure: Unable to determine the OS type", so...
+cd src
+
+# The script tries to use "c89" as the compiler. Use the right one.
+sed 's/c89$/gcc/' < defines/aix43.mk > defines.mk
+echo lite | sh tetconfig
+
+# TET has a local function "getline()" whose name conflicts with a system
+# function of the same name in AIX's stdio (but don't rename ungetline())
+sed 's/\([^n]\)getline/\1my_getline/' < tet3/tcc/scen1.c > x && mv -f x tet3/tcc/scen1.c
+
+make install
+cd ..
+
+#
+# VSC installation.
+#
+
+# You need a copy of VSC5312-PCTS.tar.Z frpm OpenGroup.
+# See http://www.opengroup.org/testing/testsuites/vscpcts2003.htm
+
+uncompress < VSC5312-PCTS.tar.Z | tar xf -
+cd vsc
+
+# I don't have root on the target system and we don't need it so jolly it along.
+rm -f privscript
+echo "exit 0" > privscript
+
+{ echo gcc; yes '' } | sh buildconf
+
+# Compilation of the tcl8.4 included in TET dies saying:
+#	ld: 0711-317 ERROR: Undefined symbol: .__moddi3
+#	ld: 0711-317 ERROR: Undefined symbol: .__divdi3
+# and the latest tcl, tcl8.6, doesn't work either, saying
+#	ld: -l tcl8.6 not found
+# so get the most recent version of tcl8.4
+
+cd
+wget ftp://ftp.tcl.tk/pub/tcl/tcl8_4/tcl8.4.20-src.tar.gz
+# This hung on AIX at the PASV... step, so I had to fetch it in a browser
+# locally and then upload it with scp.
+
+# Unpack the new tcl
+cd vsc/Src/Interact
+mv tcl tcl.dist
+gunzip < ~/tcl8.4.20-src.tar.gz | tar xf -
+ln -s tcl8.4.20 tcl
+cd ../..
+
+# The included of "expect" doesn't compile, saying
+#	vsc/Src/Interact/tcl/generic/tclPort.h:22:28: fatal error:
+#	tclUnixPort.h: No such file or directory
+# so add the right include directory.
+echo "TCL_CDEFS = -I$HOME/vsc/Src/Interact/tcl/unix" >> defines.mk
+
+make
+
+# Set VSC's environment variables
+echo ". $TET_ROOT/vsc/SOURCE_ME" >> $HOME/.profile
+. $HOME/.profile
+
+#
+# Configure VSC.
+# Dozens of weird questions, most of which it would do better to interrogate
+# the system itself to get the right answers.
+# I just gave rubbish answers to most of the questions as they don't
+# affect the vi tests. You may need to create a text file (say "charmap")
+# for it containing:
+#	ABCDEFGHIJKLMNOPQRSTUVWXYZ
+#	abcdefghijklmnopqrstuvwxyz
+#	0123456789.,
+#
+
+cd $HOME/vsc
+sh configure
+
+# Build the testsuite
+tcc -bp
+
+# On Linux, every test "fails" saying "POSIX2_UPE is not supported".
+# This turns out to be because every test is preceded by checking
+# "getconf POSIX2_UPE", which is not defined on all Linux systems I've tried.
+# Short-circuit this test:
+cat > Bin/getconf << \EOF
+#! /bin/sh
+
+# Dummy getconf() that makes tests run by defining POSIX2_UPE
+
+if [ $# -eq 1 -a "$1" = POSIX2_UPE ]; then
+    echo 200809
+    exit 0
+else
+    exec /usr/bin/getconf "$@"
+fi
+EOF
+chmod 755 bin/getconf
+
+# On Linux, most tests fail because the testsuite itself spits onto stderr:
+# "expect: error while loading shared libraries: libexpect5.45.so: cannot
+#          open shared object file: No such file or directory"
+# so tell it where to get its own library. Tell it where to go.
+export LD_LIBRARY_PATH=$PWD/Src/Interact/expect-5.45
+
+# Run the vi tests against the system vi
+cd $HOME/vsc
+tcc -epl /tset/POSIX.upe/vi/vi_01.ex
+tcc -epl /tset/POSIX.upe/vi/vi_02.ex
+tcc -epl /tset/POSIX.upe/vi/vi_03.ex
+tcc -epl /tset/POSIX.upe/vi/vi_04.ex
+tcc -epl /tset/POSIX.upe/vi/vi_05.ex
+tcc -epl /tset/POSIX.upe/vi/vi_06.ex
+mv results results-system-vi
+
+
+# Install xvi as "vi"
+cd
+git clone git:/github.com/martinwguy/xvi
+cd xvi/src
+make -f makefile.aix CC=gcc
+cp -p src/xvi $HOME/vsc/Bin/vi
+
+# Run the vi tests against xvi
+tcc -epl /tset/POSIX.upe/vi/vi_01.ex
+tcc -epl /tset/POSIX.upe/vi/vi_02.ex
+tcc -epl /tset/POSIX.upe/vi/vi_03.ex
+tcc -epl /tset/POSIX.upe/vi/vi_04.ex
+tcc -epl /tset/POSIX.upe/vi/vi_05.ex
+tcc -epl /tset/POSIX.upe/vi/vi_06.ex
+
+# The first test group, vi_01, completes against the system vi but sends xvi
+# into an infinite loop and doesn't time it out and kill it.
+# You have to kill the vi process (-SEGV will do!) for the test to continue.
+
+# Make report files
+#
+# The reports are formatted for printed pages, including page breaks with
+# headers and footers. Remove them by setting the page length to 6000
+# (100 pages) and put the output through "uniq" to remove multiple blank lines.
+
+cd results
+for a in *; do vrpt -L 6000 $a/journal | uniq > POSIX-VSC-ubuntu-$a; done

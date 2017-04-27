@@ -1,0 +1,38 @@
+xvi should run EXINIT and .exrc unless overridden
+
+xvi is now so complete an implementation that sharing .exrc files with
+other vi's is perfectly feasible. We should still check XVINIT and run
+only that if it is set, and if not run EXINIT and .exrc files.
+
+POSIX says:
+
+"If the environment variable EXINIT is set, the editor shall execute the ex commands contained in that variable.
+
+If the EXINIT variable is not set, and all of the following are true:
+  a. The HOME environment variable is not null and not empty.
+  b. The file .exrc in the directory referred to by the HOME environment
+     variable:
+      i. Exists
+     ii. Is owned by the same user ID as the real user ID of the process
+	 or the process has appropriate privileges
+    iii. Is not writable by anyone other than the owner
+the editor shall execute the ex commands contained in that file.
+
+If and only if all of the following are true:
+  a. The current directory is not referred to by the HOME environment variable.
+  b. A command in the EXINIT environment variable or a command in the .exrc file
+     in the directory referred to by the HOME environment variable sets the
+     editor option exrc.
+  c. The .exrc file in the current directory:
+      i. Exists
+     ii. Is owned by the same user ID as the real user ID of the process,
+	  or by one of a set of implementation-defined user IDs
+    iii. Is not writable by anyone other than the owner
+the editor shall attempt to execute the ex commands contained in that file.
+
+Lines in any .exrc file that are blank lines shall be ignored.
+If any .exrc file exists, but is not read for ownership or permission reasons,
+it shall be an error.
+
+After the EXINIT variable and any .exrc files are processed, the first file
+specified by the user shall be edited."

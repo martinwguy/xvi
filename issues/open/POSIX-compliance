@@ -1,0 +1,52 @@
+Compare xvi against POSIX spec
+
+It would be good to try xvi against each paragraph of the POSIX specs for ex
+and vi and create an issue for each deviance from it.
+
+The VSC POSIX Compilance Test Suite 2016-2.12 has a set of tests for vi
+in test group POSIX.upe/vi but it only pumps commands into vi, the last
+of which is to write a file whose contents it examines.
+Many tests that it would like to run are skipped, e.g.
+        Assertion #4 (D): vi updates screen to reflect file contents
+        TEST NOT WRITTEN - untestable
+but with our screen-scraping test mechanism it should now be possible
+to implement them.
+
+The VSC POSIX Compliance Test software can be obtained by signing a
+personal license, but it's hard to make it run. If you want to get it
+and try, see my notes in data/POSIX-VSC-HOWTO
+
+Summary of results:
+
+On AIX 7.2 for IBM POWER8 CPU:
+
+            |    TOTALS     Succeed               Untested      NotImpl
+Section     |Expect Actual          Fail  Unresolved     NotInUse
+____________|________________________________________________________
+            |
+vi_01       |     0     79     27     15      0     32      1      4
+vi_02       |     0     60     16     22      0     22      0      0
+vi_03       |     0     59     37     14      0      8      0      0
+vi_04       |     0     54     37     10      0      6      0      1
+vi_05       |     0     61     29     18      0     12      1      1
+vi_06       |     0     12      0      6      0      4      0      2
+____________|________________________________________________________
+
+On Ubuntu Xenial amd64:
+
+            |    TOTALS     Succeed               Untested       NotImpl
+Section     |Expect Actual          Fail  Unresolved      NotInUse
+____________|________________________________________________________
+            |
+vi_01       |     0     79     27     14       1     32      1      4
+vi_02       |     0     60     17     21       0     22      0      0
+vi_03       |     0     59     37     14       0      8      0      0
+vi_04       |     0     54     37     10       0      6      0      1
+vi_05       |     0     61     29     18       0     12      1      1
+vi_06       |     0     12      0      6       0      4      0      2
+____________|________________________________________________________
+
+For the full reports, see data/POSIX-VSC-* which need checking
+test by test.
+
+Ideally, we would implement their unimplemented tests using our test harness.

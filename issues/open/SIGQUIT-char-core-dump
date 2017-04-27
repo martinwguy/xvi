@@ -1,0 +1,8 @@
+On Unix. Control-\ makes xvi dump core immediately
+
+even if you insert ^V^\
+
+POSIX says nothing about SIGQUIT but it should probably work like SIGINT,
+i.e. we should catch it to be able to insert it with ^V.
+
+Dying immediately is a bit harsh (if sometime useful!)

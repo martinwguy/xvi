@@ -1,0 +1,1020 @@
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+ The Open Group Shell and Utilities Verification Suite Test-Set Summary Report
+ _____________________________________________________________________________
+
+                              VSC Release 5.3.12
+                              __________________
+
+	Test Engineer:				Signature:
+
+	Job Title:				Date:
+
+	Organisation:
+
+	Address:
+
+	Client Name:				Signature:
+
+	Job Title:				Date:
+
+	Organisation:
+
+	Address:
+
+	Test Date:		Apr 24, 2017 19:09:35
+
+	Test System:		sdf
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 1 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                                Report Contents
+                                _______________
+
+	1. Operational Summary
+
+	2. Conformance Summary
+
+	3. Inspect Results Signatures
+
+	4. POSIX User Portability Utilities Section Report
+
+	5. Test Parameters
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 2 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                              Operational Summary
+                              ___________________
+
+	Test Date:    		Apr 24, 2017 19:09:35
+
+	Test Agency:  		ef
+
+	Test Engineer:		
+
+	Report Date:  		Thu Apr 27 10:45:12 CDT 2017
+
+	Report Level: 		Test-Set
+
+	Report Range: 		all
+
+	Journal File: 		/home/martin/vsc/results/0003e/journal
+
+	System Configuration
+
+		Hardware Description:
+
+		Software Description and Release:
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 3 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+CONFORMANCE Summary
+
+	This is to certify that this system when tested for conformance
+	to POSIX.1-2008 achieved the results below.
+
+BASE subset:
+            |    TOTALS     Succeed         Fatal       Inspect               |
+Section     |Expect Actual            Fail    Unresolved        Unsupp        |
+____________|_________________________________________________________________|
+            |                                                                 |
+POSIX.upe   |     0     59       37     14      0      0      0      0        |
+TOTAL       |     0     59       37     14      0      0      0      0        |
+____________|_________________________________________________________________|
+
+            |    TOTALS    Noresult      NotInUse    Unapproved               |
+Section     |Expect Actual        Untested       NotImpl    Uninitiated       |
+____________|_________________________________________________________________|
+            |                                                                 |
+POSIX.upe   |     0     59        0      8      0      0      0      0        |
+TOTAL       |     0     59        0      8      0      0      0      0        |
+____________|_________________________________________________________________|
+
+	I declare that no changes have been made to the test suite code
+	or test suite data other than those detailed in the user and
+	installation guide.
+
+	Signature/Date _________________________________
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 4 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                          Inspect Results Signatures
+                          __________________________
+
+	No Inspect results obtained.
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 5 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	
+	Test-Set Name: /tset/POSIX.upe/vi/vi_03.ex
+	------------------------------------------
+	
+	Test-Set Results:
+	----------------
+	
+	Test-Set Started: 19:09:35
+	
+	Test Results:
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 142	Failed
+
+	
+		Test Information:
+	Assertion #142 (C): /text/+n command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:12:17 2017
+	--- vi_exp_1	Mon Apr 24 19:11:43 2017
+	***************
+	*** 1,9 ****
+	! 21Here is a file
+	  with some text
+	   in it.
+	! Some is repeated
+	  text line
+	  after text line
+	   after line.
+	! penult
+	  last line
+	--- 1,9 ----
+	! Here is a file
+	  with some text
+	   in it.
+	! 1Some is repeated
+	  text line
+	  after text line
+	   after line.
+	! 2penult
+	  last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 143	Failed
+
+	
+		Test Information:
+	Assertion #143 (C): /text/-n command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:12:52 2017
+	--- vi_exp_1	Mon Apr 24 19:12:17 2017
+	***************
+	*** 1,5 ****
+	! 1Here is a file
+	! with some text
+	  2 in it.
+	  Some is repeated
+	  text line
+	--- 1,5 ----
+	! Here is a file
+	! 1with some text
+	  2 in it.
+	  Some is repeated
+	  text line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 146	Untested
+
+	
+		Test Information:
+	Assertion #146 (D): : and command are displayed at the bottom line
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 147	Failed
+
+	
+		Test Information:
+	Assertion #147 (C): :ex commands terminated by newline or ESC
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:14:48 2017
+	--- vi_exp_1	Mon Apr 24 19:14:04 2017
+	***************
+	*** 0 ****
+	--- 1,5 ----
+	+ here is my file
+	+ of text
+	+     to use
+	+     some text
+	+ in tests
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 149	Untested
+
+	
+		Test Information:
+	Assertion #149 (D): When screen is scrolled by : command
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 150	Untested
+
+	
+		Test Information:
+	Assertion #150 (D): When shell is invoked by : command
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 163	Failed
+
+	
+		Test Information:
+	Assertion #163 (C): ?text?+n command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:25:33 2017
+	--- vi_exp_1	Mon Apr 24 19:25:00 2017
+	***************
+	*** 4,9 ****
+	  Some is repeated
+	  text line
+	  after text line
+	!  after line.
+	! penult
+	! 21last line
+	--- 4,9 ----
+	  Some is repeated
+	  text line
+	  after text line
+	! 2 after line.
+	! 1penult
+	! last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 164	Failed
+
+	
+		Test Information:
+	Assertion #164 (C): ?text?-n command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:26:07 2017
+	--- vi_exp_1	Mon Apr 24 19:25:34 2017
+	***************
+	*** 1,9 ****
+	  Here is a file
+	! with some text
+	!  in it.
+	  Some is repeated
+	  text line
+	  after text line
+	   after line.
+	  penult
+	! 21last line
+	--- 1,9 ----
+	  Here is a file
+	! 1with some text
+	! 2 in it.
+	  Some is repeated
+	  text line
+	  after text line
+	   after line.
+	  penult
+	! last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 167	Failed
+
+	
+		Test Information:
+	Assertion #167 (C): @@ uses the last buffer used
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:27:55 2017
+	--- vi_exp_1	Mon Apr 24 19:27:20 2017
+	***************
+	*** 3,6 ****
+	  with lines
+	  interspersed with
+	  commands
+	! on other lines
+	--- 3,6 ----
+	  with lines
+	  interspersed with
+	  commands
+	! on  lines
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 168	Failed
+
+	
+		Test Information:
+	Assertion #168 (C): @ buffer will use @ commands
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:28:29 2017
+	--- vi_exp_1	Mon Apr 24 19:27:56 2017
+	***************
+	*** 1,8 ****
+	  text on linehere is a file
+	  de
+	! with lines
+	  interspersed with
+	  commands
+	! on other lines
+	  a line here
+	  last line
+	--- 1,8 ----
+	  text on linehere is a file
+	  de
+	!  lines
+	  interspersed with
+	  commands
+	! on  lines
+	  a line here
+	  last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 169	Untested
+
+	
+		Test Information:
+	Assertion #169 (D): @ behaviour following errors
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 181	Untested
+
+	
+		Test Information:
+	Assertion #181 (C): b command back a line
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 185	Untested
+
+	
+		Test Information:
+	Assertion #185 (C): B command back a line
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 188	Failed
+
+	
+		Test Information:
+	Assertion #188 (C): c command uses numeric buffers
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:40:58 2017
+	--- vi_exp_1	Mon Apr 24 19:40:08 2017
+	***************
+	*** 1,16 ****
+	- aaaaaaaaaa
+	- zzz
+	  bbbbbbbbbb
+	  ccccc
+	- dddddddddd
+	  eeeee
+	  fffffffffffffff
+	  ww
+	  xx
+	  yy
+	  zzzz
+	  ccccc
+	  iiiiiiiiii
+	  gggggggggg
+	- hhhhhhhhhh
+	  bbbbbbbbbb
+	--- 1,21 ----
+	  bbbbbbbbbb
+	  ccccc
+	  eeeee
+	  fffffffffffffff
+	+ gggggggggg
+	+ aaaaaaaaaa
+	+ zzz
+	+ dddddddddd
+	  ww
+	  xx
+	  yy
+	  zzzz
+	+ hhhhhhhhhh
+	+ bbbbbbbbbb
+	  ccccc
+	  iiiiiiiiii
+	+ eeeee
+	+ fffffffffffffff
+	  gggggggggg
+	  bbbbbbbbbb
+	+ ccccc
+	Standard output isn't the same as file 'vi_exp_2'
+	diff of "out.stdout" and "vi_exp_2":
+	*** out.stdout	Mon Apr 24 19:43:31 2017
+	--- vi_exp_2	Mon Apr 24 19:40:58 2017
+	***************
+	*** 1,28 ****
+	  aaaaaaaaaa
+	! 88888888
+	  X
+	  bbbbbbbbbb
+	! 77777777
+	  X
+	  ccccc
+	! 66666666
+	  X
+	  dddddddddd
+	! 55555555
+	  X
+	  eeeeeeeeee
+	! 44444444
+	  X
+	  ffffffffff
+	! 33333333
+	  X
+	  gggggggggg
+	! 22222222
+	  X
+	  hhhhhhhhhh
+	! 11111111
+	  X
+	  iiiiiiiiii
+	  jjjjjjjjjj
+	  kkkkkkkkkk
+	  a9a
+	--- 1,30 ----
+	  aaaaaaaaaa
+	! 99999999
+	  X
+	  bbbbbbbbbb
+	! 88888888
+	  X
+	  ccccc
+	! 77777777
+	  X
+	  dddddddddd
+	! 66666666
+	  X
+	  eeeeeeeeee
+	! 55555555
+	  X
+	  ffffffffff
+	! 44444444
+	  X
+	  gggggggggg
+	! 33333333
+	  X
+	  hhhhhhhhhh
+	! 22222222
+	  X
+	  iiiiiiiiii
+	+ 11111111
+	+ X
+	  jjjjjjjjjj
+	  kkkkkkkkkk
+	  a9a
+	***************
+	*** 37,44 ****
+	  vvvvvvvvvv
+	  wwwwwwwwww
+	  end
+	- 11111111
+	- X
+	  22222222
+	  X
+	  33333333
+	--- 39,44 ----
+	***************
+	*** 55,57 ****
+	--- 55,59 ----
+	  X
+	  99999999
+	  X
+	+ yyyyyyyyyy
+	+ zzzzzzzzzz
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 190	Failed
+
+	
+		Test Information:
+	Assertion #190 (C):  double-quote X c command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:45:32 2017
+	--- vi_exp_1	Mon Apr 24 19:44:36 2017
+	***************
+	*** 1,6 ****
+	! fc
+	! urthc
+	! urth line I line Iirst
+	  sehiond
+	  cthirdc
+	  fobye think
+	--- 1,5 ----
+	! furth line Iirstc
+	! urth line I
+	  sehiond
+	  cthirdc
+	  fobye think
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 191	Failed
+
+	
+		Test Information:
+	Assertion #191 (C):  double-quote x count c and count double-quote x c
+		command
+	Expected exit code = 0; Received 1
+	Standard output isn't empty
+	Contents of out.stdout:
+	2c2
+	< set line
+	---
+	> setond line
+	4c4
+	< lcondast
+	---
+	> lcast
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 192	Untested
+
+	
+		Test Information:
+	Assertion #192 (D): [count] c displays $ at last character to be
+		altered
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 193	Failed
+
+	
+		Test Information:
+	Assertion #193 (C): count C command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:47:26 2017
+	--- vi_exp_1	Mon Apr 24 19:46:40 2017
+	***************
+	*** 4,9 ****
+	  of
+	  some
+	  sorted
+	- possibly
+	- another
+	  sort
+	--- 4,7 ----
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 194	Failed
+
+	
+		Test Information:
+	Assertion #194 (C): C command uses numeric buffers
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:48:29 2017
+	--- vi_exp_1	Mon Apr 24 19:47:27 2017
+	***************
+	*** 1,13 ****
+	  qQq
+	! zzmmmm
+	  nnnn
+	! ccww
+	  xx
+	  yy
+	  zzzz
+	! dddddddddd
+	! eeeeeee
+	  fffffffffffffff
+	  gggggggggg
+	! hhhhhhhhhh
+	! baaaaaaaaaabbbbbbbbbbbbbbbbbbbiiiiiiiiiicccccc
+	--- 1,19 ----
+	  qQq
+	! dddmmmm
+	  nnnn
+	! eeww
+	  xx
+	  yy
+	  zzzz
+	! hhhhhhhhhh
+	! bbbbbbbbbb
+	! ccccc
+	! iiiiiiiiii
+	! aaaaaaaaaa
+	! zzzeeeee
+	  fffffffffffffff
+	+ ggggggggggeeeee
+	+ fffffffffffffff
+	  gggggggggg
+	! aaaaaaaaaa
+	! zzz
+	Standard output isn't the same as file 'vi_exp_2'
+	diff of "out.stdout" and "vi_exp_2":
+	*** out.stdout	Mon Apr 24 19:50:11 2017
+	--- vi_exp_2	Mon Apr 24 19:48:30 2017
+	***************
+	*** 7,13 ****
+	--- 7,24 ----
+	  gggg
+	  hhhh
+	  iiii
+	+ 000
+	+ 111
+	+ 222
+	+ 333
+	+ 444
+	  555
+	+ 555
+	  666
+	  777
+	***************
+	*** 16,20 ****
+	  888
+	  999
+	- 000
+	- 044444433333322222211111100
+	--- 27,29 ----
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 195	Failed
+
+	
+		Test Information:
+	Assertion #195 (C):  double-quote x C command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:51:05 2017
+	--- vi_exp_1	Mon Apr 24 19:50:11 2017
+	***************
+	*** 2,10 ****
+	  sehello
+	  condthirdcond
+	  foubye
+	! halfnd a nother
+	! quarter 
+	  fiyo
+	- penult
+	  
+	! lfth and astfth and 
+	--- 2,11 ----
+	  sehello
+	  condthirdcond
+	  foubye
+	! half
+	! quarter nd a nother
+	  fiyo
+	  
+	! lfth and 
+	! penultastfth and 
+	! penult
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 196	Failed
+
+	
+		Test Information:
+	Assertion #196 (C):  double-quote X C command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:51:47 2017
+	--- vi_exp_1	Mon Apr 24 19:51:05 2017
+	***************
+	*** 2,9 ****
+	  sehello
+	  third
+	  foubye
+	- fifth and penult
+	  
+	- cond
+	- rthlastcond
+	  rth
+	--- 2,9 ----
+	  sehello
+	  third
+	  foubye
+	  
+	  rth
+	+ fifth and penultlastcond
+	+ rth
+	+ fifth and penult
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_03.ex 198	Untested
+
+	
+		Test Information:
+	Assertion #198 (D): [count] C displays $ at last character to be
+		altered
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	Test-Set Ended:   19:52:54
+	
+	Test-Set Results Summary:
+	------------------------
+	
+	   59  Tests Executed
+	   37  Tests Succeeded
+	   14  Tests Failed
+	    8  Tests Untested
+		
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 6 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	
+	Section Name: POSIX.upe
+	-----------------------
+	
+	Section Started: 19:09:35
+	
+	Test Set       Failed   Inspect  Unapprvd    Uninit  Untested    Unrept
+	        Executed  Warnings Unimplt'd Unreslved Unsupported NotInUse
+	TOTAL         59   14    0    0    0    0    0    0    0    8    0    0
+	
+	Section Ended:   19:52:54
+	
+	Failed            Unresolved        Uninitiated       Unsupported
+	
+	vi_03 142                                                             
+	vi_03 143                                                             
+	vi_03 147                                                             
+	vi_03 163                                                             
+	vi_03 164                                                             
+	vi_03 167                                                             
+	vi_03 168                                                             
+	vi_03 188                                                             
+	vi_03 190                                                             
+	vi_03 191                                                             
+	vi_03 193                                                             
+	vi_03 194                                                             
+	vi_03 195                                                             
+	vi_03 196                                                             
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 7 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	Journal Summary
+	----------------
+	
+	Test Started: 19:09:35
+	
+	Test Ended:   19:52:59
+	
+	Journal Results Summary:
+	-----------------------
+	
+		1	Sections Containing   1  Test-Sets Completed
+	
+		   59  Tests Executed
+		   37  Tests Succeeded
+		   14  Tests Failed
+		    8  Tests Untested
+	
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 8 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+Test Parameters:
+
+	TET_OUTPUT_CAPTURE   =	False
+	TET_EXEC_TOOL        =	sh
+	TET_DONT_REPORT_MISSING_ICS =	True
+	PCTS_NAME_MAX        =	2048
+	PCTS_PATH_MAX        =	4096
+	PCTS_LINK_MAX        =	256
+	VSC_WINK             =	2
+	VSC_NAP              =	10
+	VSC_SNOOZE           =	30
+	VSC_EXPECT_SUPPORT   =	TRUE
+	VSC_ESC              =	033
+	VSC_END_OF_FILE      =	004
+	VSC_BS               =	010
+	VSC_KILL             =	025
+	VSC_NL               =	012
+	VSC_LNEXT            =	026
+	VSC_STOP             =	032
+	VSC_REDRAW           =	014
+	VSC_INTR             =	003
+	VSC_CTLW             =	027
+	VSC_CTLP             =	020
+	VSC_LARGEFILE_OPTS   =	
+	VSC_PAX_BIG_FILE_SUPPORT =	TRUE
+	VSC_POSIX_VERSION    =	200809
+	VSC_XOPEN_VERSION    =	0
+	VSC_CC               =	c99
+	VSC_OPER             =	Martin
+	VSC_ORG              =	ef
+	VSC_ADDR1            =	sdf
+	VSC_ADDR2            =	
+	VSC_ADDR3            =	
+	VSC_ADDR4            =	
+	VSC_ADDR5            =	
+	VSC_SYS              =	sdf
+	VSC_TESTER           =	martin
+	VSC_TESTER_UID       =	10086
+	VSC_GRP_NAME_1       =	wheel
+	VSC_GRP_NAME_2       =	turds
+	VSC_NON_MEMBER_GRP   =	wheel
+	VSC_NON_MEMBER_GID   =	121
+	VSC_NAMELESS_UID     =	123
+	VSC_NAMELESS_GID     =	123
+	VSC_GRP_ID_1         =	121
+	VSC_GRP_ID_2         =	123
+	POSIX1_SUPPORT       =	TRUE
+	VSC_XPG_SW_DEV       =	
+	VSC_ILP32_OFF32_SUPPORT =	undefined
+	VSC_ILP32_OFFBIG_SUPPORT =	undefined
+	VSC_LP64_OFF64_SUPPORT =	TRUE
+	VSC_LPBIG_OFFBIG_SUPPORT =	undefined
+	VSC_DEFAULT_C89_PROG_ENV =	LP64_OFF64
+	VSC_XOPEN_RT         =	undefined
+	VSC_XOPEN_RTT        =	undefined
+	VSC_XPG_LEGACY       =	undefined
+	VSC_DATE_CAN_SET     =	undefined
+	VSC_LOCALEDEF_OUTPUT_FTYPE =	undefined
+	VSC_LOCALE_NAME      =	undefined
+	VSC_CHARMAP_FILE     =	undefined
+	VSC_LOCALEDEF_FILE   =	undefined
+	VSC_TRAP_NUMERIC_SIGS =	undefined
+	VSC_IPC_KEY          =	undefined
+	VSC_OTHER_UID        =	141
+	VSC_OTHER_GID        =	143
+	VSC_UID0             =	141
+	VSC_UID1             =	141
+	VSC_UID2             =	141
+	VSC_GID0             =	143
+	VSC_GID1             =	153
+	VSC_GID2             =	124
+	VSC_OTHER_USER_NAME  =	root
+	VSC_OTHER_USER_UID   =	0
+	VSC_ASA_1            =	\f
+	VSC_ASA_P            =	\b
+	VSC_DOT_O_FILE       =	/home/martin/vsc/Lib/Data/POSIX/tcm.o
+	VSC_EXE_FILE         =	/home/martin/vsc/Lib/Data/POSIX/tcc
+	VSC_FORT77_DLD       =	/bin
+	VSC_TALKNAME         =	root
+	VSC_PS_SUPPORT       =	TRUE
+	VSC_PRINTF_FLOAT_SUPPORT =	undefined
+	VSC_AWK_ATOF         =	undefined
+	VSC_AWK_NUMBER_HEX   =	undefined
+	VSC_TERMIOS_SUPPORT  =	TRUE
+	VSC_BYTE_SIZE        =	8
+	VSC_FLT_RADIX_POWER_OF_2 =	TRUE
+	VSC_NAN_NCHARSEQ     =	undefined
+	VSC_LPDEST           =	lpr
+	VSC_LPNODEST         =	lpe
+	VSC_LPSTAT           =	
+	VSC_CANCEL           =	
+	VSC_UULOG            =	undefined
+	VSC_UUNAME           =	undefined
+	VSC_UUPICK           =	undefined
+	VSC_UUTO             =	undefined
+	VSC_LP_MFLAG_SUPPORT =	TRUE
+	VSC_LP_OFLAG_SUPPORT =	TRUE
+	VSC_LP_TFLAG_SUPPORT =	TRUE
+	VSC_LP_WFLAG_SUPPORT =	TRUE
+	VSC_UUX_JFLAG_SUPPORT =	unsupported
+	VSC_UUSTAT_QFLAG_SUPPORT =	unsupported
+	VSC_UUSTAT_RFLAG_SUPPORT =	unsupported
+	VSC_MAIL_USER        =	martin
+	VSC_MAIL_FILE        =	martin
+	VSC_CHRDEV           =	YES
+	VSC_BLKDEV           =	YES
+	VSC_TEST_SUITE_FS    =	undefined
+	VSC_TEST_SUITE_MOUNT_POINT =	undefined
+	VSC_OTHER_FS         =	undefined
+	VSC_RO_FS            =	undefined
+	VSC_LFS_MAX_FILE_SIZE =	2000000000
+	VSC_LFS_FS           =	undefined
+	VSC_CHR_DEV_FILE     =	undefined
+	VSC_BLK_DEV_FILE     =	undefined
+	VSC_STREAM_DEV       =	undefined
+	VSC_SXAF             =	Y
+	VSC_MV_X_FS          =	TRUE
+	VSC_LN_X_FS          =	undefined
+	VSC_LINK_DIR_SUPPORT =	undefined
+	VSC_WPERM_TO_MV_DIR  =	undefined
+	VSC_NO_MV_FILE_IN_USE =	undefined
+	VSC_IDS_ON_SYMLINKS  =	TRUE
+	VSC_NO_SYMLINKS_DIR  =	undefined
+	VSC_LINK_MAX         =	1024
+	VSC_DU_SZ            =	4096
+	VSC_ICONV_FROM       =	UTF-8
+	VSC_ICONV_TO         =	UTF-8
+	VSC_ICONV_FROMFILE   =	/home/martin/vsc/Lib/Data/POSIX/charmap
+	VSC_AT_ALLOWDENY_DIR =	/usr/lib/cron
+	VSC_CRON_ALLOWDENY_DIR =	/usr/lib/cron
+	_L_PUBDIR            =	
+	_L_SYS               =	
+	_R_PUBDIR            =	
+	_R_SYS               =	
+	_R_SYS2              =	
+	M_SPOOL_FILE         =	
+	VSC_UUCP_CFLAG_SUPPORT =	
+	VSC_UUCP_FFLAG_SUPPORT =	
+	VSC_UUCP_JFLAG_SUPPORT =	
+	VSC_UUCP_NFLAG_SUPPORT =	
+	VSC_UUCP_RFLAG_SUPPORT =	
+	VSC_UUCP_NOSUCH_SYS  =	
+	VSC_UUCP_XFER_DELAY  =	
+	VSC_SPACE            =	SPACE
+	TET_API_COMPLIANT    =	True
+	TET_PASS_TC_NAME     =	False
+	TET_VERSION          =	3.8-lite
+
+Report Command Line:	vrpt -L6000 journal
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 9 of 9
+

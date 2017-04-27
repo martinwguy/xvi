@@ -1,0 +1,13 @@
+In input mode, using the stty kill character should be the same as saying ^U
+
+POSIX says: "The current kill character (see stty) shall cause an
+equivalent action to the -U command, unless the previously inserted
+character was a , in which case it shall be as if the literal current
+kill character had been inserted instead of the ."
+
+On Linux, the kill character seems to be ^U by default. If you change it:
+
+stty kill ^X
+
+In classic vi, ^U then just inserts a ^U and ^X becomes the line-kill character.
+In nvi, both ^U and ^X become kill characters, both escapable with backslash.

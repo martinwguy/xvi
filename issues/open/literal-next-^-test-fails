@@ -1,0 +1,7 @@
+The test literal-next-^ fails on some systems
+
+:^V^V should display :^V on the command line.
+
+It does on Debian and Ubuntu Linux.
+
+On AIX and Fedora 18, it displays ^V^

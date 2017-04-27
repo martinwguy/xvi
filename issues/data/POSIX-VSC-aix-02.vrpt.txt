@@ -1,0 +1,1628 @@
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+ The Open Group Shell and Utilities Verification Suite Test-Set Summary Report
+ _____________________________________________________________________________
+
+                              VSC Release 5.3.12
+                              __________________
+
+	Test Engineer:				Signature:
+
+	Job Title:				Date:
+
+	Organisation:
+
+	Address:
+
+	Client Name:				Signature:
+
+	Job Title:				Date:
+
+	Organisation:
+
+	Address:
+
+	Test Date:		Apr 24, 2017 19:09:34
+
+	Test System:		sdf
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 1 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                                Report Contents
+                                _______________
+
+	1. Operational Summary
+
+	2. Conformance Summary
+
+	3. Inspect Results Signatures
+
+	4. POSIX User Portability Utilities Section Report
+
+	5. Test Parameters
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 2 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                              Operational Summary
+                              ___________________
+
+	Test Date:    		Apr 24, 2017 19:09:34
+
+	Test Agency:  		ef
+
+	Test Engineer:		
+
+	Report Date:  		Thu Apr 27 10:45:12 CDT 2017
+
+	Report Level: 		Test-Set
+
+	Report Range: 		all
+
+	Journal File: 		/home/martin/vsc/results/0002e/journal
+
+	System Configuration
+
+		Hardware Description:
+
+		Software Description and Release:
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 3 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+CONFORMANCE Summary
+
+	This is to certify that this system when tested for conformance
+	to POSIX.1-2008 achieved the results below.
+
+BASE subset:
+            |    TOTALS     Succeed         Fatal       Inspect               |
+Section     |Expect Actual            Fail    Unresolved        Unsupp        |
+____________|_________________________________________________________________|
+            |                                                                 |
+POSIX.upe   |     0     60       16     22      0      0      0      0        |
+TOTAL       |     0     60       16     22      0      0      0      0        |
+____________|_________________________________________________________________|
+
+            |    TOTALS    Noresult      NotInUse    Unapproved               |
+Section     |Expect Actual        Untested       NotImpl    Uninitiated       |
+____________|_________________________________________________________________|
+            |                                                                 |
+POSIX.upe   |     0     60        0     22      0      0      0      0        |
+TOTAL       |     0     60        0     22      0      0      0      0        |
+____________|_________________________________________________________________|
+
+	I declare that no changes have been made to the test suite code
+	or test suite data other than those detailed in the user and
+	installation guide.
+
+	Signature/Date _________________________________
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 4 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+                          Inspect Results Signatures
+                          __________________________
+
+	No Inspect results obtained.
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 5 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	
+	Test-Set Name: /tset/POSIX.upe/vi/vi_02.ex
+	------------------------------------------
+	
+	Test-Set Results:
+	----------------
+	
+	Test-Set Started: 19:09:34
+	
+	Test Results:
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 80	Untested
+
+	
+		Test Information:
+	Assertion #80 (D): control R redraws the screen
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 81	Untested
+
+	
+		Test Information:
+	Assertion #81 (D): control R redraws lines marked @
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 82	Untested
+
+	
+		Test Information:
+	Assertion #82 (C): control-T in insert mode
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 83	Untested
+
+	
+		Test Information:
+	Assertion #83 (C): count control-U
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 84	Untested
+
+	
+		Test Information:
+	Assertion #84 (C): control-U after count control-U/D
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 85	Untested
+
+	
+		Test Information:
+	Assertion #85 (C): first control-U issued
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 88	Untested
+
+	
+		Test Information:
+	Assertion #88 (D): after control-V/control-Q entered vi displays ^
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 89	Untested
+
+	
+		Test Information:
+	Assertion #89 (C): control-W
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 90	Untested
+
+	
+		Test Information:
+	Assertion #90 (D): control-W leaves characters visible
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 91	Untested
+
+	
+		Test Information:
+	Assertion #91 (C): count control-Y
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 92	Untested
+
+	
+		Test Information:
+	Assertion #92 (C): count control-Y will scroll current line
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 93	Failed
+
+	
+		Test Information:
+	Assertion #93 (C): count control-Y will display first line
+	Expected exit code = 0; Received 127
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:11:32 2017
+	--- vi_exp_1	Mon Apr 24 19:10:52 2017
+	***************
+	*** 1,4 ****
+	! 01:
+	  02:
+	  03:
+	  04:
+	--- 1,4 ----
+	! 101:
+	  02:
+	  03:
+	  04:
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 94	Failed
+
+	
+		Test Information:
+	Assertion #94 (C): <ESC> terminates line-oriented commands
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:12:16 2017
+	--- vi_exp_1	Mon Apr 24 19:11:32 2017
+	***************
+	*** 1,4 ****
+	! 21Here is a file
+	!  with a
+	! few lines
+	! in it
+	--- 1,3 ----
+	! newfile
+	! 2few 1lines
+	! within it
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 98	Untested
+
+	
+		Test Information:
+	Assertion #98 (D): <ESC> erases any text deleted in input mode
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 101	Untested
+
+	
+		Test Information:
+	Assertion #101 (D): after count ! motion vi prompts for command
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 102	Untested
+
+	
+		Test Information:
+	Assertion #102 (C): count ! motion command
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 104	Untested
+
+	
+		Test Information:
+	Assertion #104 (D): count ! motion issues warnings for unwritten
+		buffers
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 105	Failed
+
+	
+		Test Information:
+	Assertion #105 (C): !command substitutes pathname for %
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:17:18 2017
+	--- vi_exp_1	Mon Apr 24 19:16:42 2017
+	***************
+	*** 1,4 ****
+	! Here is a file
+	!  with a
+	  few lines
+	  in it
+	--- 1,3 ----
+	! vi_in_1
+	  few lines
+	  in it
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 106	Failed
+
+	
+		Test Information:
+	Assertion #106 (C): !command substitutes pathname for #
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:17:58 2017
+	--- vi_exp_1	Mon Apr 24 19:17:18 2017
+	***************
+	*** 1,4 ****
+	! Here is a file
+	!  with a
+	! few lines
+	  in it
+	--- 1,2 ----
+	! vi_alt_file
+	  in it
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 107	Failed
+
+	
+		Test Information:
+	Assertion #107 (C): !command substitutes previous command for !
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:18:39 2017
+	--- vi_exp_1	Mon Apr 24 19:17:59 2017
+	***************
+	*** 1,5 ****
+	! Here is a file
+	!  with a
+	! few lines
+	! of text
+	  in it
+	--- 1,3 ----
+	! vi_in_1
+	  in it
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 108	Untested
+
+	
+		Test Information:
+	Assertion #108 (D): ! command with no previous command
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 109	Failed
+
+	
+		Test Information:
+	Assertion #109 (C): !command does not substitute escaped characters
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:19:21 2017
+	--- vi_exp_1	Mon Apr 24 19:18:39 2017
+	***************
+	*** 1,9 ****
+	! Here is a file
+	!  with a
+	! quite a
+	! large number
+	! of lines
+	! in it
+	! before
+	  the end
+	   of the file
+	--- 1,5 ----
+	! command !
+	! old file #
+	! file %
+	  the end
+	   of the file
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 111	Failed
+
+	
+		Test Information:
+	Assertion #111 (C): % where no parentheses or curly braces after cursor
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:20:44 2017
+	--- vi_exp_1	Mon Apr 24 19:19:57 2017
+	***************
+	*** 1,5 ****
+	! Here is a file
+	! 1( Line here
+	! too 2) as well
+	! 3{section start
+	! after 4} start of 5last line
+	--- 1,5 ----
+	! Here is a 1file
+	! ( Line 2here
+	! too ) as 3well
+	! {sec4tion start
+	! after } start of 5last line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 114	Failed
+
+	
+		Test Information:
+	Assertion #114 (C):  & repeats substitution command
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:23:23 2017
+	--- vi_exp_1	Mon Apr 24 19:22:23 2017
+	***************
+	*** 1,12 ****
+	! =a file=
+	  Here is
+	!    a file
+	!    This is a file too.
+	       
+	! hi the odd the paragraph 
+	! open the new the
+	    the  
+	  
+	! final one
+	! where is one
+	! one is here
+	--- 1,12 ----
+	! =bugalugga=
+	  Here is
+	!    1bugalugga
+	!    This is bugalugga too.2
+	       
+	! hi     odd     paragraph 
+	! 3open     new the
+	    the  
+	  
+	! final a
+	! where is 5a
+	! 6a is here
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 115	Failed
+
+	
+		Test Information:
+	Assertion #115 (C):  '' returns to previous context
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:24:47 2017
+	--- vi_exp_1	Mon Apr 24 19:23:24 2017
+	***************
+	*** 1,10 ****
+	! here is
+	!    a file
+	!    with {some words
+	! in it}.
+	!      
+	  the odd paragraph 
+	  
+	  and a few
+	  {sections
+	! before the end
+	--- 1,10 ----
+	! a9here is
+	!    32a file
+	!    b4with {some words
+	! c51in it}.
+	!     7 
+	  the odd paragraph 
+	  
+	  and a few
+	  {sections
+	! 86before the end
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 116	Failed
+
+	
+		Test Information:
+	Assertion #116 (C):  '' with no previous context
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:25:32 2017
+	--- vi_exp_1	Mon Apr 24 19:24:48 2017
+	***************
+	*** 1,8 ****
+	  aaa
+	  bbb
+	! ccc
+	  ddd
+	  eee
+	  fff
+	- ggg
+	  hhh
+	--- 1,7 ----
+	  aaa
+	  bbb
+	! 1ccc
+	  ddd
+	  eee
+	  fff
+	  hhh
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 117	Failed
+
+	
+		Test Information:
+	Assertion #117 (C):  ' letter moves to marked line
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:26:16 2017
+	--- vi_exp_1	Mon Apr 24 19:25:32 2017
+	***************
+	*** 1,6 ****
+	  here is
+	  a file
+	! with {some words
+	!    in it
+	!        
+	  and a blank line
+	--- 1,6 ----
+	  here is
+	  a file
+	! 1with {some words
+	!    2in it
+	!       3 
+	  and a blank line
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 118	Failed
+
+	
+		Test Information:
+	Assertion #118 (C): command \'  letter
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:27:08 2017
+	--- vi_exp_1	Mon Apr 24 19:26:17 2017
+	***************
+	*** 1,8 ****
+	  here is
+	  a file
+	! with 
+	! {some words
+	  in it}.
+	! fourth
+	! fifth
+	  last
+	--- 1,7 ----
+	  here is
+	  a file
+	! containing 
+	  in it}.
+	! here is
+	! a file
+	  last
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 119	Failed
+
+	
+		Test Information:
+	Assertion #119 (C):   returns to previous context
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:28:32 2017
+	--- vi_exp_1	Mon Apr 24 19:27:08 2017
+	***************
+	*** 1,8 ****
+	! here is
+	! a file
+	! with {some words
+	! in it}.
+	  
+	  the odd paragraph and a few
+	  {sections
+	! before the end
+	--- 1,8 ----
+	! a9here is
+	! 32a file
+	! 4with b{some words
+	! c75in it1}.
+	  
+	  the odd paragraph and a few
+	  {sections
+	! 86before the end
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 120	Failed
+
+	
+		Test Information:
+	Assertion #120 (C):   with no previous context
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:29:17 2017
+	--- vi_exp_1	Mon Apr 24 19:28:32 2017
+	***************
+	*** 1,8 ****
+	  aaa
+	  bbb
+	! ccc
+	  ddd
+	  eee
+	  fff
+	- ggg
+	  hhh
+	--- 1,7 ----
+	  aaa
+	  bbb
+	! 1ccc
+	  ddd
+	  eee
+	  fff
+	  hhh
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 121	Failed
+
+	
+		Test Information:
+	Assertion #121 (C):  <back-quote> letter moves to marked character
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:29:55 2017
+	--- vi_exp_1	Mon Apr 24 19:29:17 2017
+	***************
+	*** 1,4 ****
+	  here is
+	  a file
+	! with {some words
+	  in it}.
+	--- 1,4 ----
+	  here is
+	  a file
+	! with {1some words
+	  in it}.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 122	Failed
+
+	
+		Test Information:
+	Assertion #122 (C): command <back-quote> letter
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:30:47 2017
+	--- vi_exp_1	Mon Apr 24 19:29:55 2017
+	***************
+	*** 1,7 ****
+	  here is
+	  a file
+	! with {some words
+	  in it}.
+	! fourth
+	! fifth
+	! last
+	--- 1,7 ----
+	  here is
+	  a file
+	! containing some words
+	  in it}.
+	! fth
+	! here is
+	! a last
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 123	Untested
+
+	
+		Test Information:
+	Assertion #123 (C): [[ command
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 124	Failed
+
+	
+		Test Information:
+	Assertion #124 (C): [[ command with no previous sections
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:31:35 2017
+	--- vi_exp_1	Mon Apr 24 19:30:47 2017
+	***************
+	*** 1,5 ****
+	! 4   
+	! 2  1here is a file
+	  with a few lines
+	   and
+	  {
+	--- 1,5 ----
+	!   4 
+	!   21here is a file
+	  with a few lines
+	   and
+	  {
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 125	Untested
+
+	
+		Test Information:
+	Assertion #125 (C): ]] command
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 126	Failed
+
+	
+		Test Information:
+	Assertion #126 (C): ]] command with no following sections
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:32:23 2017
+	--- vi_exp_1	Mon Apr 24 19:31:35 2017
+	***************
+	*** 3,7 ****
+	  with a few lines
+	   and
+	  a section
+	! boundar  12y
+	    4 
+	--- 3,7 ----
+	  with a few lines
+	   and
+	  a section
+	!   21boundary
+	    4 
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 128	Untested
+
+	
+		Test Information:
+	Assertion #128 (C): count ( command
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 129	Untested
+
+	
+		Test Information:
+	Assertion #129 (C): count ) command
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 130	Failed
+
+	
+		Test Information:
+	Assertion #130 (C): count { command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:34:10 2017
+	--- vi_exp_1	Mon Apr 24 19:32:58 2017
+	***************
+	*** 1,10 ****
+	! H
+	! 5ere is a
+	  paragraph delimited by
+	  blank line.  It has a second sentence.
+	  It has a third one too!  What about a
+	  fourth sentence?  A total of five.
+	  
+	  Here is a paragraph delimited by 
+	  a section boundary.  (This paragraph has several
+	  sentences.)  (That was one of them.  This is 
+	--- 1,10 ----
+	! Here is a
+	  paragraph delimited by
+	  blank line.  It has a second sentence.
+	  It has a third one too!  What about a
+	  fourth sentence?  A total of five.
+	  
+	+ 5
+	  Here is a paragraph delimited by 
+	  a section boundary.  (This paragraph has several
+	  sentences.)  (That was one of them.  This is 
+	***************
+	*** 12,18 ****
+	  are just fakes. [Like this one.] Not this one 
+	  though.  {This one is real.}  {This is false.} But
+	  is this one? Answer yes!
+	! {467
+	  Here is a paragraph
+	  delimited by a 
+	  form-feed character.  It has a sentence with strange things
+	--- 12,18 ----
+	  are just fakes. [Like this one.] Not this one 
+	  though.  {This one is real.}  {This is false.} But
+	  is this one? Answer yes!
+	! {4
+	  Here is a paragraph
+	  delimited by a 
+	  form-feed character.  It has a sentence with strange things
+	***************
+	*** 36,45 ****
+	  Oh look - a paragraph
+	  to be delimited by
+	  a defined thing.
+	! .##
+	  and an alternative
+	  defined thingy
+	! .--
+	  and another section
+	  boundary
+	  {
+	--- 36,45 ----
+	  Oh look - a paragraph
+	  to be delimited by
+	  a defined thing.
+	! .##7
+	  and an alternative
+	  defined thingy
+	! .--6
+	  and another section
+	  boundary
+	  {
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 131	Failed
+
+	
+		Test Information:
+	Assertion #131 (C): count } command
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:35:18 2017
+	--- vi_exp_1	Mon Apr 24 19:34:11 2017
+	***************
+	*** 21,29 ****
+	  
+	  a series of paragraphs
+	  
+	  short ones too
+	  
+	- 5
+	  2
+	  another paragraph delimited
+	  by line containing blanks
+	--- 21,29 ----
+	  
+	  a series of paragraphs
+	  
+	+ 5
+	  short ones too
+	  
+	  2
+	  another paragraph delimited
+	  by line containing blanks
+	***************
+	*** 32,46 ****
+	  line.
+	  
+	- 3
+	  Oh look - a paragraph
+	  to be delimited by
+	  a defined thing.
+	! .##
+	  and an alternative
+	  defined thingy
+	! .--
+	  and another section
+	  boundary
+	! {7
+	! last paragraph6
+	--- 32,46 ----
+	  line.
+	  
+	  Oh look - a paragraph
+	  to be delimited by
+	  a defined thing.
+	! .##6
+	  and an alternative
+	  defined thingy
+	! .--7
+	  and another section
+	  boundary
+	! {
+	! 3
+	! last paragraph
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 134	Untested
+
+	
+		Test Information:
+	Assertion #134 (C): count | command with tabs
+	Assertion invalidated per IEEE POSIX.2 interpretation #64.
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 135	Untested
+
+	
+		Test Information:
+	Assertion #135 (D): cursor position when count | on a wide character
+	TEST NOT WRITTEN - untestable
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 138	Failed
+
+	
+		Test Information:
+	Assertion #138 (C): count - command
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	Standard output isn't the same as file 'vi_exp_1'
+	diff of "out.stdout" and "vi_exp_1":
+	*** out.stdout	Mon Apr 24 19:38:53 2017
+	--- vi_exp_1	Mon Apr 24 19:38:08 2017
+	***************
+	*** 1,9 ****
+	  here is
+	  a tiny
+	!     
+	! file
+	  of
+	  some
+	!    sort
+	! or another
+	  last
+	--- 1,9 ----
+	  here is
+	  a tiny
+	!    4 
+	! 3file
+	  of
+	  some
+	!    2sort
+	! 1or another
+	  last
+	
+	***********************************************************************
+
+	
+	***********************************************************************
+	/tset/POSIX.upe/vi/vi_02.ex 139	Failed
+
+	
+		Test Information:
+	Assertion #139 (C): count . command
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for !
+	diff of "vi_exp_1" and "vi_in_1":
+	*** vi_exp_1	Mon Apr 24 19:38:53 2017
+	--- vi_in_1	Mon Apr 24 19:38:53 2017
+	***************
+	*** 1,6 ****
+	! NEW
+	  another line
+	! MORE
+	  for test
+	--- 1,11 ----
+	! line 1
+	! line 2
+	! here is file to test
+	! New line of file
+	  another line
+	! a few
+	! more
+	! lines in
+	!  the file
+	! extra line
+	  for test
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for & or >
+	diff of "vi_exp_1" and "vi_in_1":
+	*** vi_exp_1	Mon Apr 24 19:39:43 2017
+	--- vi_in_1	Mon Apr 24 19:39:43 2017
+	***************
+	*** 1,7 ****
+	  here is file to test
+	! 	New line of file
+	! 	another line
+	! 	a few
+	! 	more
+	! 	lines in
+	! 	 the file
+	--- 1,7 ----
+	  here is file to test
+	! New line of file
+	! another line
+	! a few
+	! more
+	! lines in
+	!  the file
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for < ~ a or A
+	diff of "vi_exp_2" and "vi_in_2":
+	*** vi_exp_2	Mon Apr 24 19:40:17 2017
+	--- vi_in_2	Mon Apr 24 19:40:17 2017
+	***************
+	*** 1,5 ****
+	! Abcd eFGHtext
+	! miXED CAses	newtext
+	! on someton
+	! nEWew lEWEWinestonton
+	! NotOT OotTHERS
+	--- 1,5 ----
+	! 	abcd EFGH
+	! 	MiXED caSEs	new
+	! 	on some
+	! 	new lines
+	! 	NOT OTHERS
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for c or C
+	diff of "vi_exp_3" and "vi_in_3":
+	*** vi_exp_3	Mon Apr 24 19:41:10 2017
+	--- vi_in_3	Mon Apr 24 19:41:10 2017
+	***************
+	*** 1,7 ****
+	! to dot lines of to dot
+	! dotty I dotty
+	! to text
+	!  for text
+	! of ing
+	!  O ing
+	  world
+	--- 1,8 ----
+	! Some lines of text
+	! that1 I expe1ct1
+	! to change
+	!  for other lines 
+	! of text
+	!  O K
+	! there then
+	  world
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for d or D
+	diff of "vi_exp_4" and "vi_in_4":
+	*** vi_exp_4	Mon Apr 24 19:42:08 2017
+	--- vi_in_4	Mon Apr 24 19:42:08 2017
+	***************
+	*** 1,7 ****
+	!  lines of 
+	!  I 
+	! to 
+	!  for 
+	! of 
+	!  O 
+	  there
+	--- 1,7 ----
+	! Some lines of text
+	! that1 I expe1ct1
+	! to delete
+	!  for other lines 
+	! of text
+	!  O K
+	  there
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for i or I
+	diff of "vi_exp_5" and "vi_in_5":
+	*** vi_exp_5	Mon Apr 24 19:42:51 2017
+	--- vi_in_5	Mon Apr 24 19:42:51 2017
+	***************
+	*** 1,4 ****
+	! new A short text file
+	! new to do ron ron things to ron.
+	! Line For example insert some
+	! Line Line text in it
+	--- 1,4 ----
+	! A shor ext file
+	! to do things to.
+	! For example insert some
+	! text in it
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for J, o or O
+	diff of "vi_exp_6.2" and "vi_in_6":
+	*** vi_exp_6.2	Mon Apr 24 19:43:43 2017
+	--- vi_in_6	Mon Apr 24 19:43:43 2017
+	***************
+	*** 1,14 ****
+	! before
+	! A text file with
+	! again
+	! before
+	! another new one
+	! new line
+	! many and numerous lines to join
+	  together
+	- new line
+	- another new one
+	- again
+	- another new one
+	--- 1,9 ----
+	! A text
+	! file
+	! with
+	! many
+	! and
+	! numerous
+	! lines
+	! to join
+	  together
+	Expected exit code = 0; Received 2
+	Standard error isn't empty
+	Contents of out.stderr:
+	termin: I/O resynchronization failed
+	. fails for r or R
+	diff of "vi_exp_8" and "vi_in_8":
+	*** vi_exp_8	Mon Apr 24 19:45:07 2017
+	--- vi_in_8	Mon Apr 24 19:45:07 2017
+	***************
+	*** 1,3 ****
+	! xere xe xxve
+	! XzXext XzXe
+	! oh play ohohohth
+	--- 1,3 ----
+	! Here we have
+	! a text file
+	! to play with
+	. fails for s or S
+	diff of "vi_exp_9" and "vi_in_9":
+	*** vi_exp_9	Mon Apr 24 19:45:48 2017
+	--- vi_in_9	Mon Apr 24 19:46:10 2017
+	***************
+	*** 1,5 ****
+	! and here we havand h
+	! and htext file
+	! do
+	--- 1,6 ----
+	! and here we havnd h+2.3GwSdo
+	! a text file
+	! to play with
+	! and test
+	! for general
+	! correctness
+	. fails for x or X
+	diff of "vi_exp_11" and "vi_in_11":
+	*** vi_exp_11	Mon Apr 24 19:46:23 2017
+	--- vi_in_11	Mon Apr 24 19:46:35 2017
+	***************
+	*** 1,3 ****
+	! ere e ve
+	! atxt fe
+	  to play with
+	--- 1,3 ----
+	! ere e ave
+	! atxt fie
+	  to play with
+	. fails for y or Y
+	diff of "vi_exp_12" and "vi_in_12":
+	*** vi_exp_12	Mon Apr 24 19:46:48 2017
+	--- vi_in_12	Mon Apr 24 19:47:03 2017
+	***************
+	*** 1,9 ****
+	! Here we havewe 
+	! a text filea text 
+	  to play with
+	  and test
+	! and test
+	  for general
+	- for general
+	- correctness
+	  correctness
+	--- 1,10 ----
+	! Here we haveHere 
+	! aa  text filea 
+	  to play with
+	  and test
+	! to play with
+	  for general
+	  correctness
+	
+	***********************************************************************
+
+	
+	Test-Set Ended:   19:47:16
+	
+	Test-Set Results Summary:
+	------------------------
+	
+	   60  Tests Executed
+	   16  Tests Succeeded
+	   22  Tests Failed
+	   22  Tests Untested
+		
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 6 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	
+	Section Name: POSIX.upe
+	-----------------------
+	
+	Section Started: 19:09:34
+	
+	Test Set       Failed   Inspect  Unapprvd    Uninit  Untested    Unrept
+	        Executed  Warnings Unimplt'd Unreslved Unsupported NotInUse
+	TOTAL         60   22    0    0    0    0    0    0    0   22    0    0
+	
+	Section Ended:   19:47:16
+	
+	Failed            Unresolved        Uninitiated       Unsupported
+	
+	vi_02 93                                                              
+	vi_02 94                                                              
+	vi_02 105                                                             
+	vi_02 106                                                             
+	vi_02 107                                                             
+	vi_02 109                                                             
+	vi_02 111                                                             
+	vi_02 114                                                             
+	vi_02 115                                                             
+	vi_02 116                                                             
+	vi_02 117                                                             
+	vi_02 118                                                             
+	vi_02 119                                                             
+	vi_02 120                                                             
+	vi_02 121                                                             
+	vi_02 122                                                             
+	vi_02 124                                                             
+	vi_02 126                                                             
+	vi_02 130                                                             
+	vi_02 131                                                             
+	vi_02 138                                                             
+	vi_02 139                                                             
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 7 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+	Journal Summary
+	----------------
+	
+	Test Started: 19:09:34
+	
+	Test Ended:   19:47:23
+	
+	Journal Results Summary:
+	-----------------------
+	
+		1	Sections Containing   1  Test-Sets Completed
+	
+		   60  Tests Executed
+		   16  Tests Succeeded
+		   22  Tests Failed
+		   22  Tests Untested
+	
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 8 of 9
+
+     The Open Group Shell and Utilities Verification Suite Release 5.3.12      
+Test-Set Summary                                               Test-Set Summary
+
+Test Parameters:
+
+	TET_OUTPUT_CAPTURE   =	False
+	TET_EXEC_TOOL        =	sh
+	TET_DONT_REPORT_MISSING_ICS =	True
+	PCTS_NAME_MAX        =	2048
+	PCTS_PATH_MAX        =	4096
+	PCTS_LINK_MAX        =	256
+	VSC_WINK             =	2
+	VSC_NAP              =	10
+	VSC_SNOOZE           =	30
+	VSC_EXPECT_SUPPORT   =	TRUE
+	VSC_ESC              =	033
+	VSC_END_OF_FILE      =	004
+	VSC_BS               =	010
+	VSC_KILL             =	025
+	VSC_NL               =	012
+	VSC_LNEXT            =	026
+	VSC_STOP             =	032
+	VSC_REDRAW           =	014
+	VSC_INTR             =	003
+	VSC_CTLW             =	027
+	VSC_CTLP             =	020
+	VSC_LARGEFILE_OPTS   =	
+	VSC_PAX_BIG_FILE_SUPPORT =	TRUE
+	VSC_POSIX_VERSION    =	200809
+	VSC_XOPEN_VERSION    =	0
+	VSC_CC               =	c99
+	VSC_OPER             =	Martin
+	VSC_ORG              =	ef
+	VSC_ADDR1            =	sdf
+	VSC_ADDR2            =	
+	VSC_ADDR3            =	
+	VSC_ADDR4            =	
+	VSC_ADDR5            =	
+	VSC_SYS              =	sdf
+	VSC_TESTER           =	martin
+	VSC_TESTER_UID       =	10086
+	VSC_GRP_NAME_1       =	wheel
+	VSC_GRP_NAME_2       =	turds
+	VSC_NON_MEMBER_GRP   =	wheel
+	VSC_NON_MEMBER_GID   =	121
+	VSC_NAMELESS_UID     =	123
+	VSC_NAMELESS_GID     =	123
+	VSC_GRP_ID_1         =	121
+	VSC_GRP_ID_2         =	123
+	POSIX1_SUPPORT       =	TRUE
+	VSC_XPG_SW_DEV       =	
+	VSC_ILP32_OFF32_SUPPORT =	undefined
+	VSC_ILP32_OFFBIG_SUPPORT =	undefined
+	VSC_LP64_OFF64_SUPPORT =	TRUE
+	VSC_LPBIG_OFFBIG_SUPPORT =	undefined
+	VSC_DEFAULT_C89_PROG_ENV =	LP64_OFF64
+	VSC_XOPEN_RT         =	undefined
+	VSC_XOPEN_RTT        =	undefined
+	VSC_XPG_LEGACY       =	undefined
+	VSC_DATE_CAN_SET     =	undefined
+	VSC_LOCALEDEF_OUTPUT_FTYPE =	undefined
+	VSC_LOCALE_NAME      =	undefined
+	VSC_CHARMAP_FILE     =	undefined
+	VSC_LOCALEDEF_FILE   =	undefined
+	VSC_TRAP_NUMERIC_SIGS =	undefined
+	VSC_IPC_KEY          =	undefined
+	VSC_OTHER_UID        =	141
+	VSC_OTHER_GID        =	143
+	VSC_UID0             =	141
+	VSC_UID1             =	141
+	VSC_UID2             =	141
+	VSC_GID0             =	143
+	VSC_GID1             =	153
+	VSC_GID2             =	124
+	VSC_OTHER_USER_NAME  =	root
+	VSC_OTHER_USER_UID   =	0
+	VSC_ASA_1            =	\f
+	VSC_ASA_P            =	\b
+	VSC_DOT_O_FILE       =	/home/martin/vsc/Lib/Data/POSIX/tcm.o
+	VSC_EXE_FILE         =	/home/martin/vsc/Lib/Data/POSIX/tcc
+	VSC_FORT77_DLD       =	/bin
+	VSC_TALKNAME         =	root
+	VSC_PS_SUPPORT       =	TRUE
+	VSC_PRINTF_FLOAT_SUPPORT =	undefined
+	VSC_AWK_ATOF         =	undefined
+	VSC_AWK_NUMBER_HEX   =	undefined
+	VSC_TERMIOS_SUPPORT  =	TRUE
+	VSC_BYTE_SIZE        =	8
+	VSC_FLT_RADIX_POWER_OF_2 =	TRUE
+	VSC_NAN_NCHARSEQ     =	undefined
+	VSC_LPDEST           =	lpr
+	VSC_LPNODEST         =	lpe
+	VSC_LPSTAT           =	
+	VSC_CANCEL           =	
+	VSC_UULOG            =	undefined
+	VSC_UUNAME           =	undefined
+	VSC_UUPICK           =	undefined
+	VSC_UUTO             =	undefined
+	VSC_LP_MFLAG_SUPPORT =	TRUE
+	VSC_LP_OFLAG_SUPPORT =	TRUE
+	VSC_LP_TFLAG_SUPPORT =	TRUE
+	VSC_LP_WFLAG_SUPPORT =	TRUE
+	VSC_UUX_JFLAG_SUPPORT =	unsupported
+	VSC_UUSTAT_QFLAG_SUPPORT =	unsupported
+	VSC_UUSTAT_RFLAG_SUPPORT =	unsupported
+	VSC_MAIL_USER        =	martin
+	VSC_MAIL_FILE        =	martin
+	VSC_CHRDEV           =	YES
+	VSC_BLKDEV           =	YES
+	VSC_TEST_SUITE_FS    =	undefined
+	VSC_TEST_SUITE_MOUNT_POINT =	undefined
+	VSC_OTHER_FS         =	undefined
+	VSC_RO_FS            =	undefined
+	VSC_LFS_MAX_FILE_SIZE =	2000000000
+	VSC_LFS_FS           =	undefined
+	VSC_CHR_DEV_FILE     =	undefined
+	VSC_BLK_DEV_FILE     =	undefined
+	VSC_STREAM_DEV       =	undefined
+	VSC_SXAF             =	Y
+	VSC_MV_X_FS          =	TRUE
+	VSC_LN_X_FS          =	undefined
+	VSC_LINK_DIR_SUPPORT =	undefined
+	VSC_WPERM_TO_MV_DIR  =	undefined
+	VSC_NO_MV_FILE_IN_USE =	undefined
+	VSC_IDS_ON_SYMLINKS  =	TRUE
+	VSC_NO_SYMLINKS_DIR  =	undefined
+	VSC_LINK_MAX         =	1024
+	VSC_DU_SZ            =	4096
+	VSC_ICONV_FROM       =	UTF-8
+	VSC_ICONV_TO         =	UTF-8
+	VSC_ICONV_FROMFILE   =	/home/martin/vsc/Lib/Data/POSIX/charmap
+	VSC_AT_ALLOWDENY_DIR =	/usr/lib/cron
+	VSC_CRON_ALLOWDENY_DIR =	/usr/lib/cron
+	_L_PUBDIR            =	
+	_L_SYS               =	
+	_R_PUBDIR            =	
+	_R_SYS               =	
+	_R_SYS2              =	
+	M_SPOOL_FILE         =	
+	VSC_UUCP_CFLAG_SUPPORT =	
+	VSC_UUCP_FFLAG_SUPPORT =	
+	VSC_UUCP_JFLAG_SUPPORT =	
+	VSC_UUCP_NFLAG_SUPPORT =	
+	VSC_UUCP_RFLAG_SUPPORT =	
+	VSC_UUCP_NOSUCH_SYS  =	
+	VSC_UUCP_XFER_DELAY  =	
+	VSC_SPACE            =	SPACE
+	TET_API_COMPLIANT    =	True
+	TET_PASS_TC_NAME     =	False
+	TET_VERSION          =	3.8-lite
+
+Report Command Line:	vrpt -L6000 journal
+
+Test Agency: ef                                              System Tested: sdf
+Test Date:   Apr 24, 2017                                           Page 9 of 9
+

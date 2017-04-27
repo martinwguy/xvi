@@ -1,0 +1,6 @@
+xvi should recognise multiple commands separated by |
+
+Xvi doesn't recognise multiple commands on one line, separated by |,
+when typing a : command, nor in -c option.
+
+The only place | is recognised is in the XVINIT string.

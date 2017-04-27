@@ -1,0 +1,48 @@
+Implement abbreviate and unabbreviate commands
+
+As well as "map", xvi has a word-based mechanism to expand abbreviations.
+
+POSIX says:
+
+"Abbreviate
+
+Synopsis: ab[breviate][lhs rhs]
+
+If lhs and rhs are not specified, write the current list of abbreviations
+and do nothing more.
+
+Implementations may restrict the set of characters accepted in lhs
+or rhs, except that printable characters and characters shall not be
+restricted. Additional restrictions shall be implementation-defined.
+
+In both lhs and rhs, any character may be escaped with a -V, in which
+case the character shall not be used to delimit lhs from rhs, and the
+escaping -V shall be discarded.
+
+In open and visual text input mode, if a non-word or character that
+is not escaped by a -V character is entered after a word character,
+a check shall be made for a set of characters matching lhs, in the text
+input entered during this command. If it is found, the effect shall be
+as if rhs was entered instead of lhs.
+
+The set of characters that are checked is defined as follows:
+
+If there are no characters inserted before the word and non-word or <ESC>
+characters that triggered the check, the set of characters shall consist
+of the word character.
+
+If the character inserted before the word and non-word or <ESC> characters
+that triggered the check is a word character, the set of characters shall
+consist of the characters inserted immediately before the triggering
+characters that are word characters, plus the triggering word character.
+
+If the character inserted before the word and non-word or <ESC> characters
+that triggered the check is not a word character, the set of characters
+shall consist of the characters that were inserted before the triggering
+characters that are neither <blank> characters nor word characters,
+plus the triggering word character.
+
+It is unspecified whether the lhs argument entered for the ex abbreviate
+and unabbreviate commands is replaced in this fashion. Regardless of
+whether or not the replacement occurs, the effect of the command shall
+be as if the replacement had not occurred."

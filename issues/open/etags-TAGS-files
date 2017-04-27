@@ -1,0 +1,18 @@
+xvi doesn't understand TAGS files created by etags
+
+Xvi understands classic
+	symbol\tfile\tlineno
+"tags" files and ctags'
+	F_OK    unix.h  134;"   d
+	Flexbuf xvi.h   /^Flexbuf;$/;"  t       typeref:struct:__anon25
+but doesn't grok etags' "TAGS" files.
+For example, "make tags" in sox creates "TAGS" containing lines like:
+	} priv_t;^?priv_t^A19,500
+	static int start(sox_effect_t * effp)^?start^A21,511
+	#define fifo_included^?fifo_included^A19,847
+	UNUSED static void fifo_clear(fifo_t * f)^?fifo_clear^A37,1268
+and
+	/home/martin/score/sox/src/TAGS,include
+
+I'm not sure where one is supposed to find the symbol in that;
+from the DEL to the Ctrl-A?

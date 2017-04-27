@@ -1,0 +1,4 @@
+On NetBSD, all tests appear to succeed but in reality none are run
+
+On NetBSD 5.1 (gcc70.fsffrance.org) All the tests seem to succeed quickly.
+In reality, the scripts are exiting 0 without running any of the tests.

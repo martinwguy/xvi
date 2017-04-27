@@ -1,0 +1,23 @@
+When stdin returns EOF indefinitely, xvi loops using 100% CPU
+
+It should exit.
+
+Repeat-by:
+
+$ xvi < /dev/null
+
+This makes the POSIX VSC test suite loop hang at its "utility can be executed by system() and popen()" test
+
+POSIX says: 
+
+"if the editor detects an end-of-file condition from the standard
+input, it shall be equivalent to a SIGHUP asynchronous event."
+
+which is:
+
+"SIGHUP
+If the edit buffer has been modified since the last complete write,
+ex shall attempt to save the edit buffer so that it can be recovered
+later using the -r option or the ex recover command. The editor shall
+not write the file or return to command or text input mode, and shall
+terminate with a non-zero exit status."

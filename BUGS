@@ -1,0 +1,32 @@
+Known bugs in xvi 2.50, 25 April 2017
+=====================================
+
+* UTF-8 characters are not supported so on recent Linux systems,
+  accented characters display as \303\250.
+
+* If it runs out of RAM, often it is unable to save the file.
+
+* It doesn't recognise multiple commands separated by | on the :command line
+
+* :@ and :* with a line range only execute the ex commands in the named buffer
+  for the last line. They should execute them for each line in the range.
+
+* On Unix, pressing Control-\ makes xvi dump core immediately.
+  Whether it should or not, as that key generates SIGQUIT, is unclear.
+
+* When you try to open more files than will fit on a screen with an odd number
+  of lines (e.g. xvi -s autosplit=100 *.c) all except the first open at line 2.
+
+* :abbreviate and :unabbreviate are not implemented.
+
+* :w>> is not implemented.
+
+* It doesn't run the maze-solving macros.
+
+* On NetBSD with "make check", all tests seem to succeed but
+  in reality none are run.
+
+* If the standard input returns EOF indefinitely, xvi hangs consuming
+  100% CPU. It should exit, saving what buffers it can.
+
+For a complete list of issues, see the files in the folder issues/open/.

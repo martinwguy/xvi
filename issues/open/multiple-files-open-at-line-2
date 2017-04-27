@@ -1,0 +1,28 @@
+Opening many files in an odd-length screen, all except the first open at line 2
+
+If you try to open more files than will fit, and the screen height is an
+odd number, the first window has 3 lines (2 of the file and the status
+line) and all the other files open displaying line 2 instead of line 1.
+
+The culprit seems to be the call to xvEqualiseWindows() in exNext(). At
+least, without that they all open at line 1. In fact, if you open a load
+of files in a terminal with an even number of lines using
+
+	xvi -s autosplit=1000 *.c
+
+resize the terminal window to add one more line and then say :equalise,
+all the files except the first shift to displaying line 2 (with their
+status lines saying "line 1 of 571" to add insult to injury!)
+
+This seems to be caused by the way that xvi behaves when the top of a
+window moves: it moves the top of the window down (or the status line
+of the above window down, as you prefer to see it) and the starting
+line and cursor position move down withint the file such that the text
+displayed on the screen doesn't move.
+
+We'd resolve this issue by making it keep the first displayed line as
+the first displayed line of each window.
+It also changes the current line if a window gets smaller and the cursor's
+line is no longer displayed, which I find annoying. I'd rather it kept
+the cursor on the same line and ensures that line remains visible. If that
+happens anyway, keep the first displayed line as the first displayed line.

@@ -1,0 +1,6 @@
+Executing macros is noisy on the command/status line
+
+While running "hanoi", it echoes the mapped characters on the command line,
+only to overwrite them immediately with "No file [Modified]" repeatedly.
+
+It would be better if it didn't echo macro-expanded input on the command line.
