@@ -21,10 +21,12 @@ INCDIRS=
 LIBS=		-lcurses
 LDFLAGS=
 
-# Don't use -O flag here because on the RT/PC (on which
-# this version was developed) compilation takes 4 times as
-# long if you use it (8 lines per second rather than 33).
-CFLAGS=		$(SYSDEFS) $(INCDIRS)
+# Don't use -O flag on the RT/PC (on which this version was developed)
+# because compilation takes 4 times as long if you use it
+# (8 lines per second rather than 33).
+OPTFLAG=	-O
+CFLAGS=		$(SYSDEFS) $(INCDIRS) $(OPTFLAG)
+
 LINTFLAGS=	$(SYSDEFS) $(INCDIRS) -ah
 
 MACHSRC=	unix.c tcapmain.c tcap_scr.c
