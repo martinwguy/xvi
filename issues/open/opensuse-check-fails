@@ -1,0 +1,67 @@
+The test suite fails to execute on OpenSUSE
+
+On gcc117.fsffrance.org of the GCC Compile Farm, OpenSUSE on aarch64,
+I have to install GNU termcap, tcl and expect under my home directory,
+add
+	export PATH=$HOME/bin:$PATH
+	export LD_LIBRARY_PATH=$HOME/lib
+	export TCL_LIBRARY=$HOME/lib/tcl8.4
+	export TCLLIBPATH=$HOME/lib
+	export MANPATH=$HOME/man:$MANPATH
+to .profile (and source .profile)
+
+# Install termcap library
+
+	./configure --prefix=$HOME
+	make install
+
+# Install tcl
+
+	cd unix
+	./configure --prefix=$HOME
+	make install
+
+# Install expect
+
+expect 5.45 needs tclconfig/config.sub modifying to add:
+
+         | alphapca5[67]-* | alpha64pca5[67]-* | arc-* \
+         | arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
+>        | aarch64-* \
+         | avr-* \
+         | bs2000-* \
+
+then
+	./configure --prefix=$HOME --build=aarch64-suse-linux
+	make install
+
+# Test suite problems
+
+"make check" pukes:
+
+0000-startup                    FAILED with status 100
+0017-crtl-w+u                   FAILED with status 100
+0020-literal-next-^             FAILED with status 100
+0041-yl-at-eol                  FAILED with status 100
+0066-\u&                        FAILED with status 100
+0071-wrap-garbling              FAILED with status 100
+0082-autowrite                  can't read "termdata(0)": no such element in arr
+ay
+    while executing
+"set middle $termdata($reprow)"
+    (procedure "term_replace" line 3)
+    invoked from within
+"term_replace $cur_row $cur_col  [string range $s 0 [expr $space_rem_on_line-1]]
+"
+    (procedure "term_insert" line 12)
+    invoked from within
+"term_insert $expect_out(0,string)"
+FAILED with status 100
+
+and the same pair or errors for most of the following tests except for the final
+
+Interrupted                     FAILED with status 101
+N-tilde                         FAILED with status 100
+hanoi                           FAILED with status 100
+maze                            DISABLED
+showmode                        FAILED with status 100
