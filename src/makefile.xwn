@@ -40,14 +40,14 @@ GENSRC=		alloc.c altstack.c ascii.c buffers.c cmdline.c cmdmode.c \
 		fileio.c find.c flexbuf.c map.c mark.c misccmds.c mouse.c \
 		movement.c normal.c param.c pipe.c preserve.c ptrfunc.c \
 		regexp.c screen.c search.c signal.c startup.c status.c \
-		tags.c undo.c update.c version.c virtscr.c windows.c yankput.c
+		tag.c undo.c update.c version.c virtscr.c windows.c yankput.c
 
 GENOBJ=		alloc.o altstack.o ascii.o buffers.o cmdline.o cmdmode.o \
 		cursor.o dispmode.o edit.o ex_cmds1.o ex_cmds2.o events.o \
 		fileio.o find.o flexbuf.o map.o mark.o misccmds.o mouse.o \
 		movement.o normal.o param.o pipe.o preserve.o ptrfunc.o \
 		regexp.o screen.o search.o signal.o startup.o status.o \
-		tags.o undo.o update.o version.o virtscr.o windows.o yankput.o
+		tag.o undo.o update.o version.o virtscr.o windows.o yankput.o
 
 all:		wxvi
 

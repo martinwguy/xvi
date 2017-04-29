@@ -37,7 +37,7 @@ GENOBJ=		alloc.o altstack.o ascii.o buffers.o \
 		map.o mark.o misccmds.o mouse.o movement.o normal.o \
 		param.o pipe.o preserve.o ptrfunc.o regexp.o \
 		screen.o search.o signal.o startup.o status.o \
-		tags.o targets.o undo.o update.o \
+		tag.o targets.o undo.o update.o \
 		version.o vi_cmds.o vi_ops.o virtscr.o \
 		windows.o yankput.o
 

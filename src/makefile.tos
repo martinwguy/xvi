@@ -32,7 +32,7 @@ OBJ=	defmain.o defscr.o \
 	find.o flexbuf.o map.o mark.o misccmds.o mouse.o \
 	movement.o normal.o param.o pipe.o preserve.o ptrfunc.o \
 	regexp.o screen.o search.o signal.o startup.o status.o \
-	tags.o undo.o update.o version.o virtscr.o windows.o yankput.o \
+	tag.o undo.o update.o version.o virtscr.o windows.o yankput.o \
 	$(MACHOBJ)
 
 #	Megamax rule

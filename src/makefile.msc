@@ -51,7 +51,7 @@ GENSRC=		alloc.c altstack.c ascii.c buffers.c \
 		map.c mark.c misccmds.c mouse.c movement.c \
 		normal.c param.c pipe.c preserve.c ptrfunc.c \
 		regexp.c screen.c search.c startup.c status.c \
-		tags.c targets.c undo.c update.c \
+		tag.c targets.c undo.c update.c \
 		version.c vi_cmds.c vi_ops.c virtscr.c \
 		windows.c yankput.c
 
@@ -62,7 +62,7 @@ GENOBJ=		alloc.obj altstack.obj ascii.obj buffers.obj \
 		map.obj mark.obj misccmds.obj mouse.obj movement.obj \
 		normal.obj param.obj pipe.obj preserve.obj ptrfunc.obj \
 		regexp.obj screen.obj search.obj startup.obj status.obj \
-		tags.obj targets.obj undo.obj update.obj \
+		tag.obj targets.obj undo.obj update.obj \
 		version.obj vi_cmds.obj vi_ops.obj virtscr.obj \
 		windows.obj yankput.obj
 
@@ -82,7 +82,7 @@ $(LINKFILE):	$(THISFILE)
 		+echo find + flexbuf + map + mark + misccmds + mouse + >> $@
 		+echo movement + normal + param + pipe + preserve + >> $@
 		+echo ptrfunc + regexp + screen + search + startup + >> $@
-		+echo status + tags + targets + undo + update + version + >> $@
+		+echo status + tag + targets + undo + update + version + >> $@
 		+echo vi_cmds + vi_ops + virtscr + windows + yankput + >> $@
 		+echo msdos_c + msdos_a + ibmpc_a + ibmpc_c + >> $@
 		+echo $(LIB)\setargv >> $@
