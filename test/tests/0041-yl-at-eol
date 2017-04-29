@@ -38,6 +38,7 @@ test 105 {p0l2dl}	1 1 [list "ade" "~"]
 # c
 exp_send "0Cabc[esc]"
 test 106 "\$clX[esc]"	1 2 [list "abX" "~"]
+# nvi fails the next test because it doesn't put the cursor at first non-blank
 test 107 "\$>l"		1 8 [list "        abX" "~"]
 test 108 "\$<l"		1 0 [list "abX" "~"]
 test 109 "\$!ltr b Y\r"	1 0 [list "aYX" "~"]

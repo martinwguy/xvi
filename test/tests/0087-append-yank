@@ -44,6 +44,7 @@ test 103 "\"by3l4l\"By\$j0l\"bp"	2 2 [list "one two" "abone" "twocd" "~"]
 
 # Append a char to a line-based yank
 test 104 "1GdGaone two\rabcd[esc]1G"	1 0 [list "one two" "abcd" "~" ]
+# nvi fails the next test because it leaves the buffer line-based.
 test 105 "\"cyy0l\"Cylj0l\"cp"		2 2 [list "one two" "abone two" "ncd" "~" ]
 
 # Append a line to a char-based yank
