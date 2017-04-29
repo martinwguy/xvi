@@ -1,4 +1,4 @@
-The test suite fails to execute on OpenSUSE
+The test suite fails to execute on OpenSUSE, with internal errors
 
 On gcc117.fsffrance.org of the GCC Compile Farm, OpenSUSE on aarch64,
 I have to install GNU termcap, tcl and expect under my home directory,
@@ -12,18 +12,23 @@ to .profile (and source .profile)
 
 # Install termcap library
 
-	./configure --prefix=$HOME
-	make install
+	wget https://ftp.gnu.org/gnu/termcap/termcap-1.3.1.tar.gz
+	gunzip < termcap*gz | tar xf -
+	( cd termcap* && ./configure --prefix=$HOME && make install )
+	export LD_LIBRARY_PATH=$HOME/lib
 
 # Install tcl
 
-	cd unix
-	./configure --prefix=$HOME
-	make install
+	wget http://prdownloads.sourceforge.net/tcl/tcl8.6.6-src.tar.gz
+	gunzip < tcl*gz | tar xf -
+	( cd tcl*/unix && ./configure --prefix=$HOME && make install )
 
 # Install expect
 
-expect 5.45 needs tclconfig/config.sub modifying to add:
+    wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar.gz
+    gunzip < expect*gz | tar xf -
+    ( cd expect &&
+On aarch64, expect 5.45 needs tclconfig/config.sub modifying to add:
 
          | alphapca5[67]-* | alpha64pca5[67]-* | arc-* \
          | arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
@@ -32,12 +37,14 @@ expect 5.45 needs tclconfig/config.sub modifying to add:
          | bs2000-* \
 
 then
-	./configure --prefix=$HOME --build=aarch64-suse-linux
-	make install
+      ./configure --prefix=$HOME	# --build=aarch64-suse-linux
+      make install
+    )
+
 
 # Test suite problems
 
-"make check" pukes:
+In xvi, "make check" pukes:
 
 0000-startup                    FAILED with status 100
 0017-crtl-w+u                   FAILED with status 100

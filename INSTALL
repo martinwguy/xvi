@@ -26,11 +26,12 @@ Other versions of Unix
 makefile.aix
 	AIX (IBM's SysV-compatible UNIX)
 makefile.bsd
-	Berkeley UNIX including FreeBSD, NetBSD, OpenBSD
+	Berkeley UNIXs systems from the 1980s including 4.[123]BSD for VAX.
+	On modern POSIX-compatible BSD systems use makefile.pos
 makefile.hpx
 	HP UNIX (HP-UX) with GNU cc
 makefile.pos
-	POSIX systems, tested on BSDI
+	POSIX systems, including Linux and modern BSs,
 makefile.q2t
 	QNX 2 in terminal mode, using the CII C86 ANSI Compiler
 makefile.q2w
@@ -58,7 +59,8 @@ makefile.bcc
 	Borland C/C++
 makefile.msc
 	Microsoft C with Microsoft Macro Assembler (or compatible assembler)
-	and a public-domain version of "make" (not Microsoft's Make, which is brain-dead)
+	and a public-domain version of "make" (not Microsoft's Make, which is
+	brain-dead)
 makefile.qc
 	Microsoft Quick C (standalone version) & Microsoft's make utility
 makefile.tc
@@ -77,3 +79,41 @@ OS/2
 ----
 makefile.os2
 	OS/2 with Microsoft's make, which is the stupidest make ever.
+
+
+Installing required packages from source
+----------------------------------------
+xvi needs a termcap library and, to run the test suite, tcl and expect.
+To install these from source code under your home directory:
+
+# Termcap
+	wget https://ftp.gnu.org/gnu/termcap/termcap-1.3.1.tar.gz
+	gunzip < termcap*gz | tar xf -
+	(cd termcap* && ./configure --prefix=$HOME && make install)
+# Tcl
+	wget http://prdownloads.sourceforge.net/tcl/tcl8.6.6-src.tar.gz
+	gunzip < tcl*gz | tar xf -
+	( cd tcl*/unix && ./configure --prefix=$HOME && make install )
+
+# Find local versions. You can add these to .profile
+export PATH=$HOME/bin:$PATH
+export LD_LIBRARY_PATH=$HOME/lib
+export TCL_LIBRARY=$HOME/lib/tcl8.6
+export TCLLIBPATH=$HOME/lib
+export MANPATH=$HOME/man:$MANPATH
+
+# expect
+wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar.gz
+gunzip < expect*gz | tar xf -
+( cd expect*
+  # On aarch64, expect 5.45 needs tclconfig/config.sub modifying to add:
+
+         | alphapca5[67]-* | alpha64pca5[67]-* | arc-* \
+         | arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
+>        | aarch64-* \
+         | avr-* \
+         | bs2000-* \
+
+  ./configure --prefix=$HOME  # --build=aarch64-suse-linux
+  make install
+)
