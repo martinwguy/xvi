@@ -29,57 +29,74 @@ test 100 ""		1 0 [list "" "~"]
 # 1. In INSERT mode
 
 # A literal ^V at the start of the line
-test 101 "a[ctrl V]"		1 0 [list "^" "~"]
-test 102 [ctrl V]			1 2 [list "^V" "~"]
+test 11 "a[ctrl V]"		1 0 [list "^" "~"]
+test 12 [ctrl V]		1 2 [list "^V" "~"]
 exp_send [esc]
 
 # In the middle of a line
-test 103 "0Daabcd[esc]0ll"	1 2 [list "abcd" "~"]  ;# Cursor on the c
-test 104 "i[ctrl V]"		1 2 [list "ab^cd" "~"]
+test 13 "0Daabcd[esc]0ll"	1 2 [list "abcd" "~"]  ;# Cursor on the c
+test 14 "i[ctrl V]"		1 2 [list "ab^cd" "~"]
 		# Test Ctrl-V + regular character
-test 105 "X"			1 3 [list "abXcd" "~"]
+test 15 "X"			1 3 [list "abXcd" "~"]
 exp_send [esc]
 
 # 2. In REPLACE mode
 
 # 2a. Single character
-test 106 "0Daabcde[esc]0ll" 1 2 [list "abcde" "~"]	;# Cursor on the c
-test 107 "r[ctrl V]"		1 2 [list "ab^de" "~"]
-;# Something that should shunt the line up by 1 char
-test 108 "[ctrl V]"		1 2 [list "ab^Vde" "~"]
+test 16 "0Daabcde[esc]0ll" 1 2 [list "abcde" "~"]	;# Cursor on the c
+# nvi fails to display ^ when replacing a char with with ^V"
+test 17 "r[ctrl V]"		1 2 [list "ab^de" "~"]
+# Something that should shunt the line up by 1 char
+# When sitting on a ^V, xvi and vim put the cursor on the ^ but
+# nvi and classic vi put it on the V.
+set c18 2
+if { $vi == "nvi" || $vi == "vi" } { set c18 3 }
+test 18 "[ctrl V]"		1 $c18 [list "ab^Vde" "~"]
 
 # 2b. Multiple characters
-test 109 "0Daabcdefg[esc]0ll"	1 2 [list "abcdefg" "~"]  ;# Cursor on the c
-test 110 "RX[ctrl V]"		1 3 [list "abX^efg" "~"]
-test 111 "Y"			1 4 [list "abXYefg" "~"]
-test 112 "[ctrl V]"		1 4 [list "abXY^fg" "~"]
-test 113 "\xFF"			1 8 [list "abXY\\377fg" "~"]
-#test 114 "Z[esc]"		1 8 [list "abXY\\377Zg" "~"]
-test 114 "Z"		1 9 [list "abXY\\377Zg" "~"]
+test 19 "0Daabcdefg[esc]0ll"	1 2 [list "abcdefg" "~"]  ;# Cursor on the c
+test 20 "RX[ctrl V]"		1 3 [list "abX^efg" "~"]
+test 21 "Y"			1 4 [list "abXYefg" "~"]
+# Only xvi, lacking UTF-8, displays top-bit-set characters thus
+if { $vi == "xvi" } {
+ test 22 "[ctrl V]"		1 4 [list "abXY^fg" "~"]
+ test 23 "\xFF"		1 8 [list "abXY\\377fg" "~"]
+ test 24 "Z"			1 9 [list "abXY\\377Zg" "~"]
+}
 exp_send [esc]
 
 # 3. On the command line
-ctest 115 ":[ctrl V]"		1 ":^"
-ctest 116 "[ctrl V]"		3 ":^V"
-ctest 117 "[ctrl V]"		3 ":^V^"
-ctest 118 "A"			4 ":^VA"
-ctest 119 "[ctrl V]"		4 ":^VA^"
-ctest 120 "\xFF"		8 ":^VA\\377"
-# Need to send left arrow and check that it works in the middle of the line.
-ctest 121 "\b\b\b"		1 ":"
-ctest 121 "abcd[larrow][larrow][ctrl V]" 3 ":ab^cd"
-ctest 122 "[ctrl V]"		5 ":ab^Vcd"
+ctest 25 ":[ctrl V]"		1 ":^"
+ctest 26 "[ctrl V]"		3 ":^V"
+ctest 27 "[ctrl V]"		3 ":^V^"
+ctest 28 "A"			4 ":^VA"
+if { $vi == "xvi" } {
+ ctest 29 "[ctrl V]"		4 ":^VA^"
+ ctest 30 "\xFF"		8 ":^VA\\377"
+ ctest 31 "\b\b\b"		1 ":"
+} else {
+ # nvi doesn't clear the status line unless you leave and re-enter command mode
+ ctest 31 "\b\b\b:"		1 ":"
+}
+# Send left arrow and check that it works in the middle of the line.
+# Only vi has command-line editing
+if { $vi == "xvi" || $vi == "vim" } {
+ctest 41 "abcd[larrow][larrow][ctrl V]" 3 ":ab^cd"
+ctest 42 "[ctrl V]"		5 ":ab^Vcd"
+exp_send "\b\b\b\b:"
+}
 
 # Check interaction with insert maps. literal characters shouldn't be
 # mapped by ":map!" mappings.
 
-exp_send "\b\b\b\b:map! X Y\r"
+exp_send "map! X Y\r"
 exp_send "1GdG"
-test 123 "iX[ctrl V]X"		1 2 [list "YX"]	 ;# INSERT mode
-test 124 "[esc]0Cabc[esc]0"	1 0 [list "abc"] ;# reset test pattern
-test 125 "rXlr[ctrl V]X"	1 1 [list "YXc"] ;# 1-char REPLACE mode
-test 126 "0Cabc[esc]0"		1 0 [list "abc"] ;# reset test pattern
-test 127 "RX[ctrl V]X"		1 2 [list "YXc"] ;# multi-char REPLACE mode
+test 51 "iX[ctrl V]X"		1 2 [list "YX"]	 ;# INSERT mode
+test 52 "[esc]0Cabc[esc]0"	1 0 [list "abc"] ;# reset test pattern
+# nvi fails this because it doesn't put replaced characters through insert maps
+test 53 "rXlr[ctrl V]X"		1 1 [list "YXc"] ;# 1-char REPLACE mode
+test 54 "0Cabc[esc]0"		1 0 [list "abc"] ;# reset test pattern
+test 55 "RX[ctrl V]X"		1 2 [list "YXc"] ;# multi-char REPLACE mode
 exp_send "[esc]"
 
 # Need to check that inserting the same text again works (i.e. that
