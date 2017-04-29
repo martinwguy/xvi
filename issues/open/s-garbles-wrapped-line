@@ -1,0 +1,12 @@
+Using s to delete from a wrapped line leaves the wrapped end visible
+If you have:
+
+<tab>wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar.gz
+
+displayed, with the "gz" wrapped on to a new line, sit on the tab and press s,
+the tab is deleted and the line shifted left but it leaves the "gz" behind
+on the following line. It diesppears when you end insert mode.
+
+The bug doesn't happen if you delete the tab with x, or cl
+
+The bug does happen with s and with R

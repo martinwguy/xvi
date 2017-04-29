@@ -3,24 +3,20 @@
 		  Martin Guy <martinwguy@gmail.com>
 			January-April 2017
 
-This is an experiment in keeping issues with the source code instead of
-separately on some web server. That way, the current set of issue files
-in the source tree refers to the exact version of the source code that it
-accompanies *and* you don't lose them all when the company closes down
-or when your mate's web server dies unexpectedly with no recent backups.
+Xvi now keeps its issues in the source tree instead of on some web server.
+That way, the issue files refers to the version of the source code they
+accompany and you don't lose them all when the company closes down or
+when your mate's web server dies unexpectedly with no recent backups.
 
-= Workflow =
+Each issue is tracked by a text file in the "isuues/open" directory.
+The file is created when the issue is discovered, modified as its analysis
+proceeds and is deleted with the commit that resolves it. At that point,
+some of its contents may become commentary in its regression test file:
 
-The idea is to keep the description of each issue as text in a file
-in the "open" directory. The file is created when the issue is discovered,
-modified as its analysis proceeds and is deleted with the commit that
-resolves it, often being replaced by a test case of the same name.
-
-== Open and closed bugs ==
-
-Open bugs are easy to see because they still have files in issues/issues and
+Open bugs are easy to see because they still have files in issues/open and
 it shouldn't be too hard to get a history of closed bugs with a script that
 trawls the git history and fishes out the last versions of any files
 that have been deleted from issues/open/.
 
-An alternative would be to "git mv" them into a directory called "closed".
+You can see the current list of open issues on the web at
+https://github.com/martinwguy/xvi/tree/master/issues/open
