@@ -79,9 +79,11 @@ Cmd	*cmd;
 
     case 's':		/* substitute characters */
 	if (start_command()) {
+	    int nlines = plines(curwin->w_cursor->p_line);
+
 	    replchars(curwin->w_cursor->p_line,
 			curwin->w_cursor->p_index, IDEF1(cmd->cmd_prenum), "");
-	    updateline(FALSE);
+	    updateline(nlines != plines(curwin->w_cursor->p_line));
 	    Redo.r_mode = r_insert;
 	    flexclear(&Redo.r_fb);
 	    (void) lformat(&Redo.r_fb, "%ds", IDEF1(cmd->cmd_prenum));

@@ -821,8 +821,10 @@ int	c;
     if (!literal_next) (void) flexaddch(&Insbuff, c);
 
     if (repstate == overwrite || repstate == replace_one) {
+	int nlines = plines(curwin->w_cursor->p_line);
+
 	replchars(curpos->p_line, curpos->p_index, 1, mkstr(c));
-	updateline(FALSE);
+	updateline(nlines != plines(curwin->w_cursor->p_line));
 	if (!literal_next) {
 	    (void) one_right(TRUE);
 	}

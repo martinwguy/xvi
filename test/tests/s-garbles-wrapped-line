@@ -1,0 +1,46 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test that 'r' on an empty line (or Nr with less than N characters
+# uder/after the cursor) fails.
+
+source scripts/term
+start_vi
+
+# Tests begin
+
+# Check it started up OK
+test 100 ""		1 0 [list "" "~"]
+
+# Check that replacing the tab using s moves the line down without leaving a bit
+# on the following line
+
+test 101 "a\twget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar.gz[esc]" \
+	2 1 [list "        wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar." "gz" "~"]
+
+# nvi and classic vi: "_      $wget"
+# vim: like xvi
+set r102 [list "wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar.gz" "~"]
+if { $vi == "nvi" || $vi == "vi" } { set r102 \
+	[list "       \$wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar." "gz" "~"] }
+
+test 102 "0s" 1 0 $r102
+
+# Check that R also unwraps the line properly
+
+test 110 "\t[esc]" \
+	1 7 [list "        wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar." "gz" "~"]
+
+set r111 [list "xwget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar.gz" "~"]
+if { $vi == "vi" } {	;# Classic vi doesn't shift down until Esc
+    set r111 [list "x       wget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar." "gz" "~"]
+}
+test 111 "Rx" 1 1 $r111
+test 112 "[esc]" \
+	1 0 [list "xwget https://downloads.sf.net/project/expect/Expect/5.45/expect5.45.tar.gz" "~"]
+
+stop_vi
+
+exit 0
