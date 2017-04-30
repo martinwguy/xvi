@@ -32,14 +32,14 @@ static	int		cmdsz = 0;	/* size of buffers */
 static	char		*inbuf = NULL;	/* command input buffer */
 static	unsigned int	inpos = 0;	/* posn to put next input char */
 static	unsigned int	inend = 0;	/* one past the last char */
-static	unsigned int 	*colposn = NULL;/* holds n chars per char */
+static	unsigned short 	*colposn = NULL;/* holds n chars per char */
 
 static bool_t
 cmd_buf_alloc()
 {
     int new_cmdsz;
     char *new_inbuf;
-    unsigned int *new_colposn;
+    unsigned short *new_colposn;
 
     new_cmdsz = (cmdsz == 0) ? CMDSZCHUNK : cmdsz + CMDSZCHUNK;
 
@@ -47,9 +47,8 @@ cmd_buf_alloc()
 	show_error("Failed to allocate command line inbuf");
 	return FALSE;
     }
-    if ((new_colposn = re_alloc(colposn, new_cmdsz * sizeof(int))) == NULL) {
+    if ((new_colposn = re_alloc(colposn, new_cmdsz * sizeof(*colposn))) == NULL) {
 	free(new_inbuf);
-	show_error("Failed to allocate command line colposn");
 	return FALSE;
     }
 
@@ -145,7 +144,7 @@ int	ch;
 {
     unsigned		len;
     char *		stat; /* Pointer to status line text */
-    unsigned		curposn;
+    unsigned short	curposn;
     unsigned		w;
 
     if (kbdintr) {
@@ -228,7 +227,7 @@ int	ch;
 	      /* Delete the characters from the command line buffer */
 	      memmove(inbuf+inpos, inbuf+oldinpos, inend-oldinpos);
 	      memmove(colposn+inpos, colposn+oldinpos,
-		      (inend-oldinpos+1) * sizeof(int));
+		      (inend-oldinpos+1) * sizeof(*colposn));
 	      inend -= (oldinpos - inpos);
 	      /* Update the screen columns */
 	      for (i=inpos; i <= inend; i++) colposn[i] -= len;
@@ -364,7 +363,7 @@ int	ch;
 	 * Insert a literal character
 	 */
 	register int i;
-	register unsigned int *cp;
+	register unsigned short *cp;
 
 	/*
 	 * Get rid of the ^ that we inserted, which is the char before inpos.
@@ -429,7 +428,6 @@ int	ch;
 	 * if we just displayed the ^ for a literal next character,
 	 * the cursor should be shown on the ^.
 	 */
-	//update_cline();
 	update_cline();
     }
 
