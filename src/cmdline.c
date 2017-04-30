@@ -194,7 +194,8 @@ static	struct	ecmd	{
 
   { "echo",	    EX_ECHO,	    0,	EC_INTEXP,		ec_strings },
   { "edit",	    EX_EDIT,	    1,	EC_EXCLAM|EC_EXPALL,	ec_1string },
-  { "equalise",	    EX_EQUALISE,    0,	0,			ec_none },
+  { "equalise",	    EX_EQUALISE,    1,	0,			ec_none },
+  { "equalize",	    EX_EQUALISE,    0,	0,			ec_none },
   { "ex",	    EX_EX,	    0,	EC_EXPALL,		ec_1string },
 
   { "file",	    EX_FILE,	    0,	EC_EXPALL,		ec_1string },
