@@ -26,9 +26,9 @@ Test-Set Summary                                               Test-Set Summary
 
 	Test Date:		Apr 25, 2017 13:57:55
 
-	Test System:		sdfsf
+	Test System:		Ubuntu/amd64
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 1 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -47,7 +47,7 @@ Test-Set Summary                                               Test-Set Summary
 
 	5. Test Parameters
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 2 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -58,7 +58,7 @@ Test-Set Summary                                               Test-Set Summary
 
 	Test Date:    		Apr 25, 2017 13:57:55
 
-	Test Agency:  		poo
+	Test Agency:  		xvi-2.50
 
 	Test Engineer:		
 
@@ -76,7 +76,7 @@ Test-Set Summary                                               Test-Set Summary
 
 		Software Description and Release:
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 3 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -110,7 +110,7 @@ ____________|_________________________________________________________________|
 
 	Signature/Date _________________________________
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 4 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -121,7 +121,7 @@ Test-Set Summary                                               Test-Set Summary
 
 	No Inspect results obtained.
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 5 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -412,7 +412,7 @@ Test-Set Summary                                               Test-Set Summary
 	    4  Tests Untested
 		
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 6 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -439,7 +439,7 @@ Test-Set Summary                                               Test-Set Summary
 	vi_06 1017                                                            
 	vi_06 1019                                                            
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 7 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -463,7 +463,7 @@ Test-Set Summary                                               Test-Set Summary
 		    4  Tests Untested
 	
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 8 of 9
 
      The Open Group Shell and Utilities Verification Suite Release 5.3.12      
@@ -498,13 +498,13 @@ Test Parameters:
 	VSC_XOPEN_VERSION    =	0
 	VSC_CC               =	c99
 	VSC_OPER             =	Martin
-	VSC_ORG              =	poo
+	VSC_ORG              =	xvi-2.50
 	VSC_ADDR1            =	yeah
 	VSC_ADDR2            =	
 	VSC_ADDR3            =	
 	VSC_ADDR4            =	
 	VSC_ADDR5            =	
-	VSC_SYS              =	sdfsf
+	VSC_SYS              =	Ubuntu/amd64
 	VSC_TESTER           =	vsc
 	VSC_TESTER_UID       =	1001
 	VSC_GRP_NAME_1       =	vsc
@@ -619,6 +619,6 @@ Test Parameters:
 
 Report Command Line:	vrpt -L 6000 journal
 
-Test Agency: poo                                           System Tested: sdfsf
+Test Agency: xvi-2.50                        System Tested: Ubuntu xenial amd64
 Test Date:   Apr 25, 2017                                           Page 9 of 9
 
