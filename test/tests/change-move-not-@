@@ -10,6 +10,8 @@ exec tclsh "$0" ${1+"$@"}
 # Classic vi fails these tests because it empties the default buffer
 # when you copy/move.
 #
+# Was https://github.com/martinwguy/xvi/issues/125
+#
 
 source scripts/term
 start_vi

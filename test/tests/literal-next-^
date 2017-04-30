@@ -5,6 +5,8 @@
 # so we set LANG=C to circumvent that. (Un)setting LANG in TCL doesn't work,
 # presumably because tclsh or expect checks $LANG's setting on startup.
 # This means you can only run this test file as a shell script, not with tclsh.
+#
+# Was https://github.com/martinwguy/xvi/issues/20
 
 # The next line is executed by /bin/sh, but not tcl \
 LANG=C exec tclsh "$0" ${1+"$@"}

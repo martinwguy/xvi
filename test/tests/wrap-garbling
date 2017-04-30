@@ -14,6 +14,8 @@ exec tclsh "$0" ${1+"$@"}
 #
 # When this test fails, the Y is printed over the top of the X.
 #
+# Was https://github.com/martinwguy/xvi/issues/71
+#
 
 source scripts/term
 start_vi

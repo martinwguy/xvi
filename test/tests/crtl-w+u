@@ -9,6 +9,7 @@ exec tclsh "$0" ${1+"$@"}
 # lines, or the last line of the current insertion,
 # both leaving autoindent chars if any were generated.
 #
+# Was https://github.com/martinwguy/xvi/issues/17
 
 source scripts/term
 start_vi

@@ -3,10 +3,12 @@
 # The next line is executed by /bin/sh, but not tcl \
 exec tclsh "$0" ${1+"$@"}
 
-# Issue 93: Undoing "dl" leaves the cursor one place too far to the left.
+# Undoing "dl" leaves the cursor one place too far to the left.
 #
 # When undoing "dl", "d2l" etc, in the middle of a line, the cursor was left
 # one place to the left compared to where it was.
+#
+# Was https://github.com/martinwguy/xvi/issues/93
 
 source scripts/term
 start_vi

@@ -9,6 +9,8 @@ exec tclsh "$0" ${1+"$@"}
 # the replacement text (not all of it).
 # If the replacement test character results in no characters, it should
 # change the case of the following character.
+#
+# Was https://github.com/martinwguy/xvi/issues/66
 
 source scripts/term
 start_vi

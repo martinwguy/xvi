@@ -7,6 +7,8 @@ exec tclsh "$0" ${1+"$@"}
 # Test file checks that a failed search on the command line
 # halts a macro in execution
 #
+# Was https://github.com/martinwguy/xvi/issues/128
+#
 
 source scripts/term
 start_vi

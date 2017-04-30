@@ -4,7 +4,9 @@
 exec tclsh "$0" ${1+"$@"}
 
 # Test that 'r' on an empty line (or Nr with less than N characters
-# uder/after the cursor) fails.
+# under/after the cursor) fails.
+#
+# Was https://github.com/martinwguy/xvi/issues/106
 
 source scripts/term
 start_vi

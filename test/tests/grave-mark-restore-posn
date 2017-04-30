@@ -4,6 +4,8 @@
 exec tclsh "$0" ${1+"$@"}
 
 # Test for `x or `` restoring the cursor position within the line
+#
+# Was https://github.com/martinwguy/xvi/issues/150
 
 source scripts/term
 start_vi

@@ -4,6 +4,8 @@
 exec tclsh "$0" ${1+"$@"}
 
 # Check that [h] and [^h] match and don't match H when ignorecase is on
+#
+# Was https://github.com/martinwguy/xvi/issues/144
 
 source scripts/term
 start_vi

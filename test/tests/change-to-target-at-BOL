@@ -4,6 +4,8 @@
 exec tclsh "$0" ${1+"$@"}
 
 # Test for changing to a search target that maches at the start of a line.
+#
+# Was https://github.com/martinwguy/xvi/issues/154
 
 source scripts/term
 start_vi

@@ -8,6 +8,8 @@ exec tclsh "$0" ${1+"$@"}
 # "Commands that store text into buffers shall store the text into the
 # unnamed buffer as well as any specified buffer."
 #
+# Was https://github.com/martinwguy/xvi/issues/123
+#
 
 source scripts/term
 start_vi

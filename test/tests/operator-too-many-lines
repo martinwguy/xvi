@@ -13,6 +13,8 @@ exec tclsh "$0" ${1+"$@"}
 #	two
 #	three
 # with the cursor on the t of "two".
+#
+# Was https://github.com/martinwguy/xvi/issues/122
 
 source scripts/term
 start_vi

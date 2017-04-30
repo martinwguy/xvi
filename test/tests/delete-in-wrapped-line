@@ -8,6 +8,8 @@ exec tclsh "$0" ${1+"$@"}
 # on two screen lines, if the deletion shrinks it to one screen line,
 # that garbage isn't left on what used to be its second screen line.
 #
+# Was https://github.com/martinwguy/xvi/issues/137
+#
 
 source scripts/term
 start_vi

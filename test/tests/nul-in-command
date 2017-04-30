@@ -4,6 +4,8 @@
 exec tclsh "$0" ${1+"$@"}
 
 # Test that nul characters on the command line are ignored.
+#
+# Was https://github.com/martinwguy/xvi/issues/104
 
 source scripts/term
 

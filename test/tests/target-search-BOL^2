@@ -24,6 +24,8 @@ exec tclsh "$0" ${1+"$@"}
 # three
 # one
 # five
+#
+# Was https://github.com/martinwguy/xvi/issues/101
 
 source scripts/term
 start_vi

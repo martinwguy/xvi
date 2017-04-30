@@ -5,6 +5,8 @@ exec tclsh "$0" ${1+"$@"}
 
 # Test for deleting a line in one window of a two-pane screen.
 # This used to make xvi loop indefinitely.
+#
+# Was https://github.com/martinwguy/xvi/issues/149
 
 exec echo First line > 0149_file1
 exec echo Second line >> 0149_file1

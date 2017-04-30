@@ -11,6 +11,8 @@ exec tclsh "$0" ${1+"$@"}
 # For example, if a line ends in
 #	word)
 # and you were sitting on the w and said "dw", it would also delete the ).
+#
+# Was https://github.com/martinwguy/xvi/issues/142
 
 source scripts/term
 start_vi

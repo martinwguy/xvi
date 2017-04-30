@@ -20,6 +20,8 @@ exec tclsh "$0" ${1+"$@"}
 # ex commands :next :rewind :suspend :tag :!command  and
 # vi commands ^^ (edit alternate file) and ^] (tag symbol under cursor).
 #
+# Was https://github.com/martinwguy/xvi/issues/82
+#
 
 # Use: [file mtime filename]
 

@@ -7,6 +7,8 @@ exec tclsh "$0" ${1+"$@"}
 # dNl where N is a decimal number, near the end of the line
 # should pick up the last character of the line.
 # This also applies to c < > ! although classic vi doesn't do them.
+#
+# Was https://github.com/martinwguy/xvi/issues/41
 
 source scripts/term
 start_vi

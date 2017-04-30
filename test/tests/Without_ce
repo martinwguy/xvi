@@ -6,6 +6,8 @@ exec tclsh "$0" ${1+"$@"}
 #
 # Check that it works without "Clear to end of line" capability.
 #
+# Was https://github.com/martinwguy/xvi/issues/110
+#
 
 set ::env(NOCE) 1
 

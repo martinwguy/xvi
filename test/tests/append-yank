@@ -6,21 +6,22 @@ exec tclsh "$0" ${1+"$@"}
 #
 # Test file for yanking to named buffers in append mode.
 #
-# POSIX: "If the specified buffer name is an uppercase character, and the  buffer
-#	  contents are to be modified, the buffer shall be appended to rather
-#	  than being overwritten. If the buffer is not being modified, specifying
-#	  the buffer name in lowercase and uppercase shall have identical results."
-
-# and:   "The text of each buffer shall have the characteristic of being in either
-#	  line or character mode. Appending text to a non-empty buffer shall set
-#	  the mode to match the characteristic of the text being
-#	  appended. Appending text to a buffer shall cause the creation of at
-#	  least one additional line in the buffer. All text stored into buffers
-#	  by ex commands shall be in line mode. The ex commands that use buffers
-#	  as the source of text specify individually how buffers of different
-#	  modes are handled. Each open or visual mode command that uses buffers
-#	  for any purpose specifies individually the mode of the text stored into
-#	  the buffer and how buffers of different modes are handled."
+# POSIX: "If the specified buffer name is an uppercase character, and the buffer
+#	contents are to be modified, the buffer shall be appended to rather than
+#	being overwritten. If the buffer is not being modified, specifying the
+#	buffer name in lowercase and uppercase shall have identical results."
+# and: "The text of each buffer shall have the characteristic of being in either
+#	line or character mode. Appending text to a non-empty buffer shall set
+#	the mode to match the characteristic of the text being
+#	appended. Appending text to a buffer shall cause the creation of at
+#	least one additional line in the buffer. All text stored into buffers
+#	by ex commands shall be in line mode. The ex commands that use buffers
+#	as the source of text specify individually how buffers of different
+#	modes are handled. Each open or visual mode command that uses buffers
+#	for any purpose specifies individually the mode of the text stored
+#	into the buffer and how buffers of different modes are handled."
+#
+# Was https://github.com/martinwguy/xvi/issues/87
 #
 
 source scripts/term

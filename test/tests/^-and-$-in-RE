@@ -10,6 +10,8 @@ exec tclsh "$0" ${1+"$@"}
 # regular expressions.  If regexptype=egrep, they should be recognised at
 # the start and end of pattern alternatives too.
 #
+# Was https://github.com/martinwguy/xvi/issues/138
+#
 
 source scripts/term
 start_vi
