@@ -9,10 +9,10 @@ accompany, one can work on the issues when not on the internet and they
 don't all get lost when the company closes down or when your friend's
 web server dies unexpectedly with no recent backups.
 
-Each issue is tracked by a text file in the "isuues/open" directory.
+Each issue is tracked by a text file in the "issues/open" directory.
 The file is created when the issue is discovered, modified as its analysis
 proceeds and is deleted with the commit that resolves it. At that point,
-some of its contents may become commentary in its regression test file:
+some of its contents may become commentary in its regression test script.
 
 Open bugs are easy to see because they still have files in issues/open/.
 It shouldn't be too hard to get a history of closed bugs with a script that
