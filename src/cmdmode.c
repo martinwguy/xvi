@@ -371,8 +371,9 @@ int	ch;
 	 */
 	inpos--; inend--;
 	memmove(inbuf+inpos, inbuf+inpos+1, inend-inpos);
-#if 1
-	memmove(colposn+inpos, colposn+inpos+1, (inend-inpos)+1);
+#if 0
+	memmove(colposn+inpos, colposn+inpos+1,
+		(inend-inpos+1)*sizeof(*colposn));
 	for (i=inpos; i <= inend; i++) colposn[i]--;
 #else
 	/* The above two lines, performed in one loop */
