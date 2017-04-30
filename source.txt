@@ -96,13 +96,13 @@
      mouse).
 
      For example, the  generic	UNIX  implementation  has  unix.c  and
-     unix.h  for  the  system  interface  module,  and	termcap.c  and
+     unix.h  for  the  system  interface  module,  and	tcap_scr.c and
      termcap.h for the terminal interface  module;  this  should  work
-     reasonably with any full-duplex terminal that can be described in
-     the termcap database.  On consoles with  memory-mapped  displays,
-     or  systems  with	graphic  user  interfaces,  however, it may be
-     possible to achieve faster display updating,  and	perhaps  other
-     benefits,	by  replacing the termcap module with another one that
+     reasonably with any full-duplex terminal that can be described by
+     the termcap and terminfo databases.   On  consoles  with  memory-
+     mapped  displays and systems with graphic user interfaces, it may
+     be possible to achieve faster display updating and perhaps  other
+     benefits  by  replacing  the termcap module with another one that
      makes better use  of  whatever  facilities  are  available.   For
      instance,	there  is  an  experimental version for SunView, which
      allows mouse input on Sun workstations running the SunView window
@@ -201,46 +201,46 @@
 
      4						 Xvi Source Code Notes
 
-     +-----------------------+--------------+------------------------+
-     |	      System	     |	 Makefile   |	   Source Files      |
-     +-----------------------+--------------+------------------------+
-     |UNIX		     |		    |			     |
-     |	BSD		     | makefile.bsd | unix.[ch] termcap.[ch] |
-     |	System V -	     | makefile.usg | unix.[ch] termcap.[ch] |
-     |	AIX		     | makefile.aix | unix.[ch] termcap.[ch] |
-     |	ULTRIX		     | makefile.ult | unix.[ch] termcap.[ch] |
-     |	Xenix - 	     | makefile.xen | unix.[ch] termcap.[ch] |
-     |	POSIX (e.g. BSDI)    | makefile.pos | unix.[ch] termcap.[ch] |
-     |	SunOS		     | makefile.sun | unix.[ch] termcap.[ch] |
-     |	SunView 	     | makefile.sv  | unix.[ch] sunview.h    |
-     |			     |		    | sunfront.c sunback.c   |
-     |			     |		    | xvi.icn		     |
-     +-----------------------+--------------+------------------------+
-     |MS-DOS		     |		    | msdos_c.c msdos.h      |
-     |			     |		    | ibmpc_c.c ibmpc.h      |
-     |	Microsoft C 5.*      | makefile.msc | 8086mm.inc ibmpc_a.asm |
-     |	& MASM 5.*	     |		    | msdos_a.asm	     |
-     |	Microsoft Quick C    | makefile.qc  | 8086mm.inc ibmpc_a.asm |
-     |	& MASM 5.*	     |		    | msdos_a.asm	     |
-     |	Zortech C++ 2.*      | makefile.zc2 | 8086mm.inc ibmpc_a.asm |
-     |	& MASM 5.*	     |		    | msdos_a.asm	     |
-     |	Zortech C++ 3.*      | makefile.zc3 | 8086mm.inc ibmpc_a.asm |
-     |	& MASM 5.*	     |		    | msdos_a.asm	     |
-     |	Zortech C++ 3.*      |		    |			     |
-     |	386 protected mode   | makefile.386 | pc386.[ch]	     |
-     +-----------------------+--------------+------------------------+
-     |OS/2 -		     |		    |			     |
-     |	Version 1, text mode |		    |			     |
-     |	Microsoft C 5.1      | makefile.os2 | os2vio.[ch]	     |
-     |	& MASM 5.1	     |		    | i286.asm		     |
-     +-----------------------+--------------+------------------------+
-     |QNX		     |		    |			     |
-     |	Version 2/3 (CII)    | makefile.qnx | qnx.[ch]		     |
-     |	Version 4 (Watcom C) | makefile.qn4 | unix.[ch] termcap.[ch] |
-     +-----------------------+--------------+------------------------+
-     |TOS -		     |		    |			     |
-     |	Lattice C	     | makefile.tos | tos.[ch] tos.lnk	     |
-     +-----------------------+--------------+------------------------+
+     +-----------------------+--------------+-----------------------------+
+     |	      System	     |	 Makefile   |	     Source Files	  |
+     +-----------------------+--------------+-----------------------------+
+     |UNIX		     |		    |				  |
+     |	BSD		     | makefile.bsd | unix.[ch] tcap*.c termcap.h |
+     |	System V -	     | makefile.usg | unix.[ch] tcap*.c termcap.h |
+     |	AIX		     | makefile.aix | unix.[ch] tcap*.c termcap.h |
+     |	ULTRIX		     | makefile.ult | unix.[ch] tcap*.c termcap.h |
+     |	Xenix - 	     | makefile.xen | unix.[ch] tcap*.c termcap.h |
+     |	POSIX (e.g. BSDI)    | makefile.pos | unix.[ch] tcap*.c termcap.h |
+     |	SunOS		     | makefile.sun | unix.[ch] tcap*.c termcap.h |
+     |	SunView 	     | makefile.sv  | unix.[ch] sunview.h	  |
+     |			     |		    | sunfront.c sunback.c	  |
+     |			     |		    | xvi.icn			  |
+     +-----------------------+--------------+-----------------------------+
+     |MS-DOS		     |		    | msdos_c.c msdos.h 	  |
+     |			     |		    | ibmpc_c.c ibmpc.h 	  |
+     |	Microsoft C 5.*      | makefile.msc | 8086mm.inc ibmpc_a.asm	  |
+     |	& MASM 5.*	     |		    | msdos_a.asm		  |
+     |	Microsoft Quick C    | makefile.qc  | 8086mm.inc ibmpc_a.asm	  |
+     |	& MASM 5.*	     |		    | msdos_a.asm		  |
+     |	Zortech C++ 2.*      | makefile.zc2 | 8086mm.inc ibmpc_a.asm	  |
+     |	& MASM 5.*	     |		    | msdos_a.asm		  |
+     |	Zortech C++ 3.*      | makefile.zc3 | 8086mm.inc ibmpc_a.asm	  |
+     |	& MASM 5.*	     |		    | msdos_a.asm		  |
+     |	Zortech C++ 3.*      |		    |				  |
+     |	386 protected mode   | makefile.386 | pc386.[ch]		  |
+     +-----------------------+--------------+-----------------------------+
+     |OS/2 -		     |		    |				  |
+     |	Version 1, text mode |		    |				  |
+     |	Microsoft C 5.1      | makefile.os2 | os2vio.[ch]		  |
+     |	& MASM 5.1	     |		    | i286.asm			  |
+     +-----------------------+--------------+-----------------------------+
+     |QNX		     |		    |				  |
+     |	Version 2/3 (CII)    | makefile.qnx | qnx.[ch]			  |
+     |	Version 4 (Watcom C) | makefile.qn4 | unix.[ch] tcap*.c termcap.h |
+     +-----------------------+--------------+-----------------------------+
+     |TOS -		     |		    |				  |
+     |	Lattice C	     | makefile.tos | tos.[ch] tos.lnk		  |
+     +-----------------------+--------------+-----------------------------+
 
      - Versions  marked  with  - probably do not work, as systems have
        not been recently available to the authors for testing.
@@ -562,14 +562,11 @@
 	 void	  (*v_clear_line)(VirtScr *);
 
 	 void	  (*v_goto)(VirtScr *, int row, int col);
-	 void	  (*v_advise)(VirtScr *, int row, int col,
-				   int index, char *str);
 
 	 void	  (*v_write)(VirtScr *, int row, int col, char *str);
 	 void	  (*v_putc)(VirtScr *, int row, int col, int ch);
 
 	 void	  (*v_set_colour)(VirtScr *, int colour);
-	 int	  (*v_colour_cost)(VirtScr *);
 
 	 void	  (*v_flush)(VirtScr *);
 
@@ -587,6 +584,9 @@
      remaining	fields	are  all  function pointers, and are described
      below.  Note that all functions  have  at	least  one  parameter,
      which  is	a  pointer to the instance of the VirtScr in question.
+     This is always referred to as vs below.  Note also that the  top-
+     left-hand corner of the window is taken to be (0,0).
+
 
 
      25th September 1992					Page 9
@@ -596,9 +596,6 @@
 
 
      10 					 Xvi Source Code Notes
-
-     This is always referred to as vs below.  Note also that the  top-
-     left-hand corner of the window is taken to be (0,0).
 
      v_new(vs)
 	  Obtain  a  new VirtScr, and return a pointer to it.  This is
@@ -623,23 +620,6 @@
      v_goto(vs, int row, int col)
 	  Move the cursor to the specified row and column.
 
-     v_advise(vs, int row, int col, int index, char *str)
-	  This	function is called when the editor is about to produce
-	  some output on  the  same  line  as  the  last  output,  but
-	  separate from it by one or more characters.  The destination
-	  position is the coordinate pair (row, col + index), and  str
-	  contains  the  string  of characters which are in the window
-	  starting at position (row, col).   Where  there  is  a  cost
-	  incurred by moving the cursor to a specific screen position,
-	  the terminal	interface  module  may	decide	to  write  the
-	  intervening  characters  to  the  screen rather than using a
-	  specific "move cursor" sequence, in order  to  minimise  the
-	  number of characters written to the terminal.
-
-	  Note	that for many environments, the cost of re-positioning
-	  the cursor  is  nil,	and  under  these  circumstances  this
-	  function need not do anything.
-
      v_write(vs, int row, int col, char *str)
 	  Write  the  specified  string of characters into the window,
 	  starting at the specified row and  column.   The  parameters
@@ -651,17 +631,6 @@
 
      v_putc(vs, int row, int col, int ch)
 	  This is like v_write but for a single character.
-
-
-
-
-     Page 10					   25th September 1992
-
-
-
-
-
-     Xvi Source Code Notes					    11
 
      v_set_colour(vs, int colour)
 	  Set the colour for all subsequent output (including clearing
@@ -683,6 +652,16 @@
      v_beep(vs)
 	  Beep.   It is acceptable to flash the screen or window if no
 	  audio facility is available.
+
+
+
+     Page 10					   25th September 1992
+
+
+
+
+
+     Xvi Source Code Notes					    11
 
      v_insert(vs, int row, int col, char *str)
 	  This	function  inserts  the	given  string  at  the	 given
@@ -719,16 +698,6 @@
 		|format 	| string  | DEF_TFF	  |
 		+---------------+---------+---------------+
 
-
-
-     25th September 1992				       Page 11
-
-
-
-
-
-     12 					 Xvi Source Code Notes
-
      4.4.  File Formats
 
      The functions in xvi which read and write text files are aware of
@@ -749,6 +718,17 @@
      of  work  to do if you want to retain the facility for converting
      between file formats within the editor.
 
+
+
+
+     25th September 1992				       Page 11
+
+
+
+
+
+     12 					 Xvi Source Code Notes
+
      In any case, your system interface module should  define  DEF_TFF
      to  be  the  index  of  the entry in tftable which represents the
      default  format  for  your  system.   This  is  the   value   for
@@ -756,10 +736,10 @@
 
      4.5.  Notes on Termcap Implementation
 
-     There  exists a termcap implementation of the terminal interface,
-     currently only used for the UNIX port.  This module  could  quite
-     easily  be  re-used  for  other systems if desired; the following
-     routines would need to be defined by the system module:
+     The termcap implementation of the terminal interface is currently
+     only used for the UNIX port.  This module could quite  easily  be
+     re-used  for  other  systems  if  desired; the following routines
+     would need to be defined by the system module:
 
      void foutch(int c)
 	  Output a single character to the  terminal.	This  must  be
@@ -784,17 +764,6 @@
      UNIX  and	MS-DOS implementations do use such a facility, and the
      interface functions for both systems are identically defined.
 
-
-
-
-     Page 12					   25th September 1992
-
-
-
-
-
-     Xvi Source Code Notes					    13
-
      4.7.  Function Keys/Mouse Handling
 
      Function key values are coded into a set of #defined constants in
@@ -816,6 +785,16 @@
 	  mouseclick(int row, int column);
 
      where row and column are the  current  co-ordinates,  counted  in
+
+
+     Page 12					   25th September 1992
+
+
+
+
+
+     Xvi Source Code Notes					    13
+
      character	positions,  of	the mouse pointer within the screen or
      editing window.  If the mouse is moved while  a  button  is  held
      down, the routine
@@ -851,6 +830,27 @@
 
      The  return  value from xvi_startup() is a pointer, which will be
      used in future to identify the window for input events.  For now,
+     it should be stored in the VirtScr's pv_window field.
+
+     Having  called  xvi_startup(), input events may then be passed to
+     the editor by calling  xvi_handle_event  with  a  pointer	to  an
+     xvEvent  structure  as  the  sole	argument.   This  structure is
+     defined as follows:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
      25th September 1992				       Page 13
@@ -860,13 +860,6 @@
 
 
      14 					 Xvi Source Code Notes
-
-     it should be stored in the VirtScr's pv_window field.
-
-     Having  called  xvi_startup(), input events may then be passed to
-     the editor by calling  xvi_handle_event  with  a  pointer	to  an
-     xvEvent  structure  as  the  sole	argument.   This  structure is
-     defined as follows:
 
 	  typedef struct event {
 	      enum {
@@ -917,6 +910,13 @@
      This structure is used to hold a single text line.   It  contains
      forward  and  backward  pointers  which are connected together to
      form a two-way linked list.  It also contains  a  pointer	to  an
+     allocated	text  buffer, an integer recording the number of bytes
+     allocated for the text, and the line number (an  unsigned	long).
+     The  text	is null-terminated, and the space allocated for it may
+     be grown but is never shrunk.  The maximum size of this space  is
+     given by MAX_LINE_LENGTH.
+
+
 
 
      Page 14					   25th September 1992
@@ -926,12 +926,6 @@
 
 
      Xvi Source Code Notes					    15
-
-     allocated	text  buffer, an integer recording the number of bytes
-     allocated for the text, and the line number (an  unsigned	long).
-     The  text	is null-terminated, and the space allocated for it may
-     be grown but is never shrunk.  The maximum size of this space  is
-     given by MAX_LINE_LENGTH.
 
      The  line number is used when showing line numbers on screen, but
      this is secondary to its main purpose of providing an ordering on
@@ -983,6 +977,12 @@
 	  Returns TRUE if l1 is the last line (i.e. the extra line  at
 	  the end, not the last text line) of the buffer.
 
+     is_line0(Line *l1)
+	  Returns  TRUE  if l1 is the 0th line (i.e. the extra line at
+	  the start, not the first text line) of the buffer.
+
+
+
 
 
      25th September 1992				       Page 15
@@ -992,10 +992,6 @@
 
 
      16 					 Xvi Source Code Notes
-
-     is_line0(Line *l1)
-	  Returns  TRUE  if l1 is the 0th line (i.e. the extra line at
-	  the start, not the first text line) of the buffer.
 
      5.3.  Posn
 
@@ -1049,6 +1045,10 @@
 
      When the editor was modified  to  support	buffer	windows,  many
      global   variables   were	 moved	into  the  Buffer  and	Xviwin
+     structures; some were left as globals.  For  instance,  the  undo
+     and  mark	facilities  are  obviously buffer-related, but yank is
+     useful if it is global (actually static within its  own  module);
+     it was decided that search and redo should also be global.
 
 
      Page 16					   25th September 1992
@@ -1058,11 +1058,6 @@
 
 
      Xvi Source Code Notes					    17
-
-     structures; some were left as globals.  For  instance,  the  undo
-     and  mark	facilities  are  obviously buffer-related, but yank is
-     useful if it is global (actually static within its  own  module);
-     it was decided that search and redo should also be global.
 
      Some  modules have their own internal static data structures; for
      instance, the search module remembers the last  pattern  searched
@@ -1114,6 +1109,11 @@
      flexrmchar(f)
 	  Remove the last character from a Flexbuf.
 
+     flexpopch(f)
+	  Remove the first character from a Flexbuf and return it.
+
+     flexgetstr(f)
+	  Return a pointer to the string contained in the Flexbuf.
 
 
 
@@ -1124,12 +1124,6 @@
 
 
      18 					 Xvi Source Code Notes
-
-     flexpopch(f)
-	  Remove the first character from a Flexbuf and return it.
-
-     flexgetstr(f)
-	  Return a pointer to the string contained in the Flexbuf.
 
      flexaddch(f, c)
 	  Add the character c to the end of the Flexbuf.
@@ -1181,6 +1175,12 @@
      own  VirtScr.  It will then be possible to build a version of the
      editor which operates in a true windowing environment by using  a
      separate  screen  window  for each buffer, instead of the current
+     vertical-split method.
+
+     A full definition of the  VirtScr	type  will  be	found  in  the
+     previous section.
+
+
 
 
      Page 18					   25th September 1992
@@ -1190,11 +1190,6 @@
 
 
      Xvi Source Code Notes					    19
-
-     vertical-split method.
-
-     A full definition of the  VirtScr	type  will  be	found  in  the
-     previous section.
 
      5.11.  Global Variables
 
@@ -1248,6 +1243,11 @@
      The header file xvi.h contains  all  the  type  definitions  used
      within the editor, as well as function declarations etc.
 
+     The  following  source  files  form  the primary interface to the
+     editor:
+
+
+
 
      25th September 1992				       Page 19
 
@@ -1256,9 +1256,6 @@
 
 
      20 					 Xvi Source Code Notes
-
-     The  following  source  files  form  the primary interface to the
-     editor:
 
      startup.c
 	       Entry point for the editor.  Deals  with  argument  and
@@ -1313,6 +1310,9 @@
 	       the logical cursor in the buffer and  the  position  of
 	       the  window onto that buffer.  This routine is not very
 	       optimal, and will probably disappear in due course.
+
+
+
 
 
      Page 20					   25th September 1992
