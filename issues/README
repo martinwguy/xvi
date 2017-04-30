@@ -6,7 +6,7 @@
 Xvi now keeps its issues in the source tree instead of on some web server.
 That way, the issue files refers to the version of the source code they
 accompany, one can work on the issues when not on the internet and they
-aren't all get lost when the company closes down or when your friend's
+don't all get lost when the company closes down or when your friend's
 web server dies unexpectedly with no recent backups.
 
 Each issue is tracked by a text file in the "isuues/open" directory.
