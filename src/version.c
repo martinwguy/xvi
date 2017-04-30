@@ -20,7 +20,7 @@
 ***/
 
 #ifdef __DATE__
-    char	Version[] = "Xvi 2.49 " __DATE__;
+    char	Version[] = "Xvi 2.50 " __DATE__;
 #else
-    char	Version[] = "Xvi 2.49 12th March 2015";
+    char	Version[] = "Xvi 2.50 30th April 2017";
 #endif

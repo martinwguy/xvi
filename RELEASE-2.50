@@ -1,0 +1,116 @@
+Release Notes for xvi 2.50
+==========================
+
+Martin Guy <martinwguy@gmail.com>, 30 April 2017.
+
+xvi-2.50 is the result of a four-month bug-fixing marathon started and inspired
+by John Vogel github.com/jvvv. Thanks to John for the unlimited command line,
+better interrupt handling and other fixes and to Richard Lloyd and Mark Shroyer
+for portability fixes.
+
+Since version 2.49, xvi now:
+
+- Implements
+  - the U and = commands
+  - the +$, +$-n and +-n flags, to open a file near its end
+  - the -R flag to open files readonly
+  - the -c "command" flag, which may be given several times
+  - ignores the -w n flag for POSIX compliance
+  - the "autowrite", "beautify", "scroll", "showmode", "terse" and "writeany"
+    parameters
+  - Appending to yank buffers when they are named in upper case
+  - Control-@ in insert mode, to reinsert the last inserted text
+  - ~ on the LHS and RHS of a substitution, giving the last replacement text
+  and is now able to run the "Towers of Hanoi" problem-solving macros
+
+- Removes some undocumented features:
+  - The "autogrow" parameter. It is now as if it were always on
+  - The hundred-deep multi-level undo mechanism
+  - The :compare command
+  - The "equalsize" parameter, now as if it were always on
+  - The "edit" and "autonoedit" parameters
+
+- Documents the xvi-specific :equalise command and the tabindent parameter
+
+- Sets enumerated parameters' values by the shortest match, e.g. ":se iu=c"
+
+- The :command line:
+  - Is no longer limited to 78 characters in length
+  - Has a simple line-editing capabilities using the left and right arrow keys,
+    home, end and ^W to delete the previous word, ^U to clear the line
+  - Does filename completion with the Tab key instead of the Esc key and
+    this is now only performed for commands which expect a filename
+
+- Fixes all known screen-updating bugs:
+  - Modifying one pane of a split buffer with 'x' didn't update the other pane
+  - Undoing a "dl" used to leave the cursor in the wrong place
+  - It now uses termcap's left/backspace/down capabilities even if they are
+    longer than one character
+  - It no longer garbles the screen when deleting near the end of a wrapped line
+  - Hitting s on a tab character at the start of a wrapped line used not to
+    update the wrapped part until you hit escape.
+
+- Improves the correctness and POSIX-compliance of several commands:
+  - "dw" at end of line used not to delete the last character
+  - "yl" or "dl" at end of line used not to yank/delete anything
+  - If a search fails, don't do the rest of a "redo"
+  - The execution of macros is halted if any motion or command fails
+  - Characters from the RHS of a mapping are now remapped if "remap" is set
+  - Doesn't remap initial RHS characters if they are the same as the LHS
+  - Parameter "remap" is now set by default
+  - ~ and ^_ now react to a preceding count
+  - ^Q is now a synonym for ^V
+  - Typing ^ Control-D in autoindent mode removes indentation for one line only
+  - :s/.../\u&/ now only capitalizes the first letter of the replacement text
+  - :s/pattern/% now uses the RHS of the last substitution
+  - "r" on an empty line (or Nr when less than N chars remain) now fails
+  - Control-@ is now disallowed on the :command line
+  - The Home and End keys now go to start and end of line, not of screen
+  - Key F10 now inserts #0 and F1 #1 in insert, replace and command modes
+  - When inserting a character-based yank, the cursor is left at the beginning
+    of the inserted text, not the end
+  - All 26 alphabetic yank buffers can now be used, not just 10 of them
+  - When lines are restored with an "undo", their marks are restored too
+  - When yanking to a named buffer the text is also copied to the unnamed buffer
+  - Lines of text about to be piping through a command are yanked first
+  - Spaces are allowed after :s and bare :s repeats the last substitution
+  - Command ":2,3" goes to line 3, not 2
+  - Environment variables LINES and COLUMNS now override other size settings
+  - The cursor is left in the correct position when undoing an undo
+  - ~ and % on the RHS os a substitution now respect the "magic" parameter
+  - ^ is only special at the start of a pattern, so you don't need to say \^
+  - Exit with non-zero status when receiving SIGHUP or SIGQUIT
+  - Let the interrupt character be something other than ^C if set with stty
+  - Restore the cursor position when going to a marked line using grave quote
+  - Make character range matches [abc] [^X] respect ignorecase properly
+  - Get command abbreviations :ma :s :su and :u right (mark/subst/suspend/undo)
+  - When the screen is resized and many buffers are open, it behaves better
+  - Fix deletion from start of line to a pattern that matches at start of line
+  - Fix cursor position when changing from mid of one line to start of another
+
+- The handling of keyboard interrupts (Control-C) has been improved
+  - Repeat counts are ignored if an insert/replace is interrupted
+  - Macros in execution are halted
+  - Infinitely-recursive macros and very long file reads can now be interrupted
+  - if stdin is not a terminal, SIGINT kills xvi immediately
+
+- If it runs out of memory, it is not known to crash any more, though it may
+  still not be able to write the file out.
+
+- Has its own unique test suite, able to match against screen contents.
+
+- Has been built on AIX 7.1/7.2, CentOS 7, Crux Linux, Debian jessie, Fedora 18,
+  FreeBSD, HP-UX, NetBSD, OpenBSD, OpenSUSE and Ubuntu xenial using
+  GCC, clang and Tiny-C for i386, amd64, ARM-64, PowerPC-64 and IBM POWER8 CPUs
+  and on MSDOS with Borland Turbo C 2.0.
+  The termcap code has been tested against ncurses, GNU termcap and AIX curses.
+
+- The test suite has been run on:
+  - AIX, CentOS, Debian, Fedora, Ubuntu: PASS
+  - NetBSD: Is seems to pass all tests but in reality nothing is tested
+  - OpenSUSE: The test suite fails with internal errors
+
+- Compiles to just under 100KB of code (Unix/termcap port, clang -Os for i386)
+
+Its source code can be obtained from http://sf.net/p/xvi and
+its web site is at http://martinwguy.github.io/xvi
