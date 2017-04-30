@@ -803,7 +803,7 @@ int	c;
 
 	/* The ^ that we inserted to show the ^V-in-progress is replaced
 	 * by the literal character because we didn't call one_right for it. */
-	//replchars(curpos->p_line, curpos->p_index, 1, "");
+
 	/* Remove the phantom ^ from the insert buffer */
 	flexrmchar(&Insbuff);
 

@@ -182,7 +182,6 @@ map_getc()
 	    } else {
 		/* After a ^V, ^C just inserts a ^C */
 	    }
-	    //kbdintr = FALSE;
 	    return(kbdintr_ch);
 	}
 

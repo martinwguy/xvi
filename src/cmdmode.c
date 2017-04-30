@@ -193,7 +193,6 @@ int	ch;
 	    inbuf[inend] = '\0';	/* terminate input line */
 	    inpos = 0; inend = 0;
 	    State = NORMAL;		/* return state to normal */
-	    //update_sline();	/* line is now a message line */
 	    return(cmd_COMPLETE);	/* and indicate we are done */
 
 	case '\b':		/* backspace or delete */
@@ -231,7 +230,7 @@ int	ch;
 	      inend -= (oldinpos - inpos);
 	      /* Update the screen columns */
 	      for (i=inpos; i <= inend; i++) colposn[i] -= len;
-	      flexrm(&curwin->w_statusline, colposn[inpos], len); //martin
+	      flexrm(&curwin->w_statusline, colposn[inpos], len);
 	    }
 	    if (inpos == 0) {
 		/*
@@ -382,8 +381,6 @@ int	ch;
 #endif
 	/* Move the rest of the status line down */
 	flexrm(&curwin->w_statusline, colposn[inpos], 1);
-	/* and remove its last character */
-		//flexrmchar(&curwin->w_statusline);
 
 	literal_next = FALSE;
     }

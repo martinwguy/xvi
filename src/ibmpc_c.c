@@ -230,11 +230,11 @@ inchar(long mstimeout)
 	    case 0x47: return(K_HOME);		/* home key */
 	    case 0x48: return(K_UARROW);	/* up arrow key */
 	    case 0x49: return(K_PGUP);		/* page up key */
-	    case 0x4b: return(K_LARROW);		/* left arrow key */
+	    case 0x4b: return(K_LARROW);	/* left arrow key */
 	    case 0x4d: return(K_RARROW);	/* right arrow key */
 	    case 0x4f: return(K_END);		/* end key */
-	    case 0x50: return(K_DARROW');	/* down arrow key */
-	    case 0x51: return(K_PGDN);		/* page down key */
+	    case 0x50: return(K_DARROW);	/* down arrow key */
+	    case 0x51: return(K_PGDOWN);	/* page down key */
 	    case 0x52: return(K_INSERT);	/* insert key */
 	    case 0x53: return(K_DELETE);	/* delete key */
 	    /*
