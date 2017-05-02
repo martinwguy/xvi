@@ -1,0 +1,60 @@
+Text stuffed with @ should go through the input map
+
+One of the reasons the maze test doesn't run is that xvi doesn't put
+text stuffed from a yank/named buffer into the input stream (e.g. @f).
+
+When we do this with the patch below, hanoi stops working, halting at:
+
+0  <-- cursor is at (2,0) on this 0
+07
+0654321
+
+
+T0123456n
+T0123456$
+/
+~
+We've tried unrolling the first loop iteration of hanoi and that doesn't
+help because it's halting near the end.
+
+We could unroll the whole hanoi test, creating a test piece by running
+hanoi with a working xvi and spitting out the input chars since it last
+changed and the new screen automatically, but it's a lot of effort!
+
+The xvi change is that test inserted with @ goes through the map table
+and it sometimes adds a newline. Try it with just the stuff change.
+
+diff --git a/src/yankput.c b/src/yankput.c
+index c2680d8..a91d5c0 100644
+--- a/src/yankput.c
++++ b/src/yankput.c
+@@ -730,6 +730,6 @@ bool_t	vi_mode;
+     switch (yp_buf->y_type) {
+     case y_chars:
+-	put(yp_buf->y_1st_text, vi_mode, FALSE);
++	put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
+ 	break;
+ 
+     case y_lines:
+@@ -759,10 +764,17 @@ char	*str;
+ bool_t	vi_mode;
+ bool_t	newline;
+ {
+-    stuff("%s%s%s",
+-	    (!vi_mode && str[0] != ':') ? ":" : "",
+-	    str,
+-	    (!vi_mode || newline) ? "\n" : "");
++    if (vi_mode) {
++	stuff_to_map(str);
++	if (newline) {
++	    stuff_to_map("\n");
++	}
++    } else {
++	stuff("%s%s%s",
++		str[0] != ':' ? ":" : "",
++		str,
++		newline ? "\n" : "");
++    }
+ }
+ 
+ /*
