@@ -734,7 +734,7 @@ bool_t	vi_mode;
      */
     switch (yp_buf->y_type) {
     case y_chars:
-	put(yp_buf->y_1st_text, vi_mode, FALSE);
+	put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
 	break;
 
     case y_lines:

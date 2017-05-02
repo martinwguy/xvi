@@ -28,14 +28,6 @@ diff --git a/src/yankput.c b/src/yankput.c
 index c2680d8..a91d5c0 100644
 --- a/src/yankput.c
 +++ b/src/yankput.c
-@@ -730,6 +730,6 @@ bool_t	vi_mode;
-     switch (yp_buf->y_type) {
-     case y_chars:
--	put(yp_buf->y_1st_text, vi_mode, FALSE);
-+	put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
- 	break;
- 
-     case y_lines:
 @@ -759,10 +764,17 @@ char	*str;
  bool_t	vi_mode;
  bool_t	newline;
