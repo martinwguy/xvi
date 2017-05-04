@@ -20,9 +20,10 @@ download it <A HREF=http://sf.net/p/xvi>from sourceforge</A>,
 <A HREF="https://github.com/martinwguy/xvi">see it on github</A>
 or fetch it from the <A HREF="#Downloads">downloads section</A> below.
 <BR><U>4th May 2017</U>:
-It turns out that xvi-2.50 contains a critical bug, that ":e" says
-"Ambiguous command", caused by the new ":equalize" alias for ":equalise".
-2.50.1 will follow in a few days' time.
+A serious bug crept into xvi-2.50, that ":e" says "Ambiguous command",
+caused by the new ":equalize" alias for ":equalise".
+2.50.1 fixes this, compilation with compilers that don't understand //comments
+and adds the missing newlines to multi-line character-based puts.
 <HR>
 <P>
 Xvi is a portable multi-window version of the UNIX editor &lsquo;vi&rsquo;,
@@ -117,17 +118,17 @@ Official executable binaries are available for:
 <TH>O/S<TH>xvi version<TH>Files
 <TR><TD> Linux
   <TD>2.50
-  <TD><A HREF="download/xvi-2.50-32bit.tgz">32-bit tarball</A>
-  <BR><A HREF="download/xvi-2.50-64bit.tgz">64-bit tarball</A>
-  <BR><A HREF="download/xvi_2.50-1_i386.deb">Debian/Ubuntu for i386</A>
-  <BR><A HREF="download/xvi_2.50-1_amd64.deb">Debian/Ubuntu for amd64</A>
+  <TD><A HREF="download/xvi-2.50.1-32bit.tgz">32-bit tarball</A>
+  <BR><A HREF="download/xvi-2.50.1-64bit.tgz">64-bit tarball</A>
+  <BR><A HREF="download/xvi_2.50.1-1_i386.deb">Debian/Ubuntu for i386</A>
+  <BR><A HREF="download/xvi_2.50.1-1_amd64.deb">Debian/Ubuntu for amd64</A>
 </TABLE>
 and there are binaries for various other systems on
 <A HREF="contrib.html">the contrib page</A>.
 <P>
 The current source code release is
 <UL>
- <LI><A HREF="download/xvi-2.50.tar.gz">xvi-2.50.tar.gz</A>
+ <LI><A HREF="download/xvi-2.50.tar.gz">xvi-2.50.1.tar.gz</A>
 </UL>
 also available
 <A HREF="http://sourceforge.net/projects/xvi"> from SourceForge</A>,
