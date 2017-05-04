@@ -1,12 +1,15 @@
-Release Notes for xvi 2.50
-==========================
+Release Notes for xvi 2.50.1
+============================
 
-Martin Guy <martinwguy@gmail.com>, 30 April 2017.
+Martin Guy <martinwguy@gmail.com>, 4 May 2017.
 
 xvi-2.50 is the result of a four-month bug-fixing marathon started and inspired
 by John Vogel github.com/jvvv. Thanks to John for the unlimited command line,
 better interrupt handling and other fixes and to Richard Lloyd and Mark Shroyer
 for portability fixes.
+
+2.50.1 i a bugfix release to 2.50 due to ":e" saying "Ambiguous command"
+since the ":equalize" alias was introduced for ":equalise".
 
 Since version 2.49, xvi now:
 
