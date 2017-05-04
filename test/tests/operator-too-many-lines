@@ -63,7 +63,7 @@ test 52 "jd+"		3 0 [list "one" "two" "three"  "~"]
 test 53 "kd2\r"		2 0 [list "one" "two" "three"  "~"]
 test 54 "d2\n"		2 0 [list "one" "two" "three"  "~"]
 test 55 "d2j"		2 0 [list "one" "two" "three"  "~"]
-test 56 "d2[darrow]"	2 0 [list "one" "two" "three"  "~"]
+test 56 "d2[down]"	2 0 [list "one" "two" "three"  "~"]
 test 57 "d2[ctrl n]"	2 0 [list "one" "two" "three"  "~"]
 test 58 "d3$"		2 0 [list "one" "two" "three"  "~"]
 
@@ -71,7 +71,7 @@ test 58 "d3$"		2 0 [list "one" "two" "three"  "~"]
 test 60 ":2--,2d\r"	2 0 [list "one" "two" "three"  "~"]
 test 61 "d2-"		2 0 [list "one" "two" "three"  "~"]
 test 62 "d2k"		2 0 [list "one" "two" "three"  "~"]
-test 63 "d2[uarrow]"	2 0 [list "one" "two" "three"  "~"]
+test 63 "d2[up]"	2 0 [list "one" "two" "three"  "~"]
 test 64 "d2[ctrl P]"	2 0 [list "one" "two" "three"  "~"]
 
 # Just quickly test that a bad motion halts a macro

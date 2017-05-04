@@ -83,7 +83,7 @@ if { $vi == "xvi" } {
 # Send left arrow and check that it works in the middle of the line.
 # Only vi has command-line editing
 if { $vi == "xvi" || $vi == "vim" } {
-ctest 41 "abcd[larrow][larrow][ctrl V]" 3 ":ab^cd"
+ctest 41 "abcd[left][left][ctrl V]" 3 ":ab^cd"
 ctest 42 "[ctrl V]"		5 ":ab^Vcd"
 exp_send "\b\b\b\b:"
 }
