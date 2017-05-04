@@ -1,0 +1,11 @@
+Interrupt and especially Interrupt-with-^Y sometimes fail 70
+
+Occasionally, the Interrupted test and more so the Intetupr-with-^Y
+tsts fail with eis status 70. Reason unknown. RUnning them again they
+usually succeed.
+
+WHen this happens, the screen is full of @ signs, one per line,
+the status line reads "No File [Modified]" and the cursor is at
+line 24, column 42 (!)
+
+Try modifying the test so that the result isn't all on one line.
