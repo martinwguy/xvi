@@ -1,7 +1,0 @@
-If you go
-
-	:so datahanoi\b\b\b\b\b/
-
-the command line looks right (":se data/hanoi") but when you press enter
-it says "can't open "data/anoi" so I guess there's something wrong with the
-new cmdline code (or with flexinsch() or something).
