@@ -193,7 +193,7 @@ static	struct	ecmd	{
   { "delete",	    EX_DELETE,	    0,	0,			ec_none },
 
   { "echo",	    EX_ECHO,	    0,	EC_INTEXP,		ec_strings },
-  { "edit",	    EX_EDIT,	    1,	EC_EXCLAM|EC_EXPALL,	ec_1string },
+  { "edit",	    EX_EDIT,	    2,	EC_EXCLAM|EC_EXPALL,	ec_1string },
   { "equalise",	    EX_EQUALISE,    1,	0,			ec_none },
   { "equalize",	    EX_EQUALISE,    0,	0,			ec_none },
   { "ex",	    EX_EX,	    0,	EC_EXPALL,		ec_1string },
