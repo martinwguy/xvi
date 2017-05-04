@@ -516,7 +516,7 @@ Line		*newlines;
 		 */
 		wp->w_cursor->p_line = NULL;
 		offset = cntllines(line, lastp);
-		if (offset > INT_MAX) {
+		if (sizeof(long) > sizeof(int) && offset > INT_MAX) {
 		    offset = 0;
 		}
 		wp->w_cursor->p_index = offset;

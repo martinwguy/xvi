@@ -143,7 +143,6 @@ cmd_input(ch)
 int	ch;
 {
     unsigned		len;
-    char *		stat; /* Pointer to status line text */
     unsigned		w;
 
     if (kbdintr) {

@@ -245,18 +245,12 @@ char		*no_file_str;
     register
 #endif
     unsigned long	nchars;		/* number of chars read */
-    unsigned long	nlines;		/* number of lines read */
+	     long	nlines;		/* number of lines read */
     unsigned long	nulls;		/* number of null chars */
     bool_t		incomplete;	/* incomplete last line */
     Line		*lptr = NULL;	/* pointer to list of lines */
-    Line		*last = NULL;	/*
-					 * last complete line
-					 * read in
-					 */
-    Line		*lp;		/*
-					 * line currently
-					 * being read in
-					 */
+    Line		*last = NULL;	/* last complete line read in */
+    Line		*lp;		/* line currently being read in */
     register enum {
 	at_soln,
 	in_line,
@@ -264,10 +258,7 @@ char		*no_file_str;
 	at_eoln,
 	at_eof
     }			state;
-    register char	*buff;		/*
-					 * text of line
-					 * being read in
-					 */
+    register char	*buff;		/* text of line being read in */
     register int	col;		/* current column in line */
     unsigned		savecho;
 
