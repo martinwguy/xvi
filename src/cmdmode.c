@@ -144,7 +144,6 @@ int	ch;
 {
     unsigned		len;
     char *		stat; /* Pointer to status line text */
-    unsigned short	curposn;
     unsigned		w;
 
     if (kbdintr) {
@@ -408,10 +407,14 @@ int	ch;
 	    return cmd_CANCEL;
 	}
 
-	curposn = colposn[inpos];
+	/* Add the displayed version to the status line text */
+	flexinsstr(&curwin->w_statusline, colposn[inpos], p);
 
-	flexinsstr(&curwin->w_statusline, curposn, p);
-
+	/*
+	 * Move the rest of the command line up by one character position.
+	 * If inpos == inend (cursor at tne of line) this does nothing.
+	 */
+	memmove(inbuf+inpos+1, inbuf+inpos, inend-inpos);
 	for (i=inpos+1; i <= inend+1; i++) {
 	    colposn[i] += w;
 	}

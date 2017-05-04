@@ -1,0 +1,78 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Check that command-line editing works.
+# You should be able to use:
+# [left] [right] [home] [end]
+# [ctrl W] - delete a word left
+# [ctrl U] - cancel the input line (but remain on the : command line)
+
+# Each test checks the screen display AND the characters that are entered
+# as a command.
+
+source scripts/term
+start_vi
+
+# Normal insertion at end of line
+ctest 10 ":echo abc"		9 ":echo abc"
+test  11 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "abc"] } { fail 12 }
+
+# Left one place
+ctest 20 ":echo abc[left]"	8 ":echo abc"
+test  21 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "abc"] } { fail 22 }
+
+# Home, right one place and End
+ctest 30 ":abc[home]"		1 ":abc"
+ctest 31 "[right]"		2 ":abc"
+ctest 32 "[end]"		4 ":abc"
+
+# Insert at start of line
+ctest 40 "[home]echo X"		7 ":echo Xabc"
+test 41 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "Xabc"] } { fail 42 }
+
+# Insert in the middle of a line
+ctest 50 ":echo abcd[left][left]X"	9 ":echo abXcd"
+test 51 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "abXcd"] } { fail 52 }
+
+# Delete at end of line
+ctest 60 ":echo abcd\b"		9 ":echo abc"
+test 61 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "abc"] } { fail 62 }
+
+# Delete from middle of line
+ctest 60 ":echo abXcd[left][left]\b" \
+				8 ":echo abcd"
+test 61 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "abcd"] } { fail 62 }
+
+# Delete a word at end of line cancels the word but leaves the space
+ctest 70 ":echo one two"	13 ":echo one two"
+ctest 71 "[ctrl W]"		10  ":echo one"
+test  72 "X\r"			1 0 [list "" "~"]
+if { ! [statusline_is "one X"] } { fail 73 }
+
+# Delete word from the middle of a word (should cancel left)
+ctest 80 ":echo onetwo[left][left][left]" \
+				9 ":echo onetwo"
+ctest 81 "[ctrl W]"		6  ":echo two"
+test  82 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "two"] } { fail 83 }
+
+# Delete word from the start of a word (should delete previous word)
+# Sit the cursr on the 't' and hit ^W: it should delete the "one ".
+ctest 90 ":echo one two[left][left][left]" \
+				10 ":echo one two"
+ctest 91 "[ctrl W]"		6  ":echo two"
+test  92 "\r"			1 0 [list "" "~"]
+if { ! [statusline_is "two"] } { fail 93 }
+
+
+stop_vi
+
+exit 0
