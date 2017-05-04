@@ -241,10 +241,10 @@ proc ctrl {c} {
     return [format %c [expr {$i & 0x1F}]]
 }
 proc esc    {} { return [format %c 0x1B] }
-proc uarrow {} { return "[esc]OA" }
-proc darrow {} { return "[esc]OB" }
-proc rarrow {} { return "[esc]OC" }
-proc larrow {} { return "[esc]OD" }
+proc up     {} { return "[esc]OA" }
+proc down   {} { return "[esc]OB" }
+proc right  {} { return "[esc]OC" }
+proc left   {} { return "[esc]OD" }
 proc home   {} { return "[esc]OH" }
 proc end    {} { return "[esc]OF" }
 proc pgup   {} { return "[esc]\[5~" }
