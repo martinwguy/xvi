@@ -21,9 +21,121 @@ We could unroll the whole hanoi test, creating a test piece by running
 hanoi with a working xvi and spitting out the input chars since it last
 changed and the new screen automatically, but it's a lot of effort!
 
-The xvi change is that test inserted with @ goes through the map table
-and it sometimes adds a newline. Try it with just the stuff change.
+The xvi change is that test inserted with @ goes through the map table.
 
+Tested adding a parameter to turn mapping of stuffed text on and off and
+debug-printfing the stuffed text at the start of stuff_to_map() reveals that
+no mapped character are being stuffed but without the patch map() is called:
+WORKING:
+  PUT! [/6]
+  PUT! [/0]
+! PUT! [$]
+  PUT! [/5]
+  PUT! [/0]
+! PUT! [$]
+  PUT! [/5]
+  PUT! [/6]
+! PUT! [n]
+  PUT! [/4]
++ PUT! [/0]
++ PUT! [$]
++ PUT! [/3]
++ PUT! [/6]
++ PUT! [n]
+  PUT! [/5]
+! PUT! [/4]
+! PUT! [$]
+but using stuff_to_map() for @-stuffed chars, map() is called with:
+BROKEN:
+  PUT! [/6]
+  PUT! [/0]
+! PUT! [/]
+  PUT! [/5]
+  PUT! [/0]
+! PUT! [/]
+  PUT! [/5]
+  PUT! [/6]
+! PUT! [/]
+  PUT! [/4]
+  PUT! [/5]
+! PUT! [/]
+  PUT! [/3]
+  PUT! [/0]
+! PUT! [/]
+  PUT! [/3]
+  PUT! [/4]
+! PUT! [/]
+
+Now, the three @-stuffs are @f @h @f in the L macro so it looks like @f
+is getting (or regurgitating) the wrong contents. @f is set by macro A "fyl
+four characters earlier in macro L.
+
+Experiment:
+To find out whether it's the storing or regurgitating/mapping, add printfs
+when named buffers are yanked to. If it's getting / it something to do with
+the yanking code. If it's getting $, n it's something to do with the putting
+code.
+
+Result:
+WORKING (no mapping of @stuffs):
+Yank to buffer @ C[]
+Yank to buffer @
+Yank to buffer @ C[89Z]
+Yank to buffer @
+Yank to buffer @
+Yank to buffer @ C[7]
+Yank to buffer f C[6]
+Yank to buffer h C[0]
+Yank to buffer f C[/6]
+Yank to buffer @ C[6]
+Yank to buffer h C[/0]
+Yank to buffer @ C[0]
+PUT! [/6]
+PUT! [/0]
+Yank to buffer f C[$]
+PUT! [$]
+BROKEN (mapping @stuffs):
+Yank to buffer @ C[]
+Yank to buffer @
+Yank to buffer @ C[89Z]
+Yank to buffer @
+Yank to buffer @
+Yank to buffer @ C[7]
+Yank to buffer f C[6]
+Yank to buffer h C[0]
+Yank to buffer f C[/6]
+Yank to buffer @ C[6]
+Yank to buffer h C[/0]
+Yank to buffer @ C[0]
+PUT! [/6]
+PUT! [/0]
+Yank to buffer f C[/]
+PUT! [/]
+HOWEVER if you run the broken one step by step, it gets the right result
+(yanks and puts $ into "f, not /). It only gets it wrong when you run the
+whole macro.
+This may be because stuffing into the canonical queue changes the order
+of teh input chacraters. For example, if saying L pushes 60 chars onto the
+canonical queue, and while processing that we push something else onto
+the canon queue, it'll come after the 60 chars, whereas if stuffed onto
+the mapped queue, it'll come before any of the 60 chars left in the canon.
+
+So try stuffing @-mapped chars onto the start of the canon queue, not the end.
+
+
+diff --git a/src/map.c b/src/map.c
+index a7c601e..9ac53a0 100644
+--- a/src/map.c
++++ b/src/map.c
+@@ -130,7 +130,7 @@ void
+ stuff_to_map(s)
+ char *s;
+ {
+-    lformat(&canon_queue, s);
++    lformat(&canon_queue, "%s", s);
+ }
+
+ /* Undo all previous "stuff"'s, leaving the input buffer empty.
 diff --git a/src/yankput.c b/src/yankput.c
 index c2680d8..a91d5c0 100644
 --- a/src/yankput.c
@@ -48,5 +160,5 @@ index c2680d8..a91d5c0 100644
 +		newline ? "\n" : "");
 +    }
  }
- 
+
  /*
