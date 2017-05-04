@@ -1,0 +1,8 @@
+POSIX says:
+
+     * POSIX: "Commands that store text into buffers shall store the text
+     * into the unnamed buffer as well as any specified buffer."
+     * This only applies to the letter-named buffers, not the automatic ones.
+
+but it's unclear whether just the appended text should be put in the unnamed
+buffer or the whole contents of the buffer appended to.
