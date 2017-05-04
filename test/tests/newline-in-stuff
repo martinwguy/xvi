@@ -15,20 +15,28 @@ exec tclsh "$0" ${1+"$@"}
 #
 # Here we test that they get the newlines on the right places.
 
+# This only tests stuffing in vi mode (with, e.g., @f), which goes through
+# the mapping tables. We need to check ex mode (e.g. the :@f command).
+
 source scripts/term
 start_vi
 
-# One line char-based
+# One line char-based check that 1st_text is inserted
 test 10 "aaabc\rdef\rghi[esc]"	3 2 [list "aabc" "def" "ghi" "~"]
 test 11 "1G\"ay\$G\$@a[esc]"	3 5 [list "aabc" "def" "ghiabc" "~"]
 
-# Two lines char-based
+# Two lines char-based check that 2nd_text is inserted
 test 20 "1GcGaabc\rdef\rghi[esc]" 3 2 [list "aabc" "def" "ghi" "~"]
 test 21 "1G\"by/f\rG\$@b[esc]"	4 1 [list "aabc" "def" "ghiabc" "de" "~"]
 
-# Three lines char-based
+# Three lines char-based checks that l_lines is inserted
 test 30 "1GcGaabc\rdef\rghi[esc]" 3 2 [list "aabc" "def" "ghi" "~"]
 test 31 "1G\"cy/i\rG\$@c[esc]"	5 1 [list "aabc" "def" "ghiabc" "def" "gh" "~"]
+
+# Five lines char-based checks that l_lines are inserted and in the right order
+test 32 "1GcGaabc\rdef\rghi\rjkl\rmno[esc]" 5 2 [list "aabc" "def" "ghi" "jkl" "mno" "~"]
+test 33 "1G\"dy/o\rG\$@d[esc]"	9 1 [list "aabc" "def" "ghi" "jkl" "mnoabc" \
+					  "def" "ghi" "jkl" "mn" "~"]
 
 # One line line-based
 test 40 "1GcGaabc\rdef\rghi[esc]" 3 2 [list "aabc" "def" "ghi" "~"]

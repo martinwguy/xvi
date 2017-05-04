@@ -130,7 +130,7 @@ void
 stuff_to_map(s)
 char *s;
 {
-    lformat(&canon_queue, s);
+    flexinsstr(npos.mp_src, 0, s);
 }
 
 /* Undo all previous "stuff"'s, leaving the input buffer empty.

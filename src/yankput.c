@@ -714,6 +714,10 @@ oom:
  * The "vi_mode" parameter will be FALSE if the buffer should
  * be preceded by a ':' and followed by a '\n', i.e. it is the
  * result of a :@ command rather than a vi-mode @ command.
+ *
+ * POSIX: "After each line of a line-mode buffer,
+ * and all but the last line of a character mode buffer,
+ * behave as if a <newline> were entered as standard input."
  */
 void
 yp_stuff_input(name, vi_mode)
@@ -721,40 +725,73 @@ int	name;
 bool_t	vi_mode;
 {
     Yankbuffer	*yp_buf;
+    Line	*lp;
 
     yp_buf = yp_get_buffer(name);
     if (yp_buf == NULL) {
 	return;
     }
 
-    /*
-     * POSIX: "After each line of a line-mode buffer,
-     * and all but the last line of a character mode buffer,
-     * behave as if a <newline> were entered as standard input."
-     */
-    switch (yp_buf->y_type) {
-    case y_chars:
-	put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
-	break;
+    if (!vi_mode) {
+	switch (yp_buf->y_type) {
+	case y_chars:
+	    put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
+	    break;
 
-    case y_lines:
-	break;
+	case y_lines:
+	    break;
 
-    default:
-	show_error("Nothing to put!");
-	return;
-    }
-
-    if (yp_buf->y_line_buf != NULL) {
-	Line	*lp;
+	default:
+	    show_error("Nothing to put!");
+	    return;
+	}
 
 	for (lp = yp_buf->y_line_buf; lp != NULL; lp = lp->l_next) {
 	    put(lp->l_text, vi_mode, TRUE);
 	}
-    }
 
-    if (yp_buf->y_type == y_chars && yp_buf->y_2nd_text != NULL) {
-	put(yp_buf->y_2nd_text, vi_mode, FALSE);
+	if (yp_buf->y_type == y_chars && yp_buf->y_2nd_text != NULL) {
+	    put(yp_buf->y_2nd_text, vi_mode, FALSE);
+	}
+    } else {
+	/*
+	 * Characters from vi-mode @f commands are stuffed into the start of
+	 * the canonical queue so here we have to put() the elements in
+	 * reverse order for them to end up in the correct order.
+	 */
+	switch (yp_buf->y_type) {
+	case y_chars:
+	    if (yp_buf->y_2nd_text != NULL) {
+		put(yp_buf->y_2nd_text, vi_mode, FALSE);
+	    }
+	    break;
+
+	case y_lines:
+	    break;
+
+	default:
+	    show_error("Nothing to put!");
+	    return;
+	}
+
+	/* Insert the intervening lines in reverse order */
+	if (yp_buf->y_line_buf != NULL) {
+	    /* Go to the last element in the list of lines */
+	    for (lp = yp_buf->y_line_buf; lp->l_next != NULL; lp = lp->l_next)
+		;
+	    /*
+	     * Now work back towards the first one, including the first line.
+	     * The (lp = lp->l_prev) != NULL is always true, used to make it
+	     * go back to the first line inclusive.
+	     */
+	    do {
+		put(lp->l_text, vi_mode, TRUE);
+	    } while (lp != yp_buf->y_line_buf && (lp = lp->l_prev));
+	}
+
+	if (yp_buf->y_type == y_chars && yp_buf->y_1st_text != NULL) {
+	    put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
+	}
     }
 }
 
@@ -764,10 +801,21 @@ char	*str;
 bool_t	vi_mode;
 bool_t	newline;
 {
-    stuff("%s%s%s",
-	    (!vi_mode && str[0] != ':') ? ":" : "",
-	    str,
-	    (!vi_mode || newline) ? "\n" : "");
+    if (vi_mode) {
+	/* stuff_to_map() inserts chars at the start of canon_queue so
+	 * insert a trailing newline, if any, before the text so that it
+	 * ends up after the text that it should follow.
+	 */
+	if (newline) {
+	    stuff_to_map("\n");
+	}
+	stuff_to_map(str);
+    } else {
+	stuff("%s%s%s",
+		str[0] != ':' ? ":" : "",
+		str,
+		newline ? "\n" : "");
+    }
 }
 
 /*
