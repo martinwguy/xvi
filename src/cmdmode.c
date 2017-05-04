@@ -294,6 +294,8 @@ int	ch;
 	case CTRL('U'):		/* line kill */
 	    inpos = 1; inend = 1;
 	    inbuf[inend] = '\0';
+	    /* Just leave the first character (:/?!) */
+	    curwin->w_statusline.fxb_wcnt = 1;
 	    update_cline();
 	    return(cmd_INCOMPLETE);
 

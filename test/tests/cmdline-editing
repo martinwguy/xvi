@@ -72,6 +72,15 @@ ctest 91 "[ctrl W]"		6  ":echo two"
 test  92 "\r"			1 0 [list "" "~"]
 if { ! [statusline_is "two"] } { fail 93 }
 
+# Test ^U - it should cancel the line back to the :
+ctest 100 ":echo abc"		9 ":echo abc"
+ctest 101 "[ctrl U]"		1 ":"
+# Test ^U in the middle of the line - should still cancel everything
+ctest 102 "echo abc[left][left][left][left]" \
+				5 ":echo abc"
+ctest 103 "[ctrl U]"		1 ":"
+
+exp_send "\b"	;# Back to normal mode
 
 stop_vi
 
