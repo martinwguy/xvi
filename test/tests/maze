@@ -61,7 +61,7 @@ set postRun [list \
 #
 
 # Clean up after vim so that it starts up ok
-exec rm -f {.1991_maze_sample.swp}
+exec rm -f {data/.sample.maz.swp}
 
 source scripts/term
 start_vi data/sample.maz
@@ -73,6 +73,7 @@ ctest 11 ":so data/maze_mac"	17 ":so data/maze_mac"
 test 12 "\r"			1 0 $preInit
 
 # Test the initialization
+# :b :
 test 20 "I"			2 1 $postInit
 
 test 30 "L"			22 0 $postRun
