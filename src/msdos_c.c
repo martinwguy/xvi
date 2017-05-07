@@ -55,11 +55,13 @@ volatile	unsigned char	SIG_suspend_request;
 volatile	unsigned char	SIG_user_disconnected;
 volatile	unsigned char	SIG_terminate;
 
+#if 0
 void
 ignore_signals(void)
 {
     msdsignal(&kbdintr);
 }
+#endif
 
 void
 sys_init(void)

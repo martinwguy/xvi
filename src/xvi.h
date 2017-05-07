@@ -1179,7 +1179,6 @@ extern	long	exTilde P((Line *, Line *, char *));
 /*
  * signal.c
  */
-extern	void	ignore_signals P((void));
 extern	void	catch_signals P((void));
 
 /*
