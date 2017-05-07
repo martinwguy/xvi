@@ -71,16 +71,6 @@ int	num;
 	backfunc = inc;
     }
 
-    /*
-     * On 'to' searches, skip one to start with so we can repeat
-     * searches in the same direction and have it work right.
-     */
-    if (type) {
-	if ((*mvfunc)(&pos) != mv_SAMELINE) {
-	    return(NULL);
-	}
-    }
-
     for (i = 0; i < num; i++) {
 	bool_t	found;
 
