@@ -1,10 +1,15 @@
-Release Notes for xvi 2.50
+Release Notes for xvi 2.51
 ==========================
 
-Martin Guy <martinwguy@gmail.com>, 30 April 2017.
+Martin Guy <martinwguy@gmail.com>, $DATE$
 
-xvi-2.50 is the result of a four-month bug-fixing marathon started and inspired
-by John Vogel github.com/jvvv. Thanks to John for the unlimited command line,
+xvi-2.51 refines the 2.50 release by fixing final bugs in new features and 
+- text stuffed as commands from a yank buffer (e.g. "a@) is now mapped
+- ytx when the character right of the cursor is an x now does nothing
+  instead of yanking up to the following x character (if any)
+These fixes make the maze-solving macros work :)
+
+Thanks to John Vogel github.com/jvvv for the unlimited-length command line,
 better interrupt handling and other fixes and to Richard Lloyd and Mark Shroyer
 for portability fixes.
 
