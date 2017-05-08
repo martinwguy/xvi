@@ -1,0 +1,35 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Make sure that executing a char-base yank buffer with :@ or :*
+# terminates it with a newline.
+
+#
+# We need to test three cases for char-based yanks, due to the way xvi works
+# a single-line char-based yank without a trailing newline needs one
+# a two-line char-based yank needs one putting out after the first line
+# needs one after the second.
+# However, if the yank buffer already ends with a newline another is not added.
+
+source scripts/term
+start_vi
+
+# Single-line char-based yanks
+
+# without a trailine newline
+test 1 "as/a/b/[esc]0\"fy\$:@f\r" 1 0 "s/b/b/"
+# with one
+test 2 "Cs/a/b/\rdef[esc]k0\"fy/d\r:@f\r" 1 0 [list "s/b/b/" "def"]
+
+# Two-line yanks
+
+# without trailing newline
+test 3 "1GcGs/a/b/\rs/b/c/[esc]k0\"f2y\$:@f\r" 1 0 [list "s/c/b/" "s/b/c/"]
+# with trailing newline
+test 4 "1GcGs/a/b/\rs/b/c/\rdef[esc]1G\"f2y/d\r:@f\r" 1 0 [list "s/c/b/" "s/b/c/"]
+
+stop_vi
+
+exit 0
