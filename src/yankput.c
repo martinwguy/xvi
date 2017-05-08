@@ -735,7 +735,7 @@ bool_t	vi_mode;
     if (!vi_mode) {
 	switch (yp_buf->y_type) {
 	case y_chars:
-	    put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
+	    put(yp_buf->y_1st_text, vi_mode, TRUE);
 	    break;
 
 	case y_lines:
@@ -751,7 +751,7 @@ bool_t	vi_mode;
 	}
 
 	if (yp_buf->y_type == y_chars && yp_buf->y_2nd_text != NULL) {
-	    put(yp_buf->y_2nd_text, vi_mode, FALSE);
+	    put(yp_buf->y_2nd_text, vi_mode, TRUE);
 	}
     } else {
 	/*

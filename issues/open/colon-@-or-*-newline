@@ -1,8 +1,0 @@
-:@ or :* of a character-based yank buffer should append newline
-
-If you put s/a/b/ in buffer a by sitting on the s and saying "ay$
-and then say :@a[Enter] it pastes :s/a/b onto the command line but
-doesn't press Enter. You either have to do that yourself or add ^V^M
-to the end of the buffer.
-
-It works ok if you "ayy the command (i.e. as a line-based yank).
