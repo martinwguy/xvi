@@ -453,11 +453,6 @@ bool_t	interactive;			/* true if reading from tty */
 		}
 
 		switch (ecp->ec_arg_type) {
-		case ec_strings:
-		    makeargv(arg, &argc, &argv, " \t");
-		    if (argv == NULL) return(FALSE);
-		    break;
-
 		case ec_filecmd:
 		    if (*arg == '!') {
 		        /* Write into pipe */
@@ -469,9 +464,12 @@ bool_t	interactive;			/* true if reading from tty */
 		    }
 		    /* FALL THROUGH */
 
+		case ec_strings:
 		case ec_1string:
 		    makeargv(arg, &argc, &argv, " \t");
 		    if (argv == NULL) return(FALSE);
+		    if (ecp->ec_arg_type == ec_strings)
+			break;
 
 		    if (argc > 1) {
 			/*
