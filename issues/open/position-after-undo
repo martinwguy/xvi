@@ -1,0 +1,16 @@
+Cursor position after undo and undo-undo is wrong
+
+POSIX:
+"Current line:
+    If lines are added or changed in the file, set to the first line added or changed.
+    Set to the line before the first line deleted, if it exists.
+    Set to 1 if the edit buffer is not empty.
+    Set to zero.
+Current column: Set to non- <blank>."
+
+xvi differs from this:
+- undoing a "%s/make/MAKE/" or "g/make/s//MAKE/" leaves the cursor at line 1
+- When undoing an undo, it restores the cursor to where it was before the
+  first undo.
+- when deleting lines, it leaves the cursor on the line after the deleted
+  text, not the one before.
