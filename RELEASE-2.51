@@ -8,6 +8,7 @@ xvi-2.51 refines the 2.50 release by fixing final bugs in new features and
 - ytx when the character right of the cursor is an x now does nothing
   instead of yanking up to the following x character (if any)
 These fixes make the maze-solving macros work :)
+- :w>> is now implemented
 
 Thanks to John Vogel github.com/jvvv for the unlimited-length command line,
 better interrupt handling and other fixes and to Richard Lloyd and Mark Shroyer

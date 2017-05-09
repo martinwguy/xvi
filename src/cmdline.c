@@ -460,6 +460,11 @@ bool_t	interactive;			/* true if reading from tty */
 
 		case ec_filecmd:
 		    if (*arg == '!') {
+		        /* Write into pipe */
+			break;
+		    }
+		    if (*arg == '>' && arg[1] == '>') {
+		        /* Append to file */
 			break;
 		    }
 		    /* FALL THROUGH */
@@ -475,6 +480,7 @@ bool_t	interactive;			/* true if reading from tty */
 			command = EX_EBADARGS;
 		    }
 		    arg = argv[0];	/* unnecessary but correct */
+
 		default:
 		    break;
 		}
