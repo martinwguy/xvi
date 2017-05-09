@@ -5,7 +5,6 @@ for those who already know how to use the editor.
 To get out of xvi, type the following:
         :q!
 and then press RETURN.
-
 The rest of this file contains a summary of xvi commands.
 If you remember the commands ^D (control-D) and ^U (control-U)
 then that will be enough to get you around this help file.
@@ -21,13 +20,63 @@ type
 
 but beware - the meaning of the prefix varies between commands.
 
+Targets
+=======
+
+Many commands consist of two letters where the first gives the operation
+and the second says where it should affect up to. If the second letter is
+the same as the first (dd, yy, cc etc), it means just the current line,
+or you can use one of the following:
+
+Line-based targets, which affect from the current line to the:
+
+        j + Enter downarrow ^N
+                following one
+        k - uparrow ^P
+                previous one
+        4j      one 4 below it
+        G       end of the file
+        1G      first line of the file
+        _       itself (a synonym for dd, yy, cc etc)
+        H L M   first/middle/last line of screen
+        'x      line with mark x
+
+Character-based targets, which affect from the cursor position to the:
+
+        l rightarrow space
+                character under the cursor only
+        h leftarrow ^H
+                character left of the cursor only
+        0 |     start of the line
+        ^ Home  first non-blank character of the line
+        $ End   end of the line
+        N|      column N of the same line
+        %       matching bracket
+        ( ) { } [ ]
+                start/end of the sentence/paragraph/section
+        `x      cursor position of mark x
+        /patt   next match of the pattern
+        ?patt   previous match of the pattern
+        n       next match of last search pattern
+        N       previous match of last search
+        w       start of the next word (W to include punctuation)
+        b       start of the word under the cursor (and B)
+        e       end of the word under cursor (and E)
+        fx Fx   next/previous occurrence of char x in the same line
+        tx Tx   up to but not including next/previous char x
+        ;       repeat of f F t or T
+        ,       repeat of f F t or T in the opposite direction
+
+Command summary
+===============
+
 Cursor positioning
 ==================
 
         ^F      Move forward one screenful in file
-	PgDown	Same as ^F
+        PgDown  Same as ^F
         ^B      Move backward one screenful
-	PgUp	Same as ^B
+        PgUp    Same as ^B
         ^D      Scroll down half a screenful
         ^U      Scroll up half a screenful
         G       Go to line (defaults to end of file)
@@ -59,16 +108,16 @@ Character Positioning
 =====================
 
         ^       First non-white on current line
-	Home	Same as ^
+        Home    Same as ^
         0       Beginning of line
         $       End of line
-	End	Same as $
+        End     Same as $
         h       Left one character
         l       Right one character
         ^H and Left-arrow
-		Same as 'h'
+                Same as 'h'
         space and Right-arrow
-		Same as 'l'
+                Same as 'l'
         fx      Find 'x' forward in current line
         Fx      Find 'x' backward in current line
         tx      Go up to 'x' forward in current line
@@ -118,51 +167,54 @@ Marking and Returning
         :ka     Mark current line with letter 'a'
         :7ka    Mark line 7 with letter 'a'
 
-Insert and Replace
-==================
+Insert and Replace Characters
+=============================
 
         a       Append after cursor
         i       Insert before cursor
-	Insert	Same as i
+        Insert  Same as i
         A       Append at end of current line
         I       Insert before first non-blank on current line
-        o       Open a new line below current line
-        O       Open a new line above current line
         rx      Replace a single character with 'x'
         R       Enter replace (overwrite) mode
 
-Operators (double to affect lines)
-==================================
+Line operators
+==============
+(T is a target character - see "Targets" above)
 
-        d       Delete
-        c       Change
-        y       Yank to buffer (to be put back with 'p' or 'P')
-        <       Reduce indentation (by no of spaces in "shiftwidth" parameter)
-        >       Increase indentation
-        !       Pipe line range through specified system command
+        dT      Delete from current line to target
+        cT      Replace from current line to target with following text
+        <T      Reduce indentation (by no of spaces in "shiftwidth" parameter)
+        >T      Increase indentation
+        !T      Pipe line range through specified system command
+
+        :x,ymz  Move lines x to y after line z
+        :x,ytz  Copy lines x to y after line z
+        o       Open a new line below current line
+        O       Open a new line above current line
 
 Miscellaneous operations
 ========================
 
-        C       Change rest of line
-        D       Delete rest of line
+        C       Change rest of line (same as c$)
+        D       Delete rest of line (same as d$)
         s       Substitute characters
         S       Same as cc
         J       Join next line on to end of this line
-        x       Delete character
-	Delete	Same as x
+        x       Delete character under cursor
+        Delete  Same as x
         X       Delete character before cursor
-	~	Change the case of the character under the cursor
-	^_	Flip the top bit of the character under the cursor
-	F1	Show this help file
-	Help	Same as F1
-	:help	Same as F1
+        ~       Change the case of the character under the cursor
+        ^_      Flip the top bit of the character under the cursor
+        F1      Show this help file
+        Help    Same as F1
+        :help   Same as F1
 
 Yank and Put
 ============
 
-        y       yank some text (see "operators")
-        Y       Yank current line
+        yT      yank from cursor to target (see "Targets" above)
+        Y       Yank current line (same as "yy")
         :y      Yank current line
         :17y    Yank line 17
         :3,5y   Yank lines from 3 to 5 inclusive
@@ -178,19 +230,21 @@ Yank and Put
                 The buffer name may be any ASCII letter, '@' (the default),
                 ':' which normally stores the last colon command executed, or
                 '/' and '?' which normally store the last forward and reverse
-                search patterns.
-                Yanking to an upper case letter appends to a yank buffer.
+                search patterns. Yanking/deleting/changing to an upper case
+		letter appends the yanked text to the buffer.
+
         "xp     Inserts contents of yank buffer x after the current position
 
-        @x      Take contents of yank buffer as command input
+        @x      Take contents of yank buffer as vi command input
         @@      Take last yanked or deleted text as input
         @:      Redo last colon command
+        :@x :*x Execute contents of buffer x as ex commands
 
 Undo and Redo
 =============
 
-        u       Undo last change
-        U       Restore current line
+        u       Undo last change (or undo an undo)
+        U       Restore current line to how it was when you arrived there
         .       Repeat last change
 
 Global Editing
@@ -207,10 +261,6 @@ Global Editing
         Any of the above may be preceded by a line range, e.g. 12,15.
 
         &               Redo last substitution (same as :&)
-        :x,y yank       Yank lines from x through y
-        :x,y delete     Delete lines from x through y
-        :x,y copy z     Copy lines from x through y to after line z
-        :x,y move z     Move lines from x through y to after line z
 
 File and buffer manipulation
 ============================
@@ -245,7 +295,20 @@ File and buffer manipulation
         :cd dir Change current directory
         :so file
                 Read commands from file
-	^Z	Suspend the editor session (also :suspend)
+
+Shells, piping and suspension
+=============================
+
+        :!cmd   Execute the shell command "cmd".
+        !!cmd   Pipe the current line through the shell command "cmd".
+                Similarly: !G from current line to end of file, !'m from
+                current line to mark m, !/foo from current to next "foo",
+                !% from current line to matching bracket, etc.
+        :w !command
+                Pipe the file (or range of lines) into a command
+        :r !command
+                Read lines from a shell command's standard output
+        ^Z      Suspend the editor session (also :suspend); resume with "fg"
 
 Displaying and Setting Parameters
 =================================
@@ -281,7 +344,8 @@ Command line options
         -s param=value  Set param to value before starting up
         -c command      Perform a : command after starting up
         -t tag          Edit file containing tag
-        +num            Start up editing file at line num
+        +num            Start up editing file at line num.  num can also be
+                        $ for the last line, $-N (or -N) for the last-but-Nth
         +/pat           Start up editing file at line containing pat
 
 Using the mouse (not implemented on all systems)
