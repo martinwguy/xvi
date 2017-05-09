@@ -20,10 +20,6 @@ line of a line-mode buffer, and all but the last line of a character-mode
 buffer, the ex command parser shall behave as if the line was terminated
 by a newline.
 
-NOTE: This is not true for xvi. In the above "s/a/b/" you have to
-add a ^V^M at the end or press Enter yourself afterwards.
-See bug colon-@-or-*-newlines
-
 If an error occurs during this process, or a line specified by the
 addresses does not exist when the current line would be set to it, or
 more than a single line was specified by the addresses, and the contents
