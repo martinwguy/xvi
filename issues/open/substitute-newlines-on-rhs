@@ -1,0 +1,5 @@
+You should be able to insert newlines into the rhs of a substitution
+
+If I remember correctly, with ^V^M. This should split the line into two
+but xvi currently inserts a literal control-M (or control-J if you use ^V^J)
+forcing you to write the file out in mac format and read it back in.

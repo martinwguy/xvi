@@ -1,0 +1,6 @@
+When windows are resized, the current line is not maintained
+
+When using ^T ^W ^O :equalise :split end friends, at present
+what was the current line can end up off the displayed region of the buffer
+and xvi moves the cursor on-screen. It would be better if it kept the
+current line the same and scrolled the window if necessary.
