@@ -231,6 +231,10 @@ bool_t	flag;
     curwin->w_set_want_col = TRUE;
 }
 
+/*
+ * If 'flag' is TRUE, set the position to the first non-blank character
+ * otherwise to the 0th character.
+ */
 void
 xvSetPosnToStartOfLine(pos, flag)
 Posn	*pos;
