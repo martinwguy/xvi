@@ -754,13 +754,13 @@ bool_t		wrapscan;
  * the last line to be considered. If these are NULL, the whole buffer is
  * considered; if only up is NULL, we consider the single line "lp".
  *
- * The "matchtype" parameter says whether we are doing 'g' or 'v'.
+ * The "forward" parameter is TRUE if we are doing 'g', FALSE for 'v'.
  */
 bool_t
-exGlobal(lp, up, cmd, matchtype)
+exGlobal(lp, up, cmd, forward)
 Line		*lp, *up;
 char		*cmd;
-bool_t		matchtype;
+bool_t		forward;
 {
     Rnode		*globprogp;
     regexp		*prog;		/* compiled pattern */
@@ -776,7 +776,7 @@ bool_t		matchtype;
      * cmdchar. If there is no such character, we default to 'p'.
      */
     if (*cmd == '\0' || (cmd = compile(&cmd[1], *cmd, FALSE)) == NULL) {
-	regerror(matchtype ?
+	regerror(forward ?
 		"Usage: :g/search pattern/command" :
 		"Usage: :v/search pattern/command");
 	return(FALSE);
@@ -836,7 +836,7 @@ bool_t		matchtype;
 	curnum = lineno(lp);
 	curline = lp;
 	lastline = up;
-	greptype = matchtype;
+	greptype = forward;
 	disp_init(grep_line, (int) curwin->w_ncols, (cmdchar == 'l'));
 	return(TRUE);
     }
@@ -875,7 +875,7 @@ bool_t		matchtype;
      */
     ndone = 0;
     while (lp != up) {
-	if (matchtype == regexec(prog, lp->l_text, TRUE)) {
+	if (forward == regexec(prog, lp->l_text, TRUE)) {
 	    Line	*thisline;
 
 	    /*
