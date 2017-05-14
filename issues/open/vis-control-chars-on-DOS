@@ -1,0 +1,9 @@
+Control characters display as faces and sex signs on MS-DOS
+
+In the edit buffer and on the command line, most of characters
+1 to 31 display as single characters: funny faces and symbols.
+
+They should display as ^A, ^M and so on.
+
+For characters with the top bit set, this behaviour is OK
+because it makes accented characters work.
