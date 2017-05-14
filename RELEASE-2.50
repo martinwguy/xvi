@@ -1,4 +1,4 @@
-Release Notes for xvi 2.50.1
+Release Notes for xvi 2.50.2
 ============================
 
 Martin Guy <martinwguy@gmail.com>, 4 May 2017.
@@ -8,8 +8,21 @@ by John Vogel github.com/jvvv. Thanks to John for the unlimited command line,
 better interrupt handling and other fixes and to Richard Lloyd and Mark Shroyer
 for portability fixes.
 
-2.50.1 i a bugfix release to 2.50 due to ":e" saying "Ambiguous command"
-since the ":equalize" alias was introduced for ":equalise".
+2.50.1 is a bugfix release to 2.50:
+
+- ":e" said "Ambiguous command" since the ":equalize" alias was introduced
+- Pasting a char-based buffer of several lines lacked newlines between them
+- It now compiles with compilers that don't have // comments
+
+2.50.2 is a bugfix release to 2.50.1:
+
+- Inserting chars in the middle of a command line got the display right but
+  the inserted characters were omitted from the command
+- ^U to cancel a command line now clears the display too back to the :
+- "tc" now does not move if the character after the cursor is a "c"
+- Character maps are now applied to text stuffed with :@ or :*
+- Stuffing a character-based yank with :@ or :* adds a final newline
+- These make the maze-solving macro work, now included in the test suite
 
 Since version 2.49, xvi now:
 
