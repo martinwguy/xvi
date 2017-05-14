@@ -35,6 +35,13 @@ install: all
 	$(INSTALL) -m 644 src/xvi.help $(HELPDIR)
 	$(INSTALL) -m 644 doc/xvi.1 $(MANDIR)
 
+# The generic tarball for Unix systems.
+xvi.tgz: all src/xvi.help
+	@# The build must be done without INSTALLROOT= set as below,
+	@# otherwise the compiled-in help file location includes $PWD
+	make INSTALLROOT=$$PWD/usr install
+	tar cfz xvi.tgz usr
+
 clean:
 	(cd src && $(MAKE) -f makefile.pos clean)
 	(cd doc && $(MAKE) clean)
