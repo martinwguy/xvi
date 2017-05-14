@@ -3,16 +3,21 @@ Release Notes for xvi 2.51
 
 Martin Guy <martinwguy@gmail.com>, $DATE$
 
-xvi-2.51 refines the 2.50 release by fixing final bugs in new features and 
-- text stuffed as commands from a yank buffer (e.g. "a@) is now mapped
-- ytx when the character right of the cursor is an x now does nothing
-  instead of yanking up to the following x character (if any)
-These fixes make the maze-solving macros work :)
-- :w>> is now implemented
+Since xvi-2.50, xvi now
 
-Thanks to John Vogel github.com/jvvv for the unlimited-length command line,
-better interrupt handling and other fixes and to Richard Lloyd and Mark Shroyer
-for portability fixes.
+Implements
+  - The :w>> command
+and fixes bugs
+  - Inserting chars in the middle of the command line now works
+  - ^U to cancel a command line now clears the display too back to the :
+  - Character maps are now applied to text stuffed with :@ or :*
+  - Stuffing a character-based yank with :@ or :* adds a final newline
+  - text stuffed as commands from a yank buffer (e.g. "a@) is now mapped
+  - "ytx" when the character right of the cursor is an x now does nothing
+    instead of yanking up to the following x character (if any)
+These last fixes make the maze-solving macros work :)
+
+Thanks to Richard Lloyd for HP/UX portability fixes.
 
 Since version 2.49, xvi now:
 
@@ -41,7 +46,7 @@ Since version 2.49, xvi now:
 - Sets enumerated parameters' values by the shortest match, e.g. ":se iu=c"
 
 - The :command line:
-  - Is no longer limited to 78 characters in length
+  - Is no longer limited to 78 characters in length, thanks to John Vogel
   - Has a simple line-editing capabilities using the left and right arrow keys,
     home, end and ^W to delete the previous word, ^U to clear the line
   - Does filename completion with the Tab key instead of the Esc key and
@@ -96,7 +101,7 @@ Since version 2.49, xvi now:
 
 - The handling of keyboard interrupts (Control-C) has been improved
   - Repeat counts are ignored if an insert/replace is interrupted
-  - Macros in execution are halted
+  - Macros in execution are aborted
   - Infinitely-recursive macros and very long file reads can now be interrupted
   - if stdin is not a terminal, SIGINT kills xvi immediately
 
