@@ -1,0 +1,77 @@
+set term_counter 0
+proc term_expect {args} {
+	upvar timeout localTimeout
+	upvar #0 timeout globalTimeout
+	set timeout 10
+	catch {set timeout $globalTimeout}
+	catch {set timeout $localTimeout}
+
+	global term_counter
+	incr term_counter
+	global [set strobe _data_[set term_counter]]
+	global [set tstrobe _timer_[set term_counter]]
+
+	proc term_chars_changed {} "uplevel #0 set $strobe 1"
+	proc term_cursor_changed {} "uplevel #0 set $strobe 1"
+
+	set $strobe 1
+	set $tstrobe 0
+
+	if {$timeout >= 0} {
+		set mstimeout [expr 1000*$timeout]
+		after $mstimeout "set $strobe 1; set $tstrobe 1"
+		set timeout_act {}
+	}
+
+	set argc [llength $args]
+	if {$argc%2 == 1} {
+		lappend args {}
+		incr argc
+	}
+
+	for {set i 0} {$i<$argc} {incr i 2} {
+		set act_index [expr $i+1]
+		if {[string compare timeout [lindex $args $i]] == 0} {
+			set timeout_act [lindex $args $act_index]
+			set args [lreplace $args $i $act_index]
+			incr argc -2
+			break
+		}
+	}
+
+	while {![info exists act]} {
+		if {![set $strobe]} {
+			vwait $strobe
+		}
+		set $strobe 0
+
+		if {[set $tstrobe]} {
+			set act $timeout_act
+		} else {
+			for {set i 0} {$i<$argc} {incr i 2} {
+				if {[uplevel [lindex $args $i]]} {
+					set act [lindex $args [incr i]]
+					break
+				}
+			}
+		}
+	}
+
+	proc term_chars_changed {} {}
+	proc term_cursor_changed {} {}
+
+	if {$timeout >= 0} {
+		after $mstimeout unset $strobe $tstrobe
+	} else {
+		unset $strobe $tstrobe
+	}
+
+	set code [catch {uplevel $act} string]
+	if {$code >  4} {return -code $code $string}
+	if {$code == 4} {return -code continue}
+	if {$code == 3} {return -code break}
+	if {$code == 2} {return -code return}
+	if {$code == 1} {return -code error -errorinfo $::errorInfo \
+				-errorcode $::errorCode $string}
+	return $string
+}

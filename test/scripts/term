@@ -37,12 +37,13 @@ if { [info exists ::env(NOCE)] } {
 }
 
 source scripts/$tkterm
+source scripts/term_expect
 
 if { [info exists ::env(NOCE)] } {
     exec rm "scripts/$tkterm"
 }
 
-# Most tests use timeouts but 1 sec is more appropriate than the default of 10.
+# Most tests use timeouts but most complete in under a second.
 set timeout 2
 
 #
