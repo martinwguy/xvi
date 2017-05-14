@@ -1,7 +1,0 @@
-For 'U' on an unchenged line, don't record an undo entry.
-
-POSIX doesn't say how a normal 'u'ndo should behave after 'U' line undo, but
-With classic vi, if you repeatedly line-Undo and then 'u'ndo, you still get
-line back messed up as it was.
-
-In xvi at present, a double Undo leaves you with 'u'ndo making no change.

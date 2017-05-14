@@ -790,11 +790,9 @@ Line		*newlines;
  * Current column: Set to the first column in the line in which any portion
  * of the first character in the line is displayed."
  *
- * They don't say how a normal 'u'ndo should behave after line Undo, but
- * classic vi undoes the line-Undo command (leaving the line messed up again),
- * and if you repeatedly line-Undo and then 'u'ndo, you still get the messed up
- * line back.
- * In xvi at present, a double Undo leaves you with 'u'ndo making no change.
+ * They don't say how a normal 'u'ndo should behave after 'U' line undo, but
+ * classic vi undoes the line-Undo command and if you repeatedly line-Undo
+ * and then 'u'ndo, you still get the messed up line back.
  */
 void
 undoline()
@@ -802,12 +800,16 @@ undoline()
     Line   *line = curwin->w_cursor->p_line;
     Buffer *buffer = curbuf;
 
-    /* Set the undo history to a command that restores the line to
-     * the way it was before they did the line undo.
+    /*
+     * Set the undo history to a command that restores the line to
+     * the way it was before they did the line undo, but only if the line
+     * has changed (so that UUu still messes it up again).
      */
-    buffer->b_change->cd_nlevels = 0;
-    init_change_data();
-    replchars(line, 0, strlen(line->l_text), buffer->b_Undotext);
+    if (strcmp(line->l_text, buffer->b_Undotext) != 0) {
+	buffer->b_change->cd_nlevels = 0;
+	init_change_data();
+	replchars(line, 0, strlen(line->l_text), buffer->b_Undotext);
+    }
     move_cursor(line, 0);
 
     xvUpdateAllBufferWindows();
