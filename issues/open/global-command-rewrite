@@ -1,0 +1,13 @@
+The g/re/p mechanism needs rewriting
+
+The "global" mechanism can only apply a limited set of commands [dlps&~]
+that it re-implements separately inside exGlobal().
+
+What it should do is mark every matching line in some way, then apply
+any command to each marked line, using the same code as is used for
+: commands.
+
+See the "if" and commentary at cmdline.c:491 which may be the place to
+implement this.
+
+When this is done, it will be much easier to do colon-@-or-*-with-line-range.
