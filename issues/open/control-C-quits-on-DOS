@@ -1,0 +1,14 @@
+Pressing Control-C on DOS kills xvi immediately
+
+In normal mode, on the command line and in insert/replace modes.
+
+Control-V Control-C also makes it dies immediately, so it looks like
+the signal is simply not being caught.
+
+the xvi-2.49 DOS binary doesn't do this; in command mode it echoes
+^C down the left edge of the screen, and displays "Interrupted" when
+you press some other key or if you wait five seconds, leaving the ^C's
+down the left edge.
+
+Test system: Compiled with Borland Turbo C 2.0 and run under dosemu.
+I don't know what xvi-2.49 was compiled with.
