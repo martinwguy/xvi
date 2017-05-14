@@ -1,9 +1,0 @@
-Moving in the command line with the arrow keys doesn't work on MSDOS
-
-They just go "beep", as do Home and End. ^W and ^U work
-However, all six keys do work to move about in the file in normal mode.
-
-Compiled with Borland Turbo C 2.0 under dosemu.
-
-This also suggests adding some control keys aliases for left/right/home/end
-on the command line for systems that don't have arrow keys.
