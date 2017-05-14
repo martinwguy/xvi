@@ -1,0 +1,4 @@
+it would be nice if it repainted the status line when you press ^L or ^R
+
+If the screen gets corrupted while entering a command line, it would be nice
+to be able to repaint it by pressing ^L or ^R.

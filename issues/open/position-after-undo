@@ -14,3 +14,9 @@ xvi differs from this:
   first undo.
 - when deleting lines, it leaves the cursor on the line after the deleted
   text, not the one before.
+
+POSIX doesn't say how a normal 'u'ndo should behave after 'U' line undo, but
+classic vi undoes the line-Undo command (leaving the line messed up again),
+and if you repeatedly line-Undo and then 'u'ndo, you still get the messed up
+line back.
+In xvi at present, a double Undo leaves you with 'u'ndo making no change.
