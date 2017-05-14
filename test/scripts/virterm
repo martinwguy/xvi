@@ -333,6 +333,7 @@ expect_background {
 		term_cursor_changed
 	} "^\r" {
 		# (cr,) Go to to beginning of line
+		#update idletasks
 		set cur_col 0
 		term_cursor_changed
 	} "^\n" {

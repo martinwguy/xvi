@@ -142,6 +142,10 @@ ctest 55 "\b\b"	1 ":"
 
 # Interrupt it while doing infinite macro recursion
 
+# The infinite loop tests generate lots of output and it can take time
+# to xvi/tkterm to catch up so increase the timeout.
+set timeout 15
+
 exp_send "map x y\r"
 exp_send ":map y x\r"
 exp_send "x"
@@ -151,7 +155,7 @@ term_expect timeout { fail 60 } \
     { expr { [screen_is 1 0 [list "" "~"]] &&
 	     ( $vim || [statusline_is "Interrupted"] ) } }
 
-exp_send ":map! x axy\r"
+exp_send ":map! x a[ctrl V]\rxy\r"
 exp_send "ax"
 # The x should send it into a loop, appending content madly.
 # POSIX says "If there is a currently executing command, it shall be aborted

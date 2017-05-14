@@ -416,16 +416,6 @@ proc term_update_cursor {} {
 term_init
 graphicsSet 0
 
-set flush 0
-proc screen_flush {} {
-    global flush
-    incr flush
-    if {$flush == 24} {
-	update idletasks
-	set flush 0
-    }
-}
-
 expect_background {
     -i $term_spawn_id
     -re "^\[^\x01-\x1f]+" {
@@ -434,7 +424,7 @@ expect_background {
 	term_update_cursor
     } "^\r" {
 	# (cr,) Go to beginning of line
-	screen_flush
+	update idletasks
 	set cur_col 0
 	term_update_cursor
     } "^\n" {
