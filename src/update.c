@@ -104,7 +104,6 @@ int		row;
     int			r_used;
     int			columns;
     register int	col;		/* current column */
-    register int	adv_col;	/* column after last to be updated */
 
     columns = VScols(vs);
 
@@ -126,7 +125,7 @@ int		row;
      * Note that this loop needs to be as tight as possible,
      * since it is the core of screen updating.
      */
-    for (col = adv_col = 0; col < n_used && col < r_used; col++) {
+    for (col = 0; col < n_used && col < r_used; col++) {
 	register int	nc;
 
 	nc = ntextp[col];
@@ -136,8 +135,6 @@ int		row;
 	     */
 	    VSset_colour(vs, ncolours[col]);
 	    VSputc(vs, row, col, nc);
-
-	    adv_col = col + 1;
 	}
     }
 
