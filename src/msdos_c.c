@@ -56,12 +56,6 @@ volatile	unsigned char	SIG_user_disconnected;
 volatile	unsigned char	SIG_terminate;
 
 void
-ignore_signals(void)
-{
-    msdsignal(&kbdintr);
-}
-
-void
 sys_init(void)
 {
     char	*sh;
@@ -80,6 +74,8 @@ sys_init(void)
     }
     tty_open(&Rows, &Columns);
     sys_startv();
+
+    msdsignal(&kbdintr);
 }
 
 static	enum {
