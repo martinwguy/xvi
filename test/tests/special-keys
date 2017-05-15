@@ -110,6 +110,8 @@ ctest 79 "[left]a[right]c[left][left]" 	 2 ":abc"
 # Check that function keys insert their magic strings
 ctest 80 "[f1][f2][f3][f4][f5][f6][f7][f8][f9][f10]" 22 ":a#1#2#3#4#5#6#7#8#9#0bc"
 
+ctest 99 "[ctrl U]"	1 ":"
+
 stop_vi
 
 exit 0

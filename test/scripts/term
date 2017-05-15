@@ -89,7 +89,16 @@ proc stop_vi {} {
 	exit 123
     }
 
-    exp_send ":q!\r"
+    exp_send ":q!"
+    # Make sure it can hear us!
+    set timeout 1
+    term_expect timeout {
+	    send_error "xvi is not responding to command mode. \"[statusline]\""
+	    fail 122
+        } \
+	{ statusline_is ":q!" } {} \
+	{ statusline_is "::q!" } {}
+    exp_send "\r"
 }
 
 # Send the xvi process a signal

@@ -75,7 +75,7 @@ test 63 "d2[up]"	2 0 [list "one" "two" "three"  "~"]
 test 64 "d2[ctrl P]"	2 0 [list "one" "two" "three"  "~"]
 
 # Just quickly test that a bad motion halts a macro
-test 70 ":map g d2jaxx"	2 0 [list "one" "two" "three"  "~"]
+test 70 ":map g d2jaxx\rg"	2 0 [list "one" "two" "three"  "~"]
 
 stop_vi
 
