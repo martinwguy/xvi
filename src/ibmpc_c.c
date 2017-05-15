@@ -60,22 +60,21 @@ kbfill()
     }
 }
 
-static unsigned char near
+/*
+ * Return an input character. This is only ever called when there is a
+ * keypress already in the input buffer, waiting to be read.
+ */
+static int near
 kbget()
 {
-    for (;;) {
-	if (kbcount > 0) {
-	    unsigned char c;
+    unsigned char c;
 
-	    --kbcount;
-	    c = *kbrp;
-	    if (kbrp++ >= &kbuf[sizeof kbuf - 1])
-		kbrp = kbuf;
-	    return c;
-	} else {
-	    kbfill();
-	}
-    }
+    if (kbcount <= 0) return(EOF);	/* Should never happen */
+    --kbcount;
+    c = *kbrp;
+    if (kbrp++ >= &kbuf[sizeof kbuf - 1])
+	kbrp = kbuf;
+    return c;
 }
 
 /*
@@ -124,6 +123,9 @@ inchar(long mstimeout)
 		 */
 		if (mstimeout != 0 && clock() > stoptime) {
 		    break;
+		}
+		if (kbdintr) {
+		    return EOF;
 		}
 		if (State == NORMAL) {
 		    unsigned	buttonstate;
