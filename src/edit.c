@@ -107,7 +107,8 @@ int	c;
 	     * POSIX: "A keyboard interrupt in insert or replace mode should
 	     * behave identically to pressing ESC".
 	     */
-	    c = ESC;
+	    wait_buffer = FALSE;
+	    goto case_kbdintr_ch;
 	}
     }
 
@@ -148,8 +149,16 @@ int	c;
 	    }
 	    return(FALSE);
 
+	/*
+	 * TOS doesn't seem to have a keyboard interrupt so keep the old
+	 * code that make Ctrl-C do the same on TOS as everywhere else.
+	 * POSIX for Unices says nothing special about Ctrl-C in vi.
+	 */
+#ifndef UNIX
+	case CTRL('C'):
+#endif
 	case ESC:		/* An escape or Interrupt ends input mode */
-	/* case kbdintr_ch: */
+	case_kbdintr_ch:	/* A label! */
 	{
 	    char	*cltext;
 
@@ -631,9 +640,10 @@ int	c;
 
     if (kbdintr) {
 	kbdintr = FALSE;
+	wait_buffer = FALSE;
 	if (!literal_next) {
 	    imessage = TRUE;
-	    c = ESC;
+	    goto case_kbdintr_ch;
 	} else {
 	    c = kbdintr_ch;
 	}
@@ -663,6 +673,7 @@ int	c;
 	case CTRL('C'):
 #endif
 	case ESC:			/* an escape ends input mode */
+	case_kbdintr_ch:		/* A label! */
 	    end_replace(c);
 	    return(TRUE);
 
