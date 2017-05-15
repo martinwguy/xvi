@@ -1016,7 +1016,6 @@ extern	Posn	*xvLocateTextObject P((Posn *, int, int));
 /*
  * flexbuf.c
  */
-extern	bool_t	flexinit P((Flexbuf *));
 extern	bool_t	flexaddch P((Flexbuf *, int));
 extern	bool_t	flexrm P((Flexbuf *, int, int));
 extern	bool_t	flexinsch P((Flexbuf *, int, int));

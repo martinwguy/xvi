@@ -26,10 +26,11 @@
 #define FLEXEXTRA	64
 
 /*
- * Initialize an empty Flexbuf. Return FALSE if we've run out of space.
+ * Make sure a Flexbuf is ready for use and has space to add one character.
+ * Returns FALSE if we've run out of space.
  */
-bool_t
-flexinit(f)
+static bool_t
+flexready(f)
 register Flexbuf	*f;
 {
     if (flexempty(f))
@@ -66,7 +67,7 @@ flexaddch(f, ch)
 register Flexbuf	*f;
 int	ch;
 {
-    flexinit(f);
+    flexready(f);
     f->fxb_chars[f->fxb_wcnt++] = ch;
     return TRUE;
 }
@@ -95,7 +96,7 @@ int	ch;
 {
     unsigned start;
 
-    flexinit(f);
+    flexready(f);
     if (flexempty(f) || (pos >= flexlen(f)))
 	return(flexaddch(f, ch));
     start = f->fxb_rcnt+pos;
@@ -114,7 +115,7 @@ char	*str;
     unsigned start;
     size_t len, remain;
 
-    flexinit(f);
+    flexready(f);
     start = f->fxb_rcnt+pos;
     len = strlen(str);
     remain = f->fxb_max - f->fxb_wcnt;
