@@ -262,21 +262,23 @@ char		*no_file_str;
     register int	col;		/* current column in line */
     unsigned		savecho;
 
-    if (P_ischanged(P_format)) {
-	show_message("\"%s\" [%s]%s", filename, fmtname, extra_str);
-    } else {
-	show_message("\"%s\"%s", filename, extra_str);
+    if (interactive) {
+	if (P_ischanged(P_format)) {
+	    show_message("\"%s\" [%s]%s", filename, fmtname, extra_str);
+	} else {
+	    show_message("\"%s\"%s", filename, extra_str);
+	}
+	VSflush(curwin->w_vs);
     }
-    VSflush(curwin->w_vs);
 
     fp = fopenrb(filename);
     if (fp == NULL) {
 	*headp = *tailp = NULL;
 	if (exists(filename)) {
-	    show_error("Can't read \"%s\"", filename);
+	    if (interactive) show_error("Can't read \"%s\"", filename);
 	    return(gf_CANTOPEN);
 	} else {
-	    show_message("\"%s\"%s", filename, no_file_str);
+	    if (interactive) show_message("\"%s\"%s", filename, no_file_str);
 	    return(gf_NEWFILE);
 	}
     }
@@ -447,7 +449,7 @@ char		*no_file_str;
     }
     (void) fclose(fp);
 
-    {
+    if (interactive) {
 	/*
 	 * Assemble error messages for status line.
 	 */
@@ -485,7 +487,6 @@ char		*no_file_str;
 
 nomem:
     nlines = gf_NOMEM;
-    show_error(out_of_memory);
 fail:
     throw(lptr);
     (void) fclose(fp);

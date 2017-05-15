@@ -224,56 +224,31 @@ bool_t
 exSource(file)
 char	*file;
 {
-    Flexbuf		cmd;
-    FILE		*fp;
-    register int	c;
-    bool_t		literal;
-    bool_t		success = TRUE;
+    Line	*head, *tail;
+    long	nlines;
+    Line	*lp;
+    bool_t	success = TRUE;
+    bool_t	old_interactive = interactive;
 
-    fp = fopen(file, "r");
-    if (fp == NULL) {
-	if (interactive) {
+    interactive = FALSE;	/* Shut get_file() up */
+
+    nlines = get_file(file, &head, &tail, "", " No such file");
+    if (nlines < 0) {
+        if (old_interactive) {
 	    show_error("Can't open \"%s\"", file);
 	}
 	return(FALSE);
     }
 
-    flexnew(&cmd);
-    literal = FALSE;
-    while ((c = getc(fp)) != EOF) {
-	if (kbdintr) {
-	    kbdintr = FALSE;
-	    imessage = TRUE;
+    for (lp=head; lp != tail->l_next; lp = lp->l_next) {
+	if (!exCommand(lp->l_text)) {
 	    success = FALSE;
 	    break;
 	}
-	if (!literal && (c == CTRL('V') || c == '\n')) {
-	    switch (c) {
-	    case CTRL('V'):
-		literal = TRUE;
-		break;
-
-	    case '\n':
-		if (!flexempty(&cmd)) {
-		    if (!exCommand(flexgetstr(&cmd))) {
-			success = FALSE;
-			goto out;	/* Alas, poor "break"! */
-		    }
-		    flexclear(&cmd);
-		}
-		break;
-	    }
-	} else {
-	    literal = FALSE;
-	    if (!flexaddch(&cmd, c)) {
-		success = FALSE;
-		goto out;
-	    }
-	}
     }
-out:
-    flexdelete(&cmd);
-    (void) fclose(fp);
+
+    throw(head);
+    interactive = old_interactive;
     return(success);
 }
 
