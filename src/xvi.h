@@ -903,7 +903,7 @@ extern	int	nbuffers;
  * cmdline.c
  */
 extern	bool_t	should_fexpand P((char *));
-extern	bool_t	exCommand P((char *, bool_t));
+extern	bool_t	exCommand P((char *));
 extern	void	wait_return P((void));
 
 /*
@@ -956,6 +956,7 @@ extern	char	*mkstr P((int));
  * events.c
  */
 extern	xvResponse	*xvi_handle_event P((xvEvent *));
+extern	bool_t		interactive;
 
 /*
  * ex_cmds1.c
@@ -985,7 +986,7 @@ extern	bool_t	exShellCommand P((char *));
 extern	void	exSuspend P((bool_t));
 extern	void	exEquals P((Line *));
 extern	void	exHelp P((void));
-extern	bool_t	exSource P((bool_t, char *));
+extern	bool_t	exSource P((char *));
 extern	char	*exChangeDirectory P((char *));
 extern	bool_t	exLineOperation P((int, Line *, Line *, Line *));
 extern	bool_t	exJoin P((Line *, Line *, bool_t));
@@ -1039,9 +1040,9 @@ extern	void	map_char P((int));
 extern	void	map_timeout P((void));
 extern	bool_t	map_waiting P((void));
 extern	int	mapped_char P((int));
-extern	bool_t	xvi_map P((char *, bool_t, bool_t));
+extern	bool_t	xvi_map P((char *, bool_t));
 extern	void	xvi_keymap P((char *, char *));
-extern	bool_t	xvi_unmap P((int, char **, bool_t, bool_t));
+extern	bool_t	xvi_unmap P((int, char **, bool_t));
 
 /*
  * mark.c
@@ -1122,7 +1123,7 @@ extern	void	xvOpYank P((Cmd *));
  * param.c
  */
 extern	void	init_params P((void));
-extern	void	exSet P((int, char **, bool_t));
+extern	void	exSet P((int, char **));
 extern	void	set_param P((int, ...));
 extern	int	xv_strtoi P((char **));
 

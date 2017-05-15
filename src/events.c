@@ -28,6 +28,13 @@ static	bool_t	d_proc P((int));
 
 volatile int	keystrokes;
 
+/*
+ * Should commands be chatty on the status line?
+ * True if reading commands from tty.
+ * It starts out FALSE so that the calls in xvi_startup are quiet.
+ */
+bool_t		interactive = FALSE;
+
 xvResponse *
 xvi_handle_event(ev)
 xvEvent	*ev;
@@ -288,7 +295,8 @@ int	c;
 	    break;
 
 	case ':':
-	    if (!exCommand(cmdline + 1, TRUE)) {
+	    interactive = TRUE;
+	    if (!exCommand(cmdline + 1)) {
 		unstuff();
 	    }
 	    break;

@@ -489,10 +489,9 @@ mapescape(lhsp, rhsp)
  * Insert the entry "lhs" as mapping into "rhs".
  */
 bool_t
-xvi_map(arg, exclam, inter)
+xvi_map(arg, exclam)
     register char      *arg;
     bool_t		exclam;
-    bool_t		inter;
 {
     register int	c;
 
@@ -510,13 +509,13 @@ xvi_map(arg, exclam, inter)
 
 	lhs = arg;
 	if (!mapescape(&lhs, &rhs)) {
-	    if (inter) {
+	    if (interactive) {
 		show_message(out_of_memory);
 	    }
 	    return(FALSE);
 	}
 	if (rhs == NULL) {
-	    if (inter) {
+	    if (interactive) {
 		show_message("Usage: :map lhs rhs");
 	    }
 	    free(lhs);
@@ -605,17 +604,16 @@ char		*rhs;
 }
 
 bool_t
-xvi_unmap(argc, argv, exclam, inter)
+xvi_unmap(argc, argv, exclam)
 int	argc;
 char	*argv[];
 bool_t	exclam;
-bool_t	inter;
 {
     int	count;
 
     if (argc < 1) {
-	if (inter) {
-	    show_message("But what do you want me to unmap?");
+	if (interactive) {
+	    show_message("What do you want me to unmap?");
 	}
 	return(FALSE);
     }
