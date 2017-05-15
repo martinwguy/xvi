@@ -55,14 +55,6 @@ volatile	bool_t	SIG_suspend_request;
 volatile	bool_t	SIG_user_disconnected;
 volatile	bool_t	SIG_terminate;
 
-#if 0
-void
-ignore_signals(void)
-{
-    msdsignal(&kbdintr);
-}
-#endif
-
 void
 sys_init(void)
 {
@@ -82,6 +74,8 @@ sys_init(void)
     }
     tty_open(&Rows, &Columns);
     sys_startv();
+
+    msdsignal(&kbdintr);
 }
 
 static	enum {
