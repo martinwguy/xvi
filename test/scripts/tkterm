@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # -*- tcl -*-
 # The next line is executed by /bin/sh, but not tcl \
 exec tclsh "$0" ${1+"$@"}
@@ -29,7 +29,7 @@ package require Tk
 # Quick overview of this emulator
 ###############################
 # Very good attributes:
-#   Understands both termcap and terminfo   
+#   Understands both termcap and terminfo
 #   Understands meta-key (zsh, emacs, etc work)
 #   Is fast
 #   Understands X selections
@@ -82,7 +82,7 @@ set term_shell $env(SHELL) ;# program to run in term
 
 # term_exit is called if the spawned process exits
 proc term_exit {} {
-	exit
+    exit
 }
 
 # term_chars_changed is called after every change to the displayed chars
@@ -154,11 +154,26 @@ if {$termcap} {
 	:cr=\r:
 	:so=\E[7m:
 	:se=\E[m:
-	:ku=\EOA:kd=\EOB:kr=\EOC:kl=\EOD:
-	:kh=\EOH:@7=\EOF:kP=\E[5~:kN=\E[6~:
-	:kI=\E[2~:kD=\E[3~:
-	:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:k5=\EOT:
-	:k6=\EOU:k7=\EOV:k8=\EOW:k9=\EOX:k;=\EOY:
+	:k1=\EOP:
+	:k2=\EOQ:
+	:k3=\EOR:
+	:k4=\EOS:
+	:k5=\EOT:
+	:k6=\EOU:
+	:k7=\EOV:
+	:k8=\EOW:
+	:k9=\EOX:
+	:k;=\EOY:
+	:ku=\EOA:
+	:kd=\EOB:
+	:kr=\EOC:
+	:kl=\EOD:
+	:kh=\EOH:
+	:@7=\EOF:
+	:kP=\E[5~:
+	:kN=\E[6~:
+	:kI=\E[2~:
+	:kD=\E[3~:
     }
 }
 
@@ -184,11 +199,26 @@ if {$terminfo} {
 	cr=\r,
 	smso=\E[7m,
 	rmso=\E[m,
-	kcuu1=\EOA,kcud1=\EOB,kcuf1=\EOC,kcub1=\EOD,
-	khome=\EOH,kend=\EOF,kpp=\E[5~,knp=\E[6~,
-	kich1=\E[2~,kdch1=\E[3~,
-	kf1=\EOP,kf2=\EOQ,kf3=\EOR,kf4=\EOS,kf5=\EOT,
-	kf6=\EOU,kf7=\EOV,kf8=\EOW,kf9=\EOX,kf10=\EOY,
+	kf1=\EOP,
+	kf2=\EOQ,
+	kf3=\EOR,
+	kf4=\EOS,
+	kf5=\EOT,
+	kf6=\EOU,
+	kf7=\EOV,
+	kf8=\EOW,
+	kf9=\EOX,
+	kf10=\EOY,
+	kcuu1=\EOA,
+	kcud1=\EOB,
+	kcuf1=\EOC,
+	kcub1=\EOD,
+	khome=\EOH,
+	kend=\EOF,
+	kpp=\E[5~,
+	knp=\E[6~,
+	kich1=\E[2~,
+	kdch1=\E[3~,
     }
     close $file
 
@@ -245,31 +275,31 @@ if {$term_alone} {
 $term tag configure standout -background  black -foreground white
 
 proc term_clear {} {
-	global term
+    global term
 
-	$term delete 1.0 end
-	term_init
+    $term delete 1.0 end
+    term_init
 }
 
 # pine is the only program I know that requires clear_to_eol, sigh
 proc term_clear_to_eol {} {
-	global cols cur_col cur_row
-	global term_standout
+    global cols cur_col cur_row
+    global term_standout
 
-	set save_standout $term_standout
-	set term_standout FALSE
+    set save_standout $term_standout
+    set term_standout FALSE
 	
-	# save current col/row
-	set col $cur_col
-	set row $cur_row
+    # save current col/row
+    set col $cur_col
+    set row $cur_row
 
-	set space_rem_on_line [expr $cols - $cur_col]
-	term_insert [format %[set space_rem_on_line]s ""]
+    set space_rem_on_line [expr $cols - $cur_col]
+    term_insert [format %[set space_rem_on_line]s ""]
 
-	# restore current col/row
-	set cur_col $col
-	set cur_row $row
-	set term_standout $save_standout
+    # restore current col/row
+    set cur_col $col
+    set cur_row $row
+    set term_standout $save_standout
 }
 
 proc term_init {} {
@@ -287,6 +317,29 @@ proc term_init {} {
     $term mark set insert $cur_row.$cur_col
 
     set ::rowsDumb $rows
+}
+
+if 0 {
+# NOT YET COMPLETE!
+proc term_resize {rowsNew colsNew} {
+    global rows cols term
+
+    foreach {set r 1} {$r < $rows} {incr r} {
+	if {$colsNew > $cols} {
+	    # add columns
+	    $term insert $i.$column $blanks
+	} elseif {$colsNew < $cols} {
+	    # remove columns
+	    # ?
+	}
+    }
+
+    if {$rowsNew > $rows} {
+	# add rows
+    } elseis {$rowsNew < $rows} {
+	# remove rows
+    }
+}
 }
 
 proc term_down {} {
@@ -333,84 +386,84 @@ proc term_up {} {
 }
 
 proc term_insert {s} {
-	global cols cur_col cur_row
-	global term term_standout
+    global cols cur_col cur_row
+    global term term_standout
 
-	set chars_rem_to_write [string length $s]
-	set space_rem_on_line [expr $cols - $cur_col]
+    set chars_rem_to_write [string length $s]
+    set space_rem_on_line [expr $cols - $cur_col]
 
-	if {$term_standout} {
-		set tag_action "add"
-	} else {
-		set tag_action "remove"
-	}
+    if {$term_standout} {
+	set tag_action "add"
+    } else {
+	set tag_action "remove"
+    }
 
-	##################
-	# write first line
-	##################
+    ##################
+    # write first line
+    ##################
 
-	if {$chars_rem_to_write > $space_rem_on_line} {
-		set chars_to_write $space_rem_on_line
-		set newline 1
-	} else {
-		set chars_to_write $chars_rem_to_write
-		set newline 0
-	}
+    if {$chars_rem_to_write > $space_rem_on_line} {
+	set chars_to_write $space_rem_on_line
+	set newline 1
+    } else {
+	set chars_to_write $chars_rem_to_write
+	set newline 0
+    }
 
-	$term delete $cur_row.$cur_col $cur_row.[expr $cur_col + $chars_to_write]
-	$term insert $cur_row.$cur_col [
-		string range $s 0 [expr $space_rem_on_line-1]
-	]
+    $term delete $cur_row.$cur_col $cur_row.[expr $cur_col + $chars_to_write]
+    $term insert $cur_row.$cur_col [
+				    string range $s 0 [expr $space_rem_on_line-1]
+				   ]
 
-	$term tag $tag_action standout $cur_row.$cur_col $cur_row.[expr $cur_col + $chars_to_write]
+    $term tag $tag_action standout $cur_row.$cur_col $cur_row.[expr $cur_col + $chars_to_write]
 
-	# discard first line already written
-	incr chars_rem_to_write -$chars_to_write
-	set s [string range $s $chars_to_write end]
-	
-	# update cur_col
-	incr cur_col $chars_to_write
-	# update cur_row
-	if {$newline} {
-		term_down
-	}
+    # discard first line already written
+    incr chars_rem_to_write -$chars_to_write
+    set s [string range $s $chars_to_write end]
 
-	##################
-	# write full lines
-	##################
-	while {$chars_rem_to_write >= $cols} {
-		$term delete $cur_row.0 $cur_row.end
-		$term insert $cur_row.0 [string range $s 0 [expr $cols-1]]
-		$term tag $tag_action standout $cur_row.0 $cur_row.end
+    # update cur_col
+    incr cur_col $chars_to_write
+    # update cur_row
+    if {$newline} {
+	term_down
+    }
 
-		# discard line from buffer
-		set s [string range $s $cols end]
-		incr chars_rem_to_write -$cols
+    ##################
+    # write full lines
+    ##################
+    while {$chars_rem_to_write >= $cols} {
+	$term delete $cur_row.0 $cur_row.end
+	$term insert $cur_row.0 [string range $s 0 [expr $cols-1]]
+	$term tag $tag_action standout $cur_row.0 $cur_row.end
 
-		set cur_col 0
-		term_down
-	}
+	# discard line from buffer
+	set s [string range $s $cols end]
+	incr chars_rem_to_write -$cols
 
-	#################
-	# write last line
-	#################
+	set cur_col 0
+	term_down
+    }
 
-	if {$chars_rem_to_write} {
-		$term delete $cur_row.0 $cur_row.$chars_rem_to_write
-		$term insert $cur_row.0 $s
-		$term tag $tag_action standout $cur_row.0 $cur_row.$chars_rem_to_write
-		set cur_col $chars_rem_to_write
-	}
+    #################
+    # write last line
+    #################
 
-	term_chars_changed
+    if {$chars_rem_to_write} {
+	$term delete $cur_row.0 $cur_row.$chars_rem_to_write
+	$term insert $cur_row.0 $s
+	$term tag $tag_action standout $cur_row.0 $cur_row.$chars_rem_to_write
+	set cur_col $chars_rem_to_write
+    }
+
+    term_chars_changed
 }
 
 proc term_update_cursor {} {
-	global cur_row cur_col term
+    global cur_row cur_col term
 
-	$term mark set insert $cur_row.$cur_col
+    $term mark set insert $cur_row.$cur_col
 
-	term_cursor_changed
+    term_cursor_changed
 }
 
 term_init
@@ -479,21 +532,32 @@ expect_background {
     }
 }
 
-# Bind Tk's X events to their equivalents
+if 0 {
+# New and incomplete!
+bind $term <Configure> {
+    global rows cols
+
+    scan [wm geometry .] "%dx%d" rows cols
+    stty rows $rows columns $cols < $spawn_out(slave,name)
+    
+    # when this is working, uncomment ...
+    # term_resize $rows $cols
+}
+}
 
 bind $term <Any-Enter> {
-	focus %W
+    focus %W
 }
 
 bind $term <Meta-KeyPress> {
-	if {"%A" != ""} {
-		exp_send -i $term_spawn_id "\033%A"
-	}
+    if {"%A" != ""} {
+	exp_send -i $term_spawn_id "\033%A"
+    }
 }
 
 bind $term <KeyPress> {
-	exp_send -i $term_spawn_id -- %A
-	break
+    exp_send -i $term_spawn_id -- %A
+    break
 }
 
 bind $term <Control-space>	{exp_send -null}
@@ -508,11 +572,14 @@ bind $term <F6> {exp_send -i $term_spawn_id "\033OU"}
 bind $term <F7> {exp_send -i $term_spawn_id "\033OV"}
 bind $term <F8> {exp_send -i $term_spawn_id "\033OW"}
 bind $term <F9> {exp_send -i $term_spawn_id "\033OX"}
+bind $term <F10> {exp_send -i $term_spawn_id "\033OY"}
 bind $term <Up>    {exp_send -i $term_spawn_id "\033OA"}
 bind $term <Down>  {exp_send -i $term_spawn_id "\033OB"}
 bind $term <Right> {exp_send -i $term_spawn_id "\033OC"}
 bind $term <Left>  {exp_send -i $term_spawn_id "\033OD"}
 bind $term <Home>  {exp_send -i $term_spawn_id "\033OH"}
 bind $term <End>   {exp_send -i $term_spawn_id "\033OF"}
-bind $term <Prior> {exp_send -i $term_spawn_id "\033[5~"}
-bind $term <Next>  {exp_send -i $term_spawn_id "\033[6~"}
+bind $term <Prior> {exp_send -i $term_spawn_id "\033\[5~"}
+bind $term <Next>  {exp_send -i $term_spawn_id "\033\[6~"}
+bind $term <Insert> {exp_send -i $term_spawn_id "\033\[2~"}
+bind $term <Delete> {exp_send -i $term_spawn_id "\033\[3~"}
