@@ -221,8 +221,7 @@ exHelp()
 }
 
 bool_t
-exSource(interactive, file)
-bool_t	interactive;
+exSource(file)
 char	*file;
 {
     Flexbuf		cmd;
@@ -256,7 +255,7 @@ char	*file;
 
 	    case '\n':
 		if (!flexempty(&cmd)) {
-		    if (!exCommand(flexgetstr(&cmd), interactive)) {
+		    if (!exCommand(flexgetstr(&cmd))) {
 			success = FALSE;
 			goto out;	/* Alas, poor "break"! */
 		    }

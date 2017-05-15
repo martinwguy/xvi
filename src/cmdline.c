@@ -275,7 +275,7 @@ static	struct	ecmd	{
 static	int	decode_command P((char **, bool_t *, struct ecmd **));
 static	bool_t	get_line P((char **, Line *, Line **));
 static	bool_t	get_range P((char **));
-static	void	badcmd P((bool_t, char *));
+static	void	badcmd P((char *));
 static	char	*show_line P((void));
 static	char	*expand_percents P((char *));
 
@@ -327,9 +327,8 @@ char *cmdline;
  * It returns TRUE if it succeeds, FALSE if it fails.
  */
 bool_t
-exCommand(cmdline, interactive)
+exCommand(cmdline)
 char	*cmdline;			/* optional command string */
-bool_t	interactive;			/* true if reading from tty */
 {
     char	*arg;			/* ptr to string arg(s) */
     int		argc = 0;		/* arg count for ec_strings */
@@ -352,7 +351,7 @@ bool_t	interactive;			/* true if reading from tty */
      * Parse a range, if present (and update the cmdline pointer).
      */
     if (!get_range(&cmdline)) {
-	badcmd(interactive, "Bad address range");
+	badcmd("Bad address range");
 	return(FALSE);
     }
 
@@ -369,7 +368,7 @@ bool_t	interactive;			/* true if reading from tty */
 	 */
 	if (!(ecp->ec_flags & EC_RANGE0)) {
 	    if (l_line == curbuf->b_line0 || u_line == curbuf->b_line0) {
-		badcmd(interactive, "Specification of line 0 not allowed");
+		badcmd("Specification of line 0 not allowed");
 		return(FALSE);
 	    }
 	}
@@ -550,7 +549,7 @@ bool_t	interactive;			/* true if reading from tty */
 	char	*errmsg;
 
 	if ((errmsg = exChangeDirectory(arg)) != NULL) {
-	    badcmd(interactive, errmsg);
+	    badcmd(errmsg);
 	    error++;
 	} else if (interactive) {
 	    char	*dirp;
@@ -640,13 +639,13 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_MAP:
-	if (!xvi_map(arg, exclam, interactive)) {
+	if (!xvi_map(arg, exclam)) {
 	    error++;
 	}
 	break;
 
     case EX_UNMAP:
-	if (!xvi_unmap(argc, argv, exclam, interactive)) {
+	if (!xvi_unmap(argc, argv, exclam)) {
 	    error++;
 	}
 	break;
@@ -743,7 +742,7 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_SET:
-	exSet(argc, argv, interactive);
+	exSet(argc, argv);
 	break;
 
     case EX_SHELL:
@@ -752,13 +751,8 @@ bool_t	interactive;			/* true if reading from tty */
 
     case EX_SOURCE:
 	if (arg == NULL) {
-	    badcmd(interactive, "Missing filename");
-	} else if (exSource(interactive, arg) && interactive) {
-#if 0
-	    show_file_info(TRUE);
-#endif
-	    ;
-	} else {
+	    badcmd("Missing filename");
+	} else if (!exSource(arg)) {
 	    error++;
 	}
 	break;
@@ -922,26 +916,26 @@ bool_t	interactive;			/* true if reading from tty */
 	break;
 
     case EX_ENOTFOUND:
-	badcmd(interactive, "Unrecognized command");
+	badcmd("Unrecognized command");
 	break;
 
     case EX_EAMBIGUOUS:
-	badcmd(interactive, "Ambiguous command");
+	badcmd("Ambiguous command");
 	break;
 
     case EX_ECANTFORCE:
-	badcmd(interactive, "Inappropriate use of !");
+	badcmd("Inappropriate use of !");
 	break;
 
     case EX_EBADARGS:
-	badcmd(interactive, "Inappropriate arguments given");
+	badcmd("Inappropriate arguments given");
 	break;
 
     default:
 	/*
 	 * Decoded successfully, but unknown to us. Whoops!
 	 */
-	badcmd(interactive, "Internal error - unimplemented command.");
+	badcmd("Internal error - unimplemented command.");
 	error++;
 	break;
 
@@ -955,7 +949,7 @@ bool_t	interactive;			/* true if reading from tty */
     case EX_RECOVER:
     case EX_UNABBREV:
     case EX_Z:
-	badcmd(interactive, "Unimplemented command.");
+	badcmd("Unimplemented command.");
 	error++;
 	break;
     }
@@ -1403,8 +1397,7 @@ get_line(cpp, startline, lpp)
  * badly defined or unimplemented commands.
  */
 static void
-badcmd(interactive, str)
-bool_t	interactive;
+badcmd(str)
 char	*str;
 {
     if (interactive) {

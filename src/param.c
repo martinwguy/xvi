@@ -325,10 +325,9 @@ init_params()
 }
 
 void
-exSet(argc, argv, inter)
+exSet(argc, argv)
 int	argc;		/* number of parameters to set */
 char	*argv[];	/* vector of parameter strings */
-bool_t	inter;		/* TRUE if called interactively */
 {
     Flexbuf		to_show;
     int	count;
@@ -339,7 +338,7 @@ bool_t	inter;		/* TRUE if called interactively */
      */
     if (argc == 0 || (argc == 1 && (argv[0][0] == '\0' ||
 				strncmp(argv[0], "all", 3) == 0))) {
-	if (inter) {
+	if (interactive) {
 	    int pcwidth;
 
 	    show_all = (argc != 0 && argv[0][0] != '\0');
@@ -367,7 +366,7 @@ bool_t	inter;		/* TRUE if called interactively */
 	if (mip->mi_query) {
 	    (void) lformat(&to_show, "%s ", parmstring(mip->mi_param, 0));
 	} else {
-	    if (!_do_set(mip, inter)) {
+	    if (!_do_set(mip, interactive)) {
 		break;
 	    }
 	}
@@ -378,8 +377,7 @@ bool_t	inter;		/* TRUE if called interactively */
     }
     flexdelete(&to_show);
 
-    if (inter) {
-
+    if (interactive) {
 	/*
 	 * Finally, update the screen in case we changed
 	 * something like "tabstop" or "list" that will change

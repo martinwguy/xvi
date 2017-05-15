@@ -197,7 +197,7 @@ char	*envp;				/* init string from the environment */
 			;
 		} else {
 		    ep[-1] = '\0';
-		    (void) exCommand(env, FALSE);
+		    (void) exCommand(env);
 		    env = ep;
 		}
 		/* fall through ... */
@@ -206,7 +206,7 @@ char	*envp;				/* init string from the environment */
 	    }
 	}
 	if (ep > env) {
-	    (void) exCommand(env, FALSE);
+	    (void) exCommand(env);
 	}
     }
 
@@ -269,7 +269,7 @@ char	*envp;				/* init string from the environment */
 		    usage();
 		    return(NULL);
 		}
-		exSet(1, &argv[count], FALSE);
+		exSet(1, &argv[count]);
 		break;
 
 	    case 'w':	/* "window" size, not used in xvi */
@@ -414,7 +414,7 @@ char	*envp;				/* init string from the environment */
     if (commands != NULL) {
 	int i;
 	for (i=0; i < ncommands; i++) {
-	    (void) exCommand(commands[i], FALSE);
+	    (void) exCommand(commands[i]);
 	}
 	free(commands);
     }
