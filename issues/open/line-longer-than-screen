@@ -1,0 +1,8 @@
+Display of a line that is longer than the screen could be improved
+
+When a line that's longer than will fit on-screen is the current line,
+it displays as a column of @ signs down the left edge but the cursor
+moves about the screen as if the line were displayed.
+
+Classic vi just maks a mess.
+nvi and vim display some of the line (they don't display it as @s)
