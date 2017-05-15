@@ -51,9 +51,9 @@ extern	VirtScr		defscr;
  * We don't actually use these on the MS-DOS version, but they have to
  * exist.
  */
-volatile	unsigned char	SIG_suspend_request;
-volatile	unsigned char	SIG_user_disconnected;
-volatile	unsigned char	SIG_terminate;
+volatile	bool_t	SIG_suspend_request;
+volatile	bool_t	SIG_user_disconnected;
+volatile	bool_t	SIG_terminate;
 
 #if 0
 void

@@ -773,17 +773,17 @@ extern	bool_t		imessage;
  * This flag is set when a keyboard-generated suspension request
  * has been generated, i.e. (on a UNIX system) the user hit ^Z.
  */
-extern volatile unsigned char SIG_suspend_request;
+extern volatile bool_t SIG_suspend_request;
 
 /*
  * This flag is set as a result of the user having disconnected.
  */
-extern volatile unsigned char SIG_user_disconnected;
+extern volatile bool_t SIG_user_disconnected;
 
 /*
  * This flag is set when a termination signal is received.
  */
-extern volatile unsigned char SIG_terminate;
+extern volatile bool_t SIG_terminate;
 
 /*
  * This variable (defined in main.c) is a bitmap which controls the
