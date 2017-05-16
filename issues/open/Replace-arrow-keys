@@ -1,0 +1,13 @@
+Moving left with count prefix to Replace get repetition wrong
+
+Xvi allows you to move left and right within the replacement text
+while you are doin an R command, but if there was a repeat count
+before the R, inly the part left of the cursor's final position
+is repeated, and after the cursor position, not the end of the
+replacement text to boot!
+
+The easy solution is to remove the left & right arrow keys from
+replace mode.
+
+In classic vi and nvi, pressing an arrow key while in R mode
+terminates the replacement and respects a preceding count.
