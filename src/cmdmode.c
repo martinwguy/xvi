@@ -413,22 +413,16 @@ int	ch;
 
 	/*
 	 * Move the rest of the command line up by one character position.
-	 * If inpos == inend (cursor at tne of line) this does nothing.
+	 * If inpos == inend (cursor at tne of line) this only moves the
+	 * terminating \0
 	 */
+	inend++;
 	memmove(inbuf+inpos+1, inbuf+inpos, inend-inpos);
-	for (i=inpos+1; i <= inend+1; i++) {
-	    colposn[i] += w;
+	for (i = inend; i > inpos; i--) {
+	    colposn[i] = colposn[i-1] + w;
 	}
+	inbuf[inpos++] = ch;
 
-	inend++; inbuf[inpos++] = ch;
-	inbuf[inend] = '\0';
-	colposn[inpos] = colposn[inpos-1] + w;
-
-	/*
-	 * Show the status line with the cursor after the last char or,
-	 * if we just displayed the ^ for a literal next character,
-	 * the cursor should be shown on the ^.
-	 */
 	update_cline();
     }
 
@@ -441,7 +435,12 @@ get_cmd()
     return(inbuf);
 }
 
-/* Which screen column should the cursor be displayed in? */
+/*
+ * Which screen column should the cursor be displayed in?
+ *
+ * If we just displayed the ^ for a literal next character,
+ * the cursor should be shown on the ^, not after it.
+ */
 int
 get_pos()
 {
