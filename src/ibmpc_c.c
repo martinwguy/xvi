@@ -191,40 +191,7 @@ inchar(long mstimeout)
 	 */
 	if (c != '\0') {
 	    return(c);
-	}
-	/* else must be a function key press */
-	{
-	    if (State != NORMAL) {
-		/*
-		 * Function key pressed during insert or command line
-		 * mode. Get the next character ...
-		 */
-		if (kbget() == 0x53) {
-		    /*
-		     * ... and if it's the delete key, return it as a
-		     * backspace ...
-		     */
-		    return '\b';
-		}
-		/*
-		 * ... otherwise it isn't valid ...
-		 */
-		alert();
-
-		/*
-		 * Typical MS-DOS users are fairly naive & may not
-		 * understand how to get out of insert mode. To make
-		 * things easier, we do it for them here.
-		 */
-		switch (State) {
-		case INSERT:
-		case REPLACE:
-		    return ESC;
-		default:
-		    continue;
-		}
-	    }
-	    /* else (State == NORMAL) ... */
+	} else { /* must be a function key press */
 	    switch (kbget()) {
 	    case 0x3b: return(K_HELP);		/* F1 key */
 	    case 0x47: return(K_HOME);		/* home key */
@@ -238,11 +205,9 @@ inchar(long mstimeout)
 	    case 0x52: return(K_INSERT);	/* insert key */
 	    case 0x53: return(K_DELETE);	/* delete key */
 	    /*
-	     * default:
-	     *	fall through and ignore both characters ...
+	     * default: ignore both characters ...
 	     */
 	    }
-	    continue;
 	}
     }
 }
