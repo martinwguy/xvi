@@ -1,0 +1,21 @@
+The internal keycodes for special keys mask valid characters
+
+The codes for K_HELP, the arrow keys, Home, End, Page Up/Down,
+Insert, Delete, are 0x80 to 0x8c, which are valid accented characters
+on MSDOS and can be the second char of UTF-8 characters.
+
+For example, left arrow, \206, is the second char of the AE ligature
+in UTF-8 and down arrow, \204, is a-grave on MSDOS CP437.
+
+One idea is to use rarer character codes, say from 0xFF down.
+F8-FF are impossible first char values in UTF-8 and rare chars in CP437
+except for F8, which is the degree symbol.
+Unfortunately, cmdtab.c currently replies on the codes being sequential
+to ASCII, i.e. starting from 0x80.
+
+Another answer is to widen the input character type and use values outside
+the 0-255 range for the special key codes. That won't affect file lines
+or what it remembers as the command line: the special chars are never
+inserted into these but are acted on beforehand.
+That would be more expensive on memory, but does pave the way for
+UTF-32 support.
