@@ -97,6 +97,18 @@ int
 inchar(long mstimeout)
 {
     clock_t		stoptime;
+    /*
+     * Function keys map to #2 to #9 and #0, for which we return # and put
+     * the other char into pending_char to return at the next call.
+     */
+    static	char	pending_char = 0;
+    register	int	c;
+
+    if (pending_char) {
+	c = pending_char;
+	pending_char = 0;
+	return(c);
+    }
 
     if (kbcount == 0) {
 	flush_output();
@@ -106,8 +118,6 @@ inchar(long mstimeout)
 	kbfill();
     }
     for (;;) {
-	register int	c;
-
 	if (kbcount == 0) {
 	    unsigned	prevbstate;
 	    unsigned	prevx = 0, prevy = 0; /* =0 only shuts compilers up */
@@ -194,7 +204,8 @@ inchar(long mstimeout)
 	if (c != '\0') {
 	    return(c);
 	} else { /* must be a function key press */
-	    switch (kbget()) {
+	    c = kbget();
+	    switch (c) {
 	    case 0x3b: return(K_HELP);		/* F1 key */
 	    case 0x47: return(K_HOME);		/* home key */
 	    case 0x48: return(K_UARROW);	/* up arrow key */
@@ -206,6 +217,14 @@ inchar(long mstimeout)
 	    case 0x51: return(K_PGDOWN);	/* page down key */
 	    case 0x52: return(K_INSERT);	/* insert key */
 	    case 0x53: return(K_DELETE);	/* delete key */
+
+	    case 0x3c: case 0x3d: case 0x3e: case 0x3f: /* F2 to F5 */
+	    case 0x40: case 0x41: case 0x42: case 0x43: /* F6 to F9 */
+		pending_char = c - 0x3a + '0';
+		return('#');
+	    case 0x44:				/* F10 key */
+		pending_char = '0';
+		return('#');
 	    /*
 	     * default: ignore both characters ...
 	     */
