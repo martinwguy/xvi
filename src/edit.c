@@ -421,23 +421,15 @@ int	c;
 	case K_HELP:
 	    stuff_to_map("#1");
 	    return(FALSE);
+
 	/*
-	 * Ignore arrow keys etc. in insert mode
-	 * to avoid inserting our internal codes.
+	 * They can insert our internal codes for special keys
+	 * by pressing, e.g., ^V Left-Arrow to get \206.
+	 * However, if we mask those here, they then can't insert
+	 * some accented chars on MSDOS, nor UTF-8 chars whose
+	 * second char is 0x80-0x8b.
 	 */
-	case K_UNDO:
-	case K_INSERT:
-	case K_HOME:
-	case K_UARROW:
-	case K_DARROW:
-	case K_LARROW:
-	case K_RARROW:
-	case K_CGRAVE:
-	case K_PGDOWN:
-	case K_PGUP:
-	case K_END:
-	case K_DELETE:
-	    return(FALSE);
+
 	}
     } else {
 	/*
@@ -449,15 +441,6 @@ int	c;
 	flexrmchar(&Insbuff);
 
         literal_next = FALSE;
-
-	/* One exception: F1, the Help key, is received as an internal code
-	 * but we don't want them inserting internal codes as literal
-	 * characters.
-	 */
-	if (c == K_HELP) {
-	    stuff_to_map("#1");
-	    return(FALSE);
-	}
     }
 
     /*
