@@ -253,6 +253,16 @@ Cmd	*cmd;
     long		overlap;
     long		n;
 
+    /* Map command aliases to canonical commands */
+    switch (cmd->cmd_ch1) {
+    case K_PGUP:
+	cmd->cmd_ch1 = CTRL('B');
+	break;
+    case K_PGDOWN:
+	cmd->cmd_ch1 = CTRL('F');
+	break;
+    }
+
     /*
      * First move the cursor to the top of the screen
      * (for ^B), or to the top of the next screen (for ^F).
