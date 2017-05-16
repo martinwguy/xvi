@@ -1,9 +1,0 @@
-The cursor should sit on the last character of wide chars
-
-When the cursor is on a character that is displayed as several characters,
-like , the cursor should be on the last character of the displayed version,
-whereas xvi puts it on the first (on the ^ instead of the V for ^V).
-The same goes for characters with the top bit set like \263.
-
-The only one xvi gets right is the tab characters, for which it put the
-cursor on the last of the space characters, as it should.

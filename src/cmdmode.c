@@ -438,6 +438,10 @@ get_cmd()
 /*
  * Which screen column should the cursor be displayed in?
  *
+ * Unlike the normal display, if the cursor is on a wide character like ^X,
+ * it should be displayed on the leftmost character because the command line
+ * is always effectively in INSERT mode.
+ *
  * If we just displayed the ^ for a literal next character,
  * the cursor should be shown on the ^, not after it.
  */

@@ -37,8 +37,15 @@ exp_send [esc]
 
 # In the middle of a line
 test 13 "0Daabcd[esc]0ll"	1 2 [list "abcd" "~"]  ;# Cursor on the c
-test 14 "i[ctrl V]"		1 2 [list "ab^cd" "~"]
-		# Test Ctrl-V + regular character
+
+# vim displays the ^ but doesn't shunt the other characters up
+set r14 "ab^cd"
+if { $vi == "vim" } { set r14 "ab^d" }
+test 14 "i[ctrl V]"		1 2 [list $r14 "~"]
+
+# Test Ctrl-V + regular character
+# vim fails this alla grande! You can insert ^va but not ^VX
+# and the selection of insertable characters seems random!
 test 15 "X"			1 3 [list "abXcd" "~"]
 exp_send [esc]
 
@@ -47,13 +54,13 @@ exp_send [esc]
 # 2a. Single character
 test 16 "0Daabcde[esc]0ll" 1 2 [list "abcde" "~"]	;# Cursor on the c
 # nvi fails to display ^ when replacing a char with with ^V"
-test 17 "r[ctrl V]"		1 2 [list "ab^de" "~"]
+if { $vi != "nvi" } {
+    test 17 "r[ctrl V]"		1 2 [list "ab^de" "~"]
+} else {
+    exp_send "r[ctrl V]"
+}
 # Something that should shunt the line up by 1 char
-# When sitting on a ^V, xvi and vim put the cursor on the ^ but
-# nvi and classic vi put it on the V.
-set c18 2
-if { $vi == "nvi" || $vi == "vi" } { set c18 3 }
-test 18 "[ctrl V]"		1 $c18 [list "ab^Vde" "~"]
+test 18 "[ctrl V]"		1 3 [list "ab^Vde" "~"]
 
 # 2b. Multiple characters
 test 19 "0Daabcdefg[esc]0ll"	1 2 [list "abcdefg" "~"]  ;# Cursor on the c
@@ -96,7 +103,9 @@ exp_send "1GdG"
 test 51 "iX[ctrl V]X"		1 2 [list "YX"]	 ;# INSERT mode
 test 52 "[esc]0Cabc[esc]0"	1 0 [list "abc"] ;# reset test pattern
 # nvi fails this because it doesn't put replaced characters through insert maps
-test 53 "rXlr[ctrl V]X"		1 1 [list "YXc"] ;# 1-char REPLACE mode
+if { $vi != "nvi" } {
+    test 53 "rXlr[ctrl V]X"	1 1 [list "YXc"] ;# 1-char REPLACE mode
+}
 test 54 "0Cabc[esc]0"		1 0 [list "abc"] ;# reset test pattern
 test 55 "RX[ctrl V]X"		1 2 [list "YXc"] ;# multi-char REPLACE mode
 exp_send "[esc]"

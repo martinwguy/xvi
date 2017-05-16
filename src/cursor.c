@@ -23,8 +23,6 @@
 
 #include "xvi.h"
 
-static	void	calc_position_in_line P((void));
-
 /*
  * Update the window's variables which say where the cursor is.
  * These are row, col and virtcol, curswant if w_set_want_col.
@@ -35,6 +33,15 @@ static	void	calc_position_in_line P((void));
 void
 cursupdate()
 {
+    Xviwin		*win = curwin;
+    register int	i;
+    register char	*cltp;
+    register int	ccol;
+    register unsigned	width;
+    register int	index;
+    register int	c;
+    register Posn	*curp;
+
     /*
      * Calculate physical lines from logical lines.
      */
@@ -44,20 +51,6 @@ cursupdate()
     /*
      * Calculate new position within the line.
      */
-    calc_position_in_line();
-}
-
-static void
-calc_position_in_line()
-{
-    Xviwin		*win = curwin;
-    register int	i;
-    register char	*cltp;
-    register int	ccol;
-    register unsigned	width;
-    register int	index;
-    register int	c;
-    register Posn	*curp;
 
     curp = win->w_cursor;
     cltp = curp->p_line->l_text;
@@ -75,16 +68,15 @@ calc_position_in_line()
 	width = vischar((c = cltp[i++]), (char **) NULL, ccol);
     }
 
-    if (State != INSERT && c == '\t' && ! Pb(P_list) && Pb(P_tabs)) {
-	/*
-	 * If we are inserting, or we're on a control
-	 * character other than a tab, or we aren't showing
-	 * tabs normally, the cursor goes to the first column
-	 * of the control character representation: otherwise,
-	 * if it's a tab & we aren't in insert mode, we place
-	 * the cursor on the last column of the tab
-	 * representation. (This is like the "real" vi.)
-	 */
+    /*
+     * If we are inserting or replacing, the cursor goes to the first column
+     * of a control character/tab representation: otherwise, we place
+     * the cursor on the last column of the tab/control char representation.
+     * For normal characters, one char wide, this is a no-op.
+     * The exception is for when the cursor is on the terminating \0,
+     * which is not displayed but would seem to have width of 2.
+     */
+    if (State != INSERT && State != REPLACE && cltp[index] != '\0') {
 	ccol += width - 1;
     }
 
