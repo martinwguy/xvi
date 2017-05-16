@@ -86,3 +86,5 @@ install:
 		mv xvi $(HOME)/bin/`arch`/xvi
 
 $(GENOBJ): 	$(GENINC) $(MACHINC)
+
+$(MACHOBJ): 	$(GENINC) $(MACHINC)
