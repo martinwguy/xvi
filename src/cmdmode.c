@@ -247,8 +247,9 @@ int	ch;
 	    char	*to_expand;
 	    char	*expansion;
 
+	    inbuf[inend] = '\0';	/* ensure word is terminated */
+
 	    /* Only do filename completion for commands that want it. */
-	    inbuf[inend] = '\0';
 	    if (!should_fexpand(inbuf)) {
 		break;
 	    }
@@ -256,7 +257,6 @@ int	ch;
 	    /*
 	     * Find the word to be expanded.
 	     */
-	    inbuf[inend] = '\0';	/* ensure word is terminated */
 	    to_expand = strrchr(inbuf, ' ');
 	    if (to_expand == NULL || *(to_expand + 1) == '\0') {
 		beep();
@@ -270,15 +270,19 @@ int	ch;
 	     */
 	    expansion = fexpand(to_expand, TRUE);
 	    if (*expansion != '\0') {
+		int oldinpos = inpos;
 		/*
 		 * Expanded okay - remove the original and stuff
 		 * the expansion into the input stream. Note that
 		 * we remove the preceding space character as well;
 		 * this avoids problems updating the command line
-		 * when something like "*.h<ESC>" is typed.
+		 * when something like "*.h<TAB>" is typed.
 		 */
-		inend = inpos = to_expand - inbuf - 1;
-		len = colposn[inpos - 1] + 1;
+		inpos = to_expand - inbuf - 1;
+		len = colposn[inend] - colposn[inpos];
+		flexrm(&curwin->w_statusline, colposn[inpos], len);
+		inend = inpos;
+	        inbuf[inend] = '\0';
 		if (common_prefix(expansion) > 1)
 		    beep();
 		stuff(" %s", expansion);
