@@ -1,0 +1,4 @@
+
+Keys PgUP and PgDown both scroll down 2 lines
+
+They should scroll by a screenful, and PgUp should go up!

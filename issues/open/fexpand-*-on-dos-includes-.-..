@@ -1,0 +1,4 @@
+fexpand("*") on dos includes . and ..
+
+Repeat-by: :n *
+Result: two buffers, one for . and one for .., both saying "Can't read X"

@@ -1,0 +1,6 @@
+"End" key on command line emits rubbish if you've inserted chars
+
+"Home" and "End" keys work fine as long as you just typed at the
+end of the command line but if you've moed left and inserted a char,
+pressing "End" spews out garbage or corrupt its idea of colposn so
+the cursor moves funnily in reaction to left and right arrows.
