@@ -1,0 +1,13 @@
+An asterisk as the first char of a pattern should match a literal *
+
+If you have a buffer:
+-----
+abcde
+prows
+hello *prows
+there
+-----
+and say
+	1G/*prows
+it should go to the * on line 3. Instead it says
+	?+* follows nothing
