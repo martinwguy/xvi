@@ -1,7 +1,9 @@
 When xvi runs out of memory, you can't save the buffer
 
 When xvi runs out of RAM (like in issue #130) you can't write the file.
-To ":w foo" it says "Cannot open preserve file /tmp/#foo.tmp", also if you force the write ``:w! foo"
+To ":w foo" it says "Cannot open preserve file /tmp/#foo.tmp".
+
+If you force the write ``:w! foo"...
 
 If you bypass the preserve file when forcing:
 
@@ -21,3 +23,9 @@ If you bypass the preserve file when forcing:
      }
 
 It says "Can't write foo" instead because the fopen() fails for lack of RAM.
+
+Test using:
+	(ulimit -v 2500; src/xvi)
+	80aa[esc]
+	yyppppppppppppp...  until it barfs
+	:w foo
