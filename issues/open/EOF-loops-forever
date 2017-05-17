@@ -21,3 +21,32 @@ ex shall attempt to save the edit buffer so that it can be recovered
 later using the -r option or the ex recover command. The editor shall
 not write the file or return to command or text input mode, and shall
 terminate with a non-zero exit status."
+
+------------------------------------------------------------------------
+Implementing this:
+
+--- a/src/unix.c
++++ b/src/unix.c
+@@ -244,6 +248,7 @@ kbgetc()
+         }
+ 
+ 	if ((nread = read(0, (char *) kbuf, sizeof kbuf)) <= 0) {
++	    SIG_user_disconnected = TRUE;
+ 	    return EOF;
+ 	} else {
+ 	    kb_nchars = nread;
+
+xvi dies with a startup_error() due to memory allocation failure.
+Repeat-by: (ulimit -v 2500; src/xvi)
+
+Putting abort() in the OOM handler, we see it allocates 3GB of RAM and dies.
+abort() is called from xvInitWindow (vs=0x806d8c0 <tcap_scr>) at windows.c:57
+so vs_init() is failing in vs_init() at
+    vs->pv_int_lines = alloc(vs->pv_rows * sizeof(Sline));
+and vs->pv_rows==65504 which comes from
+tcap_scr.c:907: LI = *prows;
+and prows is the parameter to tty_open(). Its value is set to a random value
+by getScreenSize(), which gets it from
+    (void) ioctl(0, TIOCGWINSZ, (char *) &winsz);
+
+If we also check the return value from ioctl() and all is well.
