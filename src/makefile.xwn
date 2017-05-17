@@ -79,6 +79,3 @@ sources:
 
 install:
 		mv xvi $(HOME)/bin/`arch`
-
-memtest:
-		$(CC) $(CFLAGS) -DMEMTEST=1 -c unix.c

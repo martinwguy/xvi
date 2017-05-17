@@ -160,10 +160,6 @@ FILE *fdopen(int fd, const char *mode);
  */
 #undef	CTRL
 
-#ifdef MEMTEST
-#   include <sys/resource.h>
-#endif		/* MEMTEST */
-
 /***********************************************************************
  *                END of environmental setup section                   *
  ***********************************************************************/
@@ -213,8 +209,11 @@ volatile bool_t	win_size_changed = FALSE;
 /*
  * Get a single byte from the keyboard.
  *
- * If the keyboard input buffer is empty, & read() fails or times out,
- * return EOF.
+ * If the keyboard input buffer is empty and read() times out, return EOF.
+ *
+ * POSIX: "If a read from the standard input returns an error, or if
+ * the editor detects an end-of-file condition from the standard input,
+ * it shall be equivalent to a SIGHUP asynchronous event."
  */
 static int
 kbgetc()
@@ -231,6 +230,7 @@ kbgetc()
         int retval;
         int nread;
 
+	/* Wait until there is some input to be read */
         FD_ZERO(&rfds);
         FD_SET(0, &rfds);
         while (1) {
@@ -244,6 +244,7 @@ kbgetc()
         }
 
 	if ((nread = read(0, (char *) kbuf, sizeof kbuf)) <= 0) {
+	    SIG_user_disconnected = TRUE;
 	    return EOF;
 	} else {
 	    kb_nchars = nread;
@@ -454,14 +455,6 @@ sys_init()
     unsigned int	rows = 0;
     unsigned int	columns = 0;
 
-#ifdef MEMTEST
-    {
-	static struct rlimit dlimit = { 400 * 1024, 400 * 1024 };
-
-	(void) setrlimit(RLIMIT_DATA, &dlimit);
-    }
-#endif		/* MEMTEST */
-
     /*
      * Set up tty flags in raw and cooked structures.
      * Do this before any termcap-initialisation stuff
@@ -607,14 +600,16 @@ getScreenSize(rp, cp)
 unsigned int	*rp;
 unsigned int	*cp;
 {
-#ifdef	TIOCGWINSZ
-    struct winsize	winsz;
-
-    (void) ioctl(0, TIOCGWINSZ, (char *) &winsz);
-    *rp = winsz.ws_row;
-    *cp = winsz.ws_col;
-#else
     *rp = *cp = 0;
+
+#ifdef	TIOCGWINSZ
+    {
+	struct winsize	winsz;
+	if (ioctl(0, TIOCGWINSZ, (char *) &winsz) == 0) {
+	    *rp = winsz.ws_row;
+	    *cp = winsz.ws_col;
+	}
+    }
 #endif
 
     /* Environment variables override all other kinds of screen size */
