@@ -22,6 +22,11 @@
 
 #include "xvi.h"
 
+#ifdef UNIX
+# include <sys/types.h>		/* for getuid() and stat() */
+# include <sys/stat.h>		/* for stat() */
+#endif
+
 /*
  * References to the current cursor position, and the window
  * and buffer into which it references. These make the code a
@@ -64,12 +69,12 @@ bool_t		imessage;	/*
 static	void	usage P((void));
 
 Xviwin *
-xvi_startup(vs, argc, argv, envp)
+xvi_startup(vs, argc, argv)
 VirtScr	*vs;
 int	argc;
 char	*argv[];
-char	*envp;				/* init string from the environment */
 {
+    char	*envp;			/* init string from the environment */
     char	*tag = NULL;		/* tag from command line */
     char	*pat = NULL;		/* pattern from command line */
     long	line = 0;		/* line number from command line.
@@ -80,9 +85,25 @@ char	*envp;				/* init string from the environment */
     char	**files;
     int		numfiles = 0;
     int		count;
-    char	*env;
+    char	*env = NULL;
     char	**commands = NULL;	/* Arguments to -c flags */
     int		ncommands = 0;		/* Arguments to -c flags */
+
+    /*
+     * Fetch the startup string.
+     */
+    envp = getenv("XVINIT");
+    if (envp == NULL) {
+	envp = getenv("EXINIT");
+    }
+
+    /*
+     * Save a copy of the startup string so that subsequent calls
+     * to getenv() do not overwrite it.
+     */
+    if (envp != NULL) {
+	env = strsave(envp);
+    }
 
 #define add_command(c) { \
 	commands = realloc(commands, sizeof(*commands) * ++ncommands); \
@@ -137,17 +158,6 @@ char	*envp;				/* init string from the environment */
     init_yankput();
 
     init_sline();
-
-    /*
-     * Save a copy of the passed environment string in case it was
-     * obtained from getenv(), so that the subsequent call we make
-     * to get the SHELL parameter value does not overwrite it.
-     */
-    if (envp != NULL) {
-	env = strsave(envp);
-    } else {
-	env = NULL;
-    }
 
     /*
      * Try to obtain a value for the "shell" parameter from the
@@ -208,7 +218,88 @@ char	*envp;				/* init string from the environment */
 	if (ep > env) {
 	    (void) exCommand(env);
 	}
+    } else {
+	/*
+	 * POSIX: "If the EXINIT variable is not set,
+	 *   the HOME environment variable is not null and not empty,
+	 *   the file .exrc in the HOME directory:
+	 *   - exists,
+	 *   - is owned by the same user ID as the real user ID of the process
+	 *     or the process has appropriate privileges [what DOES this mean?!]
+	 *   - is not writable by anyone other than the owner
+	 * the editor shall execute the ex commands contained in that file."
+	 */
+	char *home = getenv("HOME");
+
+	if (home != NULL && home[0] != '\0') {
+	    Flexbuf	flexrc;
+	    char *	exrc;
+#ifdef UNIX
+	    struct stat	stbuf;
+#endif
+
+	    flexnew(&flexrc);
+	    lformat(&flexrc, "%s/.exrc", home);
+	    exrc = flexgetstr(&flexrc);
+	    if (exists(exrc)
+#ifdef UNIX
+		&& stat(exrc, &stbuf) == 0 && stbuf.st_uid == getuid()
+		&& (stbuf.st_mode & 022) == 0
+#endif
+			    ) {
+		if (!exSource(exrc)) {
+		    startup_error("Cannot read $HOME/.exrc");
+		}
+	    }
+	    flexdelete(&flexrc);
+	}
     }
+
+    /*
+     * POSIX: "If the current directory is not referred to by $HOME,
+     *         a command in EXINIT or $HOME/.exrc sets the option exrc,
+     *         the .exrc file in the current directory:
+     *         - exists
+     *         - is owned by the same user ID as the process' real user ID
+     *         - is not writable by anyone other than the owner
+     * the editor shall execute the ex commands contained in that file."
+     *
+     * What if $HOME is not set?
+     */
+    if (Pb(P_exrc)) {
+	char *curdir;
+	char *homedir;
+
+	curdir = alloc(MAXPATHLEN + 1);
+	if (curdir == NULL) {
+	    startup_error(out_of_memory);
+	    return(NULL);
+	}
+	if (getcwd(curdir, MAXPATHLEN + 1) != NULL
+	    && (homedir = getenv("HOME")) != NULL && homedir[0] != '\0') {
+	    /* On Unix, it would be more accurate to stat curdir and homedir
+	     * and see whether the inode numbers correspond. */
+	    if (strcmp(curdir, homedir) != 0) {
+	        char *exrc = ".exrc";
+#ifdef UNIX
+		struct stat	stbuf;
+#endif
+
+		if (exists(exrc)
+#ifdef UNIX
+		    && stat(exrc, &stbuf) == 0 && stbuf.st_uid == getuid()
+		    && (stbuf.st_mode & 022) == 0
+#endif
+			    ) {
+		    if (!exSource(exrc)) {
+			startup_error("Cannot read ./.exrc");
+		    }
+		}
+	    }
+	}
+	free(curdir);
+    }
+
 
     /*
      * Process the command line arguments.

@@ -138,6 +138,7 @@ Param	params[] = {
 {   "directory",    "di",           P_STRING,   0,              not_imp,   },
 {   "edcompatible", "edc",          P_BOOL,     0,              not_imp,   },
 {   "errorbells",   "eb",           P_BOOL,     TRUE,           nofunc,    },
+{   "exrc",	    "ex",           P_BOOL,     FALSE,          nofunc,    },
 {   "flash",        "flash",        P_BOOL,     FALSE,          xvpSetVBell, },
 {   "format",       "fmt",          P_ENUM,     0,              set_format,},
 {   "hardtabs",     "ht",           P_NUM,      0,              not_imp,   },

@@ -101,8 +101,6 @@ main(argc, argv)
 int	argc;
 char	*argv[];
 {
-    char	*env;
-
     timer_port = attach_port(0, 0);
     if (timer_port == 0) {
 	fputs("Cannot obtain timer port\n", stderr);
@@ -111,12 +109,8 @@ char	*argv[];
 
     vs = win_open();
 
-    env = getenv("WXVINIT");
-    if (env == NULL) {
-	env = getenv("XVINIT");
-    }
     catch_signals();
-    vs->pv_window = (genptr *) xvi_startup(vs, argc, argv, env);
+    vs->pv_window = (genptr *) xvi_startup(vs, argc, argv));
 
     while (1) {
 	process_event();

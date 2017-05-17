@@ -715,7 +715,7 @@ char **argv;
     subshells = FALSE;	/* make sure we don't attempt to shell out */
 
     catch_signals();
-    if (xvi_startup(vs, argc, argv, getenv("XVINIT")) == NULL) {
+    if (xvi_startup(vs, argc, argv)) == NULL) {
         exit(1);
     }
 

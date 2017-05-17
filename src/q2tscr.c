@@ -109,7 +109,7 @@ char	*argv[];
     tty_init();
 
     catch_signals();
-    if (xvi_startup(&qnxscr, argc, argv, getenv("XVINIT")) == NULL) {
+    if (xvi_startup(&qnxscr, argc, argv)) == NULL) {
 	sys_endv();
 	exit(1);
     }

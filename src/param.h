@@ -127,6 +127,7 @@ enum {
     P_directory,
     P_edcompatible,
     P_errorbells,
+    P_exrc,
     P_flash,
     P_format,
     P_hardtabs,

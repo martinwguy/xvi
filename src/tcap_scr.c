@@ -302,7 +302,7 @@ char	*argv[];
     vs->pv_cols = CO;
 
     catch_signals();
-    if (xvi_startup(vs, argc, argv, getenv("XVINIT")) == NULL) {
+    if (xvi_startup(vs, argc, argv) == NULL) {
 	sys_endv();
 	exit(1);
     }

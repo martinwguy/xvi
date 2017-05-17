@@ -1184,7 +1184,7 @@ extern	void	catch_signals P((void));
 /*
  * startup.c
  */
-extern	Xviwin	*xvi_startup P((VirtScr *, int, char **, char *));
+extern	Xviwin	*xvi_startup P((VirtScr *, int, char **));
 extern	void	startup_error P((char *));
 
 /*

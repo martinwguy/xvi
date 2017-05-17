@@ -89,7 +89,7 @@ char	*argv[];
     defscr.pv_cols = (unsigned) Columns;
 
     catch_signals();
-    if (xvi_startup(&defscr, argc, argv, getenv("XVINIT")) == NULL) {
+    if (xvi_startup(&defscr, argc, argv)) == NULL) {
 	sys_endv();
 	exit(1);
     }

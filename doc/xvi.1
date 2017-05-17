@@ -721,31 +721,10 @@ does not work properly when applied to macros (either \fB@\fP
 or \fB:map\fP); it should undo all the changes made by the macro,
 but in fact only the last command within the macro is undone.
 .SH "OTHER DIFFERENCES FROM VI"
-The
+If the
 .B XVINIT
-environment variable is read instead of
+environment variable is set, it is read instead of
 .BR EXINIT .
-Whilst no files are sourced
-automatically,
-users who wish to have a startup file can arrange it very easily.
-.BR sh (1)
-or
-.BR ksh (1)
-users should add this line to their
-.BR "$HOME/.profile" :
-.IP
-.BI "XVINIT=\(fmsource " xvi-startup-file "\(fm; export XVINIT"
-.LP
-.BR csh (1)
-users should add this to their
-.BR "$HOME/.login" :
-.IP
-.BI "setenv XVINIT \(fmsource " xvi-startup-file \(fm
-.LP
-and \%MS-DOS users should add this to their
-.BR autoexec.bat :
-.IP
-.BI "set XVINIT=source" xvi-startup-file
 .LP
 The \fBtags\fP parameter can be used to specify multiple tags files;
 these can be separated by either
