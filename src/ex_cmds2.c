@@ -266,23 +266,17 @@ char *
 exChangeDirectory(dir)
     char	*dir;
 {
-    static char	*homedir = NULL;
+    char	*homedir = getenv("HOME");
     static char	*prevdir = NULL;
     char	*ret;
     char	*curdir;
 
-    if (dir == NULL && homedir == NULL) {
-	if ((ret = getenv("HOME")) == NULL) {
-	    return("HOME environment variable not set");
-	}
-	homedir = strsave(ret);
-	if (homedir == NULL) {
-	    return("Failed to save HOME environment variable");
-	}
-    }
 
     if (dir == NULL) {
-	dir = homedir;
+	dir = getenv("HOME");
+	if (dir == NULL) {
+	    return("HOME environment variable not set");
+	}
     } else if (*dir == '-' && dir[1] == '\0') {
 	if (prevdir == NULL) {
 	    return("No previous directory");
