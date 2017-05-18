@@ -632,7 +632,8 @@ int	c;
 	}
     }
 
-    if (wait_buffer || (!literal_next && c == CTRL('A'))) {
+    if (repstate == overwrite &&
+	(wait_buffer || (!literal_next && c == CTRL('A')))) {
 	/*
 	 * Add contents of named buffer, or the last
 	 * insert buffer if CTRL('A') was typed.
@@ -646,7 +647,28 @@ int	c;
     }
 
     if (!literal_next) {
+	/*
+	 * This switch is for special characters; we skip over
+	 * it for normal characters, or for literal-next mode.
+	 */
 	switch (c) {
+	case CTRL('@'):
+	    /*
+	     * If ^@ is the first character inserted, insert the last
+	     * text we inserted and return to command mode.
+	     */
+	    if (repstate == overwrite && flexempty(&Insbuff)) {
+		yp_stuff_input('<', TRUE, FALSE);
+		stuff("%c", ESC);
+	    } else {
+		/*
+		 * Xvi can't handle NULs in files because it
+		 * stores Lines as nul-terminated strings.
+		 */
+		beep();
+	    }
+	    return(FALSE);
+
 	/*
 	 * TOS doesn't seem to have a keyboard interrupt so keep the old
 	 * code that make Ctrl-C do the same on TOS as everywhere else.
@@ -761,8 +783,10 @@ int	c;
 	    return(TRUE);
 
 	case CTRL('B'):
-	    wait_buffer = TRUE;
-	    return(FALSE);
+	    if (repstate == overwrite) {
+		wait_buffer = TRUE;
+		return(FALSE);
+	    }
 	    break;
 
 	case CTRL('Q'):
