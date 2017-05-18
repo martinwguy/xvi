@@ -120,7 +120,7 @@ int	c;
 	if (!wait_buffer) {
 	    c = '<';
 	}
-	yp_stuff_input(c, TRUE);
+	yp_stuff_input(c, TRUE, FALSE);
 	wait_buffer = FALSE;
 	return(FALSE);
     }
@@ -138,7 +138,7 @@ int	c;
 	     */
 	    if (curpos->p_line == Insertloc.p_line &&
 		curpos->p_index == Insertloc.p_index) {
-		yp_stuff_input('<', TRUE);
+		yp_stuff_input('<', TRUE, FALSE);
 		stuff("%c", ESC);
 	    } else {
 		/*
@@ -640,7 +640,7 @@ int	c;
 	if (!wait_buffer) {
 	    c = '<';
 	}
-	yp_stuff_input(c, TRUE);
+	yp_stuff_input(c, TRUE, FALSE);
 	wait_buffer = FALSE;
 	return(FALSE);
     }

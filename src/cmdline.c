@@ -875,7 +875,7 @@ char	*cmdline;			/* optional command string */
 	break;
 
     case EX_EXBUFFER:
-	yp_stuff_input(arg[0], FALSE);
+	yp_stuff_input(arg[0], FALSE, FALSE);
 	break;
 
     case EX_EQUALS:

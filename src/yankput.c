@@ -73,7 +73,7 @@ typedef struct yankbuffer {
 
 static	Yankbuffer	yb[NBUFS];
 
-static	void		put P((char *, bool_t, bool_t));
+static	void		put P((char *, bool_t, bool_t, bool_t));
 static	Yankbuffer	*yp_get_buffer P((int));
 static	int		bufno P((int));
 static	Line		*copy_lines P((Line *, Line *));
@@ -715,14 +715,18 @@ oom:
  * be preceded by a ':' and followed by a '\n', i.e. it is the
  * result of a :@ command rather than a vi-mode @ command.
  *
+ * The "map_it" parameter says whether we should put the characters
+ * from the buffer through the map and/or map! tables.
+ *
  * POSIX: "After each line of a line-mode buffer,
  * and all but the last line of a character mode buffer,
  * behave as if a <newline> were entered as standard input."
  */
 void
-yp_stuff_input(name, vi_mode)
+yp_stuff_input(name, vi_mode, map_it)
 int	name;
 bool_t	vi_mode;
+bool_t	map_it;
 {
     Yankbuffer	*yp_buf;
     Line	*lp;
@@ -735,7 +739,7 @@ bool_t	vi_mode;
     if (!vi_mode) {
 	switch (yp_buf->y_type) {
 	case y_chars:
-	    put(yp_buf->y_1st_text, vi_mode, TRUE);
+	    put(yp_buf->y_1st_text, vi_mode, TRUE, map_it);
 	    break;
 
 	case y_lines:
@@ -747,22 +751,22 @@ bool_t	vi_mode;
 	}
 
 	for (lp = yp_buf->y_line_buf; lp != NULL; lp = lp->l_next) {
-	    put(lp->l_text, vi_mode, TRUE);
+	    put(lp->l_text, vi_mode, TRUE, map_it);
 	}
 
 	if (yp_buf->y_type == y_chars && yp_buf->y_2nd_text != NULL) {
-	    put(yp_buf->y_2nd_text, vi_mode, TRUE);
+	    put(yp_buf->y_2nd_text, vi_mode, TRUE, map_it);
 	}
     } else {
 	/*
-	 * Characters from vi-mode @f commands are stuffed into the start of
+	 * Characters from @f commands are stuffed into the start of
 	 * the canonical queue so here we have to put() the elements in
 	 * reverse order for them to end up in the correct order.
 	 */
 	switch (yp_buf->y_type) {
 	case y_chars:
 	    if (yp_buf->y_2nd_text != NULL) {
-		put(yp_buf->y_2nd_text, vi_mode, FALSE);
+		put(yp_buf->y_2nd_text, vi_mode, FALSE, map_it);
 	    }
 	    break;
 
@@ -785,31 +789,46 @@ bool_t	vi_mode;
 	     * go back to the first line inclusive.
 	     */
 	    do {
-		put(lp->l_text, vi_mode, TRUE);
+		put(lp->l_text, vi_mode, TRUE, map_it);
 	    } while (lp != yp_buf->y_line_buf && (lp = lp->l_prev));
 	}
 
 	if (yp_buf->y_type == y_chars && yp_buf->y_1st_text != NULL) {
-	    put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL);
+	    put(yp_buf->y_1st_text, vi_mode, yp_buf->y_2nd_text != NULL, map_it);
 	}
     }
 }
 
+/*
+ * Stuff a string into the input.
+ *
+ * If vi_mode is FALSE, we're stuffing ex commands (the :@f command) so need
+ * to add a leading : if it's missing.
+ *
+ * If map_it is TRUE, we are stuffing input that needs to go through the
+ * :map and :map! tables. If FALSE, it's already been there (the Redo insert).
+ */
 static void
-put(str, vi_mode, newline)
+put(str, vi_mode, newline, map_it)
 char	*str;
 bool_t	vi_mode;
 bool_t	newline;
+bool_t	map_it;
 {
     if (vi_mode) {
-	/* stuff_to_map() inserts chars at the start of canon_queue so
+	/*
+	 * stuff_to_map() inserts chars at the start of canon_queue so
 	 * insert a trailing newline, if any, before the text so that it
 	 * ends up after the text that it should follow.
 	 */
-	if (newline) {
-	    stuff_to_map("\n");
+	if (map_it) {
+	    if (newline) {
+		stuff_to_map("\n");
+	    }
+	    stuff_to_map(str);
+	} else {
+	    stuff(newline ? "%s\n" : "%s", str);
 	}
-	stuff_to_map(str);
     } else {
 	stuff("%s%s%s",
 		str[0] != ':' ? ":" : "",
