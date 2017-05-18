@@ -199,7 +199,7 @@ Cmd	*cmd;
 	break;
 
     case '@':
-	yp_stuff_input(cmd->cmd_ch2, TRUE);
+	yp_stuff_input(cmd->cmd_ch2, TRUE, TRUE);
 	break;
 
     /*
@@ -230,7 +230,7 @@ Cmd	*cmd;
 	 */
 	stuff("%s", flexgetstr(&Redo.r_fb));
 	if (Redo.r_mode != r_normal) {
-	    yp_stuff_input('<', TRUE);
+	    yp_stuff_input('<', TRUE, FALSE);
 	    if (Redo.r_mode == r_insert) {
 		stuff("%c", ESC);
 	    }
