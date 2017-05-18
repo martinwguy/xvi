@@ -77,16 +77,35 @@ static	int	start_index;	/* index into line where we entered replace */
 static	int	start_column;	/* virtual col corresponding to start_index */
 
 /*
- * Process the given character, in insert mode.
+ * Process the given character, in insert mode and in replace mode.
  *
  * Return TRUE if the screen needs repainting, FALSE if it doesn't.
  */
+static bool_t ir_proc P((int, bool_t));
+
 bool_t
 i_proc(c)
 int	c;
 {
+	ir_proc(c, TRUE);
+}
+
+bool_t
+r_proc(c)
+int	c;
+{
+	ir_proc(c, FALSE);
+}
+
+static bool_t
+ir_proc(c, insert)
+int	c;
+bool_t	insert;
+{
     register Posn	*curpos;
     static bool_t	wait_buffer = FALSE;
+
+    /* These are used in insert mode only */
     bool_t		beginline;
     int			nlines;
 
@@ -95,7 +114,9 @@ int	c;
     /*
      * Get the number of physical lines the current line occupies.
      */
-    nlines = plines(curpos->p_line);
+    if (insert) {
+	nlines = plines(curpos->p_line);
+    }
 
     if (kbdintr) {
 	kbdintr = FALSE;
@@ -112,7 +133,8 @@ int	c;
 	}
     }
 
-    if (wait_buffer || (!literal_next && c == CTRL('A'))) {
+    if ((insert || repstate == overwrite) &&
+	(wait_buffer || (!literal_next && c == CTRL('A')))) {
 	/*
 	 * Add contents of named buffer, or the last
 	 * insert buffer if CTRL('A') was typed.
@@ -136,8 +158,9 @@ int	c;
 	     * If ^@ is the first character inserted, insert the last
 	     * text we inserted and return to command mode.
 	     */
-	    if (curpos->p_line == Insertloc.p_line &&
-		curpos->p_index == Insertloc.p_index) {
+	    if (insert ? (curpos->p_line == Insertloc.p_line &&
+		          curpos->p_index == Insertloc.p_index)
+		       : (repstate == overwrite && flexempty(&Insbuff))) {
 		yp_stuff_input('<', TRUE, FALSE);
 		stuff("%c", ESC);
 	    } else {
@@ -159,8 +182,10 @@ int	c;
 #endif
 	case ESC:		/* An escape or Interrupt ends input mode */
 	case_kbdintr_ch:	/* A label! */
-	{
-	    char	*cltext;
+	    if (!insert) {
+		end_replace(c);
+		return(TRUE);
+	    }
 
 	    /*
 	     * If a prefix count was given, and we have not yet
@@ -176,8 +201,6 @@ int	c;
 		return(FALSE);
 	    }
 
-	    cltext = curpos->p_line->l_text;
-
 	    curwin->w_set_want_col = TRUE;
 
 	    /*
@@ -185,7 +208,7 @@ int	c;
 	     * on the current line, delete it.
 	     */
 	    if (curpos->p_index == indentchars &&
-		cltext[indentchars] == '\0') {
+		curpos->p_line->l_text[indentchars] == '\0') {
 		replchars(curpos->p_line, 0, indentchars, "");
 		begin_line(FALSE);
 	    }
@@ -215,10 +238,13 @@ int	c;
 	    }
 	    xvUpdateAllBufferWindows();
 	    return(TRUE);
-	}
 
 	case CTRL('T'):
 	case CTRL('D'):
+	    if (!insert) {
+		break;
+	    }
+
 	    /*
 	     * If the only character on the line so far is a '0',
 	     * backspace over it and delete the entire indent.
@@ -277,101 +303,125 @@ int	c;
 
 	case '\b':
 	case DEL:
-	    /*
-	     * Can't backup past starting point.
-	     */
-	    if (curpos->p_line == Insertloc.p_line &&
-			    curpos->p_index <= Insertloc.p_index) {
-		beep();
-		return(TRUE);
-	    }
+	    if (insert) {
+		/*
+		 * Can't backup past starting point.
+		 */
+		if (curpos->p_line == Insertloc.p_line &&
+				curpos->p_index <= Insertloc.p_index) {
+		    beep();
+		    return(TRUE);
+		}
 
-	    /*
-	     * Can't backup to a previous line.
-	     */
-	    if (curpos->p_line != Insertloc.p_line && curpos->p_index <= 0) {
-		beep();
+		/*
+		 * Can't backup to a previous line.
+		 */
+		if (curpos->p_line != Insertloc.p_line && curpos->p_index <= 0) {
+		    beep();
+		    return(TRUE);
+		}
+		(void) one_left(FALSE);
+		if (curpos->p_index < indentchars)
+		    indentchars--;
+		replchars(curpos->p_line, curpos->p_index, 1, "");
+		(void) flexaddch(&Insbuff, '\b');
+		cursupdate();
+		/*
+		 * Make sure backspacing over a physical line
+		 * break updates the screen correctly.
+		 */
+		updateline(curwin->w_col == 0);
+		return(TRUE);
+	    } else {		/* replace */
+		if (repstate == overwrite && curwin->w_virtcol > start_column) {
+		    (void) one_left(FALSE);
+		    replchars(curpos->p_line,
+				    curpos->p_index, 1,
+				    (curpos->p_index < nchars) ?
+				    mkstr(saved_line[curpos->p_index]) : "");
+		    updateline(FALSE);
+		    (void) flexaddch(&Insbuff, '\b');
+		} else {
+		    beep();
+		    if (repstate == replace_one) {
+			end_replace(c);
+		    }
+		}
 		return(TRUE);
 	    }
-	    (void) one_left(FALSE);
-	    if (curpos->p_index < indentchars)
-		indentchars--;
-	    replchars(curpos->p_line, curpos->p_index, 1, "");
-	    (void) flexaddch(&Insbuff, '\b');
-	    cursupdate();
-	    /*
-	     * Make sure backspacing over a physical line
-	     * break updates the screen correctly.
-	     */
-	    updateline(curwin->w_col == 0);
-	    return(TRUE);
 
 	case CTRL('U'):
 	case CTRL('W'):
-	  {
-	    /* Number of screen lines occupied by current line */
-	    int plines_before, plines_after;
-
-	    /* Where to start cancelling from in the line */
-	    int from_index;
-
-	    if (c == CTRL('U')) {
-		/*
-		 * Cancel current line of inserted text.
-		 * If we are on the same line as we started inserting on,
-		 * cancel back to where the insertion started, otherwise
-		 * we have inserted more than one logical line so
-		 * cancel all text on the current line.
-		 */
-		if (curpos->p_line == Insertloc.p_line) {
-		    from_index = Insertloc.p_index;
-		} else {
-		    from_index = 0;
-		}
+	    if (!insert) {
+		/* Should implement ^U in Replace mode */
+		break;
 	    } else {
-		/* CTRL('W'): Delete back one word in inserted text */
-		Posn *new = bck_word(curpos, 0, TRUE);
-		if (new == NULL) return(TRUE);
-		from_index = new->p_index;
-		/* Don't delete over the insert position */
-		if (curpos->p_line == Insertloc.p_line &&
-		    from_index < Insertloc.p_index) {
+		/* Number of screen lines occupied by current line */
+		int plines_before, plines_after;
+
+		/* Where to start cancelling from in the line */
+		int from_index;
+
+		if (c == CTRL('U')) {
+		    /*
+		     * Cancel current line of inserted text.
+		     * If we are on the same line as we started inserting on,
+		     * cancel back to where the insertion started, otherwise
+		     * we have inserted more than one logical line so
+		     * cancel all text on the current line.
+		     */
+		    if (curpos->p_line == Insertloc.p_line) {
 			from_index = Insertloc.p_index;
+		    } else {
+			from_index = 0;
+		    }
+		} else {
+		    /* CTRL('W'): Delete back one word in inserted text */
+		    Posn *new = bck_word(curpos, 0, TRUE);
+		    if (new == NULL) return(TRUE);
+		    from_index = new->p_index;
+		    /* Don't delete over the insert position */
+		    if (curpos->p_line == Insertloc.p_line &&
+			from_index < Insertloc.p_index) {
+			    from_index = Insertloc.p_index;
+		    }
 		}
-	    }
 
-	    /* Leave auto-inserted indent characters or those added with ^T. */
-	    if (from_index < indentchars && Pb(P_autoindent)) {
-		from_index = indentchars;
-	    }
+		/*
+		 * Leave auto-inserted indent characters or those added with
+		 * ^T.
+		 */
+		if (from_index < indentchars && Pb(P_autoindent)) {
+		    from_index = indentchars;
+		}
 
-	    /* Nothing to cancel? */
-	    if (curpos->p_index <= from_index) {	/* == */
+		/* Nothing to cancel? */
+		if (curpos->p_index <= from_index) {	/* == */
+		    return(TRUE);
+		}
+
+		plines_before = plines(curpos->p_line);
+
+		replchars(curpos->p_line, from_index,
+			  curpos->p_index - from_index, "");
+
+		plines_after = plines(curpos->p_line);
+
+		curpos->p_index = from_index;
+
+		(void) flexaddch(&Insbuff, c);
+		cursupdate();
+		/*
+		 * Make sure cancelling over a physical line
+		 * break updates the screen correctly.
+		 */
+		updateline(plines_before != plines_after);
 		return(TRUE);
 	    }
 
-	    plines_before = plines(curpos->p_line);
-
-	    replchars(curpos->p_line, from_index,
-		      curpos->p_index - from_index, "");
-
-	    plines_after = plines(curpos->p_line);
-
-	    curpos->p_index = from_index;
-
-	    (void) flexaddch(&Insbuff, c);
-	    cursupdate();
-	    /*
-	     * Make sure cancelling over a physical line
-	     * break updates the screen correctly.
-	     */
-	    updateline(plines_before != plines_after);
-	    return(TRUE);
-	  }
-
-	case '\r':
+	case '\r':			/* new line */
 	case '\n':
-	    {
+	    if (insert) {
 		int	i;
 		int	previndex;
 		Line	*prevline;
@@ -399,12 +449,67 @@ int	c;
 		move_window_to_cursor();
 		cursupdate();
 		updateline(TRUE);
+	    } else {		/* replace */
+		if (curpos->p_line->l_next == curbuf->b_lastline &&
+						repstate == overwrite) {
+		    /*
+		     * Don't allow splitting of last line of
+		     * buffer in overwrite mode. Why not?
+		     */
+		    beep();
+		    return(TRUE);
+		}
+
+		if (repstate == replace_one) {
+		    echo &= ~e_CHARUPDATE;
+
+		    /*
+		     * First remove the character which is being replaced.
+		     */
+		    replchars(curpos->p_line, curpos->p_index, 1, "");
+
+		    /*
+		     * Then split the line at the current position.
+		     */
+		    if (openfwd(curpos, TRUE) == FALSE) {
+			show_error(out_of_memory);
+			return(TRUE);
+		    }
+
+		    (void) flexaddch(&Insbuff, c);
+
+		    repstate = got_one;
+		    end_replace('\n');
+
+		} else {
+		    (void) flexaddch(&Insbuff, '\n');
+
+		    if (xvMoveDown(curwin->w_cursor, 1L, FALSE)) {
+			info_update();
+
+			/*
+			 * This is wrong, but it's difficult
+			 * to get it right.
+			 */
+			xvMoveToColumn(curwin->w_cursor, start_column);
+		    }
+
+		    free(saved_line);
+		    saved_line = strsave(curpos->p_line->l_text);
+		    if (saved_line == NULL) {
+			State = NORMAL;
+			return(TRUE);
+		    }
+		    nchars = strlen(saved_line);
+		}
 	    }
 	    return(TRUE);
 
 	case CTRL('B'):
-	    wait_buffer = TRUE;
-	    return(FALSE);
+	    if (insert || repstate == overwrite) {
+		wait_buffer = TRUE;
+		return(FALSE);
+	    }
 	    break;
 
 	case CTRL('Q'):
@@ -423,13 +528,12 @@ int	c;
 	    return(FALSE);
 
 	/*
-	 * They can insert our internal codes for special keys
-	 * by pressing, e.g., Left-Arrow to get \206.
-	 * However, if we mask those here, they then can't insert
-	 * some accented chars on MSDOS, nor UTF-8 chars whose
-	 * second char is 0x80-0x8b.
+	 * They can insert our internal codes for special keys by pressing,
+	 * e.g., Left-Arrow to get \206.
+	 * However, if we mask those here, they then can't insert some
+	 * accented chars on MSDOS (e.g. a grave \206) nor UTF-8 chars
+	 * whose second char is 0x80-0x8b (e.g. AE ligature \303\206)
 	 */
-
 	}
     } else {
 	/*
@@ -437,9 +541,11 @@ int	c;
 	 */
 
 	/* Get rid of the ^ that we inserted to show the ^V */
-	replchars(curpos->p_line, curpos->p_index, 1, "");
+	if (insert) {
+	    replchars(curpos->p_line, curpos->p_index, 1, "");
+	}
+	/* Remove the phantom ^ from the insert buffer */
 	flexrmchar(&Insbuff);
-
         literal_next = FALSE;
     }
 
@@ -451,6 +557,29 @@ int	c;
      * Put the character into the insert buffer.
      */
     (void) flexaddch(&Insbuff, c);
+
+    if (!insert) {	/* replace mode */
+	if (repstate == overwrite || repstate == replace_one) {
+	    int nlines = plines(curwin->w_cursor->p_line);
+
+	    replchars(curpos->p_line, curpos->p_index, 1, mkstr(c));
+	    updateline(nlines != plines(curwin->w_cursor->p_line));
+	    if (!literal_next) {
+		(void) one_right(TRUE);
+	    }
+	}
+	/*
+	 * If command was an 'r', leave replace mode after one character.
+	 */
+	if (!literal_next && repstate == replace_one) {
+	    repstate = got_one;
+	    end_replace(c);
+	}
+
+	return(TRUE);	/* Return from replace mode */
+    }
+
+    /* Insert mode */
 
     /*
      * Do the actual insertion of the new character.
@@ -605,256 +734,6 @@ int	repeat;		/* number of times to repeat the insertion */
     Ins_repeat = repeat;
     next_indent = 0;
     State = INSERT;
-}
-
-/*
- * Process the given character, in replace mode.
- *
- * Return TRUE if the screen needs repainting, FALSE if it doesn't.
- */
-bool_t
-r_proc(c)
-int	c;
-{
-    Posn		*curpos;
-    static bool_t	wait_buffer = FALSE;
-
-    curpos = curwin->w_cursor;
-
-    if (kbdintr) {
-	kbdintr = FALSE;
-        if (literal_next) {
-            c = kbdintr_ch;
-        } else {
-            imessage = TRUE;
-            /*
-             * POSIX: "A keyboard interrupt in insert or replace mode should
-             * behave identically to pressing ESC".
-             */
-            wait_buffer = FALSE;
-            goto case_kbdintr_ch;
-        }
-    }
-
-    if (repstate == overwrite &&
-	(wait_buffer || (!literal_next && c == CTRL('A')))) {
-	/*
-	 * Add contents of named buffer, or the last
-	 * insert buffer if CTRL('A') was typed.
-	 */
-	if (!wait_buffer) {
-	    c = '<';
-	}
-	yp_stuff_input(c, TRUE, FALSE);
-	wait_buffer = FALSE;
-	return(FALSE);
-    }
-
-    if (!literal_next) {
-	/*
-	 * This switch is for special characters; we skip over
-	 * it for normal characters, or for literal-next mode.
-	 */
-	switch (c) {
-	case CTRL('@'):
-	    /*
-	     * If ^@ is the first character inserted, insert the last
-	     * text we inserted and return to command mode.
-	     */
-	    if (repstate == overwrite && flexempty(&Insbuff)) {
-		yp_stuff_input('<', TRUE, FALSE);
-		stuff("%c", ESC);
-	    } else {
-		/*
-		 * Xvi can't handle NULs in files because it
-		 * stores Lines as nul-terminated strings.
-		 */
-		beep();
-	    }
-	    return(FALSE);
-
-	/*
-	 * TOS doesn't seem to have a keyboard interrupt so keep the old
-	 * code that make Ctrl-C do the same on TOS as everywhere else.
-	 * POSIX for Unices says nothing special about Ctrl-C in vi.
-	 */
-#ifndef UNIX
-	case CTRL('C'):
-#endif
-	case ESC:			/* an escape ends input mode */
-	case_kbdintr_ch:		/* A label! */
-	    end_replace(c);
-	    return(TRUE);
-
-	case '\b':			/* back space */
-	case DEL:
-	    if (repstate == overwrite && curwin->w_virtcol > start_column) {
-		(void) one_left(FALSE);
-		replchars(curpos->p_line,
-				curpos->p_index, 1,
-				(curpos->p_index < nchars) ?
-				mkstr(saved_line[curpos->p_index]) : "");
-		updateline(FALSE);
-		(void) flexaddch(&Insbuff, '\b');
-	    } else {
-		beep();
-		if (repstate == replace_one) {
-		    end_replace(c);
-		}
-	    }
-	    return(TRUE);
-
-	case K_LARROW:			/* left arrow */
-	    if (repstate == overwrite && curwin->w_virtcol > start_column &&
-						one_left(FALSE)) {
-		(void) flexaddch(&Insbuff, c);
-		return(TRUE);
-	    } else {
-		beep();
-		if (repstate == replace_one) {
-		    end_replace(c);
-		}
-		return(FALSE);
-	    }
-
-	case K_RARROW:			/* right arrow */
-	    if (repstate == overwrite && one_right(FALSE)) {
-		(void) flexaddch(&Insbuff, c);
-		return(TRUE);
-	    } else {
-		beep();
-		if (repstate == replace_one) {
-		    end_replace(c);
-		}
-		return(FALSE);
-	    }
-
-	case '\r':			/* new line */
-	case '\n':
-	    if (curpos->p_line->l_next == curbuf->b_lastline &&
-					    repstate == overwrite) {
-		/*
-		 * Don't allow splitting of last line of
-		 * buffer in overwrite mode. Why not?
-		 */
-		beep();
-		return(TRUE);
-	    }
-
-	    if (repstate == replace_one) {
-		echo &= ~e_CHARUPDATE;
-
-		/*
-		 * First remove the character which is being replaced.
-		 */
-		replchars(curpos->p_line, curpos->p_index, 1, "");
-
-		/*
-		 * Then split the line at the current position.
-		 */
-		if (openfwd(curpos, TRUE) == FALSE) {
-		    show_error(out_of_memory);
-		    return(TRUE);
-		}
-
-		(void) flexaddch(&Insbuff, c);
-
-		repstate = got_one;
-		end_replace('\n');
-
-	    } else {
-		(void) flexaddch(&Insbuff, '\n');
-
-		if (xvMoveDown(curwin->w_cursor, 1L, FALSE)) {
-		    info_update();
-
-		    /*
-		     * This is wrong, but it's difficult
-		     * to get it right.
-		     */
-		    xvMoveToColumn(curwin->w_cursor, start_column);
-		}
-
-		free(saved_line);
-		saved_line = strsave(curpos->p_line->l_text);
-		if (saved_line == NULL) {
-		    State = NORMAL;
-		    return(TRUE);
-		}
-		nchars = strlen(saved_line);
-	    }
-
-	    return(TRUE);
-
-	case CTRL('B'):
-	    if (repstate == overwrite) {
-		wait_buffer = TRUE;
-		return(FALSE);
-	    }
-	    break;
-
-	case CTRL('Q'):
-	case CTRL('V'):
-	    (void) flexaddch(&Insbuff, c);
-	    literal_next = TRUE;
-	    c = '^';
-	    break;
-
-	case K_HELP:
-	    stuff_to_map("#1");
-	    return(FALSE);
-
-	/*
-	 * They can insert our internal codes for special keys
-	 * by pressing, e.g., Left-Arrow to get \206.
-	 * However, if we mask those here, they then can't insert
-	 * some accented chars on MSDOS, nor UTF-8 chars whose
-	 * second char is 0x81-0x8b.
-	 */
-
-	}
-    } else {
-	/*
-	 * Insert a literal character
-	 */
-
-	/* The ^ that we inserted to show the ^V-in-progress is replaced
-	 * by the literal character because we didn't call one_right for it. */
-
-	/* Remove the phantom ^ from the insert buffer */
-	flexrmchar(&Insbuff);
-
-	literal_next = FALSE;
-    }
-
-    /*
-     * If we get here, we want to insert the character into the buffer.
-     */
-
-    /*
-     * Put the character into the insert buffer
-     */
-    (void) flexaddch(&Insbuff, c);
-
-    if (repstate == overwrite || repstate == replace_one) {
-	int nlines = plines(curwin->w_cursor->p_line);
-
-	replchars(curpos->p_line, curpos->p_index, 1, mkstr(c));
-	updateline(nlines != plines(curwin->w_cursor->p_line));
-	if (!literal_next) {
-	    (void) one_right(TRUE);
-	}
-    }
-
-    /*
-     * If command was an 'r', leave replace mode after one character.
-     */
-    if (!literal_next && repstate == replace_one) {
-	repstate = got_one;
-	end_replace(c);
-    }
-
-    return(TRUE);
 }
 
 /*
