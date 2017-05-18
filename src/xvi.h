@@ -948,7 +948,7 @@ extern	void	prompt P((char *));
  */
 extern	bool_t	i_proc P((int));
 extern	bool_t	r_proc P((int));
-extern	void	startinsert P((int, int));
+extern	void	startinsert P((bool_t, int));
 extern	void	startreplace P((int, int));
 extern	char	*mkstr P((int));
 

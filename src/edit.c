@@ -424,7 +424,7 @@ int	c;
 
 	/*
 	 * They can insert our internal codes for special keys
-	 * by pressing, e.g., ^V Left-Arrow to get \206.
+	 * by pressing, e.g., Left-Arrow to get \206.
 	 * However, if we mask those here, they then can't insert
 	 * some accented chars on MSDOS, nor UTF-8 chars whose
 	 * second char is 0x80-0x8b.
@@ -595,7 +595,7 @@ int	c;
  */
 void
 startinsert(startln, repeat)
-int	startln;	/* if set, insert point really at start of line */
+bool_t	startln;	/* if set, insert point really at start of line */
 int	repeat;		/* number of times to repeat the insertion */
 {
     Insertloc = *curwin->w_cursor;
@@ -623,13 +623,17 @@ int	c;
 
     if (kbdintr) {
 	kbdintr = FALSE;
-	wait_buffer = FALSE;
-	if (!literal_next) {
-	    imessage = TRUE;
-	    goto case_kbdintr_ch;
-	} else {
-	    c = kbdintr_ch;
-	}
+        if (literal_next) {
+            c = kbdintr_ch;
+        } else {
+            imessage = TRUE;
+            /*
+             * POSIX: "A keyboard interrupt in insert or replace mode should
+             * behave identically to pressing ESC".
+             */
+            wait_buffer = FALSE;
+            goto case_kbdintr_ch;
+        }
     }
 
     if (repstate == overwrite &&
@@ -799,20 +803,15 @@ int	c;
 	case K_HELP:
 	    stuff_to_map("#1");
 	    return(FALSE);
+
 	/*
-	 * Ignore other special keys to avoid inserting our internal codes.
+	 * They can insert our internal codes for special keys
+	 * by pressing, e.g., Left-Arrow to get \206.
+	 * However, if we mask those here, they then can't insert
+	 * some accented chars on MSDOS, nor UTF-8 chars whose
+	 * second char is 0x81-0x8b.
 	 */
-	case K_UNDO:
-	case K_INSERT:
-	case K_HOME:
-	case K_UARROW:
-	case K_DARROW:
-	case K_CGRAVE:
-	case K_PGDOWN:
-	case K_PGUP:
-	case K_END:
-	case K_DELETE:
-	    return(FALSE);
+
 	}
     } else {
 	/*
@@ -834,9 +833,8 @@ int	c;
 
     /*
      * Put the character into the insert buffer
-     * (but not if it's the phantom ^ of ^V).
      */
-    if (!literal_next) (void) flexaddch(&Insbuff, c);
+    (void) flexaddch(&Insbuff, c);
 
     if (repstate == overwrite || repstate == replace_one) {
 	int nlines = plines(curwin->w_cursor->p_line);
