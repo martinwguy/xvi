@@ -146,6 +146,7 @@ enum {
     P_open,
     P_optimize,
     P_paragraphs,
+    P_posix,
     P_preserve,
     P_preservetime,
     P_prompt,

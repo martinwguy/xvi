@@ -89,6 +89,10 @@ char	*argv[];
     char	**commands = NULL;	/* Arguments to -c flags */
     int		ncommands = 0;		/* Arguments to -c flags */
 
+    if (getenv("POSIXLY_CORRECT")) {
+	set_param(P_posix, TRUE);
+    }
+
     /*
      * Fetch the startup string.
      */

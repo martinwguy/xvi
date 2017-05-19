@@ -157,6 +157,7 @@ Param	params[] = {
 {   "open",         "ope",          P_BOOL,     0,              not_imp,   },
 {   "optimize",     "opt",          P_BOOL,     0,              not_imp,   },
 {   "paragraphs",   "pa",           P_STRING,   0,              nofunc,    },
+{   "posix",	    "po",           P_BOOL,     FALSE,          nofunc,    },
 {   "preserve",     "psv",          P_ENUM,     0,              nofunc,    },
 {   "preservetime", "psvt",         P_NUM,      5,              nofunc,    },
 {   "prompt",       "pro",          P_BOOL,     0,              not_imp,   },

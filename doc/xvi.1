@@ -628,6 +628,22 @@ When the boolean parameter
 .BR tabindent
 is clear (\fB:set notabindent\fI), automatic indentation does not use
 tab characters and is done with spaces.
+.LP
+The
+.B posix
+parameter instead, set automatically if environment variable
+.B POSIXLY_CORRECT
+is set,
+tweaks xvi's behaviour to conform to the POSIX specification
+instead of to common sense.
+At present it makes the execution of a character-based named buffer
+with
+.B :@
+or
+.B :*
+.I not
+terminate the last line of the buffer with a newline, leaving it on the command
+line waiting for you to press Enter.
 .\"---------------------------------------------------------------------------
 .SH LIMITATIONS
 .SS "Ex mode"

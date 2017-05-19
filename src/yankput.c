@@ -718,6 +718,14 @@ oom:
  * The "map_it" parameter says whether we should put the characters
  * from the buffer through the map and/or map! tables.
  *
+ * :@a and :*a give			!vi_mode && !map_it
+ * @a gives				vi_mode && map_it
+ * ^@ ^A or ^Ba during insert give	vi_mode && !map_it
+ * redo of an insert or replace1 gives	vi_mode && !map_it
+ *
+ * POSIX for "@": "Behave as if the contents of the named buffer were entered
+ * as standard input."
+ *
  * POSIX: "After each line of a line-mode buffer,
  * and all but the last line of a character mode buffer,
  * behave as if a <newline> were entered as standard input."
@@ -736,10 +744,31 @@ bool_t	map_it;
 	return;
     }
 
-    if (!vi_mode) {
+    if (!vi_mode) {	/* :@ ex command; map_it is always FALSE */
+	/*
+	 * POSIX for ":@": "For each line of a line-mode buffer, and all but
+	 * the last line of a character-mode buffer, the ex command parser
+	 * shall behave as if the line was terminated by a <newline>."
+	 *
+	 * Classic vi and nvi don't add a newline to the last line of a
+	 * multi-line char-mode buffer, but do add one to a char-mode buffer
+	 * containing a single line
+	 *
+	 * vim adds a newline to the last line of any character-mode buffer
+	 * stuffed with :@ or :*.
+	 *
+	 * hanoi and maze work either way, but it seems pointless to stuff
+	 * an ex command and leave the last line hanging there waiting for
+	 * the user to preee [Enter] so by default we newline-terminate
+	 * all lines of a :@, and do what POSIX wants if $POSIXLY_CORRECT.
+	 */
+	bool_t posixly_correct = Pb(P_posix);
+
 	switch (yp_buf->y_type) {
 	case y_chars:
-	    put(yp_buf->y_1st_text, vi_mode, TRUE, map_it);
+	    put(yp_buf->y_1st_text, vi_mode,
+		posixly_correct ? yp_buf->y_2nd_text != NULL : TRUE,
+		map_it);
 	    break;
 
 	case y_lines:
@@ -755,7 +784,9 @@ bool_t	map_it;
 	}
 
 	if (yp_buf->y_type == y_chars && yp_buf->y_2nd_text != NULL) {
-	    put(yp_buf->y_2nd_text, vi_mode, TRUE, map_it);
+	    put(yp_buf->y_2nd_text, vi_mode,
+		posixly_correct ? FALSE : TRUE,
+		map_it);
 	}
     } else {
 	/*
@@ -830,10 +861,8 @@ bool_t	map_it;
 	    stuff(newline ? "%s\n" : "%s", str);
 	}
     } else {
-	stuff("%s%s%s",
-		str[0] != ':' ? ":" : "",
-		str,
-		newline ? "\n" : "");
+	/* !vi_mode is exclusive to the :@ / :* commands. */
+	stuff(":%s%s", str, newline ? "\n" : "");
     }
 }
 

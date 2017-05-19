@@ -6,29 +6,51 @@ exec tclsh "$0" ${1+"$@"}
 # Make sure that executing a char-base yank buffer with :@ or :*
 # terminates it with a newline.
 
-#
-# We need to test three cases for char-based yanks, due to the way xvi works
-# a single-line char-based yank without a trailing newline needs one
-# a two-line char-based yank needs one putting out after the first line
-# needs one after the second.
-# However, if the yank buffer already ends with a newline another is not added.
+# We need to test three cases for char-based yanks, due to the way xvi works:
+# a single-line char-based yank without a trailing newline
+# a two-line char-based yank needs one putting out after the first line only.
+# a three-line char-based yank should add a newline to all but the last line.
+
+# nvi newline-terminates all lines of char-based buffers
+
+# We yank char-based buffers by yanking from ^ to $ or n$.
+# We yank a line-based buffer by yanking to a search pattern that
+# matches at start of a later line.
 
 source scripts/term
 start_vi
 
-# Single-line char-based yanks
+# Single-line char-based yank should not be newline-terminated
+if { [info exists ::env(POSIXLY_CORRECT)] } {
+    test 10 "as/a/b/[esc]0\"fy\$:@f\r" $rows 7 "s/a/b/"
+    test 11 "\r" 1 0 "s/b/b/"
+} else {
+    test 10 "as/a/b/[esc]0\"fy\$:@f\r" 1 0 "s/b/b/"
+}
 
-# without a trailine newline
-test 1 "as/a/b/[esc]0\"fy\$:@f\r" 1 0 "s/b/b/"
-# with one
-test 2 "Cs/a/b/\rdef[esc]k0\"fy/d\r:@f\r" 1 0 [list "s/b/b/" "def"]
+# single-line line-based yank should get newline-terminated
+test 20 "Cs/a/b/\rdef[esc]k0\"fy/d\r:@f\r" 1 0 [list "s/b/b/" "def"]
 
-# Two-line yanks
+# Two-line char-based yank; the second line should not be newline-terminated
+if { [info exists ::env(POSIXLY_CORRECT)] } {
+    test 30 "1GcGs/a/b/\rs/b/c/[esc]k0\"f2y\$:@f\r" $rows 7 [list "s/b/b/" "s/b/c/"]
+    test 31 "\r"					1 0 [list "s/c/b/" "s/b/c/"]
+} else {
+    test 30 "1GcGs/a/b/\rs/b/c/[esc]k0\"f2y\$:@f\r" 1 0 [list "s/c/b/" "s/b/c/"]
+}
 
-# without trailing newline
-test 3 "1GcGs/a/b/\rs/b/c/[esc]k0\"f2y\$:@f\r" 1 0 [list "s/c/b/" "s/b/c/"]
-# with trailing newline
-test 4 "1GcGs/a/b/\rs/b/c/\rdef[esc]1G\"f2y/d\r:@f\r" 1 0 [list "s/c/b/" "s/b/c/"]
+# Two-line line-based yank slurped with a search pattern.
+# Both lines should be newline-terminated.
+test 40 "1GcGs/a/b/\rs/b/c/\rdef[esc]1G\"fy/d\r:@f\r" 1 0 [list "s/c/b/" "s/b/c/"]
+
+# Three-line char-based yank slurped with 3y$;
+# the last line should not be newline-terminated
+if { [info exists ::env(POSIXLY_CORRECT)] } {
+    test 50 "1GcGs/a/b/\rs/b/c/\rs/c/d/[esc]1G\"f3y\$:@f\r" $rows 7 [list "s/c/b/" "s/b/c/"]
+    test 51 "\r"					1 0 [list "s/d/b/" "s/b/c/"]
+} else {
+    test 50 "1GcGs/a/b/\rs/b/c/\rs/c/d/[esc]1G\"f3y\$:@f\r" 1 0 [list "s/d/b/" "s/b/c/"]
+}
 
 stop_vi
 
