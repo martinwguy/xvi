@@ -29,7 +29,7 @@
 "
 " This is changed from the original:
 "	< map K 1Go
-"	> map K 1Gc$
+"	> map K 1Gcc
 " so that it works with nvi (based on elvis) which starts with 0 lines, not 1.
 "
 " Martinwguy
@@ -56,7 +56,7 @@ map C "fp
 map e "fy2l
 map E "hp
 map F "hy2l
-map K 1Gc$
+map K 1Gcc
 map M dG
 map N yy
 map O p

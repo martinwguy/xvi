@@ -1,0 +1,128 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+# Test against POSIX's description of the $ motion:
+# 
+# Move Cursor to End-of-Line
+# 
+# Synopsis:
+# 
+#     [count] $
+
+# It shall be an error if there are less than (count -1) lines after
+# the current line in the edit buffer.
+# 
+# If used as a motion command:
+# 
+#   1. If count is 1:
+# 
+#      a. It shall be an error if the line is empty.
+# 
+#      b. Otherwise, the text region shall consist of all characters
+#      from the starting cursor to the last non- <newline> in the line,
+#      inclusive, and any text copied to a buffer shall be in character
+#      mode.
+# 
+#   2. Otherwise, if the starting cursor position is at or before the
+#   first non- <blank> in the line, the text region shall consist of the
+#   current and the next count -1 lines, and any text saved to a buffer
+#   shall be in line mode.
+# 
+#   3. Otherwise, the text region shall consist of all characters from
+#   the starting cursor to the last non- <newline> in the line that is
+#   count -1 lines forward from the current line, and any text copied to
+#   a buffer shall be in character mode.
+# 
+# If not used as a motion command:
+# 
+# Current line: Set to the current line + count-1.
+# 
+# Current column: The current column is set to the last display line column
+# of the last non- <newline> in the line, or column position 1 if the line
+# is empty.
+# 
+# The current column shall be adjusted to be on the last display line column
+# of the last non- <newline> of the current line as subsequent commands
+# change the current line, until a command changes the current column.
+
+source scripts/term
+start_vi
+
+# "It shall be an error if there are less than (count -1) lines after
+#  the current line in the edit buffer."
+
+# To test if it's an error, place the failing command in a buffer and
+# execute it. It the error is flagged, the rest of the buffer should
+# not be executed.
+# ay2$x - a command that should fail and NOT perform the x
+# "add	- put the command in buffer a
+# aone[esc] - make the buffer one line of text
+# @a	- execute the macro: the 2$ should fail and the x not be performed
+# AOK[esc] - something to make the screen different from what it as before
+#	so that the test doesn't succeed as soon as the "one" appears.
+
+test 10 "ay2\$x[esc]\"addaone[esc]@aAOK[esc]"	1 4 [list "oneOK" "~"]
+# The same thing with 2y$ instead of y2$
+test 15 "cc2y\$x[esc]\"addatwo[esc]@aAOK[esc]"	1 4 [list "twoOK" "~"]
+
+# "If used as a motion command:
+#
+# 1. If count is 1:
+#    a. It shall be an error if the line is empty."
+
+test 20 "1GdGa\$\"ap[esc]\"add@aAOK[esc]"	1 2 [list "OK" "~"]
+
+#    b. Otherwise, the text region shall consist of all characters from
+#       the starting cursor to the last non- <newline> in the line, inclusive,
+#       and any text copied to a buffer shall be in character mode.
+
+test 30 "1GdGaone[esc]hd\$"	1 0 [list "o" "~"]
+test 31 "pp"			1 2 [list "onnee" "~"]
+
+# (If count is not 1)
+# "2. Otherwise, if the starting cursor position is at or before the
+#     first non- <blank> in the line, the text region shall consist of the
+#     current and the next count -1 lines, and any text saved to a buffer
+#     shall be in line mode."
+
+# Test from start of line 1
+test 40 "dGaone\rtwo\rthree[esc]1Gy2\$Gp" \
+				4 0 [list "one" "two" "three" "one" "two"]
+
+# From one of the blank chars before first text (should be line-based)
+test 41 "1GdGa  one\r  two[esc]1G0ly2\$Gp" \
+				3 2 [list "  one" "  two" "  one" "  two" "~"]
+
+# From first char of first text (should be line-based)
+test 42 "1GdGa  three\r  four[esc]1G0lly2\$Gp" \
+				3 2 [list "  three" "  four" "  three" "  four" "~"]
+
+# "3. Otherwise, the text region shall consist of all characters from the
+#     starting cursor to the last non-<newline> in the line that is count-1
+#     lines forward from the current line, and any text copied to a buffer
+#     shall be in character mode."
+
+# From second char of first text (should be char-based)
+test 50 "1GdGa  one\r  two[esc]1G0llly2\$Gp" \
+				2 3 [list "  one" "  tne" "  twowo" "~"]
+
+# "Current line: Set to the current line + count-1.
+#  Current column: The current column is set to the last display line
+#  column of the last non- <newline> in the line, or column position 1 if
+#  the line is empty."
+
+test 60 "1GdGaone\rtwo\rthree[esc]1G2\$" \
+				2 2 [list "one" "two" "three"]
+
+# "The current column shall be adjusted to be on the last display line
+#  column of the last non-<newline> of the current line as subsequent
+#  commands change the current line, until a command changes the current
+#  column."
+
+test 70 "j"			3 4 [list "one" "two" "three"]
+
+stop_vi
+
+exit 0

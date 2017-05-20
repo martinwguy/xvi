@@ -79,7 +79,7 @@ exp_send "[esc]"
 term_expect timeout { fail 105 } { expr { [getmode] eq "" } }
 
 # See if the flag appears in change mode
-exp_send "C"
+exp_send "cc"
 term_expect timeout { fail 106 } { expr { [getmode] eq "INSERT" } }
 # See if it disappears again
 exp_send "[esc]"

@@ -117,12 +117,47 @@ Cmd	*cmd;
 
     case '$':
     case K_END:
-	if (xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum) - 1, FALSE)) {
-	    while (xvMoveRight(&lastpos, FALSE))
+	/*
+	 * POSIX: "If count is 1, it shall be an error if the line is empty."
+	 * Classic vi, nvi and vim do not error for $ on an empty line, and
+	 * it breaks the maze macros, so we only fail it if POSIXLY_CORRECT
+	 */
+	if (LDEF1(cmd->cmd_prenum) == 1) {
+	    if (Pb(P_posix) && lastpos.p_line->l_text[0] == '\0') {
+		/* Leave cmd->cmd_target NULL to flag an error */
+		break;
+	    }
+	    /* MakeCharBased(cmd); */	/* a no-op, as d, c, y are char-based */
+	} else {
+	    /*
+	     * POSIX: "It shall be an error if there are less than (count -1)
+	     *         lines after the current line in the edit buffer."
+	     */
+	    if (!xvMoveDown(&lastpos, LDEF1(cmd->cmd_prenum) - 1, FALSE)) {
+		break;
+	    }
+	}
+
+	while (xvMoveRight(&lastpos, FALSE))
 		;
-	    cmd->cmd_target = lastpos;
-	    curwin->w_curswant = INT_MAX;
-	    curwin->w_set_want_col = FALSE;
+	cmd->cmd_target = lastpos;
+	curwin->w_curswant = INT_MAX;
+	curwin->w_set_want_col = FALSE;
+
+	/*
+	 * POSIX: "[if count > 1 and] the starting cursor position is at
+	 * or before the first non-<blank> in the line, the text region
+	 * shall consist of the current and the next count -1 lines, and
+	 * any text saved to a buffer shall be in line mode."
+	 */
+	if (LDEF1(cmd->cmd_prenum) > 1) {
+	    Posn firstnonwhite;
+
+	    firstnonwhite = *(curwin->w_cursor);
+	    xvSetPosnToStartOfLine(&firstnonwhite, TRUE);
+	    if (cmd->cmd_startpos.p_index <= firstnonwhite.p_index) {
+		MakeLineBased(cmd);
+	    }
 	}
 	break;
 
@@ -168,7 +203,7 @@ Cmd	*cmd;
 
     case '\'':
     case '`':
-    {
+      {
 	Posn		*posn;
 
 	posn = getmark(cmd->cmd_ch2, curbuf);
@@ -185,7 +220,7 @@ Cmd	*cmd;
 	    }
 	}
 	break;
-    }
+      }
     case '/':
     case '?':
 	/*

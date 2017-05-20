@@ -631,19 +631,25 @@ tab characters and is done with spaces.
 .LP
 The
 .B posix
-parameter instead, set automatically if environment variable
+parameter, set automatically if environment variable
 .B POSIXLY_CORRECT
 is set,
 tweaks xvi's behaviour to conform to the POSIX specification
-instead of to common sense.
-At present it makes the execution of a character-based named buffer
-with
+instead of to what classic vi does.
+At present it:
+.IP \(bu
+makes the execution of a character-mode buffer
+using
 .B :@
 or
 .B :*
 .I not
 terminate the last line of the buffer with a newline, leaving it on the command
-line waiting for you to press Enter.
+line waiting for you to press Enter;
+.IP \(bu
+makes the
+.B $
+command or target on an empty line fail instead of succeeding.
 .\"---------------------------------------------------------------------------
 .SH LIMITATIONS
 .SS "Ex mode"
