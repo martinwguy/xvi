@@ -30,7 +30,6 @@
  *
  * Note that there are currently no line-based exclusive targets.
  */
-#define		COMMAND		0x1		/* is implemented */
 #define		TARGET		0x2		/* can serve as a target */
 #define		TGT_LINE	0x4		/* a line-based target */
 #define		TGT_CHAR	0		/* a char-based target */

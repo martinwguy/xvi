@@ -155,7 +155,7 @@ Cmd	*cmd;
 {
     cmd->cmd_flags = CFLAGS(cmd->cmd_ch1);
 
-    if ((cmd->cmd_flags & COMMAND) == 0) {
+    if (CFUNC(cmd->cmd_ch1) == do_badcmd) {
 	cmd->cmd_operator = NOP;
 	cmd->cmd_prenum = 0;
 	beep();
