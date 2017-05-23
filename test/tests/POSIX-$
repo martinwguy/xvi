@@ -72,7 +72,9 @@ test 15 "cc2y\$x[esc]\"addatwo[esc]@aAOK[esc]"	1 4 [list "twoOK" "~"]
 # 1. If count is 1:
 #    a. It shall be an error if the line is empty."
 
-test 20 "1GdGa\$\"ap[esc]\"add@aAOK[esc]"	1 2 [list "OK" "~"]
+if { [info exists ::env(POSIXLY_CORRECT)] } {
+    test 20 "1GdGa\$\"ap[esc]\"add@aAOK[esc]"	1 2 [list "OK" "~"]
+}
 
 #    b. Otherwise, the text region shall consist of all characters from
 #       the starting cursor to the last non- <newline> in the line, inclusive,
