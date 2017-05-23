@@ -65,7 +65,7 @@ proc start_vi {args} {
 	set vi $::env(VI)
     }
     exp_send "rm -f core\r"	;# To detect core dumps
-    exp_send "exec $vi $args\r"
+    exp_send "XVINIT=: exec $vi $args\r"
     set vi [file tail $vi]
 }
 
