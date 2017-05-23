@@ -7,7 +7,12 @@ What it should do is mark every matching line in some way, then apply
 any command to each marked line, using the same code as is used for
 : commands.
 
-See the "if" and commentary at cmdline.c:491 which may be the place to
+POSIX says: "The global, v, and undo commands cannot be used in
+	commands. Marked lines may be deleted by commands executed for lines
+	occurring earlier in the file than the marked lines. In this case,
+	no commands shall be executed for the deleted lines."
+
+See the "if" and commentary at cmdline.c:491 which may be the right place to
 implement this.
 
 When this is done, it will be much easier to do colon-@-or-*-with-line-range.
