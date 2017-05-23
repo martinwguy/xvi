@@ -1,0 +1,72 @@
+After an undo, set the cursor position according to POSIX
+
+xvi sets te cursor to where it was before the action being undone happened.
+
+POSIX as a detaioled description of what *it* wants, and xvi's current
+strategy is not ideal. For example, you can't go undo-undo to go back to
+the last thing you changed.
+
+SIX says, of the cursor position after an undo:
+#
+# "Current line: Set to the first line added or changed if any;
+#  otherwise, move to the line preceding any deleted text if one exists;
+#  otherwise, move to line 1.
+#
+#  Current column: If undoing an ex command, set to the first non-<blank>.
+#  Otherwise, if undoing a text input command:
+#
+#  1. If the command was a C, c, O, o, R, S, or s command, the
+#     current column shall be set to the value it held when the text
+#     input command was entered.
+#
+#  2. Otherwise, set to the last column in which any portion of the
+#         first character after the deleted text is displayed,
+#     or, if no non-<newline> characters follow the text deleted
+#         from this line, set to the last column in which any portion
+#         of the last non-<newline> in the line is displayed,
+#     or 1 if the line is empty.
+#
+#  Otherwise, if a single line was modified (that is, not added
+#  or deleted) by the u command:
+#
+#  1. If text was added or changed, set to the last column in
+#     which any portion of the first character added or changed
+#     is displayed.
+#
+#  2. If text was deleted, set to the last column in which any portion
+#         of the first character after the deleted text is displayed,
+#     or, if no non-<newline> characters follow the deleted text,
+#         set to the last column in which any portion of the last
+#         non-<newline> in the line is displayed,
+#     or 1 if the line is empty.
+#
+#  Otherwise, set to non-<blank>."
+
+Which sound like:
+
+if undoing an ex-mode command, set to first non-blank of the line from the
+  rules above.
+
+For undoing vi commands:
+
+if undoing a text-input command (which is what: the below and a i A I ?)
+  if CcOoRSs, leave it to undo's current setting of the position,
+    which is where the cursor was when text input mode was entered
+  or on the following character following what you removed for the undo
+    (cos AaIi always add text), sticking at eol
+else
+  if a single line was modified by the u command:
+    if it added or changed text, set to last char of the added or changed text
+    if it deleted text, set to first char after deleted text, sticking at eol
+  "Otherwise set to non-blank" ???
+
+what if several lines were modified by the command?
+To the first non-blank of the modified lines?
+
+What if I undo a vi-mode macro execution
+(Though xvi doesn't currently implement undo os a map execution yet)?
+
+text input commands are, for xvi the do_ins family [AIOaioK_INSERT]
+while c is do-operator line d and y, s R r are do_cmd like P p
+Add a flag to cmdtab TEXT_INPUT and remember it in the change structure
+at start_command invocation level 0?
