@@ -65,4 +65,3 @@ test 32 ":s/one/two/\r:s/~/four/\r"	1 0 [list "three two one four"]
 stop_vi
 
 exit 0
-

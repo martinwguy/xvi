@@ -44,4 +44,3 @@ test 107 "2G6l\"Ay\$Glp"	3 2 [list "one two" "three four" "abtwo" "three" "fourc
 stop_vi
 
 exit 0
-

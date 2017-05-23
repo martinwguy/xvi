@@ -33,4 +33,3 @@ exec rm 1 2
 stop_vi
 
 exit 0
-

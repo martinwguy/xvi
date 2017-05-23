@@ -79,4 +79,3 @@ exp_send "[esc]"
 stop_vi
 
 exit 0
-

@@ -24,4 +24,3 @@ test 103 "x"			1 4 [list "abcde" "~"]
 stop_vi
 
 exit 0
-

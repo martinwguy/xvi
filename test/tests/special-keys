@@ -115,4 +115,3 @@ ctest 99 "[ctrl U]"	1 ":"
 stop_vi
 
 exit 0
-

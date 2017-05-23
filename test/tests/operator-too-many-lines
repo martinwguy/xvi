@@ -80,4 +80,3 @@ test 70 ":map g d2jaxx\rg"	2 0 [list "one" "two" "three"  "~"]
 stop_vi
 
 exit 0
-
