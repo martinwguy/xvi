@@ -67,9 +67,14 @@ Cmd	*cmd;
     case 'p':
     case 'P':
 	Redo.r_mode = r_normal;
-	do_put(curwin->w_cursor,
-		(cmd->cmd_ch1 == 'p') ? FORWARD : BACKWARD, cmd->cmd_yp_name);
-	if (is_digit(cmd->cmd_yp_name) && cmd->cmd_yp_name != '0' && cmd->cmd_yp_name != '9') {
+	do_put(curwin->w_cursor, (cmd->cmd_ch1 == 'p') ? FORWARD : BACKWARD,
+	       cmd->cmd_yp_name, FALSE);
+	/*
+	 * This lets you to say "1P..." to recover the most recent deletions
+	 * in order, like saying "1P"2P"3P"4P...
+	 */
+	if (is_digit(cmd->cmd_yp_name)
+	     && cmd->cmd_yp_name != '0' && cmd->cmd_yp_name != '9') {
 	    cmd->cmd_yp_name++;
 	}
 	flexclear(&Redo.r_fb);
@@ -78,7 +83,7 @@ Cmd	*cmd;
 	break;
 
     case 's':		/* substitute characters */
-	if (start_command()) {
+	if (start_command(FALSE)) {
 	    int nlines = plines(curwin->w_cursor->p_line);
 
 	    replchars(curwin->w_cursor->p_line,
@@ -118,7 +123,7 @@ Cmd	*cmd;
 	int	size1;		/* chars in the first line */
 	Line *	line = curwin->w_cursor->p_line;
 
-	if (!start_command()) {
+	if (!start_command(FALSE)) {
 	    beep();
 	    break;
 	}
@@ -504,7 +509,7 @@ Cmd	*cmd;
 	return;
     }
     count = IDEF1(cmd->cmd_prenum);
-    start_command();
+    start_command(FALSE);
     do {
 	c = tp[cp->p_index];
 
@@ -547,7 +552,7 @@ Cmd	*cmd;
 {
     bool_t	startpos = TRUE;	/* FALSE means start position moved */
 
-    if (!start_command()) {
+    if (!start_command(FALSE)) {
 	return;
     }
 

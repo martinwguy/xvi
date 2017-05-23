@@ -797,7 +797,7 @@ bool_t		forward;
 	cmd++;	/* cmd points at char after modifier */
 	 /* fall through ... */
     case 'd':
-	if (!start_command()) {
+	if (!start_command(TRUE)) {
 	    return(FALSE);
 	}
 	break;
@@ -1349,7 +1349,7 @@ char	*flags;
     bool_t	do_all;		/* true if 'g' was specified */
     Line	*lp0;
 
-    if (!start_command()) {
+    if (!start_command(TRUE)) {
 	return(0);
     }
 

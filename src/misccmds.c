@@ -406,7 +406,7 @@ Line	*finish;
     Line	*lp;
     long	nlines = 0;
 
-    if (!start_command()) {
+    if (!start_command(FALSE)) {
 	return;
     }
 
@@ -574,7 +574,7 @@ bool_t	exclam;
 	return(FALSE);
     }
 
-    if (!start_command()) {
+    if (!start_command(FALSE)) {
 	return(FALSE);
     }
 

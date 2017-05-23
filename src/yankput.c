@@ -538,10 +538,11 @@ bool_t	line_based;
  * in the specified direction.
  */
 void
-do_put(location, direction, name)
+do_put(location, direction, name, ex_mode)
 Posn	*location;
 int	direction;
 int	name;
+bool_t	ex_mode;	/* Was this part of a command line operation? */
 {
     Yankbuffer		*yp_buf;
     register Line	*currline;	/* line we are on now */
@@ -572,7 +573,7 @@ int	name;
 	Posn	lastpos;
 	Posn	cursorpos;
 
-	if (!start_command()) {
+	if (!start_command(ex_mode)) {
 	    return;
 	}
 

@@ -720,7 +720,7 @@ char	*cmdline;			/* optional command string */
 	    where.p_index = curwin->w_cursor->p_index;
 	    where.p_line = curwin->w_cursor->p_line;
 	}
-	do_put(&where, FORWARD, '@');
+	do_put(&where, FORWARD, '@', TRUE);
 	break;
     }
 

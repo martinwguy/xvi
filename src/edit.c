@@ -765,7 +765,7 @@ int	repeat;
 	}
     }
 
-    if (!start_command()) {
+    if (!start_command(FALSE)) {
 	return;
     }
     start_index = curwin->w_cursor->p_index;

@@ -82,6 +82,12 @@ typedef	struct changedata {
     unsigned int	cd_nlevels;
 
     /*
+     * Is change from a command line command? This is needed to know
+     * where to position the cursor after an undo.
+     */
+    bool_t		cd_ex_mode;
+
+    /*
      * This field holds the total number of added/deleted lines
      * for a change; it is used for reporting (the "report" parameter).
      */

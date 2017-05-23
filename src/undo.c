@@ -122,12 +122,17 @@ Change		*change;
  * the previous saved state if the cd_nlevels variable is 0.
  */
 bool_t
-start_command()
+start_command(ex_mode)
+bool_t	ex_mode;	/* Is this an ex-mode command? */
 {
     ChangeData	*cdp = curbuf->b_change;
 
     if (!init_change_data()) {
 	return(FALSE);
+    }
+
+    if (cdp->cd_nlevels == 0) {
+	cdp->cd_ex_mode = ex_mode;
     }
 
     cdp->cd_nlevels += 1;
@@ -826,6 +831,9 @@ undo()
     Change		*chp;
     Change		*change;
     Change		*redo;
+    /* Variables to know Which line to leave the cursor on */
+    int			firstlinechanged = INT_MAX;
+    int			firstlinedeleted = INT_MAX;
 
     cdp = curbuf->b_change;
     buffer = curbuf;
@@ -890,21 +898,36 @@ undo()
 	     * change happens.
 	     */
 	    change = _repllines(lp, tmp->c_nlines, tmp->c_lines);
+	    if (tmp->c_nlines == 0) {
+		if (lp->l_number < firstlinedeleted) {
+		    firstlinedeleted = lp->l_number;
+		}
+	    } else {
+		if (lp->l_number < firstlinechanged) {
+		    firstlinechanged = lp->l_number;
+		}
+	    }
 	    break;
 
 	case C_DEL_CHAR:
 	    change = _replchars(lp, tmp->c_index, tmp->c_nchars, "");
+	    if (lp->l_number < firstlinechanged) {
+		firstlinechanged = lp->l_number;
+	    }
 	    break;
 
 	case C_CHAR:
 	    change = _replchars(lp, tmp->c_index, tmp->c_nchars,
 							    tmp->c_chars);
-
 	    /*
 	     * Free up the string, since it was strsave'd
 	     * by replchars at the time the change was made.
 	     */
 	    free(tmp->c_chars);
+
+	    if (lp->l_number < firstlinechanged) {
+		firstlinechanged = lp->l_number;
+	    }
 	    break;
 
 	case C_POSITION:
@@ -919,7 +942,85 @@ undo()
 	if (change != NULL) {
 	    push_change(&redo, change);
 	}
+
+	/* Remember the first line added or changed for final cursor position */
+	if (tmp->c_type != C_POSITION && lp->l_number < firstlinechanged) {
+	    firstlinechanged = lp->l_number;
+	}
+
 	chfree(tmp);
+    }
+
+    /*
+     * POSIX:
+     *
+     * "Current line: Set to the first line added or changed if any;
+     *  otherwise, move to the line preceding any deleted text if one exists;
+     *  otherwise, move to line 1.
+     *
+     *  Current column: If undoing an ex command, set to the first non-<blank>.
+     *  Otherwise, if undoing a text input command:
+     *
+     *  1. If the command was a C, c, O, o, R, S, or s command, the
+     *     current column shall be set to the value it held when the text
+     *     input command was entered.
+     *
+     *  2. Otherwise, set to the last column in which any portion of the
+     *     first character after the deleted text is displayed,
+     *     or, if no non-<newline> characters follow the text deleted
+     *     from this line, set to the last column in which any portion
+     *     of the last non-<newline> in the line is displayed,
+     *     or 1 if the line is empty.
+     *
+     *	Otherwise, if a single line was modified (that is, not added
+     *	or deleted) by the u command:
+     *
+     *	1. If text was added or changed, set to the last column in
+     *	   which any portion of the first character added or changed
+     *	   is displayed.
+     *
+     *	2. If text was deleted, set to the last column in which any
+     *	   portion of the first character after the deleted text is
+     *	   displayed, or, if no non-<newline> characters follow the
+     *	   deleted text, set to the last column in which any portion
+     *	   of the last non- <newline> in the line is displayed, or 1 if
+     *	   the line is empty.
+     *
+     *	Otherwise, set to non-<blank>."
+     */
+    {
+	int	endpos;		/* Line number of the line to end up on */
+	Posn p;
+
+	if (firstlinechanged != INT_MAX) {
+	    endpos = firstlinechanged;
+	} else if (firstlinedeleted != INT_MAX) {
+	    endpos = firstlinedeleted - 1;
+	} else {
+	    endpos = bufempty() ? 0 : 1;
+	}
+
+#if 0	
+	/* Start of proper code */
+	p.p_line = gotoline(buffer, (unsigned long) endpos);
+
+	if (cdp->cd_ex_mode) {
+            xvSetPosnToStartOfLine(&p, TRUE);
+	} else {
+/* Calculation of cursor column in vi mode goes here */
+	    /* What was the last command we undid? */
+            ...
+	}
+
+	move_cursor(p.p_line, p.p_index);
+#else
+	/* Temp version */
+	if (cdp->cd_ex_mode) {
+	    p.p_line = gotoline(buffer, (unsigned long) endpos);
+            xvSetPosnToStartOfLine(&p, TRUE);
+	    move_cursor(p.p_line, p.p_index);
+	}
+#endif
     }
 
     cdp->cd_undo = redo;

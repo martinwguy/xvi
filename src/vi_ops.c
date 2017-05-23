@@ -111,7 +111,7 @@ register Cmd	*cmd;
 	     * one to delete the intervening lines, and
 	     * one to delete up to the target position.
 	     */
-	    if (!start_command()) {
+	    if (!start_command(FALSE)) {
 		return;
 	    }
 
@@ -189,7 +189,7 @@ register Cmd	*cmd;
      * included in the meta-command and hence undo will
      * work properly.
      */
-    if (!start_command()) {
+    if (!start_command(FALSE)) {
 	return;
     }
 
