@@ -11,3 +11,5 @@ and say
 	1G/*prows
 it should go to the * on line 3. Instead it says
 	?+* follows nothing
+
+Similarly, :.,$s/^*/#/ should work, and it does in classic vi.
