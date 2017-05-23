@@ -11,6 +11,10 @@ Known bugs in xvi 2.51
 * :@ and :* with a line range only execute the ex commands in the named buffer
   for the last line. They should execute them for each line in the range.
 
+* Undo does not work properly when applied to macros (either @ or :map);
+  it should undo all the changes made by the macro, but in fact only the
+  last command within the macro is undone.
+
 * On Unix, pressing Control-\ makes xvi dump core immediately.
   Whether it should or not, as that key generates SIGQUIT, is unclear.
 
@@ -22,11 +26,8 @@ Known bugs in xvi 2.51
 * On NetBSD with "make check", all tests seem to succeed but
   in reality none are run.
 
-* If the standard input returns EOF indefinitely, xvi hangs consuming
-  100% CPU. It should exit, saving what buffers it can.
-
-* THe internal codes for special keys (arrow keys, Home, End etc) are
-  0x80-0x8C, which are the same as some accented chaacter on MSDOS, so
+* The internal codes for special keys (arrow keys, Home, End etc) are
+  0x80-0x8C, which are the same as some accented characters on MSDOS so,
   for instance, down arrow inserts an a-grave and a-grave does down-arrow.
   In visual mode this is harmess because only arrow keys are valid as
   commands and only accented characters are valid in insert mode but it

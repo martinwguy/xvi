@@ -737,11 +737,6 @@ Regular expressions, although implemented (see above),
 do not support the \fB~\fP metacharacter on the left hand side.
 .LP
 The \fB:global\fP command only supports the commands [\fBlps&~d\fP].
-.LP
-.B Undo
-does not work properly when applied to macros (either \fB@\fP
-or \fB:map\fP); it should undo all the changes made by the macro,
-but in fact only the last command within the macro is undone.
 .SH "OTHER DIFFERENCES FROM VI"
 If the
 .B XVINIT
@@ -773,7 +768,12 @@ if \fBautosplit\fP allows.
 .BR vi (1),
 .BR termcap (5).
 .SH BUGS
-See also http://github.com/martinwguy/xvi/issues
+See also http://github.com/martinwguy/xvi/tree/master/issues/open
+.IP \(bu
+.B Undo
+does not work properly when applied to macros (either \fB@\fP
+or \fB:map\fP); it should undo all the changes made by the macro,
+but in fact only the last command within the macro is undone.
 .IP \(bu
 Most
 .BR termcap (5)
