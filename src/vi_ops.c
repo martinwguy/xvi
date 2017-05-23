@@ -28,11 +28,15 @@ void
 xvOpShift(cmd)
 register Cmd	*cmd;
 {
+    if (!start_command(cmd)) {
+	return;
+    }
+
     /*
      * Do the shift.
      */
     tabinout(cmd->cmd_operator, cmd->cmd_startpos.p_line,
-				cmd->cmd_target.p_line);
+				cmd->cmd_target.p_line, cmd);
 
     /*
      * Put cursor on first non-white of line; this is good if the
@@ -47,6 +51,8 @@ register Cmd	*cmd;
      */
     Redo.r_mode = r_normal;
     format_redo(cmd->cmd_operator, cmd);
+
+    end_command();
 }
 
 /*
@@ -72,6 +78,10 @@ register Cmd	*cmd;
     nlines = cntllines(cmd->cmd_startpos.p_line, cmd->cmd_target.p_line);
     if (nlines == 1) {
         nplines = plines(cmd->cmd_startpos.p_line);
+    }
+
+    if (!start_command(cmd)) {
+	return;
     }
 
     /*
@@ -111,10 +121,6 @@ register Cmd	*cmd;
 	     * one to delete the intervening lines, and
 	     * one to delete up to the target position.
 	     */
-	    if (!start_command(FALSE)) {
-		return;
-	    }
-
 	    /*
 	     * First delete part of the last line.
 	     */
@@ -138,8 +144,6 @@ register Cmd	*cmd;
 			    cntllines(cmd->cmd_startpos.p_line,
 				      cmd->cmd_target.p_line) - 1,
 			    (Line *) NULL);
-
-	    end_command();
 	}
 
 	/*
@@ -158,6 +162,7 @@ register Cmd	*cmd;
 	move_cursor(cmd->cmd_startpos.p_line,
 			    cmd->cmd_startpos.p_index);
     }
+    end_command();
 
     /*
      * This seems reasonable. It's what vi does anyway.
@@ -189,7 +194,7 @@ register Cmd	*cmd;
      * included in the meta-command and hence undo will
      * work properly.
      */
-    if (!start_command(FALSE)) {
+    if (!start_command(cmd)) {
 	return;
     }
 

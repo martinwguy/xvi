@@ -720,7 +720,7 @@ char	*cmdline;			/* optional command string */
 	    where.p_index = curwin->w_cursor->p_index;
 	    where.p_line = curwin->w_cursor->p_line;
 	}
-	do_put(&where, FORWARD, '@', TRUE);
+	do_put(&where, FORWARD, '@', NULL);
 	break;
     }
 
@@ -894,7 +894,7 @@ char	*cmdline;			/* optional command string */
 	if (u_line == NULL) {
 	    u_line = l_line;
 	}
-	tabinout((command == EX_LSHIFT) ? '<' : '>', l_line, u_line);
+	tabinout((command == EX_LSHIFT) ? '<' : '>', l_line, u_line, NULL);
 	begin_line(TRUE);
 	xvUpdateAllBufferWindows();
 	break;

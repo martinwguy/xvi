@@ -38,7 +38,7 @@
  */
 typedef	struct change {
     struct change	*c_next;
-    enum {
+    enum c_type_t {
 	C_LINE,
 	C_CHAR,
 	C_DEL_CHAR,
@@ -82,10 +82,11 @@ typedef	struct changedata {
     unsigned int	cd_nlevels;
 
     /*
-     * Is change from a command line command? This is needed to know
-     * where to position the cursor after an undo.
+     * If this change is from a vi command, this is its cmd structure.
+     * If it's an ex command, NULL.
+     * This is needed to know where to position the cursor after an undo.
      */
-    bool_t		cd_ex_mode;
+    Cmd *		cd_vi_cmd;
 
     /*
      * This field holds the total number of added/deleted lines

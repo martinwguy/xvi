@@ -8,11 +8,16 @@ the last thing you changed.
 
 SIX says, of the cursor position after an undo:
 #
-# "Current line: Set to the first line added or changed if any;
+# "Current line:
+#
+#  Set to the first line added or changed if any;
 #  otherwise, move to the line preceding any deleted text if one exists;
 #  otherwise, move to line 1.
 #
-#  Current column: If undoing an ex command, set to the first non-<blank>.
+#  Current column:
+#
+#  If undoing an ex command, set to the first non-<blank>.
+#
 #  Otherwise, if undoing a text input command:
 #
 #  1. If the command was a C, c, O, o, R, S, or s command, the

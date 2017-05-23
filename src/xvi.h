@@ -949,7 +949,7 @@ extern	void	prompt P((char *));
 extern	bool_t	i_proc P((int));
 extern	bool_t	r_proc P((int));
 extern	void	startinsert P((bool_t, int));
-extern	void	startreplace P((int, int));
+extern	void	startreplace P((Cmd *));
 extern	char	*mkstr P((int));
 
 /*
@@ -1064,7 +1064,7 @@ extern	long	plines P((Line *));
 extern	Line	*gotoline P((Buffer *, unsigned long));
 extern	int	get_indent P((Line *));
 extern	int	set_indent P((Line *, int));
-extern	void	tabinout P((int, Line *, Line *));
+extern	void	tabinout P((int, Line *, Line *, Cmd *));
 extern	void	makeargv P((char *, int *, char ***, char *));
 extern	void	xvConvertWhiteSpace P((char *));
 extern	bool_t	xvJoinLine P((Line *, bool_t));
@@ -1219,7 +1219,7 @@ extern	void	do_HLM P((Cmd *));
  */
 extern	void	init_undo P((Buffer *));
 extern	void	free_undo P((Buffer *));
-extern	bool_t	start_command P((bool_t));
+extern	bool_t	start_command P((Cmd *));
 extern	void	end_command P((void));
 extern	void	replchars P((Line *, int, int, char *));
 extern	void	repllines P((Line *, long, Line *));
@@ -1268,6 +1268,6 @@ extern	bool_t	xvCanSplit P((void));
 extern	void	init_yankput P((void));
 extern	bool_t	do_yank P((Posn *, Posn *, bool_t, int));
 extern	bool_t	yank_str P((int, char *, bool_t));
-extern	void	do_put P((Posn *, int, int, bool_t));
+extern	void	do_put P((Posn *, int, int, Cmd *));
 extern	void	yp_stuff_input P((int, bool_t, bool_t));
 extern	void	yp_push_deleted P((void));

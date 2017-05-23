@@ -68,7 +68,7 @@ Cmd	*cmd;
     case 'P':
 	Redo.r_mode = r_normal;
 	do_put(curwin->w_cursor, (cmd->cmd_ch1 == 'p') ? FORWARD : BACKWARD,
-	       cmd->cmd_yp_name, FALSE);
+	       cmd->cmd_yp_name, cmd);
 	/*
 	 * This lets you to say "1P..." to recover the most recent deletions
 	 * in order, like saying "1P"2P"3P"4P...
@@ -83,7 +83,7 @@ Cmd	*cmd;
 	break;
 
     case 's':		/* substitute characters */
-	if (start_command(FALSE)) {
+	if (start_command(cmd)) {
 	    int nlines = plines(curwin->w_cursor->p_line);
 
 	    replchars(curwin->w_cursor->p_line,
@@ -114,7 +114,7 @@ Cmd	*cmd;
 	Redo.r_mode = (cmd->cmd_ch1 == 'r') ? r_replace1 : r_insert;
 	flexclear(&Redo.r_fb);
 	if (!flexaddch(&Redo.r_fb, cmd->cmd_ch1)) break;
-	startreplace(cmd->cmd_ch1, IDEF1(cmd->cmd_prenum) - 1);
+	startreplace(cmd);
 	break;
 
     case 'J':
@@ -123,7 +123,7 @@ Cmd	*cmd;
 	int	size1;		/* chars in the first line */
 	Line *	line = curwin->w_cursor->p_line;
 
-	if (!start_command(FALSE)) {
+	if (!start_command(cmd)) {
 	    beep();
 	    break;
 	}
@@ -509,7 +509,7 @@ Cmd	*cmd;
 	return;
     }
     count = IDEF1(cmd->cmd_prenum);
-    start_command(FALSE);
+    start_command(cmd);
     do {
 	c = tp[cp->p_index];
 
@@ -552,7 +552,7 @@ Cmd	*cmd;
 {
     bool_t	startpos = TRUE;	/* FALSE means start position moved */
 
-    if (!start_command(FALSE)) {
+    if (!start_command(cmd)) {
 	return;
     }
 

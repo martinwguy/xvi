@@ -745,10 +745,12 @@ int	repeat;		/* number of times to repeat the insertion */
  * The parameter is the command character which took us into replace mode.
  */
 void
-startreplace(c, repeat)
-int	c;
-int	repeat;
+startreplace(cmd)
+Cmd *	cmd;
 {
+    int c = cmd->cmd_ch1;
+    int repeat = IDEF1(cmd->cmd_prenum) - 1;
+
     /*
      * 'r' on an empty line or 'Nr' when there are less than N characters
      * under and after the cursor, is an error.
@@ -765,7 +767,7 @@ int	repeat;
 	}
     }
 
-    if (!start_command(FALSE)) {
+    if (!start_command(cmd)) {
 	return;
     }
     start_index = curwin->w_cursor->p_index;

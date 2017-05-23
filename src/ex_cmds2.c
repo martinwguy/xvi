@@ -354,7 +354,7 @@ Line	*destline;		/* destination line for copy/move */
 	return(FALSE);
     }
 
-    if (!start_command(TRUE)) {
+    if (!start_command(NULL)) {
 	return(FALSE);
     }
 
@@ -377,7 +377,7 @@ Line	*destline;		/* destination line for copy/move */
 	 */
 	destpos.p_line = destline;
 	destpos.p_index = 0;
-	do_put(&destpos, FORWARD, '=', TRUE);
+	do_put(&destpos, FORWARD, '=', NULL);
 
 	xvUpdateAllBufferWindows();
 	cursupdate();
@@ -414,7 +414,7 @@ bool_t	exclam;
 	return(FALSE);
     }
 
-    if (!start_command(TRUE)) {
+    if (!start_command(NULL)) {
 	return(FALSE);
     }
 

@@ -40,6 +40,7 @@
 ***/
 
 #include "xvi.h"
+#include "cmd.h"	/* for TEXT_INPUT */
 
 static	bool_t	save_position P((Change **));
 static	bool_t	init_change_data P((void));
@@ -122,8 +123,8 @@ Change		*change;
  * the previous saved state if the cd_nlevels variable is 0.
  */
 bool_t
-start_command(ex_mode)
-bool_t	ex_mode;	/* Is this an ex-mode command? */
+start_command(cmd)
+Cmd *	cmd;		/* cmd for vi commands, NULL for ex commands */
 {
     ChangeData	*cdp = curbuf->b_change;
 
@@ -132,7 +133,7 @@ bool_t	ex_mode;	/* Is this an ex-mode command? */
     }
 
     if (cdp->cd_nlevels == 0) {
-	cdp->cd_ex_mode = ex_mode;
+	cdp->cd_vi_cmd = cmd;
     }
 
     cdp->cd_nlevels += 1;
@@ -150,6 +151,7 @@ init_change_data()
 	cdp->cd_undo = NULL;
 	cdp->cd_total_lines = 0;
 	cdp->cd_nlevels = 0;
+	cdp->cd_vi_cmd = NULL;
 	if (!save_position(&(cdp->cd_undo))) {
 	    return(FALSE);
 	}
@@ -831,9 +833,21 @@ undo()
     Change		*chp;
     Change		*change;
     Change		*redo;
-    /* Variables to know Which line to leave the cursor on */
+    /*
+     * Variables to know Which line to leave the cursor on
+     */
     int			firstlinechanged = INT_MAX;
     int			firstlinedeleted = INT_MAX;
+    /* Type of last change; C_POSITION is a no-action value */
+    enum c_type_t	last_change_type = C_POSITION;
+    /* The start of the last inserted text or where a deletion started */
+    int			last_index = 0;
+    /*
+     * To find out if a single line was modified, we set this to -1 to mean
+     * nothing modified yet, a line number to say which single line has been
+     * modified or -2 if more than one line has been modified.
+     */
+    int			lines_modified = -1;	/* None */
 
     cdp = curbuf->b_change;
     buffer = curbuf;
@@ -898,27 +912,68 @@ undo()
 	     * change happens.
 	     */
 	    change = _repllines(lp, tmp->c_nlines, tmp->c_lines);
-	    if (tmp->c_nlines == 0) {
+	    if (tmp->c_lines == NULL) {
+		/*
+		 * If no lines were inserted; this was a line deletion.
+		 * Deleting the last line(s) of the file which leaves fld>EOF
+		 * is handled when fld is used.
+		 */
 		if (lp->l_number < firstlinedeleted) {
 		    firstlinedeleted = lp->l_number;
 		}
 	    } else {
+		/*
+		 * This was a line change or insertion;
+		 * remember the first non-blank of the first inserted line
+		 */
 		if (lp->l_number < firstlinechanged) {
+		    Posn pos;
+
 		    firstlinechanged = lp->l_number;
+		    pos.p_line = lp;
+		    xvSetPosnToStartOfLine(&pos, TRUE);
+		    last_index = pos.p_index;
 		}
 	    }
+
 	    break;
 
 	case C_DEL_CHAR:
 	    change = _replchars(lp, tmp->c_index, tmp->c_nchars, "");
+	    /*
+	     * POSIX: "If text was deleted, set to [...]
+	     *         the first character after the deleted text
+	     */
+	    last_index = tmp->c_index;
+	    if (last_index > 0 && lp->l_text[last_index] == '\0') {
+		last_index--;
+	    }
+	    last_change_type = tmp->c_type;
+
+	    /* Deleting characters counts as changing a line */
 	    if (lp->l_number < firstlinechanged) {
 		firstlinechanged = lp->l_number;
+	    }
+
+	    switch (lines_modified) {
+	    case -1:
+		lines_modified = lp->l_number;
+		break;
+	    case -2:
+		/* Still many lines modified */
+		break;
+	    default:
+		if (lines_modified != lp->l_number) {
+		    lines_modified = -2;
+		} else {
+		    /* Modifying the same line */
+		}
+		break;
 	    }
 	    break;
 
 	case C_CHAR:
-	    change = _replchars(lp, tmp->c_index, tmp->c_nchars,
-							    tmp->c_chars);
+	    change = _replchars(lp, tmp->c_index, tmp->c_nchars, tmp->c_chars);
 	    /*
 	     * Free up the string, since it was strsave'd
 	     * by replchars at the time the change was made.
@@ -928,6 +983,12 @@ undo()
 	    if (lp->l_number < firstlinechanged) {
 		firstlinechanged = lp->l_number;
 	    }
+	    last_change_type = tmp->c_type;
+	    /*
+	     * POSIX: "If text was added or changed, set to [...]
+	     *         the first character added or changed"
+	     */
+	    last_index = tmp->c_index;
 	    break;
 
 	case C_POSITION:
@@ -941,11 +1002,6 @@ undo()
 	}
 	if (change != NULL) {
 	    push_change(&redo, change);
-	}
-
-	/* Remember the first line added or changed for final cursor position */
-	if (tmp->c_type != C_POSITION && lp->l_number < firstlinechanged) {
-	    firstlinechanged = lp->l_number;
 	}
 
 	chfree(tmp);
@@ -990,7 +1046,7 @@ undo()
      */
     {
 	int	endpos;		/* Line number of the line to end up on */
-	Posn p;
+	Posn	p;
 
 	if (firstlinechanged != INT_MAX) {
 	    endpos = firstlinechanged;
@@ -1000,27 +1056,33 @@ undo()
 	    endpos = bufempty() ? 0 : 1;
 	}
 
-#if 0	
-	/* Start of proper code */
 	p.p_line = gotoline(buffer, (unsigned long) endpos);
 
-	if (cdp->cd_ex_mode) {
+	/* Set cursor position within line according to above rules */
+	if (cdp->cd_vi_cmd == NULL) {
             xvSetPosnToStartOfLine(&p, TRUE);
 	} else {
-/* Calculation of cursor column in vi mode goes here */
-	    /* What was the last command we undid? */
-            ...
+	    Cmd *	cmd = cdp->cd_vi_cmd;
+
+	    /* vi mode command */
+	    if (CFLAGS(cmd->cmd_ch1) & TEXT_INPUT) {
+		if (strchr("CcOoRSs", cmd->cmd_ch1) != NULL) {
+		    /* Keep the value set by undo's POSITION entry */
+		    ;
+		} else {
+		    p.p_index = last_index;
+		}
+	    } else {
+		/*
+		 * if a single line was modified
+		 * - if it added or changed test, the last char of that text
+		 * - if it deleted text, to first char after deletion or EOL
+		 */
+		p.p_index = last_index;
+	    }
 	}
 
 	move_cursor(p.p_line, p.p_index);
-#else
-	/* Temp version */
-	if (cdp->cd_ex_mode) {
-	    p.p_line = gotoline(buffer, (unsigned long) endpos);
-            xvSetPosnToStartOfLine(&p, TRUE);
-	    move_cursor(p.p_line, p.p_index);
-	}
-#endif
     }
 
     cdp->cd_undo = redo;

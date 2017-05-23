@@ -538,11 +538,11 @@ bool_t	line_based;
  * in the specified direction.
  */
 void
-do_put(location, direction, name, ex_mode)
+do_put(location, direction, name, vi_cmd)
 Posn	*location;
 int	direction;
 int	name;
-bool_t	ex_mode;	/* Was this part of a command line operation? */
+Cmd *	vi_cmd;		/* If vi mode, the cmd; NULL if ex mode */
 {
     Yankbuffer		*yp_buf;
     register Line	*currline;	/* line we are on now */
@@ -573,7 +573,7 @@ bool_t	ex_mode;	/* Was this part of a command line operation? */
 	Posn	lastpos;
 	Posn	cursorpos;
 
-	if (!start_command(ex_mode)) {
+	if (!start_command(vi_cmd)) {
 	    return;
 	}
 

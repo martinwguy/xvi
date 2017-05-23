@@ -398,15 +398,16 @@ register int	indent;
  * "inout" is either '<' or '>' to indicate left or right shift.
  */
 void
-tabinout(inout, start, finish)
+tabinout(inout, start, finish, cmd)
 int	inout;
 Line	*start;
 Line	*finish;
+Cmd	*cmd;	/* If vi-mode, the cmd struct; NULL if ex mode */
 {
     Line	*lp;
     long	nlines = 0;
 
-    if (!start_command(FALSE)) {
+    if (!start_command(cmd)) {
 	return;
     }
 
