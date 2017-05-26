@@ -1,0 +1,3 @@
+The maze test often (always?) leaves test/data/#sample.maz.tmp
+
+The maze test leaves xvi's preserve file in test/data/
