@@ -1,0 +1,28 @@
+Format: 1.8
+Date: Thu,  7 June 2017 09:48:00 +0200
+Source: xvi
+Binary: xvi
+Architecture: i386
+Version: 2.50.3-1
+Distribution: unstable
+Urgency: low
+Maintainer: Martin Guy <martinwguy@yahoo.it>
+Changed-By: Martin Guy <martinwguy@gmail.com>
+Description:
+ xvi        - small multiple-window version of the `vi' text editor
+Changes:
+ xvi (2.50.3-1) unstable; urgency=low
+ .
+   * Release 2.50.3. Bugs fixes are listed in the file RELEASE-2.50
+     - On MSDOS, keyboard interrupts with ^C killed xvi. Now they work again
+     - In insert/replace mode, ^B^C said "interrupted" but stayed in insert mode
+     - "source" now works again on MSDOS (it was getting confused by \r\n)
+     - Inserting in the middle of command line got screen updating wrong
+     - Accented characters with codes 128-140 can be inserted again
+     - Repeating an insertion with "." works again.
+Checksums-Sha1:
+ 8ba1c592e771618147985e83108cab60d83e2431 87104 xvi_2.50.3-1_i386.deb
+Checksums-Sha256:
+ 8ddd22261c1a297901a8800aa72b0a40648f6b35ae481af6970d82b3e293cc0c 87104 xvi_2.50.3-1_i386.deb
+Files:
+ e193f42b315055f173a6822d66c11864 87104 editors optional xvi_2.50.3-1_i386.deb
