@@ -11,7 +11,6 @@
 
 
 
-
 CFLAGS = -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -53,6 +52,7 @@ install: build
 	dh_installdirs
 
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/xvi
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/xvi-udeb
 
 
 # Build architecture-independent files here.
@@ -68,6 +68,8 @@ binary-arch: build install
 #	dh_install
 	dh_installmenu
 #	dh_installman
+# Remove the info-bloat from -udeb
+	-rm -rf debian/xvi-udeb/usr/share
 	dh_link
 	dh_strip
 	dh_compress

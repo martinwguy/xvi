@@ -5,6 +5,15 @@ Maintainer: Martin Guy <martinwguy@yahoo.it>
 Build-Depends: debhelper (>= 4.0.0), libncurses5-dev
 Standards-Version: 3.6.2
 
+Package: xvi-udeb
+XC-Package-Type: udeb
+Section: debian-installer
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: xvi - udeb
+ Do not install it on a normal system.
+
 Package: xvi
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
