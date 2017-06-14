@@ -44,6 +44,7 @@ Xvi is the full-feature vi clone with the smallest program size
 <TH COLSPAN=5>Program size under x86 Linux
           <BR>(Debian squeeze, hence <TT>gcc-4.9 -O2</TT>)
 	<TH ROWSPAN=2 ALIGN=LEFT>Runs<BR>hanoi?
+	<TH ROWSPAN=2 ALIGN=LEFT>Runs<BR>maze?
  <TR>		<TH>Text
 		<TH>Data
 		<TH>BSS
@@ -55,11 +56,20 @@ Xvi is the full-feature vi clone with the smallest program size
 		<TD ALIGN=RIGHT>166446
 		<TD ALIGN=RIGHT>1612 KB
 		<TD>Yes
+		<TD>Yes
+ <TR><TD>ex/vi	<TD ALIGN=RIGHT>218783
+		<TD ALIGN=RIGHT>2518
+		<TD ALIGN=RIGHT>51192
+		<TD ALIGN=RIGHT>272493
+		<TD ALIGN=RIGHT>1656 KB
+		<TD>Yes
+		<TD>No
  <TR><TD>nvi	<TD ALIGN=RIGHT>404612
 		<TD ALIGN=RIGHT>2884
 		<TD ALIGN=RIGHT>352
 		<TD ALIGN=RIGHT>407848
 		<TD ALIGN=RIGHT>4152 KB
+		<TD>Yes
 		<TD>Yes
  <TR><TD>elvis(*)<TD ALIGN=RIGHT>505984
 		<TD ALIGN=RIGHT>29864
@@ -67,11 +77,13 @@ Xvi is the full-feature vi clone with the smallest program size
 		<TD ALIGN=RIGHT>557240
 		<TD ALIGN=RIGHT>4424 KB
 		<TD>No
+		<TD>SEGV
  <TR><TD>elvis-tiny<TD ALIGN=RIGHT>81561
 		<TD ALIGN=RIGHT>2448
 		<TD ALIGN=RIGHT>27200
 		<TD ALIGN=RIGHT>111209
 		<TD ALIGN=RIGHT>1548 KB
+		<TD>No
 		<TD>No
  <TR><TD>vile	<TD ALIGN=RIGHT>982633
 		<TD ALIGN=RIGHT>12704
@@ -79,12 +91,14 @@ Xvi is the full-feature vi clone with the smallest program size
 		<TD ALIGN=RIGHT>1044625
 		<TD ALIGN=RIGHT>3464 KB
 		<TD>No
+		<TD>No
  <TR><TD>vim	<TH ALIGN=RIGHT>2315002
 		<TD ALIGN=RIGHT>79708
 		<TD ALIGN=RIGHT>33084
 		<TD ALIGN=RIGHT>2427794
 		<TD ALIGN=RIGHT>4792 KB
 		<TD>Yes
+		<TD>No
  <TR><TD>vim-tiny
 		<TH ALIGN=RIGHT>980746
 		<TD ALIGN=RIGHT>42888
@@ -92,6 +106,7 @@ Xvi is the full-feature vi clone with the smallest program size
 		<TD ALIGN=RIGHT>1038562
 		<TD ALIGN=RIGHT>3648 KB
 		<TD>Yes
+		<TD>No
 </TABLE>
 <SMALL>
 *) From Debian wheezy, as elvis is not in squeeze.
