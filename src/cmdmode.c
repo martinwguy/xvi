@@ -270,7 +270,6 @@ int	ch;
 	     */
 	    expansion = fexpand(to_expand, TRUE);
 	    if (*expansion != '\0') {
-		int oldinpos = inpos;
 		/*
 		 * Expanded okay - remove the original and stuff
 		 * the expansion into the input stream. Note that

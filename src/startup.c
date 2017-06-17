@@ -82,7 +82,7 @@ char	*argv[];
 					 * MAX_LINENO means last line
 					 * positive values are line N
 					 * negative values are line $-N */
-    char	**files;
+    char	**files;		/* Only valid if numfiles > 0 */
     int		numfiles = 0;
     int		count;
     char	*env = NULL;

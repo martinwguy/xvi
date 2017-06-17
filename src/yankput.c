@@ -978,7 +978,8 @@ yp_chars_to_lines(yp)
 Yankbuffer	*yp;
 {
     Line *y_1st_line;	/* 1st_text as a line */
-    Line *y_2nd_line;	/* 2nd_text as a Line */
+    Line *y_2nd_line;	/* 2nd_text as a Line,
+			 * only used if (yp->y_2nd_text != NULL) */
 
     /* Allocate all new space first so that we can do all or nothing */
 
