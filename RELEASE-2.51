@@ -32,7 +32,8 @@ Since version 2.49, xvi now:
   - Appending to yank buffers when they are named in upper case
   - Control-@ in insert mode, to reinsert the last inserted text
   - ~ on the LHS and RHS of a substitution, giving the last replacement text
-  and is now able to run the "Towers of Hanoi" problem-solving macros
+  and is now able to run the "Towers of Hanoi" problem-solving macros and
+  the maze-solving macros.
 
 - Removes some undocumented features:
   - The "autogrow" parameter. It is now as if it were always on
@@ -83,7 +84,7 @@ Since version 2.49, xvi now:
   - All 26 alphabetic yank buffers can now be used, not just 10 of them
   - When lines are restored with an "undo", their marks are restored too
   - When yanking to a named buffer the text is also copied to the unnamed buffer
-  - Lines of text about to be piping through a command are yanked first
+  - Lines of text about to be piped through a command are yanked first
   - Spaces are allowed after :s and bare :s repeats the last substitution
   - Command ":2,3" goes to line 3, not 2
   - Environment variables LINES and COLUMNS now override other size settings
@@ -111,7 +112,7 @@ Since version 2.49, xvi now:
 - Has its own unique test suite, able to match against screen contents.
 
 - Has been built on AIX 7.1/7.2, CentOS 7, Crux Linux, Debian jessie, Fedora 18,
-  FreeBSD, HP-UX, NetBSD, OpenBSD, OpenSUSE and Ubuntu xenial using
+  FreeBSD, HP-UX, NetBSD, OpenBSD, OpenSUSE QNX 6.5.0 and Ubuntu xenial using
   GCC, clang and Tiny-C for i386, amd64, ARM-64, PowerPC-64 and IBM POWER8 CPUs
   and on MSDOS with Borland Turbo C 2.0.
   The termcap code has been tested against ncurses, GNU termcap and AIX curses.
