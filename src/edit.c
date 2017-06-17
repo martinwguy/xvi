@@ -87,14 +87,14 @@ bool_t
 i_proc(c)
 int	c;
 {
-	ir_proc(c, TRUE);
+	return(ir_proc(c, TRUE));
 }
 
 bool_t
 r_proc(c)
 int	c;
 {
-	ir_proc(c, FALSE);
+	return(ir_proc(c, FALSE));
 }
 
 static bool_t
