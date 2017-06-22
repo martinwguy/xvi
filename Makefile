@@ -47,3 +47,10 @@ clean:
 	(cd doc && $(MAKE) clean)
 	(cd test && $(MAKE) clean)
 	rm -f configure-stamp build-stamp
+
+# Copy all source files into dosemu's C:\xvi folder
+todos:
+	(cd src && for a in *.[ch] makefile.tc xvi.lnk *.asm *.inc ; \
+	do \
+	    todos < $$a > $$HOME/.dosemu/drive_c/xvi/$$a ; \
+	done )
