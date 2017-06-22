@@ -515,6 +515,15 @@ fexpand(name, do_completion)
 	register int	c;
 	char * lastp = (lastdelim >= 0 ? &name[lastdelim] : NULL);
 
+	/* Eliminate "." and ".." */
+	if (strcmp(dst_BASENAME(info), ".") == 0 ||
+	    strcmp(dst_BASENAME(info), "..") == 0) {
+	    if (statnext(&info) != 0) {
+		break;
+	    }
+	    continue;
+	}
+
 	if (lastp) {
 	    for (p = name; p <= lastp;) {
 		if (!flexaddch(&newname, *p++)) {
