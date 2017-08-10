@@ -1,0 +1,14 @@
+In a directory with files
+	Stanotte.ly
+	Non lo so.ly
+go
+	xvi Stanotte.ly
+	:b Non*ly
+and it says "Inappropriate arguments given"
+or
+	:b Non[tab]
+and it leaves
+	:b _Non
+(where _ is a space with the cursor on it). The "Non" is
+garbage left on the screen and doesn't form part of the
+command line.
