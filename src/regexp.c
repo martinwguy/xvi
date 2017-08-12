@@ -444,31 +444,39 @@ int *flagp;
 	FAIL("*+ operand could be empty");
     *flagp = (op != '+') ? (WORST|SPSTART) : (WORST|HASWIDTH);
 
-    if (op == '*' && (flags&SIMPLE))
-	reginsert(STAR, ret);
-    else if (op == '*') {
-	/* Emit x* as (x&|), where & means "self". */
-	reginsert(BRANCH, ret);			/* Either x */
-	regoptail(ret, regnode(BACK));		/* and loop */
-	regoptail(ret, ret);			/* back */
-	regtail(ret, regnode(BRANCH));		/* or */
-	regtail(ret, regnode(NOTHING));		/* null. */
-    } else if (op == '+' && (flags&SIMPLE))
-	reginsert(PLUS, ret);
-    else if (op == '+') {
-	/* Emit x+ as x(&|), where & means "self". */
-	next = regnode(BRANCH);			/* Either */
-	regtail(ret, next);
-	regtail(regnode(BACK), ret);		/* loop back */
-	regtail(next, regnode(BRANCH));		/* or */
-	regtail(ret, regnode(NOTHING));		/* null. */
-    } else if (op == '?') {
+    switch (op) {
+    case '*':
+	if (flags & SIMPLE)
+	    reginsert(STAR, ret);
+	else {
+	    /* Emit x* as (x&|), where & means "self". */
+	    reginsert(BRANCH, ret);			/* Either x */
+	    regoptail(ret, regnode(BACK));		/* and loop */
+	    regoptail(ret, ret);			/* back */
+	    regtail(ret, regnode(BRANCH));		/* or */
+	    regtail(ret, regnode(NOTHING));		/* null. */
+	}
+	break;
+    case '+':
+	if (flags & SIMPLE)
+	    reginsert(PLUS, ret);
+	else {
+	    /* Emit x+ as x(&|), where & means "self". */
+	    next = regnode(BRANCH);			/* Either */
+	    regtail(ret, next);
+	    regtail(regnode(BACK), ret);		/* loop back */
+	    regtail(next, regnode(BRANCH));		/* or */
+	    regtail(ret, regnode(NOTHING));		/* null. */
+	}
+	break;
+    case '?':
 	/* Emit x? as (x|) */
 	reginsert(BRANCH, ret);			/* Either x */
 	regtail(ret, regnode(BRANCH));		/* or */
 	next = regnode(NOTHING);		/* null. */
 	regtail(ret, next);
 	regoptail(ret, next);
+	break;
     }
     regparse++;
     if (ISMULT(*regparse))
