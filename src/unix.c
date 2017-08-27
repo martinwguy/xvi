@@ -964,7 +964,10 @@ long	(*readfunc) P((FILE *));
 	    if (fp == NULL) {
 		goto fail;
 	    }
-	    (void) (*readfunc)(fp);
+	    if ((*readfunc)(fp) < 0) {
+		fclose(fp);
+		goto fail;
+	    }
 	    (void) fclose(fp);
 	} else {
 	    (void) close(pd2[0]);

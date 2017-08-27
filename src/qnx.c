@@ -267,7 +267,10 @@ long	(*readfunc) P((FILE *));
 	if (fp == NULL) {
 	    goto ret;
 	}
-	(void) (*readfunc)(fp);
+	if ((*readfunc)(fp) < 0) {
+	    fclose(fp);
+	    goto ret;	/* With retval==FALSE */
+	}
 	(void) fclose(fp);
     }
 
