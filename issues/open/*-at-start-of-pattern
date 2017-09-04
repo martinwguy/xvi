@@ -13,3 +13,30 @@ it should go to the * on line 3. Instead it says
 	?+* follows nothing
 
 Similarly, :.,$s/^*/#/ should work, and it does in classic vi.
+
+diff --git a/src/regexp.c b/src/regexp.c
+index a0aa6af..65927c4 100644
+--- a/src/regexp.c
++++ b/src/regexp.c
+@@ -615,10 +619,16 @@ int *flagp;
+     case ')':
+ 	FAIL("Internal urp");	/* Supposed to be caught earlier. */
+ 	break;
++
++	/* A pattern "*" or "^*" takes it as a literal character */
+     case '?':
+     case '+':
+     case '*':
+-	FAIL("?+* follows nothing");
++	ret = regnode(EXACTLY);
++	regc(regparse[-1]);
++	regc('\0');
++	*flagp |= HASWIDTH|SIMPLE;
++	//FAIL("?+* follows nothing");
+ 	break;
+     case '\\':
+ 	switch (*regparse)
+
+works for /? /+ /* /^? /^+ but /^* spits an error.
+For the last three, ? and + call regbranch() twice and regpiece() is not called
+and the last one calls regbranch() once which calls regpiece(),

@@ -1,3 +1,5 @@
+Filename completion on the command line garbles names including spaces
+
 In a directory with files
 	Stanotte.ly
 	Non lo so.ly
@@ -12,3 +14,8 @@ and it leaves
 (where _ is a space with the cursor on it). The "Non" is
 garbage left on the screen and doesn't form part of the
 command line.
+
+This seems to be because in unix.c it just passes "echo %s" with the
+pattern, so spaces in filenames are indistinguishable from spaces
+between filenames. It would be better to use "ls -1" and split on \n
+as having \n in filenames is rarer than spaces.
