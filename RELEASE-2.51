@@ -9,6 +9,7 @@ Implements
   - The :w>> command
 and fixes bugs
   - Inserting chars in the middle of the command line now works
+  - Filename completion with Tab no longer garbles the command line
   - ^U to cancel a command line now clears the display too back to the :
   - Character maps are now applied to text stuffed with :@ or :*
   - Stuffing a character-based yank with :@ or :* adds a final newline
