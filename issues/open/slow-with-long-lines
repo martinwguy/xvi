@@ -1,0 +1,5 @@
+If you paste a very long line into xvi, it gets incredibly slow
+
+It consumed 100% CPU and slobbers the screen with @s down the left edge
+and a moving cursor on the penultimate line for minutes and minutes.
+
