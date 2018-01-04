@@ -16,13 +16,14 @@
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
     Last modified by Martin Guy
+    Modified by C.J.Wagenius
 
 ***/
 
 #include "xvi.h"
 #include "cmd.h"
 
-VI_COMMAND	cmd_types[NUM_VI_CMDS] = {
+VI_COMMAND	cmd_types[] = {
  { /* ^@ */	do_badcmd,	0 },
  { /* ^A */	do_badcmd,	0 },
  { /* ^B */	do_page,	0 },
@@ -181,3 +182,5 @@ VI_COMMAND	cmd_types[NUM_VI_CMDS] = {
  { /* K_END */		do_target,	TARGET | TGT_CHAR | TGT_INCLUSIVE },
  { /* K_DELETE */	do_x,		0 },
 };
+
+size_t cmd_types_len = LENOF(cmd_types);
