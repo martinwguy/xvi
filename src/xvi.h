@@ -19,6 +19,7 @@
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
     Last modified by Martin Guy
+    Modified by C.J.Wagenius
 
 ***/
 
@@ -659,6 +660,7 @@ extern volatile int	keystrokes;
  * SECTION 7: MISCELLANEOUS MACROS                             *
  *                                                             *
  ***************************************************************/
+#define LENOF(x) (sizeof(x) / sizeof(*x))
 
 
 /***************************************************************

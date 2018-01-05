@@ -16,6 +16,7 @@
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
     Last modified by Martin Guy
+    Modified by C.J.Wagenius
 
 ***/
 
@@ -56,9 +57,9 @@ typedef struct vi_command {
     unsigned char	c_flags;
 } VI_COMMAND;
 
-#define	NUM_VI_CMDS	256
-#define	MAX_CMD		(NUM_VI_CMDS - 1)
+#define	MAX_CMD		(cmd_types_len - 1)
 #define CFLAGS(c)	(((c) > MAX_CMD) ? 0 : cmd_types[c].c_flags)
 #define CFUNC(c)	(((c) > MAX_CMD) ? do_badcmd : cmd_types[c].c_func)
 
-extern	VI_COMMAND	cmd_types[NUM_VI_CMDS];
+extern	VI_COMMAND	cmd_types[];
+extern size_t cmd_types_len;
