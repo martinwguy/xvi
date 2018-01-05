@@ -266,9 +266,7 @@ char *
 exChangeDirectory(dir)
     char	*dir;
 {
-    char	*homedir = getenv("HOME");
     static char	*prevdir = NULL;
-    char	*ret;
     char	*curdir;
 
 

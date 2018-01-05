@@ -255,7 +255,6 @@ register Mpos	*pos;
 		 * such inserts, so we have to shuffle the data around.
 		 */
 		if (Pb(P_remap) && pos->mp_src != NULL) {
-		    int tmpch;
 		    int offset = 0;	/* Chars to skip when adding rhs */
 
 		    /*
