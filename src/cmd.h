@@ -56,7 +56,7 @@ typedef struct vi_command {
     unsigned char	c_flags;
 } VI_COMMAND;
 
-#define	NUM_VI_CMDS	256
+#define	NUM_VI_CMDS	(K_LIMIT)
 #define	MAX_CMD		(NUM_VI_CMDS - 1)
 #define CFLAGS(c)	(((c) > MAX_CMD) ? 0 : cmd_types[c].c_flags)
 #define CFUNC(c)	(((c) > MAX_CMD) ? do_badcmd : cmd_types[c].c_func)

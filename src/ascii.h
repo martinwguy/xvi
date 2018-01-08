@@ -74,19 +74,24 @@
 /*
  * Key codes.
  */
-#define K_HELP		0x80
-#define K_UNDO		0x81
-#define K_INSERT	0x82
-#define K_HOME		0x83
-#define K_UARROW	0x84
-#define K_DARROW	0x85
-#define K_LARROW	0x86
-#define K_RARROW	0x87
-#define K_CGRAVE	0x88	/* control grave accent */
-#define K_PGDOWN	0x89
-#define K_PGUP		0x8a
-#define K_END		0x8b
-#define K_DELETE	0x8c
+enum {
+	K_HELP	=	0x80,	/* After the ASCII values */
+	K_UNDO,
+	K_INSERT,
+	K_HOME,
+	K_UARROW,
+	K_DARROW,
+	K_LARROW,
+	K_RARROW,
+	K_CGRAVE,
+	K_PGDOWN,
+	K_PGUP,
+	K_END,
+	K_DELETE,
+
+	/* This is a dummy, used to set the size of cmd_types[] */
+	K_LIMIT
+};
 
 /*
  * Function keys.
