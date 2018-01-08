@@ -40,3 +40,16 @@ tcap_scr.o: In function `scroll_down':
 tcap_scr.c:(.text+0x1948): undefined reference to `tgoto'
 collect2: error: ld returned 1 exit status
 make[1]: *** [makefile.pos:65: xvi] Error 1
+
+Conny Wagenius<cjw@tuxxor.net> says:
+
+It doesn't look like Arch-linux comes with an official termcap-
+library. The one mentioned in the bug-report is taken from AUR,
+(Arch-linux Users Repository).
+The symbols are obviously declared in the includes. Why the
+linker doesn't find them in the library is unknown.
+
+Look for another termcap-library for Arch-linux or build a new
+one.
+
+This is not a xvi issue.
