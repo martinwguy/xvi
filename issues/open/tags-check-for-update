@@ -1,0 +1,7 @@
+When a tag not found, check if the tags file has been updated
+
+If the tag file is stale and doesn't index a new function,
+you can (Control-Z, make tags, fg) and repeat but it still doean't find it.
+
+It needs to check if the tag file has been updated since we read it or, on
+systems that don't have datestamps, re-read it once if a tag search fails.
