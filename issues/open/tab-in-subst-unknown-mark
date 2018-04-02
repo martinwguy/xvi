@@ -1,0 +1,10 @@
+Tab in replacement text of :s over undefined marks corrupts status line
+
+If you say
+	:'m,'ns/, /,^I/
+when 'm and (or?) 'n are undefined, as soon as you press the Tab,
+the start of the status line is overwritten with "Unknown mark"
+and the cursor remains at the end of the status line still to be executed.
+When you press Enter, it says "Bad address ranje"
+
+If the marks are both defined, it works OK.
