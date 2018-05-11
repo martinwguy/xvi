@@ -5,7 +5,7 @@ Linux
 	cd src
 	make -f makefile.pos
 	install -s xvi /usr/local/bin/
-	install ../doc/help /usr/local/lib/xvi.help
+	install xvi.help /usr/local/lib/
 	install ../doc/xvi.1 /usr/local/share/man/man1/
 
 To make the Debian/Ubuntu package, say
