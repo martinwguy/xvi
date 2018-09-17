@@ -1,0 +1,7 @@
+On startup with filename argumetns, the status lines are blank
+
+WHen xvi starts up, it should show the filename etc on the status line
+of each window. Instead, they are all blank.
+Classic vi shows:
+	"ex_version.c" 90 lines, 4171 characters 
+others (vim, nvi) differ.
