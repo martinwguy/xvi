@@ -138,6 +138,10 @@ FILE *fdopen(int fd, const char *mode);
 #   include <sgtty.h>
     typedef struct sgttyb	Termstate;
 
+#   ifdef TIOCGWINSZ
+#	include <sys/ioctl.h>  /* For declaration of ioctl() */
+#   endif
+
     static	struct	tchars	ckd_tchars, raw_tchars;
     static	struct	ltchars	ckd_ltchars, raw_ltchars;
 
