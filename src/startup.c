@@ -459,6 +459,9 @@ char	*argv[];
 	    echo = e_CHARUPDATE | e_SHOWINFO | e_ALLOCFAIL;
 	}
 
+	/* At this point we want the status line updated with filenames */
+	interactive = TRUE;
+
 	(void) exNext(numfiles, files, FALSE);
 
 	/* If there are more than one window, move to the first */
