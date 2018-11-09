@@ -1,0 +1,4 @@
+When the tags file changes, xvi carries on using the old one.
+
+Check the modification date or sonething, rather than having to say
+:se tags=tags to force this.
