@@ -1,0 +1,15 @@
+If you repeat a "dFa" with ".", the second time, it deletes forwards
+
+Repeat-by:
+
+On file:
+    audio_file->sample_rate
+    audio_file->sample_rate
+/sample_rate
+dFa
+n
+.
+
+Result:
+    sample_rate
+    audio_file->mple_rate
