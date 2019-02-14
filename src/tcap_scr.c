@@ -1616,7 +1616,7 @@ bool_t	doit;
     }
 
     if (HO != NULL) {
-	int cost = cost_home;;
+	int cost = cost_home;
 	int save_real_col = real_col;
 	int save_real_row = real_row;
 
