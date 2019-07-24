@@ -169,7 +169,6 @@ int	ch;
 	free(inbuf);
 	free(colposn);
 	cmdsz = 0; inpos = 0; inend = 0;
-	inbuf[inend] = '\0';
 	State = NORMAL;
 	return cmd_CANCEL;
     }
