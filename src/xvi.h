@@ -227,6 +227,8 @@ typedef	int		bool_t;
  * Minimum number of rows a window can have, including status line.
  */
 #define	MINROWS		2
+#define max(a, b) (a > b ? a : b)
+#define min(a, b) (a < b ? a : b)
 
 /*
  * The number of characters taken up by the line number
