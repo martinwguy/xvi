@@ -19,8 +19,7 @@
     Originally by Tim Thompson (twitch!tjt)
     Extensive modifications by Tony Andrews (onecom!wldrdg!tony)
     Heavily modified by Chris & John Downey
-    Modified by Martin Guy
-    Cleaned up by C.J.Wagenius
+    Last modified by Martin Guy
 
 ***/
 
@@ -39,39 +38,77 @@
  * This may sound costly, but in fact it's a single memory
  * access for each parameter.
  */
-unsigned vischar(int c, char **p, int idx)
+unsigned
+vischar(c, pp, tabcol)
+    register int	c;
+    register char	**pp;
+    register int	tabcol;
 {
-	static char buf[max(MAX_TABSTOP+1, 5)];
+    static char		crep[5];
 
-	if (p) *p = buf;
-	/* do we need to complete a tabstop with spaces? */
-	if (c == '\t' && idx > -1 && Pb(P_tabs) && !Pb(P_list)) {
-		int ts;		/* tabstop          */
-		unsigned nspc;	/* number of spaces */
+    if (c == '\t' && tabcol >= 0 && Pb(P_tabs) && !Pb(P_list)) {
+	/*
+	 * Tab which we have to display as a string of
+	 * spaces (rather than "^I" or directly).
+	 */
+	register unsigned	nspaces;
+	register int		ts;
 
-		ts = min(MAX_TABSTOP, Pn(P_tabstop));
-		idx %= ts;
-		nspc = ts - idx;
-		if (p) {
-			memset(buf, ' ', nspc);
-			buf[nspc] = '\0';
-		}
-		return nspc;
-	} else if (iscntrl(c) && !Pb(P_cchars)) {
-		if (p) {
-			buf[0] = '^';
-			buf[1] = (c == DEL ? '?' : c + ('A' - 1));
-			buf[2] = '\0';
-		}
-		return 2;
-	} else if ((c & 0x80) && !Pb(P_mchars)) {
-		/* If Pb(P_mchars) is unset, we display non-ASCII characters
-		 * (i.e. top-bit-set characters) as hex escape sequences.
-		 **/
-		if (p) sprintf(buf, "\\x%02x", c);
-		return 4;
-	} else {
-		if (p) sprintf(buf, "%c", c);
-		return 1;
+	ts = Pn(P_tabstop);
+	while (tabcol >= ts) {
+	    tabcol -= ts;
 	}
+	nspaces = ts - tabcol;
+	if (pp != NULL) {
+	    static char		spstr[MAX_TABSTOP + 1];
+	    static unsigned	lastnum;
+
+	    /*
+	     * Paranoia (maybe).
+	     */
+	    if (nspaces > MAX_TABSTOP)
+		nspaces = MAX_TABSTOP;
+	    if (nspaces > lastnum)
+		(void) memset(&spstr[lastnum], ' ',
+			(int) (nspaces - lastnum));
+	    spstr[lastnum = nspaces] = '\0';
+	    *pp = spstr;
+	}
+	return nspaces;
+    } else if (((unsigned char) c < ' ' || c == DEL) && !Pb(P_cchars)) {
+	/*
+	 * ASCII Control characters.
+	 */
+	if (pp != NULL) {
+	    *pp = crep;
+	    crep[0] = '^';
+	    crep[1] = (c == DEL ? '?' : c + ('A' - 1));
+	    crep[2] = '\0';
+	}
+	return 2;
+    } else if ((c & ~0177) && !Pb(P_mchars)) {
+	/*
+	 * If Pb(P_mchars) is unset, we display non-ASCII characters
+	 * (i.e. top-bit-set characters) as octal escape sequences.
+	 */
+	if (pp != NULL) {
+	    *pp = crep;
+	    crep[0] = '\\';
+	    crep[1] = ((((unsigned char) c) >> 6) & 7) + '0';
+	    crep[2] = ((((unsigned char) c) >> 3) & 7) + '0';
+	    crep[3] = ((((unsigned char) c)     ) & 7) + '0';
+	    crep[4] = '\0';
+	}
+	return 4;
+    } else {
+	/*
+	 * Printable character.
+	 */
+	if (pp != NULL) {
+	    *pp = crep;
+	    crep[0] = c;
+	    crep[1] = '\0';
+	}
+	return 1;
+    }
 }
