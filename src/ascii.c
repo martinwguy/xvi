@@ -68,7 +68,7 @@ unsigned vischar(int c, char **p, int idx)
 		/* If Pb(P_mchars) is unset, we display non-ASCII characters
 		 * (i.e. top-bit-set characters) as hex escape sequences.
 		 **/
-		if (p) sprintf(buf, "\\x%02x", c);
+		if (p) sprintf(buf, "\\%o", c);
 		return 4;
 	} else {
 		if (p) sprintf(buf, "%c", c);
