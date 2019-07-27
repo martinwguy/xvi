@@ -308,10 +308,11 @@ do_sline()
 	    s = "REPLACE MODE";
 	    break;
 	default:
-	    s = "";
+	    s = NULL;
 	}
-	if (s && win->w_ncols > 20)
-	    strcpy(slp->s_line + win->w_ncols - 20, s);
+	if (s && win->w_ncols > 20) {
+	    strncpy(slp->s_line + win->w_ncols - 20, s, strlen(s));
+        }
     }
 
     /*
