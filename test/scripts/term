@@ -285,6 +285,13 @@ proc f10    {} { return "[esc]OY" }
 
 proc test { testno str row col lines } {
     exp_send $str
+
+    # If they want a dump on failure, ensure that a success doesn't
+    # leave an old dump file.
+    if { [info exists ::env(DUMP)] && $::env(DUMP) != "" } {
+	exec rm -f "$::env(DUMP)"
+    }
+
     term_expect timeout { fail $testno } {
 	screen_is $row $col $lines
     }
