@@ -47,7 +47,7 @@ The DISPLAY, TKTERM and VI tricks also work when running individual tests
 (see above).
 
 This stuff seems to work with tcl 8.5, but one test, nul-in-command, needs
-tcl 8.6. On Debian, the runes to install the required software is:
+tcl 8.6. On Debian, the runes to install the required software are:
 
     apt-get install expect tclsh tk
 
@@ -63,7 +63,7 @@ The syntax of a test file is fairly horrible because they are written in
 the fairly horrible language TCL, with its bizarre string quoting rules
 and lame lists represented as strings.
 
-To write a ne one, Copy the boilerplate from an existing test:
+To write a new test, copy the boilerplate from an existing test:
 
 	#!/bin/sh
 	# -*- tcl -*-
@@ -85,12 +85,12 @@ and at the end of the script you put
 "scripts/term" is a wrapper that chooses one of the two terminal emulators
 and sets it running, as well as defining a handful of functions useful to
 writing tests. See scripts/term for a list of functions, of which the most
-commonly used are
+commonly used is:
 
 	test n "string" row col [list "expected" "screen" "lines" ]
 where
 	n is the test number and the exit status of the script if it fails.
-		It can be from 1 ro 125 (126 and 127 are reserved).
+		It can be from 1 to 120.
 	"string" is what should be send to xvi as if typed by the user.
 	row is the row that the cursor should be on, starting from row 1.
 	col is the column that the cursor should be in, starting at column 0.
@@ -112,13 +112,13 @@ The test file should exit with status:
 
 For reliable testing, you need to ensure that the results of any two
 subsequent tests are different, otherwise the second test may succeed
-as soon as it sees the screen resulting from the previous one,
+as soon as it sees the screen resulting from the previous one
 but before xvi has processed any of the new input characters.
 
 Under the hood, these two functions call exp_send to send characters to xvi
-and term_expect to frame the conditions that must be satisfie for a test to
+and term_expect to frame the conditions that must be satisfied for a test to
 succeed. By using term_expect natively, you can express test outcomes more
-finely. term_espect takes a series of abitratily-complex conditions,
+finely. term_espect takes a series of arbitrarily-complex conditions,
 each with a fragment of script to execute if its condition is satisfied.
 
 See Don Libes' paper "Automation and Testing of Character-Graphic Programs"
