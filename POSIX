@@ -1,0 +1,18 @@
+POSIX compliance statement for xvi
+----------------------------------
+
+xvi has been run through the POSIX comformance test but it only makes
+the editor write test files which it then examines; it does no testing
+of the screen's appearance and much of what has been implemented in the
+OpenGroup's POSIX test suite regards the ex command line, which is more
+scantily implemented in xvi.
+
+Xvi recognises the POSIXLY_CORRECT environment variable (which sets the
+new "posix" parameter) and makes the following "common sense" changes to
+its behaviour:
+
+* Using the $ motion on an empty line is not an error.
+
+* When you execute the contents of a character mode named buffer using
+  :@ or :* commands, all lines are pasted newline-terminated instead of
+  all but the last.
