@@ -4,7 +4,7 @@
 exec tclsh "$0" ${1+"$@"}
 
 # Test a weird bug. If you insert a character "iX[esc]" and then say "."
-# it doesn't insert anyting but tries to move left one space.
+# it doesn't insert anything but tries to move left one space.
 
 source scripts/term
 start_vi
