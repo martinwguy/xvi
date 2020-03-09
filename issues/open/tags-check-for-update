@@ -1,7 +1,19 @@
-When a tag not found, check if the tags file has been updated
+When the tags file changes, xvi carries on using the old one.
 
-If the tag file is stale and doesn't index a new function,
-you can (Control-Z, make tags, fg) and repeat but it still doean't find it.
+If the tag file is stale and doesn't index a new function, you can
+(Control-Z, make tags, fg) and repeat the ^] but it still doesn't find it.
+
+e.g. If you fail to find a tag because there isn't a tag file, suspend xvi
+and "make tags", then foreground xvi and repeat the tag search, it
+still doesn't find the tag until you say ":se tags=tags" to make it reread
+the file.
+
+Check the modification date or something, rather than having to say
+:se tags=tags to force this.
 
 It needs to check if the tag file has been updated since we read it or, on
-systems that don't have datestamps, re-read it once if a tag search fails.
+systems that don't have datestamps, before doing a tag search, re-read the
+tag file if the previous tag search failed.
+
+Or we could check the modification date each time and update if it changes,
+but causing disk activity all the time isn't so great.

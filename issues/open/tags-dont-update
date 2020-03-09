@@ -1,8 +1,0 @@
-It doesn't notice if the tags file is updated after a failed tag search
-
-If you fail to find a tag because there isn't a tag file, suspend xvi
-and "make tags", then foreground xvi and repeat the tag search, it
-still doesn't find the tag until you say ":se tags=tags" to make it reread
-the file.
-
-It should maybe check the tags file's date always and update if it changes.
