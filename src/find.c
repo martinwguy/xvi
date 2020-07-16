@@ -677,16 +677,19 @@ int	opchar1, opchar2;
 	    break;
 
 	case FORWARD:
-	    store_pos.p_line = b_last_line_of(curbuf);
-	    store_pos.p_index = 0;
-	    while (inc(&store_pos) != mv_EOL) {
-		;
-	    }
-	    /*
-	     * Don't go beyond the end of the line.
-	     */
-	    if (store_pos.p_index > 0) {
-		(void) dec(&store_pos);
+	    {
+		enum mvtype mv;
+
+		store_pos.p_line = b_last_line_of(curbuf);
+		store_pos.p_index = 0;
+		while ((mv = inc(&store_pos)) != mv_EOL && mv != mv_NOMOVE)
+		    ;
+		/*
+		 * Don't go beyond the end of the line.
+		 */
+		if (mv == mv_EOL && store_pos.p_index > 0) {
+		    (void) dec(&store_pos);
+		}
 	    }
 	}
     }
