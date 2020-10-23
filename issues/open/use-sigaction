@@ -1,4 +1,4 @@
 In src/signal.c, prefer using POSIX sigaction() instead of signal()
 
-Xvi uses signal() to catch signals, while sigacrion is better.
+Xvi uses signal() to catch signals, while sigaction() is better.
 See man 2 signal

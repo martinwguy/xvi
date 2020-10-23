@@ -8,6 +8,6 @@ They should display as ^A, ^M and so on.
 For characters with the top bit set, this behaviour is OK
 because it makes accented characters work.
 
-This is because the default vale of mchars on MSDOS is TRUE
+This is because the default value of mchars on MSDOS is TRUE
 but I would rather it displayed control characters and DEL as ^X
 and top-bit-set character literally.

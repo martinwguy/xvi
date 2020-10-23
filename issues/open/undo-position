@@ -1,12 +1,12 @@
 After an undo, set the cursor position according to POSIX
 
-xvi sets te cursor to where it was before the action being undone happened.
+xvi sets the cursor to where it was before the action being undone happened.
 
-POSIX as a detaioled description of what *it* wants, and xvi's current
+POSIX has a detailed description of what *it* wants, and xvi's current
 strategy is not ideal. For example, you can't go undo-undo to go back to
 the last thing you changed.
 
-SIX says, of the cursor position after an undo:
+POSIX says, of the cursor position after an undo:
 #
 # "Current line:
 #
@@ -47,14 +47,14 @@ SIX says, of the cursor position after an undo:
 #
 #  Otherwise, set to non-<blank>."
 
-Which sound like:
+Which sounds like:
 
 if undoing an ex-mode command, set to first non-blank of the line from the
   rules above.
 
 For undoing vi commands:
 
-if undoing a text-input command (which is what: the below and a i A I ?)
+if undoing a text-input command (which is the below and a i A I ?)
   if CcOoRSs, leave it to undo's current setting of the position,
     which is where the cursor was when text input mode was entered
   or on the following character following what you removed for the undo
@@ -69,9 +69,17 @@ what if several lines were modified by the command?
 To the first non-blank of the modified lines?
 
 What if I undo a vi-mode macro execution
-(Though xvi doesn't currently implement undo os a map execution yet)?
+(Though xvi doesn't currently implement undo of a map execution yet)?
 
-text input commands are, for xvi the do_ins family [AIOaioK_INSERT]
+Text input commands are, for xvi, the do_ins family [AIOaioK_INSERT]
 while c is do-operator line d and y, s R r are do_cmd like P p
 Add a flag to cmdtab TEXT_INPUT and remember it in the change structure
 at start_command invocation level 0?
+
+xvi differs from this:
+- undoing a "%s/make/MAKE/" or "g/make/s//MAKE/" leaves the cursor at line 1
+- When undoing an undo, it restores the cursor to where it was before the
+  first undo.
+- when deleting lines, it leaves the cursor on the line after the deleted
+  text, not the one before.
+

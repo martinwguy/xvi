@@ -1,6 +1,6 @@
 :!! doesn't re-execute the last command. It just executes !
 
-nvi re-executes tha last command; POSIX-ex says:
+nvi re-executes the last command; POSIX-ex says:
 
 Non- <backslash>-escaped '!' characters in the arguments to either the ex
 ! command or the open and visual mode ! command, or in the arguments to
@@ -13,4 +13,4 @@ after all unescaped '%', '#', and '!' characters were replaced. It shall
 be an error if '!' characters appear unescaped in one of these commands
 and there has been no previous execution of one of these commands.
 
-...If you can understand that!
+...if you can understand that!

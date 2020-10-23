@@ -1,9 +1,11 @@
 Implement per-buffer parameters
 
-Some parameters, line readonly and format, would be better specified per buffer instead of being a single parameter that applies to all buffers.
+Some parameters, line readonly and format, would be better specified per buffer
+instead of being a single parameter that applies to all buffers.
 
 For example if you set a file read-only, all open files become read-only.
 Similarly, if you merely insert an msdos file into another with autodetect on,
 all the buffers will then be written in msdos mode.
 
-Interestingly, there are already per-buffer flags, they are just not attached to the parameters mechanism.
+Interestingly, there are already per-buffer flags, they are just not attached
+to the parameters mechanism.
